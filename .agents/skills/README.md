@@ -35,6 +35,7 @@ Technical standards shared by the active Foundation environment regardless of th
 * **kotlin-style**: Kotlin coding conventions, project-specific style rules, and Magic Literal prevention.
 * **testing-setup**: Unified strategy for unit, UI behavior, and visual regression testing.
 * **viewmodel-architecture-governance**: Architectural rules for ViewModels, UI state, and initialization patterns.
+* **module-architecture-governance**: Automation and standards for multi-module creation, Java/Kotlin alignment, and Clean Architecture enforcement.
 
 ### 1.3 Android & System Patterns
 Active technical knowledge for Android, Kotlin, Compose, and platform-specific engineering.

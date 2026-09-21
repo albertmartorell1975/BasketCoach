@@ -133,6 +133,12 @@
       "skillPath": ".agents/skills/kotlin-style/SKILL.md",
       "computedHash": "e9184ed7d0e7cd23b082abf2701deb4ce760b3c5836a8560f4611a423b93f3ef"
     },
+    "module-architecture-governance": {
+      "source": "albertmartorell1975/android-ai-workflow-foundation",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/module-architecture-governance/SKILL.md",
+      "computedHash": "277373b7e388b81486da383c5d034cc5da5269b3cf6d3aec08533e500ce0cfe0"
+    },
     "navigation-3": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",

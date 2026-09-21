@@ -20,10 +20,10 @@ This document defines the specialized AI personas (Agents) designed to maintain 
     > "You are the Domain Architect. Your goal is to model the business domain using pure Kotlin. You must ensure that the `:domain` module remains agnostic of databases, networks, and UI frameworks."
 
 ### 2. The Data Integrity Guardian 💾
-**Expertise**: Persistence (**Room**), Network (e.g., Retrofit, Ktor), Data Mapping, and Repository Implementation.
-- **Module Ownership**: `:data` (Interfaces) and `:app` (specifically `framework/` or `data/` implementation packages).
-- **Primary Responsibility**: Manage the flow of data. Define repository interfaces in `:data` and implement them in the infrastructure layer using specific technologies.
-- **SSOT and Schema Governance**: Maintain the **Single Source of Truth (SSOT)**. Responsible for **Room** schema evolution and migration strategy following the `room-schema-governance` skill.
+**Expertise**: Pure Data Modeling and Contract Definition.
+- **Module Ownership**: `:data` (Interfaces and Contracts only).
+- **Primary Responsibility**: Define repository interfaces and data source interfaces in a pure Kotlin environment.
+- **Implementation Strategy**: Implementation of these interfaces using Room or Retrofit MUST reside in the `:app` (or infrastructure) layer, ensuring the `:data` module remains agnositc of the Android Framework.
 - **Architectural Constraints**:
     - **Single Source of Truth (SSOT) Policy**: Define the source of truth for the UI (usually a local database or specific cache).
     - Responsible for **Mappers**: Mapping Infrastructure Models (DTOs/Entities) to Domain Models.
@@ -105,7 +105,7 @@ To prevent architectural drift and technical debt, all agents must follow this s
    - In `ai-expert-workflow` mode, do not invoke `workflow-feature`.
 7. **Strict Pre-requisite**: No agent is allowed to create a `WORKFLOW_FEATURE.md` file unless `activeWorkflow = foundation` and the `workflow-feature` prerequisites have been satisfied.
 8. **Technical Accuracy & Documentation (STRICT)**: Always consult the official Android documentation via `android-cli` or `search_android_docs` when implementing or refactoring Android framework APIs (e.g., WorkManager, Insets, In-app updates) to ensure compliance with the latest SDK standards and background execution limits.
-9. **Dependency Governance (MANDATORY)**: Any task involving adding, removing, or updating a library or plugin MUST activate the **`dependency-manager`** skill to ensure version compatibility (especially KSP/Kotlin sync) and project stability.
+11. **Module Integrity Mandate**: Any creation or modification of modules MUST follow the **`module-architecture-governance`** skill to ensure Clean Architecture boundaries and Java/Kotlin version alignment.
 
 ### 2. Collaboration Protocol (THE RELAY)
 When implementing a new feature, follow this sequential relay to maintain layer integrity:
