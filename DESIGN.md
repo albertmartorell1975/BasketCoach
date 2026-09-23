@@ -26,7 +26,7 @@ No additional brand assets are required for the MVP.
 * Focused on basketball data and coaching.
 * Professional but appropriate for a Junior coaching environment.
 * Strong hierarchy for statistics and key insights.
-* Pia Green for primary actions.
+* Pia Blue for primary actions.
 * Tactical Orange used selectively for improvement areas.
 
 ## Colors
@@ -67,11 +67,11 @@ Prefer simple layouts with clear sections and comfortable spacing.
 
 Use standard Material 3 components wherever possible.
 
-* **Primary Button:** Pia Green, used for **"Generate Analysis"**.
+* **Primary Button:** Pia Blue (`#1D2E54`), used for **"Generate Analysis"**.
 * **Metric Card:** Displays an important team statistic.
 * **Analysis Card:** Displays an insight together with its supporting evidence.
-* **Improvement Indicator:** Tactical Orange for areas requiring attention.
-* **Strength Indicator:** Success Green for positive findings.
+* **Improvement Indicator:** Tactical Orange (`#F15A24`) for areas requiring attention.
+* **Strength Indicator:** Success Green (`#008C45`) for positive findings.
 * **Chat Interface:** Clearly distinguishes Coach and AI messages.
 * **Loading / Error States:** Simple and clear feedback for AI operations.
 
