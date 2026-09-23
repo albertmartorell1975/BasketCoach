@@ -33,21 +33,17 @@ Before writing code:
 
 * Work on one feature or task at a time.
 * Keep changes within the defined scope.
-* Follow the project's documented architecture and governance skills.
+* Do not execute `git commit`, `git push`, or `git merge` autonomously unless explicitly requested by the user in the prompt.
+* Follow the applicable project skills and their detailed rules; do not duplicate them here.
 * Apply **KISS**: prefer the simplest solution that satisfies the MVP requirement.
-* Do not invent product requirements, domain data, or unsupported team insights.
+* Do not invent information, product requirements, domain data, or unsupported team insights. If something is unknown or cannot be verified from the available context, say so clearly.
 * Keep durable project state in repository files rather than relying on chat history.
-
-## Required Artifacts
-
-* `feature_list.json` — feature status, when used by the active workflow.
-* `PROGRESS.md` — verified project progress and session state.
 
 ## Definition of Done
 
 A feature is complete only when:
 
-* The target behaviour is implemented.
+* The target behavior is implemented.
 * Required verification has been run successfully.
 * Relevant project state is updated.
 * Relevant documentation is updated when behaviour, domain rules, APIs, or verification changes.

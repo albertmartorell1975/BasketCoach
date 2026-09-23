@@ -23,7 +23,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/compiler/SKILL.md",
-      "computedHash": "58761c41f107e4e208d55181613f41285d68390564857d9ffe351a7b13922d70"
+      "computedHash": "af0cc09afa9046174c9457f57819de707502f0f1423fc3b69ebc053e6312aef5"
     },
     "compose-focus-navigation": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -155,7 +155,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/testing-setup/SKILL.md",
-      "computedHash": "30baf5e254c345fe4f05f4fc3a289abaa9f16c6dc0756382ea1c6eea22f11a1e"
+      "computedHash": "bdf6806112f77c668473f5dcd5bc3639361aa185993f133f86e0f98e654fa9f0"
     },
     "viewmodel-architecture-governance": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
