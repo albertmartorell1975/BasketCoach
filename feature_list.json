@@ -1,0 +1,180 @@
+[
+  {
+    "id": "f01_dataset_loader",
+    "area": "Data",
+    "title": "Load and parse 14-game statistical dataset from asset JSON",
+    "user_visible_behavior": "App reads raw statistics of the 14 First Phase games from dataset.json asset into domain models.",
+    "depends_on": [],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Reads dataset.json asset file into data transfer models."
+  },
+  {
+    "id": "f02_team_state_aggregator",
+    "area": "Domain",
+    "title": "Compute aggregated Team State metrics from First Phase games",
+    "user_visible_behavior": "Mathematical aggregation of points, rebounds, assists, shooting percentages, and +/- across the 14 games.",
+    "depends_on": [
+      "f01_dataset_loader"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :domain:test"
+    ],
+    "evidence": [],
+    "notes": "Calculates team baseline metrics deterministically."
+  },
+  {
+    "id": "f03_domain_usecase_layer",
+    "area": "Domain/UseCases",
+    "title": "Define domain models, UseCases, and repository contracts",
+    "user_visible_behavior": "Establishes GetTeamStateUseCase and GenerateTeamAnalysisUseCase interfaces in pure Kotlin modules.",
+    "depends_on": [
+      "f02_team_state_aggregator"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :usecases:test"
+    ],
+    "evidence": [],
+    "notes": "Pure Kotlin Clean Architecture contracts."
+  },
+  {
+    "id": "f04_repository_data_impl",
+    "area": "Data",
+    "title": "Implement repository contracts in app data layer",
+    "user_visible_behavior": "Binds data sources and repositories using Dagger Hilt in the app module.",
+    "depends_on": [
+      "f03_domain_usecase_layer"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Infrastructure implementation in :app."
+  },
+  {
+    "id": "f05_gemini_analysis_integration",
+    "area": "AI Integration",
+    "title": "Integrate Gemini Flash client for Global Team Analysis generation",
+    "user_visible_behavior": "Generates initial Global Team Analysis identifying Strengths, Weaknesses, and Improvement Areas.",
+    "depends_on": [
+      "f04_repository_data_impl"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Direct Gemini 3 Flash Preview client-side API integration."
+  },
+  {
+    "id": "f06_dashboard_screen",
+    "area": "UI",
+    "title": "Build tablet Dashboard screen with team baseline and Generate Analysis button",
+    "user_visible_behavior": "Displays First Phase baseline overview and Pia Blue 'Generate Analysis' primary button.",
+    "depends_on": [
+      "f05_gemini_analysis_integration"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Tablet UI adhering to DESIGN.md and Material 3."
+  },
+  {
+    "id": "f07_analysis_screen",
+    "area": "UI",
+    "title": "Build Global Team Analysis screen showing Strengths, Weaknesses, and Improvement Areas",
+    "user_visible_behavior": "Presents structured team analysis cards with Success Green for Strengths and Tactical Orange for Improvement Areas.",
+    "depends_on": [
+      "f06_dashboard_screen"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Analysis view with evidence proximity."
+  },
+  {
+    "id": "f08_devexpert_chat_client",
+    "area": "AI Integration",
+    "title": "Implement DevExpert chat-pro REST client with DEVEXPERT_API_KEY auth",
+    "user_visible_behavior": "Connects to https://inference.devexpert.io/v1 for interactive coach chat with error and quota handling.",
+    "depends_on": [
+      "f07_analysis_screen"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "DevExpert chat-pro client-side integration."
+  },
+  {
+    "id": "f09_coach_chat_screen",
+    "area": "UI",
+    "title": "Build Coaching Chat tablet UI for reflective coaching dialogue",
+    "user_visible_behavior": "Displays chat interface distinguishing Head Coach and AI assistant messages with clear message states.",
+    "depends_on": [
+      "f08_devexpert_chat_client"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Coaching chat interface on tablet."
+  },
+  {
+    "id": "f10_evidence_grounding_usecase",
+    "area": "AI/Domain",
+    "title": "Enforce Evidence Obligation and Zero Assumption clarification in chat",
+    "user_visible_behavior": "Ensures team-specific claims are grounded in dataset.json and asks clarifying questions for ambiguous inputs.",
+    "depends_on": [
+      "f09_coach_chat_screen"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :usecases:test"
+    ],
+    "evidence": [],
+    "notes": "Grounding and clarification rules logic."
+  },
+  {
+    "id": "f11_training_focus_generator",
+    "area": "Domain/UI",
+    "title": "Refine coaching exploration into Second Phase Training Focuses",
+    "user_visible_behavior": "Derives concrete training focuses (e.g., Defensive Rebounding) for the Second Phase from coaching chat interactions.",
+    "depends_on": [
+      "f10_evidence_grounding_usecase"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :usecases:test"
+    ],
+    "evidence": [],
+    "notes": "Training focus derivation and refinement."
+  },
+  {
+    "id": "f12_tablet_responsive_layout",
+    "area": "UI",
+    "title": "Verify portrait and landscape tablet responsiveness and Material 3 styling",
+    "user_visible_behavior": "Ensures seamless layout adaptation on Android tablets in both portrait and landscape orientations.",
+    "depends_on": [
+      "f11_training_focus_generator"
+    ],
+    "status": "not_started",
+    "verification": [
+      "./gradlew :app:testDebugUnitTest"
+    ],
+    "evidence": [],
+    "notes": "Responsive tablet layout verification."
+  }
+]

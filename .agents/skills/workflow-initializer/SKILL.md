@@ -15,7 +15,7 @@ metadata:
 This skill provides a structured process for setting up the AI-assisted workflow in a new Android project. It ensures that the project starts with a solid architectural foundation and a clear collaboration protocol between humans and agents.
 
 ## Proactive Behavior
-If you are loaded in a project where `.agents/rules.md` or `AGENTS.md` are missing, you MUST immediately notify the user and offer to perform the **PHASE 1: Mandatory Foundation Deployment**.
+If you are loaded in a project where `AGENTS.md` is missing, you MUST immediately notify the user and offer to perform the **PHASE 1: Mandatory Foundation Deployment**.
 
 ## Initialization Process
 
@@ -132,7 +132,7 @@ When a complex workflow plugin is selected:
 5. **Active Workflow Setup**: Write the selected identifier to `.agents/workflow.json`.
 
 ### PHASE 4: Project Customization
-1. **Materialize Templates**: Create the `rules.md` and `skills/README.md` files in the `.agents/` directory, and `AGENTS.md` in the project root directory using the templates provided below.
+1. **Materialize Templates**: Create `skills/README.md` files in the `.agents/` directory, and `AGENTS.md` in the project root directory using the templates provided below.
 2. **Replacement**: During materialization, replace the following placeholders with values from the Stack Diagnosis:
    - `[PROJECT_NAME]` -> User's Project Name.
    - `[ARCHITECTURE]` -> MVVM or MVI.
@@ -148,89 +148,120 @@ When a complex workflow plugin is selected:
 - [ ] Install **Workflow Plugins** and resolve `skills/excludes` dependencies.
 - [ ] Perform **Stack Diagnosis** with the user (Name, Arch, DI, DB).
 - [ ] Present and install standalone **Optional Plugins** from the catalog.
-- [ ] Materialize `rules.md` (in `.agents/`), `AGENTS.md` (in project root), and `skills/README.md` with dynamic replacements.
+- [ ] Materialize `AGENTS.md` (in project root), and `skills/README.md` with dynamic replacements.
 - [ ] Run `git init` and establish the `git-governance` baseline.
 
 ## Templates
-
-### Template: rules.md
-```markdown
----
-title: Prompt Engineering Expert Rules
-description: Standard framework for refining user ideas into structured, high-quality technical prompts.
-author: Albert Martorell Garcia
-version: 1.1.0
-tags: [prompt-engineering, governance, ai-best-practices]
-status: active
----
-Purpose and Goals:
-
-* Act as a 'Prompt Engineering Expert' whose primary goal is to refine vague user ideas into highly specific, clear, and actionable prompts.
-* Ensure all final outputs are ready-to-use and follow the best practices of modern prompt engineering.
-* Provide a structured analysis of why the generated prompt is superior to the initial idea.
-
-Behaviors and Rules:
-
-1) Idea Diagnosis and Clarification:
-   a) When a user provides an idea, identify the main objective of the request.
-   b) Detect any ambiguous phrases or missing information that would lead to a generic or low-quality response.
-   c) If critical information is missing, or any part of the request is ambiguous or lacks technical detail, the agent MUST stop and ask the user as many targeted questions as it needs, to fill the gaps instead of making assumptions. Do not proceed with the optimized prompt until the user provides sufficient context or confirms to proceed with assumptions.
-
-2) Prompt Generation:
-   a) Once sufficient information is available, construct an 'Optimized Prompt'.
-   b) The final prompt must explicitly define the following components: Role, Task, Context, Audience, Output Format, Constraints, and Quality Criteria.
-   c) Briefly explain the specific improvements and engineering logic applied to the original idea.
-
-3) Response Format:
-   Your response must follow this structure:
-- Idea diagnosis: (Brief analysis of the objective and ambiguities)
-- Necessary questions: Ask as many questions as you can to fill the gaps.
-- Optimized prompt: (The full structured prompt)
-- Why this prompt is better: (Brief explanation of applied improvements)
-
-4) Proactivity and Initialization:
-   a) If you detect that the `workflow-initializer` skill is present in the project but the root directory is missing `.agents/rules.md` or `AGENTS.md`, you MUST immediately offer to initialize the project using that skill.
-   b) Do not wait for the user to ask for initialization if the environment indicates it is a fresh setup.
-
-Overall Tone:
-* Professional, analytical, and highly organized.
-* Objective and technical, focusing on clarity and utility.
-* Helpful and advisory, guiding the user toward better LLM interactions.
-```
 
 ### Template: AGENTS.md
 ```markdown
 # Instructions for Agents
 
-## Project Overview
+Project Overview
 
-[Short summary of the project, target platform/devices, domain focus, and key goals.]
+[Describe the project purpose, target platform, domain, and main goals.]
 
-## Read First
+Read First
+[mandatory project context document]
+[mandatory project scope or brief]
+[mandatory domain or technical document]
 
-[List of mandatory core documentation files (e.g., CONTEXT.md, build-brief.md, domain-model.md) that agents must read before writing code.]
+Read additional documentation only when relevant:
 
-[Optional: list of secondary documentation files (e.g., technical-discovery.md, DESIGN.md, skills) to read only when relevant to specific tasks.]
+[technical discovery / architecture document]
+[design document]
+[AI / prompt document]
+[dataset or domain data]
+.agents/skills/ — when a task is covered by a relevant governance or implementation skill.
+
+## Workflow Governance
+
+`.agents/workflow.json` is the authoritative source for the selected workflow.
+
+Supported workflows:
+
+* `foundation` → Native Android Workflow → `workflow-feature`
+* `ai-expert-workflow` → AI Expert Workflow → `feature-flow`
+
+Only the selected workflow may orchestrate feature development. Do not invoke or mix the alternative workflow.
+
+`WORKFLOW_FEATURE.md` may only be created when `activeWorkflow = foundation` and the `workflow-feature` prerequisites are satisfied.
+
+## Project Initialization
+
+**ONLY when `activeWorkflow = ai-expert-workflow`:**
+
+* `build-brief` and `harness-starter` are project-initialization skills.
+* Use them when initializing or rebuilding the AI Expert project harness.
+* They are not required before every feature.
 
 ## Startup Workflow
 
-[Step-by-step checklist of startup actions for agents before writing code (e.g., check current git branch, read progress tracking files, verify baseline project state).]
+Before writing code:
+
+1. Confirm the working directory with `pwd`.
+2. Read `.agents/workflow.json` and identify `activeWorkflow`.
+3. Follow the startup and prerequisite rules of the selected workflow.
+
+### Foundation Workflow
+
+When `activeWorkflow = foundation`:
+
+* Follow the startup and prerequisite steps defined by `workflow-feature`.
+* Do not apply AI Expert startup steps.
+
+### AI Expert Workflow
+
+When `activeWorkflow = ai-expert-workflow`:
+
+1. Read `PROGRESS.md` for the current verified state and next step.
+2. Read `feature_list.json` and select the first ready unfinished feature in list order.
+3. Run `./init.sh`.
+4. If baseline verification fails, fix the baseline before starting new feature work.
+
 
 ## Working Rules
 
-[Key rules, constraints, and methodologies for agent collaboration (e.g., work on one feature at a time, respect project architecture, apply KISS, keep durable state in files).]
+* Work on one feature at a time.
+* Keep changes within the selected feature scope unless a narrow supporting fix is required.
+* Follow the git automation rules of the active workflow.
+* Never push changes without explicit user authorization.
+* Do not perform git operations outside the active workflow's defined process.
+* Follow applicable project skills and their detailed rules; do not duplicate them here.
+* Apply **KISS**: prefer the simplest solution that satisfies the MVP requirement.
+* Do not invent requirements, domain data, or unsupported team insights. State clearly when information is unknown or unverifiable.
+* Keep durable project state in repository files rather than relying on chat history.
 
 ## Required Artifacts
 
-[List of tracking and state files maintained by the project workflow (e.g., feature_list.json, PROGRESS.md, init.sh).]
+The required artifacts depend on the selected workflow.
+
+For the AI Expert Workflow:
+
+* `feature_list.json` — feature state.
+* `PROGRESS.md` — verified state and session progress.
+* `init.sh` — standard startup and verification path.
+
+The Foundation Workflow may use different artifacts defined by `workflow-feature`.
 
 ## Definition of Done
 
-[Mandatory verification criteria and conditions required before marking a task or feature as complete.]
+A feature is complete only when:
 
-## End of Session
+* The target behaviour is implemented.
+* Required verification has actually run.
+* The selected workflow's acceptance criteria are satisfied.
+* Required project state and documentation are updated.
+* The repository can be safely continued using the selected workflow.
 
-[Checklist of actions agents must perform before ending a session (e.g., update progress files, record open risks/blockers, ensure clean working tree).]
+## End Of Session
+
+Before ending a session:
+
+1. Update the required project state for the selected workflow.
+2. Record unresolved risks or blockers.
+3. Leave the repository ready for the next agent session.
+
 ```
 
 ### Template: skills/README.md

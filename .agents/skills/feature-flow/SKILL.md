@@ -72,10 +72,10 @@ If no unfinished feature is dependency-ready, report the blocking dependency ids
 
 For the selected feature:
 
-0. If the feature status is `accepted`, report that the feature is already planned, implemented, and accepted; select the next available feature if the user asked to continue.
-1. If `docs/specs/<feature-id>.md` is missing or stale, run `planner`.
-2. Else if the feature is neither `passing` nor `accepted`, run `implementer`.
-3. Else if the feature is `passing`, run `validator`.
+1. If the feature status is `accepted`, report that the feature is already planned, implemented, and accepted; select the next available feature if the user asked to continue.
+2. If `docs/specs/<feature-id>.md` is missing or stale, run `planner`.
+3. Else if the feature is neither `passing` nor `accepted`, run `implementer`.
+4. Else if the feature is `passing`, run `validator`.
 
 Validation records should live under `docs/validations/<feature-id>.md` when the validator or main agent persists them. If the validator only reports in chat, the main agent should ask before writing a validation record unless the user requested persistence.
 

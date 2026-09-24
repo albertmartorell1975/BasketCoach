@@ -8,10 +8,34 @@ description: Create or update the minimal startup harness for a software reposit
 Originally created by Antonio Leiva / Nino Ruano for the AI Expert course.
 Integrated and adapted for Android AI Workflow Foundation with permission.
 
-
 # Harness Starter
 
 Use this skill to create the smallest useful repo harness after discovery is complete. The output should let an agent answer: what is this project, how do I start it, what is the next feature, and how do I verify work.
+
+## Mandatory Workflow Routing
+
+Before performing any harness action, read:
+
+`.agents/workflow.json`
+
+This skill is authorized to run only when:
+
+`activeWorkflow = ai-expert-workflow`
+
+If another workflow is active, stop and report that `harness-starter` belongs to the AI Expert Workflow.
+
+## AGENTS.md Preservation
+
+When creating or updating `AGENTS.md`:
+
+* Read .agents/workflow.json and preserve the active workflow as the authoritative routing decision.
+* Preserve existing project-specific Workflow Governance when present.
+* If AGENTS.md is missing or incomplete, add the workflow governance required for the active workflow.
+* Keep workflow-specific startup rules consistent with the active workflow.
+* Do not replace workflow-specific instructions with the generic harness template.
+* Do not introduce Foundation Workflow startup instructions into an AI Expert project.
+
+`AGENTS.md` is a project-specific document. The template provides structure, not authoritative workflow policy.
 
 ## Hard Rules
 
@@ -101,6 +125,7 @@ Before finishing, verify:
 - `PROGRESS.md` names the standard startup and verification paths, even if provisional.
 - `init.sh` is executable or tell the user to run `chmod +x init.sh` if tooling prevented changing mode.
 - No extra files were created.
+
 
 ## Teaching Note
 

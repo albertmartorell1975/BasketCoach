@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository contains a **tablet-only Android MVP for Junior basketball coaching** at Club Esportiu Bàsquet Pia Sabadell. It uses the aggregated statistics from 14 First Phase games to generate an evidence-based team analysis and help coaches refine improvement areas into training focuses for the Second Phase.
+This repository contains a **tablet-only Android MVP for Junior basketball coaching** at Club Esportiu Bàsquet Pia Sabadell. It uses aggregated statistics from 14 First Phase games to generate an evidence-based team analysis and help coaches refine improvement areas into training focuses for the Second Phase.
 
 ## Read First
 
@@ -13,45 +13,96 @@ This repository contains a **tablet-only Android MVP for Junior basketball coach
 
 Read additional documentation only when relevant:
 
-* `docs/technical-discovery.md` — when working on stack, integrations, AI, data, or technical decisions.
-* `DESIGN.md` — when working on UI, styles, or visual components.
-* `docs/prompt.md` — when working on AI prompts or coaching behaviour.
-* `docs/dataset.json` — when working on the dataset or statistical processing.
-* `.agents/rules.md` — when following the project prompt/task workflow.
-* `.agents/skills/` — when a task is covered by a project governance or implementation skill.
+* `docs/technical-discovery.md` — stack, integrations, AI, data, or technical decisions.
+* `DESIGN.md` — UI, styles, or visual components.
+* `docs/prompt.md` — AI prompts or coaching behaviour.
+* `docs/dataset.json` — dataset or statistical processing.
+* `.agents/skills/` — governance or implementation skills relevant to the task.
+
+## Workflow Governance
+
+`.agents/workflow.json` is the authoritative source for the selected workflow.
+
+Supported workflows:
+
+* `foundation` → Native Android Workflow → `workflow-feature`
+* `ai-expert-workflow` → AI Expert Workflow → `feature-flow`
+
+Only the selected workflow may orchestrate feature development. Do not invoke or mix the alternative workflow.
+
+`WORKFLOW_FEATURE.md` may only be created when `activeWorkflow = foundation` and the `workflow-feature` prerequisites are satisfied.
+
+## Project Initialization
+
+**ONLY when `activeWorkflow = ai-expert-workflow`:**
+
+* `build-brief` and `harness-starter` are project-initialization skills.
+* Use them when initializing or rebuilding the AI Expert project harness.
+* They are not required before every feature.
 
 ## Startup Workflow
 
 Before writing code:
 
-1. Check the current branch with `git branch --show-current`.
-2. Read `PROGRESS.md` and `feature_list.json` when present/active.
-3. Read the relevant documentation and skills for the task.
-4. Verify the current project state before making changes.
+1. Confirm the working directory with `pwd`.
+2. Read `.agents/workflow.json` and identify `activeWorkflow`.
+3. Follow the startup and prerequisite rules of the selected workflow.
+
+### Foundation Workflow
+
+When `activeWorkflow = foundation`:
+
+* Follow the startup and prerequisite steps defined by `workflow-feature`.
+* Do not apply AI Expert startup steps.
+
+### AI Expert Workflow
+
+When `activeWorkflow = ai-expert-workflow`:
+
+1. Read `PROGRESS.md` for the current verified state and next step.
+2. Read `feature_list.json` and select the first ready unfinished feature in list order.
+3. Run `./init.sh`.
+4. If baseline verification fails, fix the baseline before starting new feature work.
+
 
 ## Working Rules
 
-* Work on one feature or task at a time.
-* Keep changes within the defined scope.
-* Do not execute `git commit`, `git push`, or `git merge` autonomously unless explicitly requested by the user in the prompt.
-* Follow the applicable project skills and their detailed rules; do not duplicate them here.
+* Work on one feature at a time.
+* Keep changes within the selected feature scope unless a narrow supporting fix is required.
+* Follow the git automation rules of the active workflow.
+* Never push changes without explicit user authorization.
+* Do not perform git operations outside the active workflow's defined process.
+* Follow applicable project skills and their detailed rules; do not duplicate them here.
 * Apply **KISS**: prefer the simplest solution that satisfies the MVP requirement.
-* Do not invent information, product requirements, domain data, or unsupported team insights. If something is unknown or cannot be verified from the available context, say so clearly.
+* Do not invent requirements, domain data, or unsupported team insights. State clearly when information is unknown or unverifiable.
 * Keep durable project state in repository files rather than relying on chat history.
+
+## Required Artifacts
+
+The required artifacts depend on the selected workflow.
+
+For the AI Expert Workflow:
+
+* `feature_list.json` — feature state.
+* `PROGRESS.md` — verified state and session progress.
+* `init.sh` — standard startup and verification path.
+
+The Foundation Workflow may use different artifacts defined by `workflow-feature`.
 
 ## Definition of Done
 
 A feature is complete only when:
 
-* The target behavior is implemented.
-* Required verification has been run successfully.
-* Relevant project state is updated.
-* Relevant documentation is updated when behaviour, domain rules, APIs, or verification changes.
+* The target behaviour is implemented.
+* Required verification has actually run.
+* The selected workflow's acceptance criteria are satisfied.
+* Required project state and documentation are updated.
+* The repository can be safely continued using the selected workflow.
 
-## End of Session
+## End Of Session
 
 Before ending a session:
 
-1. Update `PROGRESS.md` and `feature_list.json` when required.
-2. Record relevant risks or unresolved blockers.
-3. Verify the final project state.
+1. Update the required project state for the selected workflow.
+2. Record unresolved risks or blockers.
+3. Leave the repository ready for the next agent session.

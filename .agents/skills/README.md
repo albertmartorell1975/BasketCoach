@@ -111,6 +111,3 @@ The Foundation incorporates knowledge from:
 * **AI Expert Workflow**: **Antonio Leiva** / **Nino Ruano**.
 * **Expert Patterns**: **Chris Banes** and others.
 * **Official Docs**: Google Android & Firebase.
-
----
-**Note**: Active skills must follow the *Mandatory Planning Protocol* defined in `AGENTS.md`.
