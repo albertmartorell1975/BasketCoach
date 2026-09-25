@@ -2,7 +2,7 @@
 
 ## Blocking Next Phase
 
-* **AI Provider Access**: The initial analysis uses Gemini 3 Flash Preview and the coach chat uses DevExpert Inference `chat-pro`. DevExpert access is temporary and subject to a weekly quota.
+* **AI Provider Access**: The initial analysis uses Gemini 3.6 Flash and the coach chat uses DevExpert Inference `chat-pro`. DevExpert access is temporary and subject to a weekly quota.
 
 * **AI Context & Evidence**: Define what analysis and evidence from `dataset.json` must be passed to `chat-pro` to keep team-specific responses grounded in the available data.
 
@@ -27,7 +27,7 @@
 * `dataset.json` is the only data source and contains the 14 First Phase games.
 * The games are analysed as one aggregated team baseline.
 * AI features require network connectivity.
-* Gemini 3 Flash Preview generates the initial analysis.
+* Gemini 3.6 Flash generates the initial analysis.
 * DevExpert Inference `chat-pro` powers the coach chat.
 * `DEVEXPERT_API_KEY` is provided via environment configuration and is not committed to the repository.
 

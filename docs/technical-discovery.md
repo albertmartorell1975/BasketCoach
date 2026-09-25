@@ -25,7 +25,7 @@ Android Native Application for Tablets.
 
 The MVP uses two AI providers with different responsibilities.
 
-### Team Analysis — Gemini 3 Flash Preview
+### Team Analysis — Gemini 3.6 Flash
 
 * **Responsibility:** Generate the initial Global Team Analysis from the aggregated 14-game dataset.
 * **Integration:** Google Gemini API / Android-compatible client integration.

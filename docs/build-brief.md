@@ -89,7 +89,7 @@ A complete vertical flow:
 
 The MVP uses two AI integrations with different responsibilities:
 
-* **Gemini 3 Flash Preview**: Generates the initial Global Team Analysis from the aggregated 14-game dataset.
+* **Gemini 3.6 Flash**: Generates the initial Global Team Analysis from the aggregated 14-game dataset.
 * **DevExpert Inference / `chat-pro`**: Provides the interactive AI Chat used by the coach to ask follow-up questions, explore specific improvement areas, and refine them into specific actions or training ideas.
 
 The chat should use the team's initial analysis and available evidence as context. It should follow the project's reflective, evidence-based coaching approach rather than immediately providing generic tactical solutions.
