@@ -201,6 +201,18 @@ Prompt notes:
 Generated images are visual direction only. `DESIGN.md` tokens, layout rules, and component guidance are authoritative when image details conflict with written guidance.
 ```
 
+If Android UI assets exist in `docs/ui/` or `docs/design/concepts/`, include the Android Resource Conversion Policy:
+
+```md
+## Android Resource Conversion Policy
+
+When implementing UI features that consume graphic assets:
+
+1. **Format Conversion:** Convert raw PNG/JPEG assets from `docs/ui/` or `docs/design/concepts/` into optimized `.webp` format.
+2. **Target Folder:** Place converted `.webp` files in `app/src/main/res/drawable/`.
+3. **Naming Mapping:** Use `lower_snake_case` with `ic_` prefix (e.g. `ic_logo.webp`).
+```
+
 If there are no design assets, create an initial direction:
 
 ```md

@@ -62,3 +62,4 @@ Record exact commands and results. If a check is impossible in the current repo 
 - No opportunistic adjacent features.
 - No false `passing` status.
 - If the feature grows beyond the spec, stop and update the spec or ask for a split.
+- **Graphic Assets Rule:** When implementing UI features that use PNG/JPEG assets from `docs/ui/` or `DESIGN.md`, convert them into optimized `.webp` format and place them in `app/src/main/res/drawable/ic_<name>.webp`.
