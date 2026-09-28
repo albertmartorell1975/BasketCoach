@@ -208,9 +208,8 @@ If Android UI assets exist in `docs/ui/` or `docs/design/concepts/`, include the
 
 When implementing UI features that consume graphic assets:
 
-1. **Format Conversion:** Convert raw PNG/JPEG assets from `docs/ui/` or `docs/design/concepts/` into optimized `.webp` format.
-2. **Target Folder:** Place converted `.webp` files in `app/src/main/res/drawable/`.
-3. **Naming Mapping:** Use `lower_snake_case` with `ic_` prefix (e.g. `ic_logo.webp`).
+1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/ui/resources/` (or `docs/design/assets/`) MUST be converted into `.webp` format and placed in `app/src/main/res/drawable/ic_<name>.webp`.
+2. **Exclusion:** Full screen mockups/screenshots (`docs/ui/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
 ```
 
 If there are no design assets, create an initial direction:
