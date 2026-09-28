@@ -20,10 +20,10 @@ The visual identity follows **Club Esportiu Bàsquet Pia Sabadell**.
 
 Visual concepts, screen mockups, and graphic assets are stored in [`docs/ui/`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui):
 
-* **Screen Mockups (Visual Reference Only — DO NOT convert to drawables):**
-  * **Dashboard Screen:** [`docs/ui/dashboard_vertical/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/dashboard_vertical/screen.png) (HTML layout: `code.html`)
-  * **Analysis Screen:** [`docs/ui/analisis_portrait/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/analisis_portrait/screen.png) & [`docs/ui/analisis_landscape/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/analisis_landscape/screen.png)
-  * **Coaching Chat Screen:** [`docs/ui/chat_general/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/chat_general/screen.png) & [`docs/ui/chat_detalle/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/chat_detalle/screen.png)
+* **Screen Mockups (`docs/ui/screens/` — Visual Reference Only — DO NOT convert to drawables):**
+  * **Dashboard Screen:** [`docs/ui/screens/dashboard_vertical/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/dashboard_vertical/screen.png) (HTML layout: `code.html`)
+  * **Analysis Screen:** [`docs/ui/screens/analisis_portrait/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/analisis_portrait/screen.png) & [`docs/ui/screens/analisis_landscape/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/analisis_landscape/screen.png)
+  * **Coaching Chat Screen:** [`docs/ui/screens/chat_general/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/chat_general/screen.png) & [`docs/ui/screens/chat_detalle/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/chat_detalle/screen.png)
 * **App Graphic Assets (`docs/ui/resources/` ➔ `app/src/main/res/drawable/`):**
   * [`docs/ui/resources/basketcoach_logo.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/resources/basketcoach_logo.png) ➔ `app/src/main/res/drawable/ic_basketcoach_logo.webp`
   * [`docs/ui/resources/foto_coach.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/resources/foto_coach.png) ➔ `app/src/main/res/drawable/ic_coach_photo.webp`
