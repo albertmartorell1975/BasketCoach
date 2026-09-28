@@ -164,7 +164,7 @@ If design assets do not exist, decide whether the user wants generated visual co
 
 Treat generated UI images as direction-setting references. Do not assume generated text, exact spacing, or component details are authoritative. Save only accepted or useful project-bound concepts under `docs/design/concepts/`, record the prompt and role in `../../../DESIGN.md`, and mark each concept as source of truth, inspiration, rejected, or needs iteration.
 
-Create a first `../../../DESIGN.md` for agents. Use it to give future coding agents persistent visual direction: design tokens plus human-readable rationale. Do not over-design every screen; define enough visual identity, layout principles, core screens, components, and accessibility expectations to prevent agents from improvising inconsistent UI.
+Create a first `../../../DESIGN.md` for agents. Use it to give future coding agents persistent visual direction: design tokens plus human-readable rationale. Do not over-design every screen; define enough visual identity, layout principles, core screens, components, and accessibility expectations to prevent agents from improvising inconsistent UI. Always create the directory structure `docs/ui/screens/` for full-screen layout reference mockups (PNG/HTML, which are NEVER converted to drawables) and `docs/ui/resources/` for app graphic assets (logos, avatars, icons, which MUST be converted to optimized `.webp` format in `app/src/main/res/drawable/ic_<name>.webp`), and document the Android Resource Conversion Policy in `DESIGN.md`.
 
 `../../../DESIGN.md` should be useful for an MVP or a significant new feature. For a non-visual project, explicitly mark visual design as not applicable in the relevant brief and do not create `../../../DESIGN.md`.
 
