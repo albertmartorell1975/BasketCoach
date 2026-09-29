@@ -23,7 +23,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/catalog/build-brief/SKILL.md",
-      "computedHash": "07845210254c073e9672641326ffc63dbb8485bef0de8fcaf013480cf82cb612"
+      "computedHash": "18198cfc7b8ea0a0659b7cec229c73b28d39dd56600ba8efbd19b666e478f798"
     },
     "compiler": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -137,7 +137,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/catalog/harness-starter/SKILL.md",
-      "computedHash": "5a5b18381d0d8897f0321505ae795eecf8b0042ba9205e73d131e6b931790231"
+      "computedHash": "8e65be2b0b0785eb24e6a473a70936f66023d3bc93e22edbe8ca0e41fa00f753"
     },
     "kotlin-control-flow": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -203,7 +203,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/workflow-feature/SKILL.md",
-      "computedHash": "14e192ba51c99d53320f4744a6cad29f56447cddc51aad9812ecf545cc26687b"
+      "computedHash": "148f451af57e7d8f19377ca595ce3a9bf199ceaf3bd809f3d1ddc26cf33c67d1"
     },
     "workflow-initializer": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
