@@ -202,6 +202,9 @@ Identify whether UI changes are needed.
 When applicable, describe:
 
 * UI/UX requirements,
+* dedicated feature design folders under `docs/ui/<feature-id>/screens/` and `docs/ui/<feature-id>/resources/` (ensure these folders exist; if they already exist, do NOT recreate or overwrite existing files),
+* graphic asset conversion: raw PNG/JPEG graphic assets located in `docs/ui/<feature-id>/resources/` MUST be converted into optimized `.webp` format in `app/src/main/res/drawable/ic_<name>.webp`,
+* exclusion rule: full-screen mockups (`docs/ui/<feature-id>/screens/<screen>/screen.png`) serve as visual reference layout guides ONLY and MUST NOT be converted into drawable resources,
 * loading, error, empty, and success states,
 * navigation implications,
 * accessibility considerations,
@@ -357,6 +360,7 @@ When the required information has already been established, state that no additi
 - [ ] **Data:** ...
 - [ ] **UseCase:** ...
 - [ ] **UI:** ...
+- [ ] **UI Design Assets & Folders:** Ensure `docs/ui/<feature-id>/screens/` and `docs/ui/<feature-id>/resources/` exist (do NOT recreate if existing). Convert raw graphic assets in `docs/ui/<feature-id>/resources/` (PNG/JPEG) to `app/src/main/res/drawable/ic_<name>.webp` (screen mockups in `screens/` excluded).
 - [ ] **Testing & Integration:** ...
 - [ ] **Documentation Sync (MANDATORY):** Run `git status .agents/skills/` and update `.agents/skills/README.md` if there are any changes in the expert skills directory.
 - [ ] **Compiler Verification (MANDATORY):** Execute the `compiler` skill verification suite.

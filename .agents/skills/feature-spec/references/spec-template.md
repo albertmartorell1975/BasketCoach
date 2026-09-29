@@ -76,7 +76,7 @@ If paths are provisional because the app is not bootstrapped yet, say so explici
 - UI involved: yes/no
 - Design source: `DESIGN.md` / existing design asset / not applicable
 - Screens or states affected: <list>
-- Graphic assets conversion: <list PNG/JPEG graphic assets from docs/ui/resources/ to be converted to app/src/main/res/drawable/ic_<name>.webp or N/A (note: screen mockups in docs/ui/<screen>/screen.png are visual reference layout guides only and excluded)>
+- Graphic assets conversion: <list PNG/JPEG graphic assets from docs/ui/<feature-id>/resources/ (or docs/ui/resources/) to be converted to app/src/main/res/drawable/ic_<name>.webp or N/A (note: screen mockups in docs/ui/<feature-id>/screens/ are visual reference layout guides only and excluded)>
 - New design artifact required: yes/no — <reason>
 
 If UI is involved, follow `DESIGN.md` and identify any feature-specific visual states and graphic asset conversions (`.png` ➔ `.webp` in `res/drawable/`) the implementer must handle. If `DESIGN.md` is missing but needed, mark it as a planning gap rather than letting the implementer invent a visual style.

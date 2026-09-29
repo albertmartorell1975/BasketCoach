@@ -18,13 +18,13 @@ Avoid unnecessary screens, components, interactions, animations, and visual comp
 
 The visual identity follows **Club Esportiu Bàsquet Pia Sabadell**.
 
-Visual concepts, screen mockups, and graphic assets are stored in [`docs/ui/`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui):
+Visual concepts, screen mockups, and graphic assets are stored in [`docs/ui/`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui). Feature-specific assets are organized in dedicated folders per feature: `docs/ui/<feature-id>/screens/` and `docs/ui/<feature-id>/resources/`.
 
-* **Screen Mockups (`docs/ui/screens/` — Visual Reference Only — DO NOT convert to drawables):**
+* **Screen Mockups (`docs/ui/screens/` or `docs/ui/<feature-id>/screens/` — Visual Reference Only — DO NOT convert to drawables):**
   * **Dashboard Screen:** [`docs/ui/screens/dashboard_vertical/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/dashboard_vertical/screen.png) (HTML layout: `code.html`)
   * **Analysis Screen:** [`docs/ui/screens/analisis_portrait/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/analisis_portrait/screen.png) & [`docs/ui/screens/analisis_landscape/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/analisis_landscape/screen.png)
   * **Coaching Chat Screen:** [`docs/ui/screens/chat_general/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/chat_general/screen.png) & [`docs/ui/screens/chat_detalle/screen.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/screens/chat_detalle/screen.png)
-* **App Graphic Assets (`docs/ui/resources/` ➔ `app/src/main/res/drawable/`):**
+* **App Graphic Assets (`docs/ui/resources/` or `docs/ui/<feature-id>/resources/` ➔ `app/src/main/res/drawable/`):**
   * [`docs/ui/resources/basketcoach_logo.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/resources/basketcoach_logo.png) ➔ `app/src/main/res/drawable/ic_basketcoach_logo.webp`
   * [`docs/ui/resources/foto_coach.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/resources/foto_coach.png) ➔ `app/src/main/res/drawable/ic_coach_photo.webp`
   * [`docs/ui/resources/avatar_coach.png`](file:///Users/AlbertMartorell/Development/Android/BasketCoach/docs/ui/resources/avatar_coach.png) ➔ `app/src/main/res/drawable/ic_coach_avatar.webp`
@@ -34,8 +34,8 @@ Visual concepts, screen mockups, and graphic assets are stored in [`docs/ui/`](f
 
 When implementing UI features that consume graphic assets:
 
-1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/ui/resources/` MUST be converted into `.webp` format and placed in `app/src/main/res/drawable/ic_<name>.webp`.
-2. **Exclusion:** Full screen mockups (`docs/ui/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
+1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/ui/<feature-id>/resources/` (or `docs/ui/resources/`) MUST be converted into `.webp` format and placed in `app/src/main/res/drawable/ic_<name>.webp`.
+2. **Exclusion:** Full screen mockups (`docs/ui/<feature-id>/screens/screen.png` or `docs/ui/screens/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
 
 ## Product Feel
 

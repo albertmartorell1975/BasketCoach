@@ -202,16 +202,17 @@ Generated images are visual direction only. `DESIGN.md` tokens, layout rules, an
 ```
 
 When a project has a visual interface, always initialize the folder structure under `docs/ui/`:
-- `docs/ui/screens/` — Full-screen layout mockups and blueprints (PNG/HTML). Visual reference only; **NEVER converted to WebP drawables**.
-- `docs/ui/resources/` — App graphic assets, branding, logos, avatars, icons. **Converted to `.webp` in `app/src/main/res/drawable/ic_<name>.webp`**.
+- `docs/ui/<feature-id>/screens/` — Full-screen layout mockups and blueprints (PNG/HTML) for each feature. Visual reference only; **NEVER converted to WebP drawables**.
+- `docs/ui/<feature-id>/resources/` — Feature graphic assets, icons, logos, illustrations. **Converted to `.webp` in `app/src/main/res/drawable/ic_<name>.webp`**.
+- Global design assets may also reside in root `docs/ui/screens/` and `docs/ui/resources/`.
 
 Include the Android Resource Conversion Policy in `DESIGN.md`:
 
 ```md
 ## Android Resource Conversion Policy
 
-1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/ui/resources/` MUST be converted into `.webp` format and placed in `app/src/main/res/drawable/ic_<name>.webp`.
-2. **Exclusion:** Full screen mockups (`docs/ui/screens/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
+1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/ui/<feature-id>/resources/` (or `docs/ui/resources/`) MUST be converted into `.webp` format and placed in `app/src/main/res/drawable/ic_<name>.webp`.
+2. **Exclusion:** Full screen mockups (`docs/ui/<feature-id>/screens/<screen>/screen.png` or `docs/ui/screens/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
 ```
 
 If there are no design assets, create an initial direction:
