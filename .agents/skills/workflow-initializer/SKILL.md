@@ -3,7 +3,7 @@ name: workflow-initializer
 description: Initializes a new Android project with the AI-assisted development workflow seed. It sets up the governance files and guides the initial customization of agents and skills.
 metadata:
   author: Albert Martorell Garcia
-  version: 3.3.0
+  version: 1.0.0
   keywords:
   - setup
   - initialization
@@ -318,7 +318,7 @@ Examples include:
 * **compose-modifier-and-layout-style**: Compose layout APIs, modifier chains, and custom layout decisions.
 * **compose-recomposition-performance**: Analysis of recomposition and UI performance issues.
 * **compose-side-effects**: Safe handling of Compose side effects.
-* **compose-stability-diagnostics**: Compose parameter stability and skippability analysis.
+* **compose-stability-diagnostics**: Performance diagnostics for parameter stability.
 * **compose-state-authoring**: Patterns for creating and managing Compose state.
 * **compose-state-hoisting**: State ownership and coordination patterns.
 * **compose-ui-testing-patterns**: Compose UI, screenshot, and semantics testing patterns.
@@ -326,9 +326,9 @@ Examples include:
 * **kotlin-control-flow**: Kotlin branching and control-flow patterns.
 * **kotlin-coroutines-structured-concurrency**: Structured coroutine design and lifecycle safety.
 * **kotlin-flow-state-event-modeling**: State, event, and Flow modelling patterns.
-* **kotlin-functions**: Kotlin function and extension design.
+* **kotlin-functions**: Choosing the right function type for every task.
 * **navigation-3**: Jetpack Navigation 3 patterns and integration.
-* **r8-analyzer**: R8/ProGuard analysis and application-size optimization.
+* **r8-analyzer**: Proguard/R8 optimization and app size management.
 
 ---
 

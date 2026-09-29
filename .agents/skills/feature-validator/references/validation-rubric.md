@@ -29,11 +29,11 @@ Acceptable:
 
 - runs lint/typecheck/tests/build or the repo-equivalent non-blocking checks,
 - exits non-zero when those checks fail,
-- prints manual commands such as `./gradlew assembleDebug` only after checks pass.
+- prints manual commands such as `pnpm dev` only after checks pass.
 
 Not acceptable after bootstrap:
 
-- only echoes "run gradlew test",
+- only echoes "run pnpm lint && pnpm test",
 - starts a long-running dev server by default,
 - reports success without executing any check.
 
@@ -99,4 +99,4 @@ Update:
 - <state/doc artifact>
 ```
 
-The repair brief should not be vague. Prefer "change `init.sh` so it executes `./gradlew testDebugUnitTest`, but does not start long-running servers" over "improve init.sh".
+The repair brief should not be vague. Prefer "change `init.sh` so it executes `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build`, but does not start `pnpm dev`" over "improve init.sh".
