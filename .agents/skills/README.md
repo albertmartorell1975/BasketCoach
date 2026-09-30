@@ -24,18 +24,20 @@ The operational backbone responsible for project lifecycle, automation, and gove
 * **compiler**: Centralized project verification, compilation, and deployment engine.
 * **foundation-evolve**: Synchronizes useful skills and improvements from working projects back to the Foundation.
 * **git-governance**: Enforces Git Flow conventions, branching rules, and commit practices.
+* **skill-creator**: Create new skills, modify and improve existing skills, run evals, and optimize skill descriptions.
 * **workflow-feature**: Foundation-native single-agent feature workflow.
 * **workflow-initializer**: Project bootstrapping, stack diagnosis, customization, plugin management, and workflow selection.
 
 ### 1.2 Shared Engineering Guardrails
 Technical standards shared by the active Foundation environment regardless of the selected development workflow.
 
+* **ai-context-exclusion**: Provider-agnostic AI context exclusion governance across Gemini, Cursor, and Claude Code.
 * **dependency-manager**: Governance for `libs.versions.toml` and dependency compatibility.
 * **design-system-governance**: Design System standards covering Material 3, accessibility, RTL, adaptive UI, and reusability.
 * **kotlin-style**: Kotlin coding conventions, project-specific style rules, and Magic Literal prevention.
+* **module-architecture-governance**: Automation and standards for multi-module creation, Java/Kotlin alignment, and Clean Architecture enforcement.
 * **testing-setup**: Unified strategy for unit, UI behavior, and visual regression testing.
 * **viewmodel-architecture-governance**: Architectural rules for ViewModels, UI state, and initialization patterns.
-* **module-architecture-governance**: Automation and standards for multi-module creation, Java/Kotlin alignment, and Clean Architecture enforcement.
 
 ### 1.3 Android & System Patterns
 Active technical knowledge for Android, Kotlin, Compose, and platform-specific engineering.
@@ -60,6 +62,10 @@ Examples include:
 * **kotlin-functions**: Kotlin function and extension design.
 * **navigation-3**: Jetpack Navigation 3 patterns and integration.
 * **r8-analyzer**: R8/ProGuard analysis and application-size optimization.
+
+The complete active set is defined by the skills physically installed under `.agents/skills/`.
+
+> External origin does not imply optional status. A skill created by an external expert can still be an active Foundation skill when it is installed under `.agents/skills/`.
 
 ---
 
@@ -93,6 +99,8 @@ Optional technical capabilities that depend on the specific project stack.
 * **verified-email**: Email verification using Android Credential Manager.
 * **agp-9-upgrade**: Android Gradle Plugin 9 migration guidance.
 
+The complete optional set is available under `.agents/catalog/`.
+
 ---
 
 ## Operational Distinction
@@ -108,6 +116,11 @@ Optional technical capabilities that depend on the specific project stack.
 
 The Foundation incorporates knowledge from:
 * **Foundation Methodology**: Albert Martorell Garcia.
-* **AI Expert Workflow**: **Antonio Leiva** / **Nino Ruano**.
+* **AI Expert Workflow**: **Antonio Leiva** / **Nino Ruano** (integrated with permission).
 * **Expert Patterns**: **Chris Banes** and others.
 * **Official Docs**: Google Android & Firebase.
+
+Included skills retain their original authorship and source metadata. Please respect the corresponding licenses and attribution requirements.
+
+---
+**Note**: Active skills must follow the *Mandatory Planning Protocol* defined in `AGENTS.md`.
