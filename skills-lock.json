@@ -11,7 +11,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/ai-context-exclusion/SKILL.md",
-      "computedHash": "aa931e55dda8309e220db1fee28a20318ee2cc5046099cdef7c19a336e21b2ea"
+      "computedHash": "f9bf5545bb9bd7aaed74af78856b63c497722471d97454923ea2b770ebb0b9ad"
     },
     "android-cli": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -197,7 +197,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/skill-creator/SKILL.md",
-      "computedHash": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf"
+      "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
     },
     "testing-setup": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -221,7 +221,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/workflow-initializer/SKILL.md",
-      "computedHash": "129c0cfeacdf07fb477b3b453132f86addb517fd38f7708ad17be5235ca83d51"
+      "computedHash": "a33ee90a3604051eb26d608a0982f85199b954bb184eac426f09fdb101cf8de2"
     }
   }
 }
