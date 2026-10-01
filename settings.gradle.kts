@@ -24,3 +24,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "BasketCoach"
 include(":app")
+include(":domain")
+include(":data")
+include(":usecases")

@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="en" style="width: 1280px; height: 1320px; overflow: hidden; position: relative;"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-tertiary-fixed":"#3a0b00","surface-variant":"#e2e2e2","primary-fixed":"#d9e2ff","error-container":"#ffdad6","surface-container":"#eeeeee","on-surface-variant":"#45464e","tertiary-container":"#5b1700","secondary":"#5d5f5f","tertiary":"#370a00","surface-container-high":"#e8e8e8","on-primary-container":"#8696c2","on-secondary":"#ffffff","inverse-surface":"#2f3131","surface-container-low":"#f3f3f3","on-primary-fixed-variant":"#36466d","tertiary-fixed-dim":"#ffb59e","primary":"#05193e","on-error":"#ffffff","inverse-on-surface":"#f1f1f1","text-muted":"#616161","secondary-container":"#dfe0e0","success-green":"#008C45","surface-dim":"#dadada","text-primary":"#1A1A1A","on-background":"#1a1c1c","inverse-primary":"#b5c6f5","on-error-container":"#93000a","surface-tint":"#4d5e86","error":"#ba1a1a","on-primary-fixed":"#061a3f","on-tertiary-fixed-variant":"#842500","primary-container":"#1d2e54","surface-bright":"#f9f9f9","danger-red":"#D32F2F","on-surface":"#1a1c1c","secondary-fixed":"#e2e2e2","tertiary-fixed":"#ffdbd0","surface-container-highest":"#e2e2e2","secondary-fixed-dim":"#c6c6c7","on-secondary-fixed-variant":"#454747","on-secondary-container":"#616363","outline-variant":"#c5c6cf","tactical-orange":"#F15A24","surface-container-lowest":"#ffffff","background":"#f9f9f9","on-secondary-fixed":"#1a1c1c","primary-fixed-dim":"#b5c6f5","on-primary":"#ffffff","on-tertiary":"#ffffff","outline":"#D1D5DB","surface":"#FFFFFF","on-tertiary-container":"#ff652f"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","gutter-tablet":"1.5rem","space-lg":"1.5rem","margin-tablet":"1.5rem","gutter":"1rem","space-2xl":"3rem","margin":"1rem","space-sm":"0.5rem","space-md":"1rem","space-xl":"2rem"},"fontFamily":{"body-lg":["Roboto Flex"],"headline-sm":["Roboto Flex"],"stat-metric":["Roboto Flex"],"label-md":["Roboto Flex"],"body-md":["Roboto Flex"],"title-sm":["Roboto Flex"],"body-sm":["Roboto Flex"],"title-lg":["Roboto Flex"],"label-lg":["Roboto Flex"],"headline-lg":["Roboto Flex"],"headline-md":["Roboto Flex"],"display-lg":["Roboto Flex"],"title-md":["Roboto Flex"]},"fontSize":{"body-lg":["1rem",{"lineHeight":"1.5rem","letterSpacing":"0.015em","fontWeight":"400"}],"headline-sm":["1.5rem",{"lineHeight":"2rem","letterSpacing":"0","fontWeight":"600"}],"stat-metric":["2.25rem",{"lineHeight":"2.5rem","letterSpacing":"-0.02em","fontWeight":"700"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.04em","fontWeight":"500"}],"body-md":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.02em","fontWeight":"400"}],"title-sm":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.01em","fontWeight":"500"}],"body-sm":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.025em","fontWeight":"400"}],"title-lg":["1.375rem",{"lineHeight":"1.75rem","letterSpacing":"0","fontWeight":"600"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.03em","fontWeight":"600"}],"headline-lg":["2rem",{"lineHeight":"2.5rem","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"0","fontWeight":"600"}],"display-lg":["3.5rem",{"lineHeight":"4rem","letterSpacing":"-0.02em","fontWeight":"700"}],"title-md":["1.125rem",{"lineHeight":"1.5rem","letterSpacing":"0.01em","fontWeight":"500"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen"><aside class="fixed left-0 top-0 h-full w-20 bg-primary-container z-50 flex flex-col items-center py-space-md shadow-xl" style="background-color: rgb(29, 46, 84);"><nav class="flex-1 flex flex-col items-center gap-space-sm w-full px-space-xs"><a class="w-16 h-16 rounded-xl flex flex-col items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all group" data-path="dashboard" href="#" title="Dashboard"><span class="material-symbols-outlined text-2xl mb-0.5">dashboard</span><span class="font-label-md text-label-md leading-none text-center">Dashboard</span></a><a class="w-16 h-16 rounded-xl flex flex-col items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all group" data-path="global-team-analysis" href="#" title="Anàlisi"><span class="material-symbols-outlined text-2xl mb-0.5">insights</span><span class="font-label-md text-label-md leading-none text-center">Anàlisi</span></a><a aria-current="page" class="w-16 h-16 flex flex-col items-center justify-center transition-all group bg-surface text-primary rounded-xl font-bold shadow-md" data-path="coaching-chat" href="#" title="Coaching Chat"><span class="material-symbols-outlined text-2xl mb-0.5">forum</span><span class="font-label-md text-label-md leading-none text-center">Chat</span></a></nav></aside><div class="pl-20 flex flex-col min-h-screen"><header class="fixed top-0 left-20 right-0 h-16 shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-tablet bg-surface"><div class="flex items-center gap-space-md"><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-title-md text-title-md text-primary font-bold tracking-tight">BasketCoach</span><span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface font-label-md text-label-md text-on-surface-variant font-medium shadow-sm">Junior Masculí Interterritorial</span></div><span class="font-body-sm text-body-sm text-text-muted md:hidden">Junior Masculí · Pia Sabadell</span></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-1.5 bg-[#E8F5E9] text-success-green px-3 py-1.5 rounded-lg border border-success-green/20"><span class="material-symbols-outlined text-success-green text-base" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span><span class="text-xs font-semibold">Dades consolidades · 14 partits 1a Fase</span></div><div class="flex items-center gap-space-sm pl-space-xs"><img src="https://lh3.googleusercontent.com/aida/AEtjO1XSw4WceqZRX_paaN4XH2olA-DYAMW5kwcmnZEfISB7-YVNpmksvmzN4sJrVHB-KvMzbw_9RKfZ7TS1h6WbdNuFrZmi4QfycPfm0wUd0CHIT_OrSp8e-v6yu3z0dMg1MNKuLrwE22NzrNTgbIDEyVFKHPoQ0sCgINEW3ssCO2ExWC-_uZu7ACmeLMj2xMadovOc12CTc3i9E2dkDhYYxm7vTM40iR4GUrduLyzWYZ5iAhz8rWHSLJXKwthG" alt="Head Coach" class="w-9 h-9 shrink-0 object-cover rounded-full"><div class="hidden md:flex flex-col text-left"><span class="font-label-lg text-label-lg text-on-surface leading-tight">Head Coach</span><span class="font-body-sm text-body-sm text-text-muted leading-none">Jordi</span></div></div></div></header><main class="w-full pt-16 px-gutter-tablet py-space-lg flex-1"><div class="flex flex-col w-full">
+<!-- Dynamic Notification / Success Feedback Toast (Controlled by inline JS) -->
+<div class="fixed bottom-6 right-8 hidden z-50 bg-primary text-on-primary px-space-md py-space-sm rounded-xl shadow-xl flex items-center gap-space-sm transition-all transform duration-300" id="toastSuccess">
+<span class="material-symbols-outlined text-tactical-orange" style="font-variation-settings: &quot;FILL&quot; 1;">verified</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold">Focus de Treball Oficialitzat</span>
+<span class="font-body-sm text-body-sm text-on-primary-container">Integrat a la planificació setmanal de la Fase 2 (Junior Masc).</span>
+</div>
+</div>
+<!-- Main Coaching Workbench: Two Panes for Tablet Landscape -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg w-full items-start">
+<!-- LEFT PANEL (Col 12 -> 5): Live Evidence & Diagnostic Context -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Target Diagnostic Header Card -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-tactical-orange/10 text-tactical-orange font-label-md text-label-md font-semibold tracking-wide uppercase">
+<span class="w-2 h-2 rounded-full bg-tactical-orange animate-pulse"></span>
+            Àrea de Millora #1 · Prioritària
+          </span>
+
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary font-bold leading-snug">Control del Rebot Defensiu</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 font-medium">Àrea crítica d'intervenció · Fase 1</p>
+</div>
+<!-- Evidence Metric Bar -->
+<div class="mt-space-xs grid grid-cols-2 gap-space-sm">
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col">
+<span class="font-label-md text-label-md text-text-muted">Punts 2a Oportunitat</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-metric text-stat-metric text-danger-red font-bold">14.8</span>
+<span class="font-label-md text-label-md text-text-muted">pts/partit</span>
+</div>
+<span class="font-body-sm text-body-sm text-tactical-orange font-medium mt-1">
+              ▲ +5.1 vs Promig Lliga
+            </span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col">
+<span class="font-label-md text-label-md text-text-muted">Rebots Ofensius Concedits</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="font-stat-metric text-stat-metric text-primary font-bold">13.2</span>
+<span class="font-label-md text-label-md text-text-muted">reb/partit</span>
+</div>
+<span class="font-body-sm text-body-sm text-danger-red font-medium mt-1">
+              Tercer pitjor de la competició
+            </span>
+</div>
+</div>
+<!-- Zero-Assumption Rule Traceable Card -->
+<div class="bg-primary-container/10 rounded-lg p-space-sm flex items-start gap-space-xs mt-space-xs">
+<span class="material-symbols-outlined text-primary text-xl mt-0.5">query_stats</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary">Regla de Zero-Suposició (Zero-Assumption)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 font-medium">Àrea crítica d'intervenció · Fase 1</p>
+</div>
+</div>
+</div>
+<!-- Court Spatial Distribution Visualizer -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary">scatter_plot</span>
+<span class="font-title-sm text-title-sm text-primary font-semibold">Origen dels Rebots Concedits</span>
+</div>
+<span class="font-label-md text-label-md text-tactical-orange font-bold uppercase">61% Perímetre</span>
+</div>
+<!-- Half-Court Schematic SVG Visualization -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-2 flex flex-col items-center relative overflow-hidden">
+<svg class="w-full h-auto text-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 300 170">
+<!-- Outer Line -->
+<rect class="text-surface-variant" height="160" rx="4" stroke="currentColor" width="290" x="5" y="5"></rect>
+<!-- 3pt Line -->
+<path class="text-surface-variant" d="M 35 165 L 35 125 A 115 115 0 0 1 265 125 L 265 165" stroke="currentColor"></path>
+<!-- Restricted Area / Paint -->
+<rect class="text-surface-variant" height="90" stroke="currentColor" width="90" x="105" y="75"></rect>
+<!-- Free Throw Circle -->
+<path class="text-surface-variant" d="M 105 75 A 45 45 0 0 1 195 75" stroke="currentColor" stroke-dasharray="3 3"></path>
+<!-- Rim / Backboard -->
+<line class="text-primary" stroke="currentColor" stroke-width="2.5" x1="130" x2="170" y1="155" y2="155"></line>
+<circle class="text-tactical-orange" cx="150" cy="147" r="7" stroke="currentColor" stroke-width="2"></circle>
+<!-- Spatial Heat Clusters -->
+<!-- Left Wing Breakdown -->
+<circle cx="65" cy="95" fill="#F15A24" fill-opacity="0.18" r="22" stroke="#F15A24" stroke-dasharray="2 2" stroke-width="1.5"></circle>
+<text fill="#F15A24" font-family="Roboto Flex" font-size="10" font-weight="700" text-anchor="middle" x="65" y="93">29%</text>
+<text fill="#36466d" font-family="Roboto Flex" font-size="7" font-weight="500" text-anchor="middle" x="65" y="104">Ala Esquerra</text>
+<!-- Top of Key Breakdown -->
+<circle cx="150" cy="55" fill="#F15A24" fill-opacity="0.22" r="24" stroke="#F15A24" stroke-width="1.5"></circle>
+<text fill="#F15A24" font-family="Roboto Flex" font-size="11" font-weight="700" text-anchor="middle" x="150" y="53">32%</text>
+<text fill="#36466d" font-family="Roboto Flex" font-size="7" font-weight="500" text-anchor="middle" x="150" y="65">Capçalera / TL</text>
+<!-- Right Wing Breakdown -->
+<circle cx="235" cy="95" fill="#F15A24" fill-opacity="0.15" r="18" stroke="#F15A24" stroke-dasharray="2 2" stroke-width="1.5"></circle>
+<text fill="#F15A24" font-family="Roboto Flex" font-size="10" font-weight="700" text-anchor="middle" x="235" y="93">23%</text>
+<text fill="#36466d" font-family="Roboto Flex" font-size="7" font-weight="500" text-anchor="middle" x="235" y="104">Ala Dreta</text>
+<!-- Post Hub / Direct Rim -->
+<circle cx="150" cy="120" fill="#1D2E54" fill-opacity="0.12" r="14" stroke="#1D2E54" stroke-width="1"></circle>
+<text fill="#1D2E54" font-family="Roboto Flex" font-size="9" font-weight="600" text-anchor="middle" x="150" y="123">16% Pintura</text>
+</svg>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm text-text-muted px-1">
+<span class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-full bg-tactical-orange"></span> Rebot Exterior (61% Total)
+          </span>
+<span class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span> Rebot Interior (39%)
+          </span>
+</div>
+</div>
+<!-- Quick Methodology Reminder -->
+<div class="bg-surface-container rounded-xl p-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary font-bold">Mètode Socràtic Pia</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Evidència → Reflexió → Exercicis → Compromís</span>
+</div>
+</div>
+
+</div>
+</div>
+<!-- RIGHT PANEL (Col 12 -> 7): Socratic Interactive Chat & Outcome Card -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Conversation Stream -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<!-- Step Indicator -->
+<div class="flex items-center justify-between border-b border-surface-container pb-space-xs">
+<span class="font-label-md text-label-md text-text-muted uppercase tracking-wider font-semibold">Diàleg Socràtic · Exploració de l'Àrea</span>
+<span class="inline-flex items-center gap-1 text-success-green font-label-md text-label-md font-semibold">
+<span class="w-2 h-2 rounded-full bg-success-green"></span>
+            Connexió Assistent Activa
+          </span>
+</div>
+<!-- 1. AI MESSAGE: Evidence & Initial Socratic Challenge -->
+<div class="flex items-start gap-space-sm max-w-full">
+<!-- Pia Assistant Avatar Badge -->
+<div class="w-10 h-10 rounded-lg bg-primary flex-shrink-0 flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-sm relative">
+<span class="">P</span>
+<span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-tactical-orange rounded-full border-2 border-surface"></span>
+</div>
+<div class="flex flex-col gap-1.5 max-w-[88%]">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-bold text-primary">BasketCoach</span>
+<span class="font-body-sm text-body-sm text-text-muted">10:14</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-md text-label-md font-medium">
+                Evidència Traçable
+              </span>
+</div>
+<!-- Bubble -->
+<div class="bg-surface-container-low rounded-xl rounded-tl-none p-space-md shadow-sm text-text-primary font-body-md text-body-md flex flex-col gap-space-xs">
+<p class="">
+                Hola Jordi. El dataset dels últims <strong>14 partits</strong> confirma que concedim 
+                <strong class="text-tactical-orange">14.8 punts de segona oportunitat</strong> per duel. Això representa el 21.4% de la nostra anotació rival total.
+              </p>
+<div class="bg-surface rounded-lg p-2.5 my-1 flex items-center gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-tactical-orange">contact_support</span>
+<p class="font-title-sm text-title-sm text-primary font-semibold">
+                  Com valores si aquesta sagnia ve d'un bloqueig de rebot deficient dels exteriors o d'interiors que surten massa a ajudar?
+                </p>
+</div>
+<p class="text-on-surface-variant text-body-sm">
+                Comprova la tendència: no és un problema d'alçada, sinó d'orientació en el llançament oposat.
+              </p>
+</div>
+</div>
+</div>
+<!-- 2. COACH JORDI MESSAGE: Coach's Empirical Assessment -->
+<div class="flex items-start justify-end gap-space-sm max-w-full">
+<div class="flex flex-col items-end gap-1.5 max-w-[88%]">
+<div class="flex items-center gap-2">
+<span class="font-body-sm text-body-sm text-text-muted">10:17</span>
+<span class="font-label-lg text-label-lg font-bold text-primary">Coach Jordi</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-label-md text-label-md">Entrenador Principal</span>
+</div>
+<!-- Bubble -->
+<div class="bg-primary-container text-on-primary rounded-xl rounded-tr-none p-space-md shadow-sm font-body-md text-body-md">
+<p class="">
+                Crec que sobretot els exteriors no tanquen la línia de tir lliure quan salta el tir exterior. Es giren mirant la pilota sense contactar primer amb el seu atacant, i ens guanyen l'esquena amb facilitat.
+              </p>
+</div>
+</div>
+<!-- Coach Avatar -->
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary">sports</span>
+</div>
+</div>
+<!-- 3. AI MESSAGE: Corroboration + 2 Formative Drills -->
+<div class="flex items-start gap-space-sm max-w-full">
+<div class="w-10 h-10 rounded-lg bg-primary flex-shrink-0 flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-sm">
+<span class="">P</span>
+</div>
+<div class="flex flex-col gap-1.5 max-w-[92%]">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-bold text-primary">BasketCoach</span>
+<span class="font-body-sm text-body-sm text-text-muted">10:19</span>
+<span class="px-1.5 py-0.5 rounded bg-tactical-orange/15 text-tactical-orange font-label-md text-label-md font-semibold">
+                Corroborat per Dades
+              </span>
+</div>
+<!-- Bubble -->
+<div class="bg-surface-container-low rounded-xl rounded-tl-none p-space-md shadow-sm text-text-primary font-body-md text-body-md flex flex-col gap-space-sm">
+<p class="">
+                La teva lectura és exacta Jordi: el <strong>61% dels rebots ofensius cedits</strong> provenen d'entrades des de les ales o capçalera després de tir exterior.
+              </p>
+<p class="font-title-sm text-title-sm text-primary font-semibold">
+                Per revertir-ho en la Fase 2, quina dinàmica formativa s'adapta millor a l'horari de dimecres?
+              </p>
+<!-- Option Cards Grid (Touch targets 48dp minimum) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm pt-1">
+<!-- Option A -->
+<div class="bg-surface rounded-lg p-space-sm shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex flex-col">
+<div class="flex items-center justify-between mb-1">
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-label-md text-label-md font-bold">Opció A</span>
+<span class="font-label-md text-label-md text-tactical-orange font-semibold">Intensitat Alta</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-bold">3c3 Crash vs Box-Out</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                      Tir forçat des de l'oposat. Obligació de bloqueig de 3 segons abans de l'alliberament del rebot. Puntuació doble pel rebot net defensiu.
+                    </p>
+</div>
+<button class="mt-space-sm w-full py-2 px-3 rounded bg-surface-container text-primary font-label-md text-label-md font-bold group-hover:bg-primary group-hover:text-on-primary transition-colors flex items-center justify-center gap-1" type="button">
+<span class="">Seleccionar Opció A</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Option B -->
+<div class="bg-surface rounded-lg p-space-sm shadow-sm flex flex-col justify-between hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex flex-col">
+<div class="flex items-center justify-between mb-1">
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-label-md text-label-md font-bold">Opció B</span>
+<span class="font-label-md text-label-md text-success-green font-semibold">Continuïtat</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-bold">Regla Primer Contacte 4c4</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                      Joc continu 4c4. Si qualsevol defensor exterior gira el cap sense fixar contacte pectoral previ, es xiula falta tècnica interna d'entrenament.
+                    </p>
+</div>
+<button class="mt-space-sm w-full py-2 px-3 rounded bg-surface-container text-primary font-label-md text-label-md font-bold group-hover:bg-primary group-hover:text-on-primary transition-colors flex items-center justify-center gap-1" type="button">
+<span class="">Seleccionar Opció B</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Coach Selection (Option A confirmed) -->
+<div class="flex items-start justify-end gap-space-sm max-w-full">
+  <div class="flex flex-col items-end gap-1.5 max-w-[88%]">
+    <div class="flex items-center gap-2">
+      <span class="font-body-sm text-body-sm text-text-muted">10:22</span>
+      <span class="font-label-lg text-label-lg font-bold text-primary">Coach Jordi</span>
+      <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-label-md text-label-md">Entrenador Principal</span>
+    </div>
+    <div class="bg-primary-container text-on-primary rounded-xl rounded-tr-none p-space-md shadow-sm font-body-md text-body-md">
+      <p class="">Comencem amb l'Opció A (3c3 Crash vs Box-Out) els dimecres. Prioritzem crear l'hàbit de contacte abans d'anar a buscar la pilota.</p>
+    </div>
+  </div>
+  <div class="w-10 h-10 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center shadow-sm">
+    <span class="material-symbols-outlined text-primary">sports</span>
+  </div>
+</div>
+
+<!-- 4. Assistant Summary & Conclusion Message in Chat Stream -->
+<div class="flex items-start gap-space-sm max-w-full">
+  <div class="w-10 h-10 rounded-lg bg-primary flex-shrink-0 flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-sm relative">
+    <span class="">P</span>
+    <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-success-green rounded-full border-2 border-surface"></span>
+  </div>
+  <div class="flex flex-col gap-1.5 max-w-[92%]">
+    <div class="flex items-center gap-2">
+      <span class="font-label-lg text-label-lg font-bold text-primary">BasketCoach</span>
+      <span class="font-body-sm text-body-sm text-text-muted">10:23</span>
+      <span class="px-1.5 py-0.5 rounded bg-success-green/10 text-success-green font-label-md text-label-md font-semibold">
+        Focus Integrat
+      </span>
+    </div>
+    <div class="bg-surface-container-low rounded-xl rounded-tl-none p-space-md shadow-sm text-text-primary font-body-md text-body-md flex flex-col gap-space-sm">
+      <p class="font-body-md text-body-md">
+        Molt d'acord, Jordi. Queda sintetitzat i incorporat a la planificació formativa de la <strong>Fase 2</strong>:
+      </p>
+      <div class="bg-surface rounded-lg p-space-sm border border-surface-container flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <span class="font-title-sm text-title-sm text-primary font-bold">Capacitat de Tancar el Rebot Defensiu (Línia Exterior)</span>
+          <span class="px-2 py-0.5 rounded bg-tactical-orange/15 text-tactical-orange font-label-md text-label-md font-bold uppercase">3c3 Crash</span>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+          Implantació del bloqueig de 3 segons abans de l'alliberament del rebot en tirs des de l'oposat.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs pt-1 border-t border-surface-container mt-1">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-tactical-orange text-base">flag</span>
+            <span class="font-body-sm text-body-sm text-text-primary"><strong>Objectiu:</strong> &lt; 9.5 pts 2a oportunitat</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-primary text-base">event_repeat</span>
+            <span class="font-body-sm text-body-sm text-text-primary"><strong>Microcicle:</strong> 4 setmanes (Dimecres)</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-body-sm text-text-muted mt-0.5">
+        Pots continuar dialogant o formular qualsevol ajust sobre la càrrega formativa.
+      </p>
+    </div>
+  </div>
+</div></div>
+<!-- 4. FINAL OUTCOME / MATERIAL 3 ACTION CARD (Blue pia outline & high prominence) -->
+
+<!-- Quick Tablet Chips & Accessible Interactive Input Field -->
+<div class="bg-surface rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<!-- Rapid Touch Suggestions (KISS Principle for sideline typing reduction) -->
+
+<!-- Input Box Form -->
+<form class="flex items-center gap-space-sm" id="chatForm" onsubmit="event.preventDefault(); handleSend();">
+<div class="relative flex-1">
+<input class="w-full h-12 pl-4 rounded-lg bg-surface-container-low text-text-primary placeholder:text-text-muted focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary font-body-md text-body-md transition-all shadow-inner" id="coachInput" placeholder="Refina el focus o pregunta sobre la càrrega formativa..." type="text">
+
+</div>
+<button class="h-12 w-12 rounded-lg bg-primary text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm hover:bg-primary-container active:scale-95 transition-all" title="Enviar Reflexió" type="submit">
+<span class="material-symbols-outlined">send</span>
+</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple micro-interactions for tablet UX
+  const btnFormalize = document.getElementById('btnFormalize');
+  const toastSuccess = document.getElementById('toastSuccess');
+  const coachInput = document.getElementById('coachInput');
+  const targetActionCard = document.getElementById('targetActionCard');
+  const quickChips = document.querySelectorAll('.quick-chip');
+
+  if (btnFormalize) {
+    btnFormalize.addEventListener('click', function() {
+      btnFormalize.disabled = true;
+      btnFormalize.classList.add('bg-success-green');
+      btnFormalize.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Focus Assignat a Fase 2</span>';
+      
+      // Highlight target card
+      targetActionCard.classList.add('ring-2', 'ring-success-green');
+
+      // Show toast
+      if (toastSuccess) {
+        toastSuccess.classList.remove('hidden');
+        setTimeout(() => {
+          toastSuccess.classList.add('hidden');
+        }, 4000);
+      }
+    });
+  }
+
+  // Quick Chips filler
+  quickChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (coachInput) {
+        coachInput.value = chip.textContent.trim();
+        coachInput.focus();
+      }
+    });
+  });
+
+  function handleSend() {
+    if (!coachInput || !coachInput.value.trim()) return;
+    const userText = coachInput.value.trim();
+    coachInput.value = '';
+    
+    // Quick acknowledgment visual feedback
+    if (toastSuccess) {
+      toastSuccess.querySelector('.text-label-lg').textContent = 'Reflexió enviada a la IA';
+      toastSuccess.querySelector('.text-on-primary-container').textContent = '"' + userText.substring(0, 32) + '..."';
+      toastSuccess.classList.remove('hidden');
+      setTimeout(() => {
+        toastSuccess.classList.add('hidden');
+      }, 2500);
+    }
+  }
+</script></main></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div>
+
+</body></html>
