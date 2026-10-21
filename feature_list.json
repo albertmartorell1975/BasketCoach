@@ -18,7 +18,7 @@
     "depends_on": [
       "feature_001_domain_models"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "Unit tests in :data verify that all 14 games are parsed correctly with their respective team and opponent stats.",
     "evidence": "",
     "notes": "Dataset location: docs/general/dataset.json."

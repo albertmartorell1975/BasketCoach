@@ -14,5 +14,9 @@
 * 🔷 **`[DOCUMENTER · workflow-documenter]`**: Enriched all 14 domain models and repository interfaces in `:domain` with comprehensive English KDoc. Created `ARCHITECTURE.md` documenting Layer-Based Clean Architecture topology and core entity relationships. Updated `CONSTRAINTS.md` codifying pure Kotlin mandate for `:domain` and `OUR_TEAM_NAME` team constant. Marked all checklist items in `spec.md` as `[x]` and set status to `accepted`. Zero executable code lines altered.
 * 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Worktree consolidation completed. Feature status set to `accepted`.
 
+### `feature_002_data_parsing` — Parse Phase 1 Dataset
+* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Coordinated 6-stage feature pipeline.
+* 🔵 **`[PLANNER · workflow-planner]`**: Generated unified feature specification at `docs/features/feature_002_data_parsing/spec.md`.
+
 ## Next Steps
-- Implement `feature_002_data_parsing` ("Parse Phase 1 Dataset") in `:data`.
+- Implement `feature_002_data_parsing` in `:data`.
