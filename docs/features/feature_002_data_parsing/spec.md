@@ -6,7 +6,7 @@
 * **`id`:** `feature_002_data_parsing`
 * **`area`:** `data`
 * **`depends_on`:** `["feature_001_domain_models"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement JSON deserialization and local repository data sourcing in `:data` to parse the 14-game Phase 1 dataset (`docs/general/dataset.json`) into the domain entities (`Game`, `Venue`, `Score`, `TeamStats`) and fulfill the `GameRepository` contract (`getPhase1Games()`, `getGameByRound(round)`).
 * **Identified Ambiguities / Assumptions:**
@@ -136,45 +136,45 @@ so that UseCases and ViewModels can reliably analyze all 14 matches, identify st
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, and `dependency-manager`. Confirm `:data` maintains pure JVM testability.
-- [ ] **Dependency Setup (`gradle/libs.versions.toml` & `data/build.gradle.kts`):**
-  - [ ] Add JSON serialization library to `libs.versions.toml` following kebab-case rules (e.g. `kotlinx-serialization-json` or `moshi`).
-  - [ ] Add dependency to `data/build.gradle.kts` and add `testImplementation(libs.junit)`.
-  - [ ] Copy `docs/general/dataset.json` to `data/src/main/resources/dataset.json`.
-- [ ] **Data Transfer Objects (`:data`):**
-  - [ ] Create `GameDto` with snake_case field mappings (`round`, `date`, `time`, `city`, `arena`, `address`, `home_team`, `away_team`, `final_score`, `home_stats`, `away_stats`).
-  - [ ] Create `ScoreDto` (`home_points`, `away_points`).
-  - [ ] Create `TeamStatsDto` with all 15 metrics from JSON.
-- [ ] **Mappers (`:data`):**
-  - [ ] Create `GameMapper.kt` mapping `GameDto` to domain `Game`, constructing `Venue(city, arena, address)`, `Score(homePoints, awayPoints)`, and `TeamStats` with `points` set from score.
-- [ ] **Parser Implementation (`:data`):**
-  - [ ] Create `GameJsonParser` interface and `GameJsonParserImpl`.
-  - [ ] Wrap parsing errors in `Result.Error(DomainError.Local.DatabaseError)` or `DomainError.Generic` safely without throwing unhandled exceptions.
-- [ ] **Repository Implementation (`:data`):**
-  - [ ] Create `GameRepositoryImpl` implementing `com.martorell.albert.basketcoach.domain.repository.GameRepository`.
-  - [ ] Implement `getPhase1Games()` with in-memory caching.
-  - [ ] Implement `getGameByRound(round: Int)` returning `Result.Error(DomainError.Local.NotFound)` when round is missing.
-- [ ] **Testing & Integration (`:data`):**
-  - [ ] Create `GameJsonParserTest.kt` in `data/src/test/kotlin/.../parser/`:
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, and `dependency-manager`. Confirm `:data` maintains pure JVM testability.
+- [x] **Dependency Setup (`gradle/libs.versions.toml` & `data/build.gradle.kts`):**
+  - [x] Add JSON serialization library to `libs.versions.toml` following kebab-case rules (e.g. `kotlinx-serialization-json` or `moshi`).
+  - [x] Add dependency to `data/build.gradle.kts` and add `testImplementation(libs.junit)`.
+  - [x] Copy `docs/general/dataset.json` to `data/src/main/resources/dataset.json`.
+- [x] **Data Transfer Objects (`:data`):**
+  - [x] Create `GameDto` with snake_case field mappings (`round`, `date`, `time`, `city`, `arena`, `address`, `home_team`, `away_team`, `final_score`, `home_stats`, `away_stats`).
+  - [x] Create `ScoreDto` (`home_points`, `away_points`).
+  - [x] Create `TeamStatsDto` with all 15 metrics from JSON.
+- [x] **Mappers (`:data`):**
+  - [x] Create `GameMapper.kt` mapping `GameDto` to domain `Game`, constructing `Venue(city, arena, address)`, `Score(homePoints, awayPoints)`, and `TeamStats` with `points` set from score.
+- [x] **Parser Implementation (`:data`):**
+  - [x] Create `GameJsonParser` interface and `GameJsonParserImpl`.
+  - [x] Wrap parsing errors in `Result.Error(DomainError.Local.DatabaseError)` or `DomainError.Generic` safely without throwing unhandled exceptions.
+- [x] **Repository Implementation (`:data`):**
+  - [x] Create `GameRepositoryImpl` implementing `com.martorell.albert.basketcoach.domain.repository.GameRepository`.
+  - [x] Implement `getPhase1Games()` with in-memory caching.
+  - [x] Implement `getGameByRound(round: Int)` returning `Result.Error(DomainError.Local.NotFound)` when round is missing.
+- [x] **Testing & Integration (`:data`):**
+  - [x] Create `GameJsonParserTest.kt` in `data/src/test/kotlin/.../parser/`:
     - Test parsing the bundled `dataset.json` yields exactly 14 games.
     - Test Round 1 data integrity (62-78 home loss, 21 rebounds, 19 turnovers).
     - Test Round 3 data integrity (71-68 home win, AST/TO 1.25).
     - Test Round 10 data integrity (67-65 away win).
     - Test malformed JSON returns `Result.Error`.
-  - [ ] Create `GameRepositoryImplTest.kt` in `data/src/test/kotlin/.../repository/`:
+  - [x] Create `GameRepositoryImplTest.kt` in `data/src/test/kotlin/.../repository/`:
     - Test `getPhase1Games()` returns all 14 games.
     - Test `getGameByRound(round)` returns correct game for valid rounds (1..14).
     - Test `getGameByRound(99)` returns `DomainError.Local.NotFound`.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Run `./gradlew :data:test` and `./gradlew :data:assemble`.
-  - [ ] Verify 100% test pass rate with 0 errors.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Run `./gradlew :data:test` and `./gradlew :data:assemble`.
+  - [x] Verify 100% test pass rate with 0 errors.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_002_data_parsing` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real unit test verification in `:data`.
-- [ ] Domain layer cleanliness: zero serialization or framework dependencies in `:domain`.
-- [ ] Error handling: typed `DomainError` returned via `Result`; no unhandled JSON parsing crashes.
-- [ ] `@compiler` verification evidence (`:data:test`, `:data:assemble`) is present and valid.
-- [ ] Structured validation report written to `docs/features/feature_002_data_parsing/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_002_data_parsing` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real unit test verification in `:data`.
+- [x] Domain layer cleanliness: zero serialization or framework dependencies in `:domain`.
+- [x] Error handling: typed `DomainError` returned via `Result`; no unhandled JSON parsing crashes.
+- [x] `@compiler` verification evidence (`:data:test`, `:data:assemble`) is present and valid.
+- [x] Structured validation report written to `docs/features/feature_002_data_parsing/validator/validation-report.md`.

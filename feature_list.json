@@ -18,9 +18,9 @@
     "depends_on": [
       "feature_001_domain_models"
     ],
-    "status": "in_progress",
+    "status": "accepted",
     "verification": "Unit tests in :data verify that all 14 games are parsed correctly with their respective team and opponent stats.",
-    "evidence": "",
+    "evidence": "gradlew :data:test :data:assemble - 10 unit tests passed (5 in GameJsonParserTest, 5 in GameRepositoryImplTest), 0 failures. BUILD SUCCESSFUL.",
     "notes": "Dataset location: docs/general/dataset.json."
   },
   {
