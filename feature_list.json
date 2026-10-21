@@ -34,7 +34,11 @@
     "status": "not_started",
     "verification": "API client is implemented and tested with mock responses.",
     "evidence": "",
-    "notes": "Must handle both batch game analysis (Insights/Drills) and single chat messages."
+    "notes": "Must handle both batch game analysis (Insights/Drills) and single chat messages.",
+    "require_review_after": [
+      "planner",
+      "validator"
+    ]
   },
   {
     "id": "feature_004_usecases",
@@ -48,7 +52,11 @@
     "status": "not_started",
     "verification": "GetPhase1GamesUseCase, GenerateInsightsUseCase, and SendChatMessageUseCase are implemented and tested.",
     "evidence": "",
-    "notes": ""
+    "notes": "",
+    "require_review_after": [
+      "planner",
+      "validator"
+    ]
   },
   {
     "id": "feature_005_dashboard_ui",
@@ -59,7 +67,11 @@
     "status": "not_started",
     "verification": "Compose UI tests render the dashboard components correctly in a landscape tablet configuration using dummy data.",
     "evidence": "",
-    "notes": "Follow DESIGN.md and Material 3 adaptive layouts."
+    "notes": "Follow DESIGN.md and Material 3 adaptive layouts.",
+    "require_review_after": [
+      "planner",
+      "validator"
+    ]
   },
   {
     "id": "feature_006_chat_ui",
@@ -70,7 +82,11 @@
     "status": "not_started",
     "verification": "Compose UI tests render the chat messages list and input field correctly.",
     "evidence": "",
-    "notes": "Must support text input and display both user and AI message bubbles."
+    "notes": "Must support text input and display both user and AI message bubbles.",
+    "require_review_after": [
+      "planner",
+      "validator"
+    ]
   },
   {
     "id": "feature_007_dashboard_integration",
@@ -84,7 +100,11 @@
     "status": "not_started",
     "verification": "The Dashboard ViewModel successfully fetches data from Use Cases and updates its UI state.",
     "evidence": "",
-    "notes": "Uses Hilt for DI."
+    "notes": "Uses Hilt for DI.",
+    "require_review_after": [
+      "planner",
+      "validator"
+    ]
   },
   {
     "id": "feature_008_chat_integration",
@@ -98,6 +118,10 @@
     "status": "not_started",
     "verification": "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
     "evidence": "",
-    "notes": "Maintains a single continuous conversation history in memory."
+    "notes": "Maintains a single continuous conversation history in memory.",
+    "require_review_after": [
+      "planner",
+      "validator"
+    ]
   }
 ]
