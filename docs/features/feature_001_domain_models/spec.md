@@ -6,7 +6,7 @@
 * **`id`:** `feature_001_domain_models`
 * **`area`:** `domain`
 * **`depends_on`:** `[]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Define the complete, pure Kotlin domain models and repository interfaces in the `:domain` module representing basketball matches (`Game`, `Venue`, `Score`), team performance statistics (`TeamStats`), AI insights (`Insight`, `InsightCategory`), tactical drills (`Drill`), single-thread chat entities (`ChatMessage`, `MessageSender`), and typed domain results/errors (`Result`, `DomainError`).
 * **Identified Ambiguities / Assumptions:**
@@ -138,41 +138,41 @@ No persistence changes required in this feature (JSON parsing and in-memory/cach
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Verify `AGENTS.md` and `CONSTRAINTS.md`. Confirm topology is `Layer-Based` and `:domain` contains zero Android SDK dependencies.
-- [ ] **Domain Models (`:domain`):**
-  - [ ] Implement `Venue(val city: String, val arena: String, val address: String)`.
-  - [ ] Implement `Score(val homePoints: Int, val awayPoints: Int)`.
-  - [ ] Implement `TeamStats(...)` with all 16 metrics (ftPct, fg2Pct, fg3Pct, efgPct, offensiveRebounds, defensiveRebounds, totalRebounds, turnovers, assists, astToRatio, steals, blocks, secondChancePoints, fastBreakPoints, personalFouls, points).
-  - [ ] Implement `Game(...)` with `round`, `date`, `time`, `venue`, `homeTeam`, `awayTeam`, `finalScore`, `homeStats`, `awayStats`, `OUR_TEAM_NAME`, and computed helpers (`isHomeGame`, `teamScore`, `opponentScore`, `isWin`, `opponentName`, `teamStats`, `opponentStats`, `pointDifferential`).
-  - [ ] Implement `InsightCategory` enum (`OFFENSE`, `DEFENSE`, `SYNERGY`, `GENERAL`).
-  - [ ] Implement `Insight(val id: String, val title: String, val description: String, val category: InsightCategory, val relatedGameRounds: List<Int>)`.
-  - [ ] Implement `Drill(val id: String, val name: String, val objective: String, val instructions: List<String>, val focusArea: String)`.
-  - [ ] Implement `MessageSender` enum (`COACH`, `AI`) and `ChatMessage(val id: String, val sender: MessageSender, val text: String, val timestamp: Long)`.
-  - [ ] Implement `DomainError` sealed interface (`Network`, `Local`, `Generic`).
-  - [ ] Implement `Result<out T, out E : DomainError>` sealed interface (`Success`, `Error`) with `map`, `onSuccess`, and `onError`.
-- [ ] **Domain Repositories (`:domain`):**
-  - [ ] Define `GameRepository` interface.
-  - [ ] Define `AiAnalysisRepository` interface.
-  - [ ] Define `ChatRepository` interface.
-- [ ] **Testing & Integration (`:domain`):**
-  - [ ] Create `GameModelTest.kt` in `domain/src/test/kotlin/.../domain/`.
-  - [ ] Unit test: Verify Round 3 Home win calculation (71-68 against CEB SANT JORDI BLAU -> `isHomeGame = true`, `isWin = true`, `pointDifferential = 3`).
-  - [ ] Unit test: Verify Round 10 Away win calculation (65-67 at CEB SANT JORDI BLAU -> `isHomeGame = false`, `isWin = true`, `pointDifferential = 2`).
-  - [ ] Unit test: Verify Round 1 Home loss calculation (62-78 against CB. CORNELLÀ -> `isHomeGame = true`, `isWin = false`, `pointDifferential = -16`).
-  - [ ] Unit test: Verify `TeamStats` metric storage.
-  - [ ] Unit test: Verify `Insight` category and drill instructions.
-  - [ ] Unit test: Verify `ChatMessage` sender identification.
-  - [ ] Unit test: Verify `Result.Success` and `Result.Error` mapping.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew :domain:test` and `./gradlew :domain:assemble`.
-  - [ ] Ensure all unit tests pass with zero warnings or errors.
-  - [ ] Record verification evidence in `feature_list.json` and `PROGRESS.md`.
+- [x] **MANDATORY Pre-Check:** Verify `AGENTS.md` and `CONSTRAINTS.md`. Confirm topology is `Layer-Based` and `:domain` contains zero Android SDK dependencies.
+- [x] **Domain Models (`:domain`):**
+  - [x] Implement `Venue(val city: String, val arena: String, val address: String)`.
+  - [x] Implement `Score(val homePoints: Int, val awayPoints: Int)`.
+  - [x] Implement `TeamStats(...)` with all 16 metrics (ftPct, fg2Pct, fg3Pct, efgPct, offensiveRebounds, defensiveRebounds, totalRebounds, turnovers, assists, astToRatio, steals, blocks, secondChancePoints, fastBreakPoints, personalFouls, points).
+  - [x] Implement `Game(...)` with `round`, `date`, `time`, `venue`, `homeTeam`, `awayTeam`, `finalScore`, `homeStats`, `awayStats`, `OUR_TEAM_NAME`, and computed helpers (`isHomeGame`, `teamScore`, `opponentScore`, `isWin`, `opponentName`, `teamStats`, `opponentStats`, `pointDifferential`).
+  - [x] Implement `InsightCategory` enum (`OFFENSE`, `DEFENSE`, `SYNERGY`, `GENERAL`).
+  - [x] Implement `Insight(val id: String, val title: String, val description: String, val category: InsightCategory, val relatedGameRounds: List<Int>)`.
+  - [x] Implement `Drill(val id: String, val name: String, val objective: String, val instructions: List<String>, val focusArea: String)`.
+  - [x] Implement `MessageSender` enum (`COACH`, `AI`) and `ChatMessage(val id: String, val sender: MessageSender, val text: String, val timestamp: Long)`.
+  - [x] Implement `DomainError` sealed interface (`Network`, `Local`, `Generic`).
+  - [x] Implement `Result<out T, out E : DomainError>` sealed interface (`Success`, `Error`) with `map`, `onSuccess`, and `onError`.
+- [x] **Domain Repositories (`:domain`):**
+  - [x] Define `GameRepository` interface.
+  - [x] Define `AiAnalysisRepository` interface.
+  - [x] Define `ChatRepository` interface.
+- [x] **Testing & Integration (`:domain`):**
+  - [x] Create `GameModelTest.kt` in `domain/src/test/kotlin/.../domain/`.
+  - [x] Unit test: Verify Round 3 Home win calculation (71-68 against CEB SANT JORDI BLAU -> `isHomeGame = true`, `isWin = true`, `pointDifferential = 3`).
+  - [x] Unit test: Verify Round 10 Away win calculation (65-67 at CEB SANT JORDI BLAU -> `isHomeGame = false`, `isWin = true`, `pointDifferential = 2`).
+  - [x] Unit test: Verify Round 1 Home loss calculation (62-78 against CB. CORNELLÀ -> `isHomeGame = true`, `isWin = false`, `pointDifferential = -16`).
+  - [x] Unit test: Verify `TeamStats` metric storage.
+  - [x] Unit test: Verify `Insight` category and drill instructions.
+  - [x] Unit test: Verify `ChatMessage` sender identification.
+  - [x] Unit test: Verify `Result.Success` and `Result.Error` mapping.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew :domain:test` and `./gradlew :domain:assemble`.
+  - [x] Ensure all unit tests pass with zero warnings or errors.
+  - [x] Record verification evidence in `feature_list.json` and `PROGRESS.md`.
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_001_domain_models` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] `:domain` has zero Android SDK dependencies (`android.*` imports absent).
-- [ ] All Acceptance Scenarios (`Given/When/Then`) are satisfied with real unit test verification.
-- [ ] Clean Architecture layer boundaries are respected (`:domain` does not depend on `:data`, `:usecases`, or `:app`).
-- [ ] `@compiler` verification evidence (`:domain:test`, `:domain:assemble`) is present and valid.
-- [ ] Structured validation report written to `docs/features/feature_001_domain_models/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_001_domain_models` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] `:domain` has zero Android SDK dependencies (`android.*` imports absent).
+- [x] All Acceptance Scenarios (`Given/When/Then`) are satisfied with real unit test verification.
+- [x] Clean Architecture layer boundaries are respected (`:domain` does not depend on `:data`, `:usecases`, or `:app`).
+- [x] `@compiler` verification evidence (`:domain:test`, `:domain:assemble`) is present and valid.
+- [x] Structured validation report written to `docs/features/feature_001_domain_models/validator/validation-report.md`.
