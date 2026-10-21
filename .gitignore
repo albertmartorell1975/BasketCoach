@@ -7,3 +7,6 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# Temporary Multi-Agent Git Worktrees
+.worktrees/
