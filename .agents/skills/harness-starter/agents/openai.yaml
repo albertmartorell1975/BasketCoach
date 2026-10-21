@@ -1,4 +1,4 @@
 interface:
   display_name: "Harness Starter"
-  short_description: "Create the minimal repo harness"
-  default_prompt: "Use $harness-starter to prepare the initial harness for this repository."
+  short_description: "Create minimal repo harness and feature_list.json"
+  default_prompt: "Use $harness-starter to initialize or update AGENTS.md, PROGRESS.md, feature_list.json, and .github/workflows/gate.yml."

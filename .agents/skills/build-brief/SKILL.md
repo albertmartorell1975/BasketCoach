@@ -8,7 +8,6 @@ description: Guided briefing for new software projects, significant features, or
 Originally created by Antonio Leiva / Nino Ruano for the AI Expert course.
 Integrated and adapted for Android AI Workflow Foundation with permission.
 
-
 # Build Brief
 
 Use this skill to turn an unclear project, significant feature, or product change into a small set of durable, teachable brief documents. The goal is clarity before coding: shared language, user types, workflows, constraints, technology options, MVP boundaries, and unresolved questions.
@@ -16,7 +15,7 @@ Use this skill to turn an unclear project, significant feature, or product chang
 ## Hard Rules
 
 - Do not implement code.
-- Do not create `AGENTS.md`, `features.yaml`, `PROGRESS.md`, issue backlogs, task plans, or implementation plans until the user explicitly asks after discovery is complete.
+- Do not create `AGENTS.md`, `feature_list.json`, `PROGRESS.md`, issue backlogs, task plans, or implementation plans until the user explicitly asks after discovery is complete.
 - Ask one question at a time. Include a recommended answer when useful.
 - Prefer structured question tools when available: if the current agent environment exposes a multiple-choice/user-input tool, use it for bounded discovery questions; otherwise present the question and options as plain text.
 - If a repository or existing docs exist, inspect them before asking questions that the files can answer.
@@ -64,8 +63,8 @@ Example plain-text fallback:
 ```txt
 Which surface should the MVP target first?
 
-Recommended: Web app, because admins and students can both use it immediately.
-Other plausible options: mobile app, CLI/internal tool, API-first backend.
+Recommended: Android mobile app, because core field workflows require offline-first mobile access.
+Other plausible options: tablet kiosk app, web admin portal, API-first backend.
 ```
 
 ## Workflow
@@ -119,12 +118,12 @@ Prefer state transitions over vague nouns. If a concept has statuses, define wha
 
 Do not assume the project is web. Ask about the required surface and constraints:
 
-- web, mobile, desktop, CLI, API, automation, data pipeline, internal tool, embedded system, AI agent workflow, or hybrid,
+- mobile (Android phones, foldables, tablets, Wear OS, TV), web, desktop, CLI, API, automation, or hybrid,
 - target users and devices,
-- data storage and migration,
+- data storage and migration (Room, DataStore, remote sync),
 - integrations,
 - authentication and authorization,
-- deployment and hosting,
+- deployment and distribution,
 - privacy/security/compliance,
 - testability and observability,
 - budget/time/operational constraints.
@@ -160,11 +159,11 @@ If design assets do not exist, decide whether the user wants generated visual co
 
 - one primary user-facing screen for the MVP's first workflow,
 - one secondary operational or edge-state screen when the MVP has internal users,
-- one compact mobile or responsive variant when mobile behavior is materially important.
+- one compact mobile or adaptive tablet variant when device adaptation is materially important.
 
 Treat generated UI images as direction-setting references. Do not assume generated text, exact spacing, or component details are authoritative. Save only accepted or useful project-bound concepts under `docs/design/concepts/`, record the prompt and role in `DESIGN.md`, and mark each concept as source of truth, inspiration, rejected, or needs iteration.
 
-Create a first `DESIGN.md` for agents. Use it to give future coding agents persistent visual direction: design tokens plus human-readable rationale. Do not over-design every screen; define enough visual identity, layout principles, core screens, components, and accessibility expectations to prevent agents from improvising inconsistent UI. Always create the directory structure `docs/ui/screens/` for full-screen layout reference mockups (PNG/HTML, which are NEVER converted to drawables) and `docs/ui/resources/` for app graphic assets (logos, avatars, icons, which MUST be converted to optimized `.webp` format in `app/src/main/res/drawable/ic_<name>.webp`), and document the Android Resource Conversion Policy in `DESIGN.md`.
+Create a first `DESIGN.md` for agents. Use it to give future coding agents persistent visual direction: design tokens plus human-readable rationale. Do not over-design every screen; define enough visual identity, layout principles, core screens, components, and accessibility expectations to prevent agents from improvising inconsistent UI. Feature-specific visual assets live under `docs/features/<feature-id>/ui/screens/` for full-screen layout reference mockups (PNG/HTML, which are NEVER converted to drawables) and `docs/features/<feature-id>/ui/resources/` for app graphic assets (logos, avatars, icons, which MUST be converted to optimized `.webp` format in the target UI module: `app/src/main/res/drawable/ic_<name>.webp` in Layer-Based topology, or `<feature>/presentation/src/main/res/drawable/ic_<name>.webp` / `core/designsystem/src/main/res/drawable/` in Feature-First topology), and document the Android Resource Conversion Policy in `DESIGN.md`.
 
 `DESIGN.md` should be useful for an MVP or a significant new feature. For a non-visual project, explicitly mark visual design as not applicable in the relevant brief and do not create `DESIGN.md`.
 
@@ -205,7 +204,7 @@ Stop discovery when there is enough information to answer:
 - What is explicitly out of scope?
 - What remains unknown?
 
-Then ask the user whether to proceed to the next phase, such as deriving `AGENTS.md`, feature slices, or an implementation plan. Do not proceed automatically.
+Then ask the user whether to proceed to the next phase (`@harness-starter` to derive `AGENTS.md`, `feature_list.json`, `PROGRESS.md`, and `.github/workflows/gate.yml`). Do not proceed automatically.
 
 ## Teaching Mode
 

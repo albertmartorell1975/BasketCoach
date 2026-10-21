@@ -1,48 +1,13 @@
 # Risks and Open Questions
 
-## Blocking Next Phase
+## Technical Risks
+* **Context Window Limits**: Passing 14 games of statistical data to the DevExpert API in a single prompt might exceed context limits or increase latency. *Mitigation: Summarize or format the data efficiently before sending.*
+* **AI Hallucinations**: The DevExpert API might invent statistics or suggest irrelevant drills. *Mitigation: Strictly prompt the AI to only use the provided dataset and focus on FIBA/European basketball rules and context.*
+* **DevExpert API Expiration**: The API is available for free for one month. *Mitigation: Ensure the AI repository/data source pattern is abstracted so it can be easily swapped to a direct Gemini/OpenAI integration later if needed.*
 
-* **AI Provider Access**: The initial analysis uses Gemini 3.6 Flash and the coach chat uses DevExpert Inference `chat-pro`. DevExpert access is temporary and subject to a weekly quota.
+## Open Questions (Implementation-time)
+* **Dataset Format**: What is the exact schema of the 14-game dataset (JSON vs CSV, exact statistical fields)?
+* **API Key Management**: How will the DevExpert API key be securely provided to the app without exposing it in public version control?
 
-* **AI Context & Evidence**: Define what analysis and evidence from `dataset.json` must be passed to `chat-pro` to keep team-specific responses grounded in the available data.
-
-## Implementation-Time Questions
-
-* **Metric Aggregation**: Define the exact aggregation rules for the 14 games and verify them against `dataset.json`.
-* **Chat Context**: Define how much analysis and chat history is retained during a session.
-* **Chat Lifecycle**: Decide whether the chat persists only during the current session or across app navigation.
-* **UI Flow**: Decide between a single-screen Analysis + Chat experience or a two-step navigation flow.
-
-## Later / Not MVP
-
-* Backend / proxy for AI providers.
-* Server-side API key handling.
-* Multiple datasets or user import.
-* Match-by-match or player-level analysis.
-* First vs Second Phase comparison.
-* Multi-team management, authentication, sharing, export, or cloud sync.
-
-## Assumptions
-
-* `dataset.json` is the only data source and contains the 14 First Phase games.
-* The games are analysed as one aggregated team baseline.
-* AI features require network connectivity.
-* Gemini 3.6 Flash generates the initial analysis.
-* DevExpert Inference `chat-pro` powers the coach chat.
-* `DEVEXPERT_API_KEY` is provided via environment configuration and is not committed to the repository.
-
-## Risks
-
-* **API Key Exposure**: Client-side keys can potentially be extracted. Accepted as an MVP limitation.
-* **AI Grounding**: AI may introduce unsupported team-specific claims. Mitigate with the Evidence Obligation.
-* **Aggregation Errors**: Incorrect calculations would invalidate the team baseline. Mitigate with deterministic logic and tests.
-* **Provider / Network Failure**: AI requests may fail or quota may be exhausted. Provide clear error states.
-* **Chat Context Growth**: Long conversations may exceed practical context limits. Use bounded history.
-* **MVP Scope**: Two AI integrations plus architecture and validation can increase complexity. Keep the vertical slice small.
-
-## Research Tasks
-
-* Define metric aggregation rules.
-* Define the structured output of the initial Team Analysis.
-* Define the context passed to `chat-pro`.
-* Validate quota/error handling and the Analysis → Chat flow.
+## Open Questions (Later)
+* **Wireframes**: The user will provide custom wireframes for the tablet UI later. The UI implementation must wait for or adapt to these designs.

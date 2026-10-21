@@ -201,9 +201,9 @@ Prompt notes:
 Generated images are visual direction only. `DESIGN.md` tokens, layout rules, and component guidance are authoritative when image details conflict with written guidance.
 ```
 
-When a project has a visual interface, always initialize the folder structure under `docs/ui/`:
-- `docs/ui/<feature-id>/screens/` — Full-screen layout mockups and blueprints (PNG/HTML) for each feature. Visual reference only; **NEVER converted to WebP drawables**.
-- `docs/ui/<feature-id>/resources/` — Feature graphic assets, icons, logos, illustrations. **Converted to `.webp` in `app/src/main/res/drawable/ic_<name>.webp`**.
+When a project has a visual interface, feature UI assets live under the unified feature folder structure:
+- `docs/features/<feature-id>/ui/screens/` — Full-screen layout mockups and blueprints (PNG/HTML) for each feature. Visual reference only; **NEVER converted to WebP drawables**.
+- `docs/features/<feature-id>/ui/resources/` — Feature graphic assets, icons, logos, illustrations. **Converted to `.webp` in the target UI module (`app/src/main/res/drawable/ic_<name>.webp` in Layer-Based topology, or `<feature>/presentation/src/main/res/drawable/ic_<name>.webp` / `core/designsystem/src/main/res/drawable/` in Feature-First topology)**.
 - Global design assets may also reside in root `docs/ui/screens/` and `docs/ui/resources/`.
 
 Include the Android Resource Conversion Policy in `DESIGN.md`:
@@ -211,8 +211,8 @@ Include the Android Resource Conversion Policy in `DESIGN.md`:
 ```md
 ## Android Resource Conversion Policy
 
-1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/ui/<feature-id>/resources/` (or `docs/ui/resources/`) MUST be converted into `.webp` format and placed in `app/src/main/res/drawable/ic_<name>.webp`.
-2. **Exclusion:** Full screen mockups (`docs/ui/<feature-id>/screens/<screen>/screen.png` or `docs/ui/screens/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
+1. **Target Folder:** Only raw PNG/JPEG graphic assets located in `docs/features/<feature-id>/ui/resources/` (or `docs/ui/resources/`) MUST be converted into `.webp` format and placed in the target UI module (`app/src/main/res/drawable/ic_<name>.webp` for Layer-Based projects, or `<feature>/presentation/src/main/res/drawable/ic_<name>.webp` / `core/designsystem/src/main/res/drawable/` for Feature-First projects).
+2. **Exclusion:** Full screen mockups (`docs/features/<feature-id>/ui/screens/<screen>/screen.png` or `docs/ui/screens/<screen>/screen.png`) are visual reference layout guides ONLY and MUST NOT be converted into drawable resources.
 ```
 
 If there are no design assets, create an initial direction:
