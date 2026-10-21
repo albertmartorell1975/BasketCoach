@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-BasketCoach project.
+BasketCoach is a Tablet Landscape application for a Junior Men's Interterritorial basketball coach. It analyzes 14 past games from Phase 1 (static dataset) to extract insights, strengths, weaknesses, and practice drills for Phase 2 using the DevExpert API, and includes a single-thread AI chat assistant.
 
 * **UI Architecture Pattern**: `MVVM (Hybrid UI State & Passive Initialization)` (Governed by `.agents/skills/viewmodel-architecture-governance/SKILL.md`)
 * **Module Topology**: `Layer-Based (:domain, :usecases, :data, :app)` (Governed by `.agents/skills/module-architecture-governance/SKILL.md`)

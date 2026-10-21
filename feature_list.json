@@ -1,0 +1,90 @@
+[
+  {
+    "id": "feature_001_domain_models",
+    "area": "domain",
+    "title": "Define Core Basketball Domain Entities",
+    "user_visible_behavior": "None (Internal API). The application will have standard models for Game, TeamStats, OpponentStats, Insight, and Drill based on the rulebook.",
+    "depends_on": [],
+    "status": "not_started",
+    "verification": "Domain objects exist in the :domain module without Android dependencies.",
+    "evidence": "",
+    "notes": "Consult docs/general/basket_rules.pdf."
+  },
+  {
+    "id": "feature_002_data_parsing",
+    "area": "data",
+    "title": "Parse Phase 1 Dataset",
+    "user_visible_behavior": "None (Internal API). The application can read and parse the bundled dataset.json into the domain models.",
+    "depends_on": ["feature_001_domain_models"],
+    "status": "not_started",
+    "verification": "Unit tests in :data verify that all 14 games are parsed correctly with their respective team and opponent stats.",
+    "evidence": "",
+    "notes": "Dataset location: docs/general/dataset.json."
+  },
+  {
+    "id": "feature_003_devexpert_client",
+    "area": "data",
+    "title": "DevExpert API Integration",
+    "user_visible_behavior": "None (Internal API). The app can send analysis requests and chat prompts to the DevExpert API.",
+    "depends_on": ["feature_001_domain_models"],
+    "status": "not_started",
+    "verification": "API client is implemented and tested with mock responses.",
+    "evidence": "",
+    "notes": "Must handle both batch game analysis (Insights/Drills) and single chat messages."
+  },
+  {
+    "id": "feature_004_usecases",
+    "area": "usecases",
+    "title": "Implement Core Use Cases",
+    "user_visible_behavior": "None (Internal API). The presentation layer can fetch games, request insights, and send chat messages via clean Use Case interfaces.",
+    "depends_on": ["feature_002_data_parsing", "feature_003_devexpert_client"],
+    "status": "not_started",
+    "verification": "GetPhase1GamesUseCase, GenerateInsightsUseCase, and SendChatMessageUseCase are implemented and tested.",
+    "evidence": "",
+    "notes": ""
+  },
+  {
+    "id": "feature_005_dashboard_ui",
+    "area": "app",
+    "title": "Tablet Landscape Dashboard UI",
+    "user_visible_behavior": "The coach sees a two-pane tablet layout displaying game summaries on one side and proactive insights/drills on the other.",
+    "depends_on": [],
+    "status": "not_started",
+    "verification": "Compose UI tests render the dashboard components correctly in a landscape tablet configuration using dummy data.",
+    "evidence": "",
+    "notes": "Follow DESIGN.md and Material 3 adaptive layouts."
+  },
+  {
+    "id": "feature_006_chat_ui",
+    "area": "app",
+    "title": "Tablet Single-Thread Chat UI",
+    "user_visible_behavior": "The coach sees a single, continuous chat thread interface where they can type questions and view AI responses.",
+    "depends_on": [],
+    "status": "not_started",
+    "verification": "Compose UI tests render the chat messages list and input field correctly.",
+    "evidence": "",
+    "notes": "Must support text input and display both user and AI message bubbles."
+  },
+  {
+    "id": "feature_007_dashboard_integration",
+    "area": "app",
+    "title": "Connect Dashboard to Real Data",
+    "user_visible_behavior": "The dashboard populates with real Phase 1 game data and real AI insights loaded via the Use Cases.",
+    "depends_on": ["feature_004_usecases", "feature_005_dashboard_ui"],
+    "status": "not_started",
+    "verification": "The Dashboard ViewModel successfully fetches data from Use Cases and updates its UI state.",
+    "evidence": "",
+    "notes": "Uses Hilt for DI."
+  },
+  {
+    "id": "feature_008_chat_integration",
+    "area": "app",
+    "title": "Connect Chat to DevExpert API",
+    "user_visible_behavior": "When the coach sends a message, it uses the DevExpert API and appends the real response to the chat.",
+    "depends_on": ["feature_004_usecases", "feature_006_chat_ui"],
+    "status": "not_started",
+    "verification": "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
+    "evidence": "",
+    "notes": "Maintains a single continuous conversation history in memory."
+  }
+]
