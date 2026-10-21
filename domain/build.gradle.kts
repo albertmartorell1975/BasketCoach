@@ -15,4 +15,5 @@ kotlin {
 
 dependencies {
     // Pure Kotlin logic
+    testImplementation(libs.junit)
 }

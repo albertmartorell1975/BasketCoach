@@ -5,9 +5,9 @@
     "title": "Define Core Basketball Domain Entities",
     "user_visible_behavior": "None (Internal API). The application will have standard models for Game, TeamStats, OpponentStats, Insight, and Drill based on the rulebook.",
     "depends_on": [],
-    "status": "in_progress",
+    "status": "passing",
     "verification": "Domain objects exist in the :domain module without Android dependencies.",
-    "evidence": "",
+    "evidence": "gradlew :domain:test :domain:assemble - 7 tests passed (round3HomeWinCalculation, round1HomeLossCalculation, round10AwayWinCalculation, teamStatsMetricIntegrity, insightAndDrillEntities, chatMessageSenderTests, resultFunctionalMappingTests), 0 failures. BUILD SUCCESSFUL.",
     "notes": "Consult docs/general/basket_rules.pdf."
   },
   {
