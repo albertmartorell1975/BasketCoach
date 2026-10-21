@@ -5,9 +5,9 @@
     "title": "Define Core Basketball Domain Entities",
     "user_visible_behavior": "None (Internal API). The application will have standard models for Game, TeamStats, OpponentStats, Insight, and Drill based on the rulebook.",
     "depends_on": [],
-    "status": "not_started",
+    "status": "accepted",
     "verification": "Domain objects exist in the :domain module without Android dependencies.",
-    "evidence": "",
+    "evidence": "gradlew :domain:test :domain:assemble - 7 tests passed (round3HomeWinCalculation, round1HomeLossCalculation, round10AwayWinCalculation, teamStatsMetricIntegrity, insightAndDrillEntities, chatMessageSenderTests, resultFunctionalMappingTests), 0 failures. BUILD SUCCESSFUL.",
     "notes": "Consult docs/general/basket_rules.pdf."
   },
   {
@@ -15,7 +15,9 @@
     "area": "data",
     "title": "Parse Phase 1 Dataset",
     "user_visible_behavior": "None (Internal API). The application can read and parse the bundled dataset.json into the domain models.",
-    "depends_on": ["feature_001_domain_models"],
+    "depends_on": [
+      "feature_001_domain_models"
+    ],
     "status": "not_started",
     "verification": "Unit tests in :data verify that all 14 games are parsed correctly with their respective team and opponent stats.",
     "evidence": "",
@@ -26,7 +28,9 @@
     "area": "data",
     "title": "DevExpert API Integration",
     "user_visible_behavior": "None (Internal API). The app can send analysis requests and chat prompts to the DevExpert API.",
-    "depends_on": ["feature_001_domain_models"],
+    "depends_on": [
+      "feature_001_domain_models"
+    ],
     "status": "not_started",
     "verification": "API client is implemented and tested with mock responses.",
     "evidence": "",
@@ -37,7 +41,10 @@
     "area": "usecases",
     "title": "Implement Core Use Cases",
     "user_visible_behavior": "None (Internal API). The presentation layer can fetch games, request insights, and send chat messages via clean Use Case interfaces.",
-    "depends_on": ["feature_002_data_parsing", "feature_003_devexpert_client"],
+    "depends_on": [
+      "feature_002_data_parsing",
+      "feature_003_devexpert_client"
+    ],
     "status": "not_started",
     "verification": "GetPhase1GamesUseCase, GenerateInsightsUseCase, and SendChatMessageUseCase are implemented and tested.",
     "evidence": "",
@@ -70,7 +77,10 @@
     "area": "app",
     "title": "Connect Dashboard to Real Data",
     "user_visible_behavior": "The dashboard populates with real Phase 1 game data and real AI insights loaded via the Use Cases.",
-    "depends_on": ["feature_004_usecases", "feature_005_dashboard_ui"],
+    "depends_on": [
+      "feature_004_usecases",
+      "feature_005_dashboard_ui"
+    ],
     "status": "not_started",
     "verification": "The Dashboard ViewModel successfully fetches data from Use Cases and updates its UI state.",
     "evidence": "",
@@ -81,7 +91,10 @@
     "area": "app",
     "title": "Connect Chat to DevExpert API",
     "user_visible_behavior": "When the coach sends a message, it uses the DevExpert API and appends the real response to the chat.",
-    "depends_on": ["feature_004_usecases", "feature_006_chat_ui"],
+    "depends_on": [
+      "feature_004_usecases",
+      "feature_006_chat_ui"
+    ],
     "status": "not_started",
     "verification": "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
     "evidence": "",
