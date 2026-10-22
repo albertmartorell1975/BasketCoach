@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.network
 
-import com.martorell.albert.basketcoach.data.config.DevExpertConfig
+import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.client.DevExpertApiClientImpl
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
@@ -29,7 +29,7 @@ class DevExpertApiClientTest {
         server.start()
 
         val baseUrl = server.url("/v1").toString()
-        val config = DevExpertConfig(
+        val config = AiClientConfig(
             apiKey = "test-api-key",
             baseUrl = baseUrl,
             model = "chat"
@@ -141,7 +141,7 @@ class DevExpertApiClientTest {
 
     @Test
     fun `returns Unauthorized when apiKey is blank`() = runTest {
-        val blankKeyConfig = DevExpertConfig(apiKey = "", baseUrl = server.url("/v1").toString())
+        val blankKeyConfig = AiClientConfig(apiKey = "", baseUrl = server.url("/v1").toString(), model = "chat")
         val unauthClient = DevExpertApiClientImpl(config = blankKeyConfig)
 
         val result = unauthClient.generateAnalysis("context")

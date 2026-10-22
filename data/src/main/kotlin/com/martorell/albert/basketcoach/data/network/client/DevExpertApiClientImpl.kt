@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.network.client
 
-import com.martorell.albert.basketcoach.data.config.DevExpertConfig
+import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatCompletionRequestDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatCompletionResponseDto
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit
  * exceptions into typed [DomainError] without swallowing [CancellationException].
  */
 class DevExpertApiClientImpl(
-    private val config: DevExpertConfig,
+    private val config: AiClientConfig,
     private val okHttpClient: OkHttpClient = defaultOkHttpClient(),
     private val json: Json = defaultJson()
 ) : DevExpertApiClient {
