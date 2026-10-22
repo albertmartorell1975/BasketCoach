@@ -31,7 +31,7 @@
     "depends_on": [
       "feature_001_domain_models"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "API client is implemented and tested with mock responses.",
     "evidence": "",
     "notes": "Must handle both batch game analysis (Insights/Drills) and single chat messages.",
