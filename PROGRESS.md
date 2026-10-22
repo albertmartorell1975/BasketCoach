@@ -22,5 +22,10 @@
 * 🔷 **`[DOCUMENTER · workflow-documenter]`**: Authored English KDoc across `:data` public classes and interfaces (`GameDto`, `ScoreDto`, `TeamStatsDto`, `GameMapper`, `GameJsonParser`, `GameJsonParserImpl`, `GameRepositoryImpl`). Updated `ARCHITECTURE.md` with Section 4 documenting the `:data` parsing pipeline, DTO-to-Domain mapping strategy, classpath resource bundling, and in-memory caching. Updated `README.md`. Marked all checklist items in `spec.md` as `[x]` and updated status to `accepted`. Zero executable code lines altered.
 * 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Worktree consolidation completed. Feature status set to `accepted`.
 
+### `feature_003_devexpert_client` — DevExpert API Integration
+* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Coordinated 6-stage feature pipeline.
+* 🔵 **`[PLANNER · workflow-planner]`**: Refined unified feature specification at `docs/features/feature_003_devexpert_client/spec.md` using the OpenAI-compatible `/chat/completions` protocol for both DevExpert Inference and Google Gemini Free Tier fallback.
+* 🟡 **`[IMPLEMENTER · workflow-implementer]`**: Implemented `DevExpertConfig` (dual-provider configuration), OpenAI-compatible network DTOs, `PromptTemplates` with Phase 1 match context grounding and FIBA rules, `DevExpertApiClientImpl` with `safeCall` and typed `DomainError` mapping, `AiAnalysisMapper`, `AiAnalysisRepositoryImpl` with single-call shared in-memory caching protected by `Mutex`, and `ChatRepositoryImpl` with in-memory thread storage. Added `okhttp` 4.12.0 and `mockwebserver`. Ran `@compiler` verification (`./gradlew :data:test :data:assemble`) — 23 unit tests passed (7 in `DevExpertApiClientTest`, 3 in `AiAnalysisRepositoryImplTest`, 3 in `ChatRepositoryImplTest`, 5 in `GameJsonParserTest`, 5 in `GameRepositoryImplTest`), 0 failures. Status: `passing`.
+
 ## Next Steps
-- Implement `feature_003_devexpert_client` in `:data`.
+- Validate `feature_003_devexpert_client` via `workflow-validator`.
