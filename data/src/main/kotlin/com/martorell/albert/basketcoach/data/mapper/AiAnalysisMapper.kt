@@ -12,7 +12,7 @@ import java.util.UUID
  */
 fun InsightDto.toDomain(defaultId: String = UUID.randomUUID().toString()): Insight {
     return Insight(
-        id = id?.takeIf { it.isNotBlank() } ?: defaultId,
+        id = id.ifBlank { defaultId },
         title = title,
         description = description,
         category = InsightCategory.fromString(category),
@@ -25,7 +25,7 @@ fun InsightDto.toDomain(defaultId: String = UUID.randomUUID().toString()): Insig
  */
 fun DrillDto.toDomain(defaultId: String = UUID.randomUUID().toString()): Drill {
     return Drill(
-        id = id?.takeIf { it.isNotBlank() } ?: defaultId,
+        id = id.ifBlank { defaultId },
         name = name,
         objective = objective,
         instructions = instructions,

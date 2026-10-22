@@ -21,7 +21,7 @@ object PromptTemplates {
            - Rebounding: Defensive rebounding vulnerability and deficit vs opponents.
            - Personal fouls: Foul trouble (averaging > 20 fouls in losses) leading to opponent free throw runs.
         3. Formulate actionable tactical insights and practice drills for Phase 2 to eliminate Phase 1 weaknesses and reinforce winning formulas.
-        4. OUTPUT FORMAT: Respond ONLY with a valid JSON object matching this exact schema without any conversational preamble or markdown code blocks:
+        4. OUTPUT FORMAT: Respond ONLY with a valid JSON object. Every field shown in the schema below is strictly mandatory (do NOT omit any field, do NOT use null values). Match this exact schema without any conversational preamble or markdown code blocks:
         {
           "insights": [
             {

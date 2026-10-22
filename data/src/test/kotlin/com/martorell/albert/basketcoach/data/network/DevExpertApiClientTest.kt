@@ -79,6 +79,7 @@ class DevExpertApiClientTest {
         val fencedContent = "```json\n$jsonPayload\n```"
         val mockApiResponse = """
             {
+              "id": "chatcmpl-test-1",
               "choices": [
                 {
                   "index": 0,
@@ -113,6 +114,7 @@ class DevExpertApiClientTest {
     fun `generateChatResponse returns completion content`() = runTest {
         val mockApiResponse = """
             {
+              "id": "chatcmpl-test-2",
               "choices": [
                 {
                   "index": 0,

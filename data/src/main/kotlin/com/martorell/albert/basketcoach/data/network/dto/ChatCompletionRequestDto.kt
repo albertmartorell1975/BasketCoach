@@ -5,10 +5,11 @@ import kotlinx.serialization.Serializable
 
 /**
  * OpenAI-compatible chat completion request payload.
+ * All fields are strictly mandatory.
  *
  * @property model Model identifier.
  * @property messages List of messages comprising the conversation thread.
- * @property temperature Optional sampling temperature (0.0 to 2.0).
+ * @property temperature Sampling temperature (0.0 to 2.0).
  */
 @Serializable
 data class ChatCompletionRequestDto(
@@ -17,11 +18,12 @@ data class ChatCompletionRequestDto(
     @SerialName("messages")
     val messages: List<ChatMessageDto>,
     @SerialName("temperature")
-    val temperature: Double? = null
+    val temperature: Double
 )
 
 /**
  * DTO representing an individual message in a chat completion conversation.
+ * All fields are strictly mandatory.
  *
  * @property role Role of the author ("system", "user", "assistant").
  * @property content Content of the message.
