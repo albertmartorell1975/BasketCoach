@@ -11,18 +11,11 @@ import java.util.UUID
  * Converts [InsightDto] to domain [Insight].
  */
 fun InsightDto.toDomain(defaultId: String = UUID.randomUUID().toString()): Insight {
-    val domainCategory = when (category.trim().uppercase()) {
-        "OFFENSE" -> InsightCategory.OFFENSE
-        "DEFENSE" -> InsightCategory.DEFENSE
-        "SYNERGY" -> InsightCategory.SYNERGY
-        else -> InsightCategory.GENERAL
-    }
-
     return Insight(
         id = id?.takeIf { it.isNotBlank() } ?: defaultId,
         title = title,
         description = description,
-        category = domainCategory,
+        category = InsightCategory.fromString(category),
         relatedGameRounds = relatedGameRounds
     )
 }
