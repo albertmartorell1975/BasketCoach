@@ -1,7 +1,6 @@
 package com.martorell.albert.basketcoach.data.parser
 
-import com.martorell.albert.basketcoach.domain.model.DomainError
-import com.martorell.albert.basketcoach.domain.model.Result
+import kotlinx.serialization.SerializationException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -25,10 +24,8 @@ class GameJsonParserTest {
 
     @Test
     fun parseGames_fromResourceStream_returnsAll14Games() {
-        val result = parser.parseGames(openDatasetStream())
+        val games = parser.parseGames(openDatasetStream())
 
-        assertTrue("Expected Result.Success", result is Result.Success)
-        val games = (result as Result.Success).data
         assertEquals("Expected exactly 14 games", 14, games.size)
         assertEquals(1, games.first().round)
         assertEquals(14, games.last().round)
@@ -36,8 +33,7 @@ class GameJsonParserTest {
 
     @Test
     fun parseGames_round1HomeLoss_matchesExactData() {
-        val result = parser.parseGames(openDatasetStream())
-        val games = (result as Result.Success).data
+        val games = parser.parseGames(openDatasetStream())
         val round1 = games.first { it.round == 1 }
 
         assertEquals("13/09/2026", round1.date)
@@ -77,8 +73,7 @@ class GameJsonParserTest {
 
     @Test
     fun parseGames_round3HomeWin_matchesExactData() {
-        val result = parser.parseGames(openDatasetStream())
-        val games = (result as Result.Success).data
+        val games = parser.parseGames(openDatasetStream())
         val round3 = games.first { it.round == 3 }
 
         assertEquals("BASQUETPIASABADELL BLAU", round3.homeTeam)
@@ -93,8 +88,7 @@ class GameJsonParserTest {
 
     @Test
     fun parseGames_round10AwayWin_matchesExactData() {
-        val result = parser.parseGames(openDatasetStream())
-        val games = (result as Result.Success).data
+        val games = parser.parseGames(openDatasetStream())
         val round10 = games.first { it.round == 10 }
 
         assertEquals("CEB SANT JORDI BLAU", round10.homeTeam)
@@ -109,13 +103,8 @@ class GameJsonParserTest {
         assertEquals(65, round10.opponentScore)
     }
 
-    @Test
-    fun parseGames_corruptedJson_returnsDatabaseErrorWithoutCrashing() {
-        val corruptedJson = "{ not a valid json at all }"
-        val result = parser.parseGames(corruptedJson)
-
-        assertTrue("Expected Result.Error", result is Result.Error)
-        val error = (result as Result.Error).error
-        assertTrue(error is DomainError.Local.DatabaseError)
+    @Test(expected = SerializationException::class)
+    fun parseGames_corruptedJson_throwsSerializationException() {
+        parser.parseGames("{ not a valid json at all }")
     }
 }
