@@ -22,14 +22,14 @@ class ChatRepositoryImpl(
     private val timestampProvider: () -> Long = { System.currentTimeMillis() }
 ) : ChatRepository {
 
-    override suspend fun getMessages(): Result<List<ChatMessage>, DomainError> {
-        return Result.Success(localDataSource.getMessages())
+    override suspend fun getMessages(): Result<List<ChatMessage>, DomainError> = safeCall {
+        localDataSource.getMessages()
     }
 
     override suspend fun sendMessage(
         messageText: String,
         gameContext: String?
-    ): Result<ChatMessage, DomainError> {
+    ): Result<ChatMessage, DomainError> = safeCall {
         val coachMessage = ChatMessage(
             id = idGenerator(),
             sender = MessageSender.COACH,
@@ -38,34 +38,26 @@ class ChatRepositoryImpl(
         )
         localDataSource.saveMessage(coachMessage)
 
-        val priorMessages = localDataSource.getMessages().dropLast(1)
-        val historyDtos = priorMessages.map { msg ->
+        val historyDtos = localDataSource.getMessages().dropLast(1).map { msg ->
             ChatMessageDto(
                 role = if (msg.sender == MessageSender.COACH) "user" else "assistant",
                 content = msg.text
             )
         }
 
-        val remoteResult = safeCall {
-            remoteDataSource.generateChatResponse(
-                conversationHistory = historyDtos,
-                newPrompt = messageText,
-                gameContext = gameContext
-            )
-        }
+        val responseText = remoteDataSource.generateChatResponse(
+            conversationHistory = historyDtos,
+            newPrompt = messageText,
+            gameContext = gameContext
+        )
 
-        return when (remoteResult) {
-            is Result.Success -> {
-                val aiMessage = ChatMessage(
-                    id = idGenerator(),
-                    sender = MessageSender.AI,
-                    text = remoteResult.data,
-                    timestamp = timestampProvider()
-                )
-                localDataSource.saveMessage(aiMessage)
-                Result.Success(aiMessage)
-            }
-            is Result.Error -> remoteResult
-        }
+        val aiMessage = ChatMessage(
+            id = idGenerator(),
+            sender = MessageSender.AI,
+            text = responseText,
+            timestamp = timestampProvider()
+        )
+        localDataSource.saveMessage(aiMessage)
+        aiMessage
     }
 }

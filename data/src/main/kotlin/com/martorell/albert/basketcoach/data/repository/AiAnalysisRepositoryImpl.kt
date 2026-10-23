@@ -19,35 +19,24 @@ class AiAnalysisRepositoryImpl(
     private val localDataSource: AiAnalysisLocalDataSource
 ) : AiAnalysisRepository {
 
-    override suspend fun getInsights(gameContext: String): Result<List<Insight>, DomainError> {
-        localDataSource.getCachedInsights()?.let { return Result.Success(it) }
-
-        return when (val loadResult = loadAnalysisInternal(gameContext)) {
-            is Result.Success -> Result.Success(localDataSource.getCachedInsights().orEmpty())
-            is Result.Error -> loadResult
+    override suspend fun getInsights(gameContext: String): Result<List<Insight>, DomainError> = safeCall {
+        localDataSource.getCachedInsights() ?: run {
+            fetchAndCacheAnalysis(gameContext)
+            localDataSource.getCachedInsights().orEmpty()
         }
     }
 
-    override suspend fun getDrills(gameContext: String): Result<List<Drill>, DomainError> {
-        localDataSource.getCachedDrills()?.let { return Result.Success(it) }
-
-        return when (val loadResult = loadAnalysisInternal(gameContext)) {
-            is Result.Success -> Result.Success(localDataSource.getCachedDrills().orEmpty())
-            is Result.Error -> loadResult
+    override suspend fun getDrills(gameContext: String): Result<List<Drill>, DomainError> = safeCall {
+        localDataSource.getCachedDrills() ?: run {
+            fetchAndCacheAnalysis(gameContext)
+            localDataSource.getCachedDrills().orEmpty()
         }
     }
 
-    private suspend fun loadAnalysisInternal(gameContext: String): Result<Unit, DomainError> {
-        val remoteResult = safeCall { remoteDataSource.generateAnalysis(gameContext) }
-        return when (remoteResult) {
-            is Result.Success -> {
-                val dto = remoteResult.data
-                val insights = dto.insights.map { it.toDomain() }
-                val drills = dto.drills.map { it.toDomain() }
-                localDataSource.saveAnalysis(insights, drills)
-                Result.Success(Unit)
-            }
-            is Result.Error -> remoteResult
-        }
+    private suspend fun fetchAndCacheAnalysis(gameContext: String) {
+        val dto = remoteDataSource.generateAnalysis(gameContext)
+        val insights = dto.insights.map { it.toDomain() }
+        val drills = dto.drills.map { it.toDomain() }
+        localDataSource.saveAnalysis(insights, drills)
     }
 }
