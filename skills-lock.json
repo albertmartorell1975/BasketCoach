@@ -119,7 +119,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/git-governance/SKILL.md",
-      "computedHash": "c27ee293febeb17ffb6a13c30a3f62b6dc849896d0c6a86813a5e386f567758e"
+      "computedHash": "ea279c28370b04c8d9843b6296b001883c6aed954957c626550466bb8af1e948"
     },
     "harness-starter": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -209,7 +209,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/workflow-orchestrator/SKILL.md",
-      "computedHash": "dc29099bee8f3b9097d34f3dd557c14129d6e597264e0f1f2f37133f8d3c9361"
+      "computedHash": "15ea34a855afd8ebb02ac097b9ae1a8845febe99333a6748478f4ec5661b1ed6"
     },
     "workflow-planner": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
