@@ -1,105 +1,116 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.network.client.DevExpertApiClient
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
+import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
+import com.martorell.albert.basketcoach.data.util.HttpException
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
-import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
-import com.martorell.albert.basketcoach.domain.repository.GameRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 class ChatRepositoryImplTest {
 
-    private val fakeGameRepository = object : GameRepository {
-        override suspend fun getPhase1Games(): Result<List<Game>, DomainError> = Result.Success(emptyList())
-        override suspend fun getGameByRound(round: Int): Result<Game, DomainError> = Result.Error(DomainError.Local.NotFound)
-    }
+    private class FakeAiRemoteDataSource(
+        var chatResponse: String = "AI response text",
+        var exceptionToThrow: Throwable? = null
+    ) : AiRemoteDataSource {
+        var capturedHistory: List<ChatMessageDto> = emptyList()
+        var capturedPrompt: String = ""
+        var capturedContext: String? = null
+        var callCount: Int = 0
 
-    private class FakeChatApiClient(
-        var responseToReturn: Result<String, DomainError> = Result.Success("AI advice")
-    ) : DevExpertApiClient {
-        var capturedHistory: List<ChatMessage>? = null
-        var capturedPrompt: String? = null
-
-        override suspend fun generateAnalysis(gameContext: String): Result<AiAnalysisResponseDto, DomainError> {
-            return Result.Error(DomainError.Generic("Not used"))
+        override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
+            throw UnsupportedOperationException()
         }
 
         override suspend fun generateChatResponse(
-            conversationHistory: List<ChatMessage>,
+            conversationHistory: List<ChatMessageDto>,
             newPrompt: String,
             gameContext: String?
-        ): Result<String, DomainError> {
+        ): String {
+            callCount++
             capturedHistory = conversationHistory
             capturedPrompt = newPrompt
-            return responseToReturn
+            capturedContext = gameContext
+            exceptionToThrow?.let { throw it }
+            return chatResponse
         }
     }
 
-    @Test
-    fun `initial getMessages returns empty list`() = runTest {
-        val fakeClient = FakeChatApiClient()
-        val repository = ChatRepositoryImpl(fakeGameRepository, fakeClient)
+    private lateinit var fakeRemoteDataSource: FakeAiRemoteDataSource
+    private lateinit var localDataSource: ChatLocalDataSourceImpl
+    private lateinit var repository: ChatRepositoryImpl
 
-        val messagesResult = repository.getMessages()
+    @Before
+    fun setUp() {
+        fakeRemoteDataSource = FakeAiRemoteDataSource()
+        localDataSource = ChatLocalDataSourceImpl()
 
-        assertTrue(messagesResult is Result.Success)
-        assertTrue((messagesResult as Result.Success).data.isEmpty())
+        var idCounter = 0
+        repository = ChatRepositoryImpl(
+            remoteDataSource = fakeRemoteDataSource,
+            localDataSource = localDataSource,
+            idGenerator = { "msg-${++idCounter}" },
+            timestampProvider = { 1000L * idCounter }
+        )
     }
 
     @Test
-    fun `sendMessage appends coach query, calls API, appends AI response, and returns Success`() = runTest {
-        val fakeClient = FakeChatApiClient(Result.Success("Boxing out is essential."))
-        var idCounter = 1
-        val repository = ChatRepositoryImpl(
-            gameRepository = fakeGameRepository,
-            apiClient = fakeClient,
-            idGenerator = { (idCounter++).toString() },
-            timestampProvider = { 1000L }
-        )
-
-        val sendResult = repository.sendMessage("How do we improve rebounding?")
+    fun `sendMessage appends coach message, invokes remoteDataSource with history and context, and appends ai message`() = runTest {
+        val sendResult = repository.sendMessage("How do we improve defense?", "Phase 1 context")
 
         assertTrue(sendResult is Result.Success)
         val aiMessage = (sendResult as Result.Success).data
-        assertEquals("Boxing out is essential.", aiMessage.text)
+        assertEquals("msg-2", aiMessage.id)
         assertEquals(MessageSender.AI, aiMessage.sender)
+        assertEquals("AI response text", aiMessage.text)
 
-        val messagesResult = repository.getMessages()
-        assertTrue(messagesResult is Result.Success)
-        val messages = (messagesResult as Result.Success).data
-        assertEquals(2, messages.size)
+        val allMessages = repository.getMessages()
+        assertTrue(allMessages is Result.Success)
+        val messageList = (allMessages as Result.Success).data
+        assertEquals(2, messageList.size)
+        assertEquals(MessageSender.COACH, messageList[0].sender)
+        assertEquals("How do we improve defense?", messageList[0].text)
+        assertEquals(MessageSender.AI, messageList[1].sender)
+        assertEquals("AI response text", messageList[1].text)
 
-        assertEquals("How do we improve rebounding?", messages[0].text)
-        assertEquals(MessageSender.COACH, messages[0].sender)
-
-        assertEquals("Boxing out is essential.", messages[1].text)
-        assertEquals(MessageSender.AI, messages[1].sender)
+        assertEquals("How do we improve defense?", fakeRemoteDataSource.capturedPrompt)
+        assertEquals("Phase 1 context", fakeRemoteDataSource.capturedContext)
+        assertTrue(fakeRemoteDataSource.capturedHistory.isEmpty())
     }
 
     @Test
-    fun `network failure preserves coach query in thread and returns Result Error`() = runTest {
-        val fakeClient = FakeChatApiClient(Result.Error(DomainError.Network.Timeout))
-        val repository = ChatRepositoryImpl(
-            gameRepository = fakeGameRepository,
-            apiClient = fakeClient
-        )
+    fun `sendMessage preserves coach message in localDataSource when remoteDataSource throws`() = runTest {
+        fakeRemoteDataSource.exceptionToThrow = HttpException(500, "Server Error")
 
-        val sendResult = repository.sendMessage("Any drill suggestions?")
+        val sendResult = repository.sendMessage("Will this fail?")
 
         assertTrue(sendResult is Result.Error)
-        assertEquals(DomainError.Network.Timeout, (sendResult as Result.Error).error)
+        val error = (sendResult as Result.Error).error
+        assertTrue(error is DomainError.Network.ServerError)
 
-        val messagesResult = repository.getMessages()
-        assertTrue(messagesResult is Result.Success)
-        val messages = (messagesResult as Result.Success).data
-        assertEquals(1, messages.size)
-        assertEquals("Any drill suggestions?", messages.first().text)
-        assertEquals(MessageSender.COACH, messages.first().sender)
+        val allMessages = repository.getMessages()
+        assertTrue(allMessages is Result.Success)
+        val messageList = (allMessages as Result.Success).data
+        assertEquals(1, messageList.size)
+        assertEquals(MessageSender.COACH, messageList[0].sender)
+    }
+
+    @Test
+    fun `getMessages returns all messages recorded in localDataSource`() = runTest {
+        localDataSource.saveMessage(ChatMessage("msg-1", MessageSender.COACH, "First", 100L))
+        localDataSource.saveMessage(ChatMessage("msg-2", MessageSender.AI, "Second", 200L))
+
+        val result = repository.getMessages()
+
+        assertTrue(result is Result.Success)
+        assertEquals(2, (result as Result.Success).data.size)
     }
 }

@@ -1,85 +1,60 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.network.client.DevExpertApiClient
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.DrillDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightDto
-import com.martorell.albert.basketcoach.domain.model.ChatMessage
+import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
+import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
+import com.martorell.albert.basketcoach.data.util.HttpException
 import com.martorell.albert.basketcoach.domain.model.DomainError
-import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
 import com.martorell.albert.basketcoach.domain.model.Result
-import com.martorell.albert.basketcoach.domain.model.Score
-import com.martorell.albert.basketcoach.domain.model.TeamStats
-import com.martorell.albert.basketcoach.domain.model.Venue
-import com.martorell.albert.basketcoach.domain.repository.GameRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 class AiAnalysisRepositoryImplTest {
 
-    private val dummyStats = TeamStats(
-        ftPct = 70.0,
-        fg2Pct = 45.0,
-        fg3Pct = 30.0,
-        efgPct = 50.0,
-        offensiveRebounds = 10,
-        defensiveRebounds = 25,
-        totalRebounds = 35,
-        turnovers = 15,
-        assists = 12,
-        astToRatio = 0.8,
-        steals = 8,
-        blocks = 2,
-        secondChancePoints = 10,
-        fastBreakPoints = 14,
-        personalFouls = 18
-    )
+    private class FakeAiRemoteDataSource(
+        var analysisResponse: AiAnalysisResponseDto? = null,
+        var exceptionToThrow: Throwable? = null
+    ) : AiRemoteDataSource {
+        var analysisCallCount: Int = 0
 
-    private val dummyGame = Game(
-        round = 1,
-        date = "2023-10-01",
-        time = "18:00",
-        venue = Venue(city = "Sabadell", arena = "Pavello", address = "Carrer Major"),
-        homeTeam = "BASQUETPIASABADELL BLAU",
-        awayTeam = "RIVAL",
-        finalScore = Score(homePoints = 65, awayPoints = 70),
-        homeStats = dummyStats,
-        awayStats = dummyStats
-    )
-
-    private val fakeGameRepository = object : GameRepository {
-        override suspend fun getPhase1Games(): Result<List<Game>, DomainError> {
-            return Result.Success(listOf(dummyGame))
-        }
-
-        override suspend fun getGameByRound(round: Int): Result<Game, DomainError> {
-            return Result.Success(dummyGame)
-        }
-    }
-
-    private class FakeApiClient(
-        var analysisCallCount: Int = 0,
-        var analysisResponse: Result<AiAnalysisResponseDto, DomainError>
-    ) : DevExpertApiClient {
-        override suspend fun generateAnalysis(gameContext: String): Result<AiAnalysisResponseDto, DomainError> {
+        override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
             analysisCallCount++
-            return analysisResponse
+            exceptionToThrow?.let { throw it }
+            return analysisResponse ?: throw IllegalStateException("No fake response configured")
         }
 
         override suspend fun generateChatResponse(
-            conversationHistory: List<ChatMessage>,
+            conversationHistory: List<ChatMessageDto>,
             newPrompt: String,
             gameContext: String?
-        ): Result<String, DomainError> {
-            return Result.Success("Chat response")
+        ): String {
+            throw UnsupportedOperationException()
         }
     }
 
+    private lateinit var fakeRemoteDataSource: FakeAiRemoteDataSource
+    private lateinit var localDataSource: AiAnalysisLocalDataSourceImpl
+    private lateinit var repository: AiAnalysisRepositoryImpl
+
+    @Before
+    fun setUp() {
+        fakeRemoteDataSource = FakeAiRemoteDataSource()
+        localDataSource = AiAnalysisLocalDataSourceImpl()
+        repository = AiAnalysisRepositoryImpl(
+            remoteDataSource = fakeRemoteDataSource,
+            localDataSource = localDataSource
+        )
+    }
+
     @Test
-    fun `getInsights returns mapped domain insights and populates cache`() = runTest {
+    fun `getInsights returns mapped domain insights and populates local cache`() = runTest {
         val dto = AiAnalysisResponseDto(
             insights = listOf(
                 InsightDto(
@@ -100,10 +75,9 @@ class AiAnalysisRepositoryImplTest {
                 )
             )
         )
-        val fakeClient = FakeApiClient(analysisResponse = Result.Success(dto))
-        val repository = AiAnalysisRepositoryImpl(fakeGameRepository, fakeClient)
+        fakeRemoteDataSource.analysisResponse = dto
 
-        val insightsResult = repository.getInsights()
+        val insightsResult = repository.getInsights("Phase 1 context")
 
         assertTrue(insightsResult is Result.Success)
         val insights = (insightsResult as Result.Success).data
@@ -111,11 +85,11 @@ class AiAnalysisRepositoryImplTest {
         assertEquals("Turnover Vulnerability", insights.first().title)
         assertEquals(InsightCategory.OFFENSE, insights.first().category)
         assertEquals(listOf(1), insights.first().relatedGameRounds)
-        assertEquals(1, fakeClient.analysisCallCount)
+        assertEquals(1, fakeRemoteDataSource.analysisCallCount)
     }
 
     @Test
-    fun `getDrills uses shared cache when getInsights was called first without second network call`() = runTest {
+    fun `getDrills uses shared cache when getInsights was called first without second remote call`() = runTest {
         val dto = AiAnalysisResponseDto(
             insights = listOf(
                 InsightDto("i1", "Title", "Desc", "DEFENSE", listOf(1))
@@ -124,30 +98,28 @@ class AiAnalysisRepositoryImplTest {
                 DrillDto("d1", "Drill 1", "Obj 1", listOf("Step 1"), "Focus")
             )
         )
-        val fakeClient = FakeApiClient(analysisResponse = Result.Success(dto))
-        val repository = AiAnalysisRepositoryImpl(fakeGameRepository, fakeClient)
+        fakeRemoteDataSource.analysisResponse = dto
 
-        val insightsResult = repository.getInsights()
+        val insightsResult = repository.getInsights("Phase 1 context")
         assertTrue(insightsResult is Result.Success)
-        assertEquals(1, fakeClient.analysisCallCount)
+        assertEquals(1, fakeRemoteDataSource.analysisCallCount)
 
-        val drillsResult = repository.getDrills()
+        val drillsResult = repository.getDrills("Phase 1 context")
         assertTrue(drillsResult is Result.Success)
         val drills = (drillsResult as Result.Success).data
         assertEquals(1, drills.size)
         assertEquals("Drill 1", drills.first().name)
-        // Verified: only 1 API call across both insights and drills
-        assertEquals(1, fakeClient.analysisCallCount)
+        // Verified: only 1 remote call across both insights and drills
+        assertEquals(1, fakeRemoteDataSource.analysisCallCount)
     }
 
     @Test
-    fun `propagates API errors properly`() = runTest {
-        val fakeClient = FakeApiClient(analysisResponse = Result.Error(DomainError.Network.NoInternet))
-        val repository = AiAnalysisRepositoryImpl(fakeGameRepository, fakeClient)
+    fun `getInsights maps remote HttpException to DomainError Network Unauthorized`() = runTest {
+        fakeRemoteDataSource.exceptionToThrow = HttpException(401, "Invalid token")
 
-        val result = repository.getInsights()
+        val result = repository.getInsights("Phase 1 context")
 
         assertTrue(result is Result.Error)
-        assertEquals(DomainError.Network.NoInternet, (result as Result.Error).error)
+        assertEquals(DomainError.Network.Unauthorized, (result as Result.Error).error)
     }
 }

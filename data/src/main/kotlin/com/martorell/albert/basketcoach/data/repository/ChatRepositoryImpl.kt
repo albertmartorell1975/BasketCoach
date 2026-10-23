@@ -1,81 +1,71 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.network.client.DevExpertApiClient
-import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSource
+import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
+import com.martorell.albert.basketcoach.data.util.safeCall
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
-import com.martorell.albert.basketcoach.domain.repository.GameRepository
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.UUID
 
 /**
- * Implementation of [ChatRepository] managing a single-thread AI basketball coach chat conversation.
- *
- * Grounded in Phase 1 match data sourced from [GameRepository] and communicated via [DevExpertApiClient].
- * Maintains active conversation history in memory protected by a [Mutex].
+ * Production implementation of [ChatRepository] coordinating [AiRemoteDataSource]
+ * and [ChatLocalDataSource] to manage a single-thread AI basketball coach chat conversation.
  */
 class ChatRepositoryImpl(
-    private val gameRepository: GameRepository,
-    private val apiClient: DevExpertApiClient,
+    private val remoteDataSource: AiRemoteDataSource,
+    private val localDataSource: ChatLocalDataSource,
     private val idGenerator: () -> String = { UUID.randomUUID().toString() },
     private val timestampProvider: () -> Long = { System.currentTimeMillis() }
 ) : ChatRepository {
 
-    private val mutex = Mutex()
-    private val messages = mutableListOf<ChatMessage>()
-
     override suspend fun getMessages(): Result<List<ChatMessage>, DomainError> {
-        mutex.withLock {
-            return Result.Success(messages.toList())
-        }
+        return Result.Success(localDataSource.getMessages())
     }
 
-    override suspend fun sendMessage(messageText: String): Result<ChatMessage, DomainError> {
+    override suspend fun sendMessage(
+        messageText: String,
+        gameContext: String?
+    ): Result<ChatMessage, DomainError> {
         val coachMessage = ChatMessage(
             id = idGenerator(),
             sender = MessageSender.COACH,
             text = messageText,
             timestamp = timestampProvider()
         )
+        localDataSource.saveMessage(coachMessage)
 
-        val historySnapshot: List<ChatMessage>
-        mutex.withLock {
-            messages.add(coachMessage)
-            historySnapshot = messages.dropLast(1).toList()
+        val priorMessages = localDataSource.getMessages().dropLast(1)
+        val historyDtos = priorMessages.map { msg ->
+            ChatMessageDto(
+                role = if (msg.sender == MessageSender.COACH) "user" else "assistant",
+                content = msg.text
+            )
         }
 
-        val gameContext = when (val gamesResult = gameRepository.getPhase1Games()) {
-            is Result.Success -> PromptTemplates.formatGameSummary(gamesResult.data)
-            is Result.Error -> null
+        val remoteResult = safeCall {
+            remoteDataSource.generateChatResponse(
+                conversationHistory = historyDtos,
+                newPrompt = messageText,
+                gameContext = gameContext
+            )
         }
 
-        val responseResult = apiClient.generateChatResponse(
-            conversationHistory = historySnapshot,
-            newPrompt = messageText,
-            gameContext = gameContext
-        )
-
-        return when (responseResult) {
+        return when (remoteResult) {
             is Result.Success -> {
                 val aiMessage = ChatMessage(
                     id = idGenerator(),
                     sender = MessageSender.AI,
-                    text = responseResult.data,
+                    text = remoteResult.data,
                     timestamp = timestampProvider()
                 )
-                mutex.withLock {
-                    messages.add(aiMessage)
-                }
+                localDataSource.saveMessage(aiMessage)
                 Result.Success(aiMessage)
             }
-            is Result.Error -> {
-                // Coach message is preserved in thread history on failure
-                responseResult
-            }
+            is Result.Error -> remoteResult
         }
     }
 }

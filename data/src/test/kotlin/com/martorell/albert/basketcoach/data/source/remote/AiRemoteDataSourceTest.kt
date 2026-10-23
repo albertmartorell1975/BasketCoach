@@ -1,27 +1,26 @@
-package com.martorell.albert.basketcoach.data.network
+package com.martorell.albert.basketcoach.data.source.remote
 
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
-import com.martorell.albert.basketcoach.data.network.client.DevExpertApiClientImpl
-import com.martorell.albert.basketcoach.domain.model.ChatMessage
-import com.martorell.albert.basketcoach.domain.model.DomainError
-import com.martorell.albert.basketcoach.domain.model.MessageSender
-import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.util.HttpException
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.SerializationException
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 
-class DevExpertApiClientTest {
+class AiRemoteDataSourceTest {
 
     private lateinit var server: MockWebServer
-    private lateinit var client: DevExpertApiClientImpl
+    private lateinit var dataSource: AiRemoteDataSourceImpl
 
     @Before
     fun setUp() {
@@ -40,7 +39,7 @@ class DevExpertApiClientTest {
             .writeTimeout(500, TimeUnit.MILLISECONDS)
             .build()
 
-        client = DevExpertApiClientImpl(
+        dataSource = AiRemoteDataSourceImpl(
             config = config,
             okHttpClient = shortTimeoutOkHttpClient
         )
@@ -94,15 +93,13 @@ class DevExpertApiClientTest {
 
         server.enqueue(MockResponse().setResponseCode(200).setBody(mockApiResponse))
 
-        val result = client.generateAnalysis("Phase 1 summary")
+        val result = dataSource.generateAnalysis("Phase 1 summary")
 
-        assertTrue(result is Result.Success)
-        val data = (result as Result.Success).data
-        assertEquals(1, data.insights.size)
-        assertEquals("Turnover Crisis", data.insights.first().title)
-        assertEquals("OFFENSE", data.insights.first().category)
-        assertEquals(1, data.drills.size)
-        assertEquals("Pressure Passing", data.drills.first().name)
+        assertEquals(1, result.insights.size)
+        assertEquals("Turnover Crisis", result.insights.first().title)
+        assertEquals("OFFENSE", result.insights.first().category)
+        assertEquals(1, result.drills.size)
+        assertEquals("Pressure Passing", result.drills.first().name)
 
         val recordedRequest = server.takeRequest()
         assertEquals("POST", recordedRequest.method)
@@ -130,66 +127,72 @@ class DevExpertApiClientTest {
         server.enqueue(MockResponse().setResponseCode(200).setBody(mockApiResponse))
 
         val history = listOf(
-            ChatMessage("1", MessageSender.COACH, "How do we improve rebounds?", 1000L)
+            ChatMessageDto("user", "How do we improve rebounds?")
         )
-        val result = client.generateChatResponse(history, "Any specific drills?")
+        val result = dataSource.generateChatResponse(history, "Any specific drills?")
 
-        assertTrue(result is Result.Success)
-        assertEquals("Focus on boxing out and protecting defensive rebounds.", (result as Result.Success).data)
+        assertEquals("Focus on boxing out and protecting defensive rebounds.", result)
 
         val recordedRequest = server.takeRequest()
         assertEquals("/v1/chat/completions", recordedRequest.path)
     }
 
     @Test
-    fun `returns Unauthorized when apiKey is blank`() = runTest {
+    fun `throws HttpException 401 when apiKey is blank`() = runTest {
         val blankKeyConfig = AiClientConfig(apiKey = "", baseUrl = server.url("/v1").toString(), model = "chat")
-        val unauthClient = DevExpertApiClientImpl(config = blankKeyConfig)
+        val unauthSource = AiRemoteDataSourceImpl(config = blankKeyConfig)
 
-        val result = unauthClient.generateAnalysis("context")
-
-        assertTrue(result is Result.Error)
-        assertEquals(DomainError.Network.Unauthorized, (result as Result.Error).error)
+        try {
+            unauthSource.generateAnalysis("context")
+            fail("Expected HttpException")
+        } catch (e: HttpException) {
+            assertEquals(401, e.code)
+        }
         assertEquals(0, server.requestCount)
     }
 
     @Test
-    fun `maps 401 response to DomainError Network Unauthorized`() = runTest {
+    fun `throws HttpException on 401 response`() = runTest {
         server.enqueue(MockResponse().setResponseCode(401).setBody("Unauthorized"))
 
-        val result = client.generateAnalysis("context")
-
-        assertTrue(result is Result.Error)
-        assertEquals(DomainError.Network.Unauthorized, (result as Result.Error).error)
+        try {
+            dataSource.generateAnalysis("context")
+            fail("Expected HttpException")
+        } catch (e: HttpException) {
+            assertEquals(401, e.code)
+        }
     }
 
     @Test
-    fun `maps 500 server error to DomainError Network ServerError`() = runTest {
+    fun `throws HttpException on 500 server error`() = runTest {
         server.enqueue(MockResponse().setResponseCode(500).setBody("Internal Server Error"))
 
-        val result = client.generateAnalysis("context")
-
-        assertTrue(result is Result.Error)
-        val error = (result as Result.Error).error
-        assertTrue(error is DomainError.Network.ServerError)
-        assertEquals(500, (error as DomainError.Network.ServerError).code)
+        try {
+            dataSource.generateAnalysis("context")
+            fail("Expected HttpException")
+        } catch (e: HttpException) {
+            assertEquals(500, e.code)
+        }
     }
 
     @Test
-    fun `maps socket timeout to DomainError Network Timeout`() = runTest {
+    fun `throws SocketTimeoutException on timeout`() = runTest {
         val timeoutResponse = MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE)
         server.enqueue(timeoutResponse)
 
-        val result = client.generateAnalysis("context")
-
-        assertTrue(result is Result.Error)
-        assertEquals(DomainError.Network.Timeout, (result as Result.Error).error)
+        try {
+            dataSource.generateAnalysis("context")
+            fail("Expected SocketTimeoutException")
+        } catch (_: SocketTimeoutException) {
+            // Success
+        }
     }
 
     @Test
-    fun `maps malformed json response to DomainError Generic`() = runTest {
+    fun `throws SerializationException on malformed json`() = runTest {
         val mockApiResponse = """
             {
+              "id": "chatcmpl-test-3",
               "choices": [
                 {
                   "index": 0,
@@ -203,11 +206,12 @@ class DevExpertApiClientTest {
         """.trimIndent()
         server.enqueue(MockResponse().setResponseCode(200).setBody(mockApiResponse))
 
-        val result = client.generateAnalysis("context")
-
-        assertTrue(result is Result.Error)
-        val error = (result as Result.Error).error
-        assertTrue(error is DomainError.Generic)
+        try {
+            dataSource.generateAnalysis("context")
+            fail("Expected SerializationException")
+        } catch (_: SerializationException) {
+            // Success
+        }
     }
 
     private fun escapeJsonString(value: String): String {
