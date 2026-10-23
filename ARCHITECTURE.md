@@ -119,8 +119,6 @@ classDiagram
         +MessageSender sender
         +String text
         +Long timestamp
-        +Boolean isFromCoach
-        +Boolean isFromAi
     }
 
     Game --> Score
@@ -129,32 +127,69 @@ classDiagram
 ```
 
 ### Domain Repositories (Contracts in `:domain`)
-- **`GameRepository`**: Access to historical Phase 1 game fixtures and team box scores.
-- **`AiAnalysisRepository`**: Querying tactical AI insights and recommended practice drills.
-- **`ChatRepository`**: Single-thread conversational assistant interaction with the DevExpert AI service.
+- **`GameRepository`**: Access to historical Phase 1 game fixtures and team box scores (`getPhase1Games()`, `getGameByRound(round)`).
+- **`AiAnalysisRepository`**: Querying tactical AI insights and recommended practice drills grounded in match context (`getInsights(gameContext)`, `getDrills(gameContext)`).
+- **`ChatRepository`**: Single-thread conversational assistant interaction with the AI service (`getMessages()`, `sendMessage(messageText, gameContext)`).
 
 ---
 
-## 4. Data Layer Governance & Parsing Pipeline (`:data`)
+## 4. Data Layer Governance & Local Fixture Pipeline (`:data`)
 
-The `:data` module provides repository implementations and data adapters for raw data sources while keeping `:domain` isolated from serialization annotations and transport schemas.
+The `:data` module provides repository implementations and data sources while keeping `:domain` isolated from serialization annotations and transport schemas.
 
 ```mermaid
 flowchart LR
-    Resource["dataset.json (Classpath Resource)"] -->|"InputStream"| Parser["GameJsonParserImpl (kotlinx.serialization)"]
-    Parser -->|"List<GameDto>"| Mapper["GameMapper.toDomain()"]
-    Mapper -->|"List<Game>"| Repo["GameRepositoryImpl (In-Memory Cache)"]
+    Resource["dataset.json (Classpath Resource)"] -->|"InputStream"| Source["GameLocalDataSourceImpl (Dispatchers.IO)"]
+    Source -->|"List<GameDto>"| Repo["GameRepositoryImpl"]
+    Repo -->|"safeCall"| Mapper["GameMapper.toDomain()"]
     Repo -->|"Result<List<Game>, DomainError>"| UseCases[":usecases Layer"]
 ```
 
-### Key Architectural Patterns in `:data`
+### Key Architectural Patterns for Historical Games
 1. **DTO Separation (`data.dto`)**:
    Raw snake_case JSON schemas are mapped into immutable `@Serializable` DTOs (`GameDto`, `ScoreDto`, `TeamStatsDto`). `:domain` remains completely clean of serialization dependencies.
 2. **DTO-to-Domain Mapping (`data.mapper`)**:
    `GameMapper` converts DTOs to pure domain entities. It constructs domain value objects (`Venue`, `Score`) and injects points scored into `TeamStats.points` directly from the match final score.
-3. **Bundled Classpath Resource Strategy**:
-   The static 14-game dataset is packaged at `data/src/main/resources/dataset.json`. This allows the pure JVM module to load data via the classloader without requiring an Android `Context`, enabling sub-second unit test execution.
+3. **Bundled Classpath Resource Strategy (`GameLocalDataSource`)**:
+   The static 14-game dataset is packaged at `data/src/main/resources/dataset.json`. `GameLocalDataSourceImpl` manages file streaming and JSON deserialization on `Dispatchers.IO`, throwing technical exceptions on failure.
 4. **In-Memory Caching (SSOT)**:
-   Because Phase 1 is a static 14-match historical dataset, `GameRepositoryImpl` lazily parses the payload on the first query and caches the sorted `List<Game>` in memory. Subsequent calls to `getPhase1Games()` or `getGameByRound(round)` resolve synchronously without re-parsing.
-5. **Defensive Error Handling**:
-   `GameJsonParserImpl` wraps parsing within `try-catch` blocks returning `Result.Error(DomainError.Local.DatabaseError)`. Missing resources or unmatched round queries return `Result.Error(DomainError.Local.NotFound)`.
+   Because Phase 1 is a static 14-match historical dataset, `GameLocalDataSourceImpl` caches the parsed DTOs in a `@Volatile` field on the first query. Subsequent calls resolve synchronously without re-reading the stream.
+5. **Safe Execution via `safeCall`**:
+   `GameRepositoryImpl` coordinates data sources within `safeCall { ... }`. `FileNotFoundException` and `NoSuchElementException` map to `DomainError.Local.NotFound`, while serialization anomalies map to `DomainError.Generic`.
+
+---
+
+## 5. AI Inference & Conversational Assistant Pipeline (`:data`)
+
+BasketCoach integrates with the DevExpert Inference API and provides seamless fallback to Google Gemini's OpenAI-compatible endpoint.
+
+```mermaid
+flowchart TD
+    Remote["DevExpert / Gemini Inference API"] <-->|"POST /v1/chat/completions"| AiRemote["AiRemoteDataSourceImpl (OkHttp)"]
+    AiRemote -->|"AiAnalysisResponseDto"| RepoAnalysis["AiAnalysisRepositoryImpl"]
+    RepoAnalysis <-->|"read/save"| LocalAnalysis["AiAnalysisLocalDataSource (In-Memory SSOT)"]
+    RepoAnalysis -->|"safeCall + toDomain()"| UseCasesAnalysis["AiAnalysisRepository"]
+
+    AiRemote -->|"Completion Text"| RepoChat["ChatRepositoryImpl"]
+    RepoChat <-->|"read/save"| LocalChat["ChatLocalDataSource (In-Memory SSOT)"]
+    RepoChat -->|"safeCall"| UseCasesChat["ChatRepository"]
+```
+
+### Key Architectural Patterns for AI Integration
+1. **OpenAI-Compatible Standard Endpoint**:
+   Both DevExpert Inference (`https://inference.devexpert.io/v1`) and Google Gemini (`https://generativelanguage.googleapis.com/v1beta/openai`) adhere to the standard `POST /chat/completions` REST protocol with Bearer token authentication.
+2. **Dual-Provider Configuration (`data.network.config`)**:
+   - `AiClientConfig`: Pure data model holding `apiKey`, `baseUrl`, and `model`. `AiClientConfig.fromEnvironment()` checks `DEVEXPERT_API_KEY` first, falling back to `GEMINI_API_KEY`.
+   - `DevExpertConfig`: Constants and defaults (`DEFAULT_BASE_URL`, models `"chat"` and `"chat-pro"`).
+   - `GeminiConfig`: Constants and defaults (`DEFAULT_BASE_URL`, model `"gemini-2.5-flash"`).
+   - `LocalPropertiesReader`: Reads local developer keys from root `local.properties` cleanly catching `IOException`.
+3. **Data Source Separation (`data.source`)**:
+   - `AiRemoteDataSource`: Executes OkHttp requests, strips markdown code fences (` ```json `), and deserializes strict DTOs. Blocking I/O is dispatched on `Dispatchers.IO`.
+   - `AiAnalysisLocalDataSource`: Thread-safe in-memory cache protected by a `Mutex` so that a single AI analysis call populates both `Insight` and `Drill` caches simultaneously.
+   - `ChatLocalDataSource`: Thread-safe single-thread message history storage protected by a `Mutex`.
+4. **Mandatory DTO Schema & Context Grounding**:
+   - `PromptTemplates.kt` grounds the AI in the 14 Phase 1 box scores (AST/TO, rebounding margins, personal foul averages, individual round scores) and FIBA rules.
+   - All network DTO properties (`InsightDto`, `DrillDto`, `AiAnalysisResponseDto`, `ChatCompletionRequestDto`, `ChatCompletionResponseDto`) are strictly mandatory without defaults, and the system prompt explicitly forbids omitting keys or setting them to null.
+5. **Exception Translation & Error Mapping (`data.util.ExceptionMapper`)**:
+   - `Throwable.toDomainError()` maps timeouts to `DomainError.Network.Timeout`, 401 to `DomainError.Network.Unauthorized`, 500..599 to `DomainError.Network.ServerError`, and IO errors to `DomainError.Network.NoInternet`.
+   - `safeCall` preserves structured concurrency by immediately rethrowing `CancellationException`.
