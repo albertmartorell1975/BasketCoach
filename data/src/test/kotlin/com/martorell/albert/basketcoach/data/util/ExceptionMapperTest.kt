@@ -44,8 +44,9 @@ class ExceptionMapperTest {
     }
 
     @Test
-    fun `toDomainError maps FileNotFoundException to DomainError Local NotFound`() {
+    fun `toDomainError maps FileNotFoundException and NoSuchElementException to DomainError Local NotFound`() {
         assertEquals(DomainError.Local.NotFound, FileNotFoundException("missing").toDomainError())
+        assertEquals(DomainError.Local.NotFound, NoSuchElementException("no element").toDomainError())
     }
 
     @Test

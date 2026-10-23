@@ -39,17 +39,7 @@ class GameRepositoryImpl(
      *   [Result.Error] with [DomainError.Local.NotFound] if no game exists for the given round, or
      *   the underlying error if dataset loading failed.
      */
-    override suspend fun getGameByRound(round: Int): Result<Game, DomainError> {
-        return when (val gamesResult = getPhase1Games()) {
-            is Result.Success -> {
-                val game = gamesResult.data.find { it.round == round }
-                if (game != null) {
-                    Result.Success(game)
-                } else {
-                    Result.Error(DomainError.Local.NotFound)
-                }
-            }
-            is Result.Error -> gamesResult
-        }
+    override suspend fun getGameByRound(round: Int): Result<Game, DomainError> = safeCall {
+        localDataSource.getGames().first { it.round == round }.toDomain()
     }
 }

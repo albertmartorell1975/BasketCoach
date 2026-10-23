@@ -28,7 +28,7 @@ fun Throwable.toDomainError(): DomainError = when (this) {
         in 500..599 -> DomainError.Network.ServerError(code)
         else -> DomainError.Network.ServerError(code, message)
     }
-    is FileNotFoundException -> DomainError.Local.NotFound
+    is FileNotFoundException, is NoSuchElementException -> DomainError.Local.NotFound
     is ConnectException, is UnknownHostException -> DomainError.Network.NoInternet
     is IOException -> DomainError.Network.NoInternet
     is SerializationException -> DomainError.Generic(message = localizedMessage, cause = this)
