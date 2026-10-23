@@ -9,6 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -40,6 +41,11 @@ class ExceptionMapperTest {
         assertEquals(DomainError.Network.NoInternet, IOException().toDomainError())
         assertEquals(DomainError.Network.NoInternet, ConnectException().toDomainError())
         assertEquals(DomainError.Network.NoInternet, UnknownHostException().toDomainError())
+    }
+
+    @Test
+    fun `toDomainError maps FileNotFoundException to DomainError Local NotFound`() {
+        assertEquals(DomainError.Local.NotFound, FileNotFoundException("missing").toDomainError())
     }
 
     @Test

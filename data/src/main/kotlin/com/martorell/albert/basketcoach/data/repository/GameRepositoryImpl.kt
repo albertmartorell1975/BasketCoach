@@ -1,66 +1,38 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.parser.GameJsonParser
-import com.martorell.albert.basketcoach.data.parser.GameJsonParserImpl
+import com.martorell.albert.basketcoach.data.mapper.toDomain
+import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSource
 import com.martorell.albert.basketcoach.data.util.safeCall
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import java.io.InputStream
 
 /**
- * Production implementation of [GameRepository] that sources Phase 1 match data from a bundled
- * classpath resource (`dataset.json`).
+ * Production implementation of [GameRepository] that sources Phase 1 match data from a
+ * [GameLocalDataSource], mapping the raw DTOs into domain [Game] entities.
  *
- * Implements a thread-safe in-memory caching strategy to ensure that deserialization and sorting occur only once
- * across application execution, serving as the Single Source of Truth (SSOT) for static historical fixtures.
- * Parsing exceptions are translated into typed [DomainError] via [safeCall].
+ * Technical exceptions raised by the data source are translated into typed [DomainError] via [safeCall].
  *
- * @param parser The [GameJsonParser] instance responsible for deserializing JSON streams.
- * @param jsonStreamProvider Provider function supplying an [InputStream] to the bundled JSON dataset.
- *   Defaults to loading `dataset.json` via the classloader.
+ * @param localDataSource The data source providing the bundled Phase 1 fixtures (and their caching).
  */
 class GameRepositoryImpl(
-    private val parser: GameJsonParser = GameJsonParserImpl(),
-    private val jsonStreamProvider: () -> InputStream? = {
-        GameRepositoryImpl::class.java.classLoader?.getResourceAsStream("dataset.json")
-    }
+    private val localDataSource: GameLocalDataSource
 ) : GameRepository {
-
-    private val mutex = Mutex()
-    private var cachedGames: List<Game>? = null
 
     /**
      * Retrieves all 14 Phase 1 competition games in ascending chronological order by round.
      *
-     * Returns cached models if previously parsed. If un-cached, reads the bundled dataset stream,
-     * parses via [GameJsonParser], sorts chronologically by [Game.round], caches the list in memory,
-     * and returns the result.
-     *
      * @return [Result.Success] with the 14 sorted [Game] entities, or
-     *   [Result.Error] with [DomainError.Local.NotFound] if the resource stream cannot be opened, or
+     *   [Result.Error] with [DomainError.Local.NotFound] if the dataset cannot be opened, or
      *   the [DomainError] mapped from any parsing failure.
      */
-    override suspend fun getPhase1Games(): Result<List<Game>, DomainError> = mutex.withLock {
-        cachedGames?.let { return Result.Success(it) }
-
-        val inputStream = jsonStreamProvider()
-            ?: return Result.Error(DomainError.Local.NotFound)
-
-        val result = safeCall { parser.parseGames(inputStream).sortedBy { it.round } }
-        if (result is Result.Success) {
-            cachedGames = result.data
-        }
-        result
+    override suspend fun getPhase1Games(): Result<List<Game>, DomainError> = safeCall {
+        localDataSource.getGames().map { it.toDomain() }.sortedBy { it.round }
     }
 
     /**
      * Retrieves a single game fixture by its competition [round].
-     *
-     * Sourced via [getPhase1Games], taking advantage of in-memory caching.
      *
      * @param round The round number to query (valid Phase 1 rounds: 1 to 14).
      * @return [Result.Success] containing the matching [Game], or
