@@ -6,10 +6,23 @@ An AI-assisted coaching tool that transforms structured team statistics into evi
 BasketCoach follows a **Layer-Based Clean Architecture** pattern across four primary modules:
 - **`:domain`**: Core business entities (`Game`, `TeamStats`, `Score`, `Venue`, `Insight`, `Drill`), typed errors (`DomainError`), and repository contracts (`GameRepository`, `AiAnalysisRepository`, `ChatRepository`). Pure Kotlin JVM with zero external dependencies.
 - **`:usecases`**: Domain interactors orchestrating analytical and conversational workflows.
-- **`:data`**: Repository implementations, JSON dataset parser (`kotlinx.serialization`), in-memory caching, and future DevExpert AI client.
+- **`:data`**: Repository implementations, local fixture data sources (`GameLocalDataSource`), in-memory SSOT caching, and OpenAI-compatible AI client (`AiRemoteDataSource`) supporting DevExpert and Google Gemini.
 - **`:app`**: Tablet Landscape Jetpack Compose UI (two-pane dashboard and single-thread chat assistant) using Hilt and MVVM Hybrid UI State.
+
+## AI Configuration & Credentials
+
+The application uses an OpenAI-compatible client supporting two providers:
+1. **DevExpert Inference API** (`https://inference.devexpert.io/v1`, models `chat` / `chat-pro`)
+2. **Google Gemini** (`https://generativelanguage.googleapis.com/v1beta/openai`, model `gemini-2.5-flash`)
+
+To supply API keys for development, add either or both keys to your root `local.properties`:
+```properties
+DEVEXPERT_API_KEY=your_devexpert_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+Alternatively, set them as environment variables or system properties. If `DEVEXPERT_API_KEY` is present, it is prioritized; otherwise, the client seamlessly falls back to `GEMINI_API_KEY`.
 
 ## Progress & Status
 - [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).
 - [x] **`feature_002_data_parsing`**: Phase 1 JSON dataset parsing and cached `GameRepositoryImpl` in `:data` (`accepted`).
-- [ ] **`feature_003_devexpert_client`**: DevExpert API client for insights and chat (`next`).
+- [x] **`feature_003_devexpert_client`**: DevExpert & Gemini OpenAI-compatible API client, data sources, and repositories in `:data` (`accepted`).

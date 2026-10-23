@@ -200,59 +200,70 @@ so the application can deliver actionable tactical insights, practice drills, an
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, and `dependency-manager`. Ensure `:data` remains a pure JVM module without Android SDK imports.
-- [ ] **Dependency Setup (`gradle/libs.versions.toml` & `data/build.gradle.kts`):**
-  - [ ] Add `okhttp = "4.12.0"` to `[versions]`.
-  - [ ] Add `okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }` to `[libraries]`.
-  - [ ] Add `okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }` to `[libraries]`.
-  - [ ] Add `implementation(libs.okhttp)` and `testImplementation(libs.okhttp.mockwebserver)` to `data/build.gradle.kts`.
-- [ ] **Configuration Layer (`:data`):**
-  - [ ] Implement `DevExpertConfig(apiKey, baseUrl, model)` with default values for DevExpert Inference (`https://inference.devexpert.io/v1`, model `"chat"`), helper factory `forGemini(apiKey, model = "gemini-2.5-flash")`, and `fromEnvironment()` fallback resolver (`System.getenv` -> `System.getProperty` -> `local.properties` for `DEVEXPERT_API_KEY` then `GEMINI_API_KEY`).
-- [ ] **Network DTOs (`:data`):**
-  - [ ] Implement `@Serializable` `ChatCompletionRequestDto` and `ChatMessageDto(role, content)`.
-  - [ ] Implement `@Serializable` `ChatCompletionResponseDto` and `ChoiceDto(index, message)`.
-  - [ ] Implement `@Serializable` `AiAnalysisResponseDto`, `InsightDto`, `DrillDto`.
-- [ ] **Prompt Engineering & Templates (`:data`):**
-  - [ ] Implement `PromptTemplates` with system prompt (Basquet Pia Sabadell Junior Interterritorial context, FIBA rules, team identity), strict English JSON schema instructions, and formatters for Phase 1 14-game summary and Phase 2 objective instructions.
-- [ ] **Network Client (`:data`):**
-  - [ ] Define `DevExpertApiClient` interface.
-  - [ ] Implement `DevExpertApiClientImpl` using `OkHttpClient` and `Json`, sending `POST {baseUrl}/chat/completions` with `Authorization: Bearer {apiKey}`.
-  - [ ] Implement exception mapping (`toDomainError()` and `safeCall`) ensuring `CancellationException` is never caught.
-- [ ] **Mappers (`:data`):**
-  - [ ] Implement `AiAnalysisMapper` converting `InsightDto` to `Insight` (mapping category strings to `InsightCategory` safely) and `DrillDto` to `Drill`.
-- [ ] **Repository Implementations (`:data`):**
-  - [ ] Implement `AiAnalysisRepositoryImpl` fulfilling `AiAnalysisRepository` (`getInsights()`, `getDrills()`) with `GameRepository` context loading and `Mutex`-guarded shared in-memory caching (1 single API call populates both insights and drills).
-  - [ ] Implement `ChatRepositoryImpl` fulfilling `ChatRepository` (`getMessages()`, `sendMessage()`) with `GameRepository` context loading, in-memory thread tracking, and contextual prompt dispatch.
-- [ ] **Testing & Integration (`:data`):**
-  - [ ] Create `DevExpertApiClientTest.kt`:
+- [x] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, and `dependency-manager`. Ensure `:data` remains a pure JVM module without Android SDK imports.
+- [x] **Dependency Setup (`gradle/libs.versions.toml` & `data/build.gradle.kts`):**
+  - [x] Add `okhttp = "4.12.0"` to `[versions]`.
+  - [x] Add `okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }` to `[libraries]`.
+  - [x] Add `okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }` to `[libraries]`.
+  - [x] Add `implementation(libs.okhttp)` and `testImplementation(libs.okhttp.mockwebserver)` to `data/build.gradle.kts`.
+- [x] **Configuration Layer (`:data`):**
+  - [x] Implement `DevExpertConfig(apiKey, baseUrl, model)` with default values for DevExpert Inference (`https://inference.devexpert.io/v1`, model `"chat"`), helper factory `forGemini(apiKey, model = "gemini-2.5-flash")`, and `fromEnvironment()` fallback resolver (`System.getenv` -> `System.getProperty` -> `local.properties` for `DEVEXPERT_API_KEY` then `GEMINI_API_KEY`).
+- [x] **Network DTOs (`:data`):**
+  - [x] Implement `@Serializable` `ChatCompletionRequestDto` and `ChatMessageDto(role, content)`.
+  - [x] Implement `@Serializable` `ChatCompletionResponseDto` and `ChoiceDto(index, message)`.
+  - [x] Implement `@Serializable` `AiAnalysisResponseDto`, `InsightDto`, `DrillDto`.
+- [x] **Prompt Engineering & Templates (`:data`):**
+  - [x] Implement `PromptTemplates` with system prompt (Basquet Pia Sabadell Junior Interterritorial context, FIBA rules, team identity), strict English JSON schema instructions, and formatters for Phase 1 14-game summary and Phase 2 objective instructions.
+- [x] **Network Client (`:data`):**
+  - [x] Define `DevExpertApiClient` interface.
+  - [x] Implement `DevExpertApiClientImpl` using `OkHttpClient` and `Json`, sending `POST {baseUrl}/chat/completions` with `Authorization: Bearer {apiKey}`.
+  - [x] Implement exception mapping (`toDomainError()` and `safeCall`) ensuring `CancellationException` is never caught.
+- [x] **Mappers (`:data`):**
+  - [x] Implement `AiAnalysisMapper` converting `InsightDto` to `Insight` (mapping category strings to `InsightCategory` safely) and `DrillDto` to `Drill`.
+- [x] **Repository Implementations (`:data`):**
+  - [x] Implement `AiAnalysisRepositoryImpl` fulfilling `AiAnalysisRepository` (`getInsights()`, `getDrills()`) with `GameRepository` context loading and `Mutex`-guarded shared in-memory caching (1 single API call populates both insights and drills).
+  - [x] Implement `ChatRepositoryImpl` fulfilling `ChatRepository` (`getMessages()`, `sendMessage()`) with `GameRepository` context loading, in-memory thread tracking, and contextual prompt dispatch.
+- [x] **Testing & Integration (`:data`):**
+  - [x] Create `DevExpertApiClientTest.kt`:
     - Test 200 OK successful `/chat/completions` response serialization, `Authorization: Bearer` header verification, and JSON parsing (including markdown-fenced JSON).
     - Test 401 Unauthorized error mapping.
     - Test 500 Server Error mapping.
     - Test network timeout mapping to `DomainError.Network.Timeout`.
     - Test blank API key returns `DomainError.Network.Unauthorized`.
-  - [ ] Create `AiAnalysisRepositoryImplTest.kt`:
+  - [x] Create `AiAnalysisRepositoryImplTest.kt`:
     - Test `getInsights()` returns parsed domain insights.
     - Test `getDrills()` returns parsed domain drills.
     - Test shared in-memory caching: calling `getInsights()` then `getDrills()` triggers only 1 API call.
     - Test API failure properly surfaces `Result.Error`.
-  - [ ] Create `ChatRepositoryImplTest.kt`:
+  - [x] Create `ChatRepositoryImplTest.kt`:
     - Test initial `getMessages()` returns empty list.
     - Test `sendMessage()` records coach message, includes Phase 1 game context, calls API, records AI message, and returns `Result.Success`.
     - Test network failure preserves coach query and returns `Result.Error`.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Run `./gradlew :data:test` and `./gradlew :data:assemble`.
-  - [ ] Verify 100% test pass rate with 0 errors.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Run `./gradlew :data:test` and `./gradlew :data:assemble`.
+  - [x] Verify 100% test pass rate with 0 errors.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_003_devexpert_client` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] `:data` maintains zero Android SDK framework dependencies (`android.*` imports absent).
-- [ ] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real unit test verification in `:data`.
-- [ ] API keys are never hardcoded in source files; `DevExpertConfig` supports dynamic configuration for both DevExpert Inference and Gemini Free Tier.
-- [ ] Typed domain errors (`DomainError.Network.*`, `DomainError.Generic`) are returned via `Result`; no raw `HttpException` or `IOException` leaks to `:domain`.
-- [ ] Structured concurrency rules are respected (`CancellationException` is never caught in `safeCall`).
-- [ ] `@compiler` verification evidence (`:data:test`, `:data:assemble`) is present and valid.
-- [ ] Structured validation report written to `docs/features/feature_003_devexpert_client/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_003_devexpert_client` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] `:data` maintains zero Android SDK framework dependencies (`android.*` imports absent).
+- [x] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real unit test verification in `:data`.
+- [x] API keys are never hardcoded in source files; `DevExpertConfig` supports dynamic configuration for both DevExpert Inference and Gemini Free Tier.
+- [x] Typed domain errors (`DomainError.Network.*`, `DomainError.Generic`) are returned via `Result`; no raw `HttpException` or `IOException` leaks to `:domain`.
+- [x] Structured concurrency rules are respected (`CancellationException` is never caught in `safeCall`).
+- [x] `@compiler` verification evidence (`:data:test`, `:data:assemble`) is present and valid.
+- [x] Structured validation report written to `docs/features/feature_003_devexpert_client/validator/validation-report.md`.
+
+---
+
+## 8. Post-Review Architectural Refinements
+
+During independent and human review, the implementation was refined to strictly adhere to `repository-pattern-governance` and Clean Architecture boundaries:
+1. **Decoupled Repositories**: Repositories no longer depend on other repositories. `AiAnalysisRepository.getInsights(gameContext)` and `ChatRepository.sendMessage(messageText, gameContext)` take game context as parameters. Cross-repository orchestration will be managed by `:usecases` (Feature 004).
+2. **Local and Remote DataSources**: Extracted `AiRemoteDataSource` (handling OkHttp I/O on `Dispatchers.IO`), `AiAnalysisLocalDataSource` (in-memory caching with `Mutex`), `ChatLocalDataSource` (in-memory chat history with `Mutex`), and `GameLocalDataSource` (reads bundled `dataset.json` with `@Volatile` cache on `Dispatchers.IO`). Removed obsolete `GameJsonParser`.
+3. **Data Source Error Boundary**: DataSources throw technical framework exceptions (`IOException`, `HttpException`, `FileNotFoundException`, `SerializationException`). Repositories wrap all calls with `= safeCall { ... }` in `ExceptionMapper.kt` to map technical exceptions to typed `DomainError` while rethrowing `CancellationException`.
+4. **Configuration Abstraction**: Modular configuration in `com.martorell.albert.basketcoach.data.network.config` with `AiClientConfig`, `DevExpertConfig`, `GeminiConfig`, and `LocalPropertiesReader`.
+5. **Strict DTO Validation**: All network DTO properties are mandatory without default values, and LLM system prompts explicitly enforce full JSON schema compliance.
