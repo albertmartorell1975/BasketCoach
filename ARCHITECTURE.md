@@ -27,7 +27,7 @@ BasketCoach is structured around a **Layer-Based Clean Architecture** topology a
 | Module | Purpose | Allowed Dependencies | Platform Target |
 | :--- | :--- | :--- | :--- |
 | **`:domain`** | Core basketball domain entities, value objects, typed errors (`DomainError`), and repository contracts. | None (pure Kotlin JVM, zero external/Android dependencies). | Pure Kotlin JVM (`libs.plugins.kotlin.jvm`) |
-| **`:usecases`** | Single-responsibility domain interactors orchestrating business workflows. | `:domain` | Pure Kotlin JVM / Android |
+| **`:usecases`** | Single-responsibility domain interactors orchestrating business workflows. | `:domain` (pure Kotlin JVM, zero Android/data dependencies). | Pure Kotlin JVM (`libs.plugins.kotlin.jvm`) |
 | **`:data`** | Repository implementations, local data parsing (`dataset.json`), database persistence (`Room`), and remote AI clients (`DevExpert API`). | `:domain` | Android / JVM |
 | **`:app`** | Tablet Landscape Jetpack Compose UI, MVVM ViewModels with Hybrid UI State, and Hilt dependency injection root. | `:domain`, `:usecases`, `:data` | Android Application |
 
@@ -48,7 +48,26 @@ The `:domain` module is the innermost layer and embodies the core business rules
 
 ---
 
-## 3. Core Domain Entities & Taxonomy
+## 3. Use Cases Layer Governance (`:usecases`)
+
+The `:usecases` module encapsulates focused, single-responsibility domain interactors (business logic) orchestrating workflows across repositories.
+
+- **Strict Pure Kotlin JVM Isolation**:
+  The module depends exclusively on `:domain` and testing libraries (`junit`, `kotlinx-coroutines-test`). It contains zero Android framework dependencies (`android.*`) and zero dependencies on `:data`.
+- **Single-Responsibility Interactor Convention**:
+  Each use case exposes a single public `suspend operator fun invoke(...)` function, returning functional `Result<T, DomainError>` sealed hierarchies.
+- **Cross-Aggregate Orchestration & Context Grounding**:
+  Per Clean Architecture and project constraints (Constraint #11), repositories remain completely decoupled and never inject or depend on one another. Any cross-aggregate coordination or contextual enrichment is orchestrated by Use Cases in this layer:
+  - `GetPhase1GamesUseCase`: Retrieves all 14 Phase 1 fixtures directly from `GameRepository`.
+  - `GetGameByRoundUseCase`: Queries a specific fixture by competition round (1..14), returning `DomainError.Local.NotFound` if missing.
+  - `GenerateInsightsUseCase`: Retrieves matches from `GameRepository` and supplies them as grounding context to `AiAnalysisRepository.getInsights(games)`. Propagates errors immediately without calling AI services if game loading fails.
+  - `GetPracticeDrillsUseCase`: Retrieves matches from `GameRepository` and supplies them to `AiAnalysisRepository.getDrills(games)`. Propagates errors immediately without calling AI services if game loading fails.
+  - `GetChatMessagesUseCase`: Retrieves historical chat messages from `ChatRepository.getMessages()`.
+  - `SendChatMessageUseCase`: Enriches chat interactions by fetching match history from `GameRepository` and passing it to `ChatRepository.sendMessage(messageText, games)`. Validates against blank inputs (`DomainError.Generic`), and gracefully falls back to passing `games = null` if game retrieval fails so that conversational chat remains operational.
+
+---
+
+## 4. Core Domain Entities & Taxonomy
 
 ```text
 [ Game ]
@@ -70,12 +89,14 @@ The `:domain` module is the innermost layer and embodies the core business rules
  ├─ id: String
  ├─ title: String
  ├─ description: String
- └─ category: InsightCategory
+ ├─ category: InsightCategory
+ └─ relatedGameRounds: List<Int>
 
 [ Drill ]
  ├─ id: String
  ├─ name: String
  ├─ objective: String
+ ├─ instructions: List<String>
  └─ focusArea: String
 
 [ ChatMessage ]
@@ -87,12 +108,12 @@ The `:domain` module is the innermost layer and embodies the core business rules
 
 ### Domain Repositories (Contracts in `:domain`)
 - **`GameRepository`**: Access to historical Phase 1 game fixtures and team box scores (`getPhase1Games()`, `getGameByRound(round)`).
-- **`AiAnalysisRepository`**: Querying tactical AI insights and recommended practice drills grounded in match context (`getInsights(gameContext)`, `getDrills(gameContext)`).
-- **`ChatRepository`**: Single-thread conversational assistant interaction with the AI service (`getMessages()`, `sendMessage(messageText, gameContext)`).
+- **`AiAnalysisRepository`**: Querying tactical AI insights and recommended practice drills grounded in match context (`getInsights(games)`, `getDrills(games)`).
+- **`ChatRepository`**: Single-thread conversational assistant interaction with the AI service (`getMessages()`, `sendMessage(messageText, games)`).
 
 ---
 
-## 4. Data Layer Governance & Local Fixture Pipeline (`:data`)
+## 5. Data Layer Governance & Local Fixture Pipeline (`:data`)
 
 The `:data` module provides repository implementations and data sources while keeping `:domain` isolated from serialization annotations and transport schemas.
 
@@ -126,7 +147,7 @@ The `:data` module provides repository implementations and data sources while ke
 
 ---
 
-## 5. AI Inference & Conversational Assistant Pipeline (`:data`)
+## 6. AI Inference & Conversational Assistant Pipeline (`:data`)
 
 BasketCoach integrates with the DevExpert Inference API and provides seamless fallback to Google Gemini's OpenAI-compatible endpoint.
 

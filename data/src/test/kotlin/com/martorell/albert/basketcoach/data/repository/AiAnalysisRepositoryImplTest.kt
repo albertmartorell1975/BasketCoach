@@ -77,7 +77,7 @@ class AiAnalysisRepositoryImplTest {
         )
         fakeRemoteDataSource.analysisResponse = dto
 
-        val insightsResult = repository.getInsights("Phase 1 context")
+        val insightsResult = repository.getInsights(emptyList())
 
         assertTrue(insightsResult is Result.Success)
         val insights = (insightsResult as Result.Success).data
@@ -100,11 +100,11 @@ class AiAnalysisRepositoryImplTest {
         )
         fakeRemoteDataSource.analysisResponse = dto
 
-        val insightsResult = repository.getInsights("Phase 1 context")
+        val insightsResult = repository.getInsights(emptyList())
         assertTrue(insightsResult is Result.Success)
         assertEquals(1, fakeRemoteDataSource.analysisCallCount)
 
-        val drillsResult = repository.getDrills("Phase 1 context")
+        val drillsResult = repository.getDrills(emptyList())
         assertTrue(drillsResult is Result.Success)
         val drills = (drillsResult as Result.Success).data
         assertEquals(1, drills.size)
@@ -117,7 +117,7 @@ class AiAnalysisRepositoryImplTest {
     fun `getInsights maps remote HttpException to DomainError Network Unauthorized`() = runTest {
         fakeRemoteDataSource.exceptionToThrow = HttpException(401, "Invalid token")
 
-        val result = repository.getInsights("Phase 1 context")
+        val result = repository.getInsights(emptyList())
 
         assertTrue(result is Result.Error)
         assertEquals(DomainError.Network.Unauthorized, (result as Result.Error).error)

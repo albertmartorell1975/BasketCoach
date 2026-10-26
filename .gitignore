@@ -10,3 +10,4 @@
 
 # Temporary Multi-Agent Git Worktrees
 .worktrees/
+.kotlin/

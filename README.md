@@ -5,7 +5,7 @@ An AI-assisted coaching tool that transforms structured team statistics into evi
 
 BasketCoach follows a **Layer-Based Clean Architecture** pattern across four primary modules:
 - **`:domain`**: Core business entities (`Game`, `TeamStats`, `Score`, `Venue`, `Insight`, `Drill`), typed errors (`DomainError`), and repository contracts (`GameRepository`, `AiAnalysisRepository`, `ChatRepository`). Pure Kotlin JVM with zero external dependencies.
-- **`:usecases`**: Domain interactors orchestrating analytical and conversational workflows.
+- **`:usecases`**: Pure Kotlin JVM domain interactors (`GetPhase1GamesUseCase`, `GetGameByRoundUseCase`, `GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`, `GetChatMessagesUseCase`, `SendChatMessageUseCase`) orchestrating analytical and conversational workflows with strict dependency solely on `:domain`.
 - **`:data`**: Repository implementations, local fixture data sources (`GameLocalDataSource`), in-memory SSOT caching, and OpenAI-compatible AI client (`AiRemoteDataSource`) supporting DevExpert and Google Gemini.
 - **`:app`**: Tablet Landscape Jetpack Compose UI (two-pane dashboard and single-thread chat assistant) using Hilt and MVVM Hybrid UI State.
 
@@ -26,3 +26,4 @@ Alternatively, set them as environment variables or system properties. If `DEVEX
 - [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).
 - [x] **`feature_002_data_parsing`**: Phase 1 JSON dataset parsing and cached `GameRepositoryImpl` in `:data` (`accepted`).
 - [x] **`feature_003_devexpert_client`**: DevExpert & Gemini OpenAI-compatible API client, data sources, and repositories in `:data` (`accepted`).
+- [x] **`feature_004_usecases`**: Core business interactors in `:usecases` for game queries, AI tactical insights, and conversational chat (`accepted`).
