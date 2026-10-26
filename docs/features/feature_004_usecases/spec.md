@@ -6,7 +6,7 @@
 * **`id`:** `feature_004_usecases`
 * **`area`:** `usecases`
 * **`depends_on`:** `["feature_002_data_parsing", "feature_003_devexpert_client"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement the core business interactors in the `:usecases` module that orchestrate application workflows between domain repositories and the presentation layer (`:app`). This includes retrieving Phase 1 match fixtures (`GetPhase1GamesUseCase`, `GetGameByRoundUseCase`), synthesizing match context to request AI tactical insights and practice drills (`GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`), and coordinating single-thread AI chat interactions grounded in match history (`GetChatMessagesUseCase`, `SendChatMessageUseCase`).
 * **Identified Ambiguities / Assumptions:**
@@ -216,55 +216,55 @@ No persistence changes required in `:usecases`. Persistence contracts remain iso
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `ARCHITECTURE.md`, and `CONSTRAINTS.md`. Verify topology is `Layer-Based (:domain, :usecases, :data, :app)`.
-- [ ] **Build Configuration (`usecases/build.gradle.kts`):**
-  - [ ] Remove `implementation(project(":data"))` to resolve Clean Architecture violation.
-  - [ ] Verify `implementation(project(":domain"))` is retained.
-  - [ ] Add `testImplementation(libs.junit)` and `testImplementation(libs.kotlinx.coroutines.test)`.
-- [ ] **Context Formatting (`:usecases`):**
-  - [ ] Implement `com.martorell.albert.basketcoach.usecases.format.GameContextFormatter` operating purely on `List<Game>`. Computes overall record, scoring averages, ball security (AST/TO), rebounding margins, foul averages, and round-by-round breakdown.
-- [ ] **Game Use Cases (`:usecases`):**
-  - [ ] Implement `GetPhase1GamesUseCase(gameRepository: GameRepository)`.
-  - [ ] Implement `GetGameByRoundUseCase(gameRepository: GameRepository)`.
-- [ ] **AI Tactical Analysis Use Cases (`:usecases`):**
-  - [ ] Implement `GenerateInsightsUseCase(gameRepository, aiAnalysisRepository, contextFormatter)`:
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `ARCHITECTURE.md`, and `CONSTRAINTS.md`. Verify topology is `Layer-Based (:domain, :usecases, :data, :app)`.
+- [x] **Build Configuration (`usecases/build.gradle.kts`):**
+  - [x] Remove `implementation(project(":data"))` to resolve Clean Architecture violation.
+  - [x] Verify `implementation(project(":domain"))` is retained.
+  - [x] Add `testImplementation(libs.junit)` and `testImplementation(libs.kotlinx.coroutines.test)`.
+- [x] **Context Formatting (`:usecases`):**
+  - [x] Implement `com.martorell.albert.basketcoach.usecases.format.GameContextFormatter` operating purely on `List<Game>`. Computes overall record, scoring averages, ball security (AST/TO), rebounding margins, foul averages, and round-by-round breakdown.
+- [x] **Game Use Cases (`:usecases`):**
+  - [x] Implement `GetPhase1GamesUseCase(gameRepository: GameRepository)`.
+  - [x] Implement `GetGameByRoundUseCase(gameRepository: GameRepository)`.
+- [x] **AI Tactical Analysis Use Cases (`:usecases`):**
+  - [x] Implement `GenerateInsightsUseCase(gameRepository, aiAnalysisRepository, contextFormatter)`:
     - Calls `gameRepository.getPhase1Games()`.
     - On success: formats context and calls `aiAnalysisRepository.getInsights(gameContext)`.
     - On error: propagates error without invoking AI repository.
-  - [ ] Implement `GetPracticeDrillsUseCase(gameRepository, aiAnalysisRepository, contextFormatter)`:
+  - [x] Implement `GetPracticeDrillsUseCase(gameRepository, aiAnalysisRepository, contextFormatter)`:
     - Calls `gameRepository.getPhase1Games()`.
     - On success: formats context and calls `aiAnalysisRepository.getDrills(gameContext)`.
     - On error: propagates error without invoking AI repository.
-- [ ] **Conversational Chat Use Cases (`:usecases`):**
-  - [ ] Implement `GetChatMessagesUseCase(chatRepository: ChatRepository)`.
-  - [ ] Implement `SendChatMessageUseCase(gameRepository, chatRepository, contextFormatter)`:
+- [x] **Conversational Chat Use Cases (`:usecases`):**
+  - [x] Implement `GetChatMessagesUseCase(chatRepository: ChatRepository)`.
+  - [x] Implement `SendChatMessageUseCase(gameRepository, chatRepository, contextFormatter)`:
     - Validates `messageText` is not blank (returns `DomainError.Generic` if blank).
     - Fetches games from `gameRepository.getPhase1Games()` for context enrichment.
     - If games load successfully, passes formatted context; if game loading fails, gracefully passes `gameContext = null`.
     - Calls `chatRepository.sendMessage(messageText.trim(), gameContext)`.
-- [ ] **Unit Tests & Test Doubles (`:usecases/src/test/kotlin`):**
-  - [ ] Create `FakeGameRepository`, `FakeAiAnalysisRepository`, and `FakeChatRepository`.
-  - [ ] Create `GameContextFormatterTest`: tests empty games list, normal games summary, and round breakdown text.
-  - [ ] Create `GetPhase1GamesUseCaseTest`: tests successful retrieval and repository error propagation.
-  - [ ] Create `GetGameByRoundUseCaseTest`: tests valid round query and not found error.
-  - [ ] Create `GenerateInsightsUseCaseTest`: tests successful orchestration and game repository failure propagation.
-  - [ ] Create `GetPracticeDrillsUseCaseTest`: tests successful drill orchestration and error propagation.
-  - [ ] Create `GetChatMessagesUseCaseTest`: tests message retrieval.
-  - [ ] Create `SendChatMessageUseCaseTest`: tests successful message sending with context, fallback without context when games fail, and blank message rejection.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew :usecases:test` and `./gradlew :usecases:assemble`.
-  - [ ] Execute full project check `./gradlew test assemble` to verify zero regression across `:domain`, `:data`, and `:usecases`.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Unit Tests & Test Doubles (`:usecases/src/test/kotlin`):**
+  - [x] Create `FakeGameRepository`, `FakeAiAnalysisRepository`, and `FakeChatRepository`.
+  - [x] Create `GameContextFormatterTest`: tests empty games list, normal games summary, and round breakdown text.
+  - [x] Create `GetPhase1GamesUseCaseTest`: tests successful retrieval and repository error propagation.
+  - [x] Create `GetGameByRoundUseCaseTest`: tests valid round query and not found error.
+  - [x] Create `GenerateInsightsUseCaseTest`: tests successful orchestration and game repository failure propagation.
+  - [x] Create `GetPracticeDrillsUseCaseTest`: tests successful drill orchestration and error propagation.
+  - [x] Create `GetChatMessagesUseCaseTest`: tests message retrieval.
+  - [x] Create `SendChatMessageUseCaseTest`: tests successful message sending with context, fallback without context when games fail, and blank message rejection.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew :usecases:test` and `./gradlew :usecases:assemble`.
+  - [x] Execute full project check `./gradlew test assemble` to verify zero regression across `:domain`, `:data`, and `:usecases`.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_004_usecases` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] Module boundary verified: `:usecases` depends ONLY on `:domain`; `implementation(project(":data"))` is completely eliminated.
-- [ ] Zero Android SDK framework dependencies (`android.*` imports absent) in `:usecases`.
-- [ ] All 11 Acceptance Scenarios (`Given/When/Then`) are satisfied with passing unit tests.
-- [ ] Cross-aggregate context enrichment (Constraint #11) is cleanly orchestrated in `:usecases` via `GameContextFormatter`.
-- [ ] Structured concurrency rules are respected across all suspend invocations.
-- [ ] `@compiler` verification evidence (`:usecases:test`, `:usecases:assemble`, full suite) is present and valid.
-- [ ] Structured validation report written to `docs/features/feature_004_usecases/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_004_usecases` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] Module boundary verified: `:usecases` depends ONLY on `:domain`; `implementation(project(":data"))` is completely eliminated.
+- [x] Zero Android SDK framework dependencies (`android.*` imports absent) in `:usecases`.
+- [x] All 11 Acceptance Scenarios (`Given/When/Then`) are satisfied with passing unit tests.
+- [x] Cross-aggregate context enrichment (Constraint #11) is cleanly orchestrated in `:usecases` via `GameContextFormatter`.
+- [x] Structured concurrency rules are respected across all suspend invocations.
+- [x] `@compiler` verification evidence (`:usecases:test`, `:usecases:assemble`, full suite) is present and valid.
+- [x] Structured validation report written to `docs/features/feature_004_usecases/validator/validation-report.md`.
