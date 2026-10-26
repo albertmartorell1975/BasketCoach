@@ -20,9 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.LossRed
 import com.martorell.albert.basketcoach.ui.theme.LossRedContainer
 import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
@@ -72,7 +77,7 @@ fun GameCard(
                 modifier = Modifier.testTag("GameResultBadge_Round_${game.round}")
             ) {
                 Text(
-                    text = if (isWin) "W" else "L",
+                    text = if (isWin) stringResource(R.string.wins_badge) else stringResource(R.string.losses_badge),
                     color = if (isWin) WinGreen else LossRed,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
@@ -89,14 +94,14 @@ fun GameCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Round ${game.round}",
+                        text = stringResource(R.string.round_number_format, game.round),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (game.isHomeGame) "HOME" else "AWAY",
+                        text = if (game.isHomeGame) stringResource(R.string.home_venue) else stringResource(R.string.away_venue),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -124,7 +129,7 @@ fun GameCard(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "${game.teamScore} - ${game.opponentScore}",
+                    text = stringResource(R.string.score_format, game.teamScore, game.opponentScore),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = if (isWin) WinGreen else MaterialTheme.colorScheme.onSurface
@@ -137,5 +142,29 @@ fun GameCard(
                 )
             }
         }
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun GameCardWinPreview() {
+    BasketCoachTheme {
+        GameCard(
+            game = DashboardPreviewData.sampleGames[2],
+            isSelected = true,
+            onClick = {}
+        )
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun GameCardLossPreview() {
+    BasketCoachTheme {
+        GameCard(
+            game = DashboardPreviewData.sampleGames[0],
+            isSelected = false,
+            onClick = {}
+        )
     }
 }

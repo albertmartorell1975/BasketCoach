@@ -16,11 +16,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Drill
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardTab
+import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 
 @Composable
 fun InsightsDrillsPane(
@@ -31,9 +36,9 @@ fun InsightsDrillsPane(
     modifier: Modifier = Modifier
 ) {
     val tabs = listOf(
-        DashboardTab.ALL to "All (${insights.size + drills.size})",
-        DashboardTab.INSIGHTS to "Insights (${insights.size})",
-        DashboardTab.DRILLS to "Drills (${drills.size})"
+        DashboardTab.ALL to stringResource(R.string.tab_all_format, insights.size + drills.size),
+        DashboardTab.INSIGHTS to stringResource(R.string.tab_insights_format, insights.size),
+        DashboardTab.DRILLS to stringResource(R.string.tab_drills_format, drills.size)
     )
 
     Column(
@@ -76,7 +81,7 @@ fun InsightsDrillsPane(
                 if (insights.isNotEmpty()) {
                     item(key = "header_insights") {
                         Text(
-                            text = "Tactical AI Insights",
+                            text = stringResource(R.string.tactical_ai_insights),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -93,7 +98,7 @@ fun InsightsDrillsPane(
                 if (drills.isNotEmpty()) {
                     item(key = "header_drills") {
                         Text(
-                            text = "Recommended Practice Drills",
+                            text = stringResource(R.string.recommended_practice_drills),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -106,5 +111,18 @@ fun InsightsDrillsPane(
                 }
             }
         }
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun InsightsDrillsPanePreview() {
+    BasketCoachTheme {
+        InsightsDrillsPane(
+            insights = DashboardPreviewData.sampleInsights,
+            drills = DashboardPreviewData.sampleDrills,
+            selectedTab = DashboardTab.ALL,
+            onTabSelected = {}
+        )
     }
 }

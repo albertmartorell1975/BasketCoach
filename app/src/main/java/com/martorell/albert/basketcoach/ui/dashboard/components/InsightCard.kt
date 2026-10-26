@@ -20,10 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
+import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.LossRed
 import com.martorell.albert.basketcoach.ui.theme.PiaAmber
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
@@ -98,7 +103,7 @@ fun InsightCard(
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Related Games:",
+                        text = stringResource(R.string.related_games_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(end = 6.dp)
@@ -113,7 +118,7 @@ fun InsightCard(
                                 color = MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 Text(
-                                    text = "R$round",
+                                    text = stringResource(R.string.round_chip_format, round),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = PiaNavy,
                                     fontWeight = FontWeight.Medium,
@@ -125,5 +130,25 @@ fun InsightCard(
                 }
             }
         }
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun InsightCardDefensePreview() {
+    BasketCoachTheme {
+        InsightCard(
+            insight = DashboardPreviewData.sampleInsights[0]
+        )
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun InsightCardOffensePreview() {
+    BasketCoachTheme {
+        InsightCard(
+            insight = DashboardPreviewData.sampleInsights[1]
+        )
     }
 }

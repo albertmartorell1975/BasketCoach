@@ -18,9 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Drill
+import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.PiaAmber
 import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
 
@@ -69,7 +74,7 @@ fun DrillCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Objective: ${drill.objective}",
+                text = stringResource(R.string.drill_objective_format, drill.objective),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -77,7 +82,7 @@ fun DrillCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Step-by-step Execution:",
+                text = stringResource(R.string.step_by_step_execution),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
@@ -107,5 +112,15 @@ fun DrillCard(
                 }
             }
         }
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun DrillCardPreview() {
+    BasketCoachTheme {
+        DrillCard(
+            drill = DashboardPreviewData.sampleDrills[0]
+        )
     }
 }

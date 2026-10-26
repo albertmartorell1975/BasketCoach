@@ -6,6 +6,10 @@ mainAgent: false
 model: pro
 skills:
   - skills/workflow-planner
+  - skills/compose-state-hoisting
+  - skills/compose-modifier-and-layout-style
+  - skills/design-system-governance
+  - skills/viewmodel-architecture-governance
 ---
 
 # System Prompt

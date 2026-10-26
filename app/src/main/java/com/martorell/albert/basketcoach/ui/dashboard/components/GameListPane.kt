@@ -19,9 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.LossRed
 import com.martorell.albert.basketcoach.ui.theme.WinGreen
 
@@ -60,26 +65,26 @@ fun GameListPane(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Phase 1 Record",
+                        text = stringResource(R.string.phase_1_record),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "$totalWins W",
+                            text = "$totalWins ${stringResource(R.string.wins_badge)}",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = WinGreen
                         )
                         Text(
-                            text = " - ",
+                            text = stringResource(R.string.record_divider),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "$totalLosses L",
+                            text = "$totalLosses ${stringResource(R.string.losses_badge)}",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = LossRed
@@ -94,12 +99,12 @@ fun GameListPane(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = String.format("Avg Scored: %.1f pts", avgPointsScored),
+                        text = stringResource(R.string.avg_scored_format, avgPointsScored),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = String.format("Avg Conceded: %.1f pts", avgPointsConceded),
+                        text = stringResource(R.string.avg_conceded_format, avgPointsConceded),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -115,7 +120,7 @@ fun GameListPane(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "Match Fixtures (${games.size})",
+            text = stringResource(R.string.match_fixtures_format, games.size),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -138,5 +143,17 @@ fun GameListPane(
                 )
             }
         }
+    }
+}
+
+@ComponentPreview
+@Composable
+private fun GameListPanePreview() {
+    BasketCoachTheme {
+        GameListPane(
+            games = DashboardPreviewData.sampleGames,
+            selectedGame = DashboardPreviewData.sampleGames[2],
+            onGameSelected = {}
+        )
     }
 }

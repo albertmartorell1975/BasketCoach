@@ -32,7 +32,7 @@ class DashboardScreenTest {
 
         composeTestRule.setContent {
             BasketCoachTheme {
-                DashboardScreen(
+                DashboardContent(
                     state = state,
                     onGameSelected = {},
                     onTabSelected = {},
@@ -59,7 +59,7 @@ class DashboardScreenTest {
 
         composeTestRule.setContent {
             BasketCoachTheme {
-                DashboardScreen(
+                DashboardContent(
                     state = state,
                     onGameSelected = { selected = it },
                     onTabSelected = {},
@@ -81,7 +81,7 @@ class DashboardScreenTest {
 
         composeTestRule.setContent {
             BasketCoachTheme {
-                DashboardScreen(
+                DashboardContent(
                     state = state,
                     onGameSelected = {},
                     onTabSelected = { clickedTab = it },
@@ -102,7 +102,7 @@ class DashboardScreenTest {
 
         composeTestRule.setContent {
             BasketCoachTheme {
-                DashboardScreen(
+                DashboardContent(
                     state = state,
                     onGameSelected = {},
                     onTabSelected = {},
@@ -122,7 +122,7 @@ class DashboardScreenTest {
 
         composeTestRule.setContent {
             BasketCoachTheme {
-                DashboardScreen(
+                DashboardContent(
                     state = state,
                     onGameSelected = {},
                     onTabSelected = {},
@@ -142,7 +142,7 @@ class DashboardScreenTest {
 
         composeTestRule.setContent {
             BasketCoachTheme {
-                DashboardScreen(
+                DashboardContent(
                     state = state,
                     onGameSelected = {},
                     onTabSelected = {},
@@ -156,5 +156,17 @@ class DashboardScreenTest {
         composeTestRule.onNodeWithText("Failed to load Phase 1 dataset").assertIsDisplayed()
         composeTestRule.onNodeWithTag("DashboardRetryButton").performClick()
         assertTrue(refreshed)
+    }
+
+    @Test
+    fun statefulDashboardScreen_rendersInitialState() {
+        composeTestRule.setContent {
+            BasketCoachTheme {
+                DashboardScreen(onNavigateToChat = {})
+            }
+        }
+
+        composeTestRule.onNodeWithTag("DashboardScreen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("GameListPane").assertIsDisplayed()
     }
 }

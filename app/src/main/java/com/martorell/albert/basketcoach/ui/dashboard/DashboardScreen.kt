@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,12 +22,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.ui.dashboard.components.GameListPane
 import com.martorell.albert.basketcoach.ui.dashboard.components.InsightsDrillsPane
@@ -40,10 +44,34 @@ import com.martorell.albert.basketcoach.ui.theme.LossRed
 import com.martorell.albert.basketcoach.ui.theme.PiaAmber
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
+import com.martorell.albert.basketcoach.ui.theme.TabletLandscapePreview
+
+@Composable
+fun DashboardScreen(
+    onNavigateToChat: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var uiState by remember { mutableStateOf(DashboardPreviewData.sampleUiState) }
+
+    DashboardContent(
+        state = uiState,
+        onGameSelected = { game: Game ->
+            uiState = uiState.copy(selectedGame = game)
+        },
+        onTabSelected = { tab: DashboardTab ->
+            uiState = uiState.copy(selectedTab = tab)
+        },
+        onNavigateToChat = onNavigateToChat,
+        onRefresh = {
+            uiState = DashboardPreviewData.sampleUiState
+        },
+        modifier = modifier
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(
+fun DashboardContent(
     state: DashboardUiState,
     onGameSelected: (Game) -> Unit,
     onTabSelected: (DashboardTab) -> Unit,
@@ -60,13 +88,13 @@ fun DashboardScreen(
                 title = {
                     Column {
                         Text(
-                            text = "BasketCoach",
+                            text = stringResource(R.string.dashboard_title),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                         Text(
-                            text = "CE Pia Sabadell Junior Blau • Phase 1 Analysis",
+                            text = stringResource(R.string.dashboard_subtitle),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
                         )
@@ -85,7 +113,7 @@ fun DashboardScreen(
                             .testTag("AskCoachAiButton")
                     ) {
                         Text(
-                            text = "Ask Coach AI",
+                            text = stringResource(R.string.ask_coach_ai),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -114,7 +142,7 @@ fun DashboardScreen(
                         CircularProgressIndicator(color = PiaPrimaryBlue)
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Analyzing Phase 1 Performance...",
+                            text = stringResource(R.string.loading_dashboard_analysis),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -130,7 +158,7 @@ fun DashboardScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Error Loading Dashboard",
+                            text = stringResource(R.string.error_loading_dashboard),
                             style = MaterialTheme.typography.titleMedium,
                             color = LossRed,
                             fontWeight = FontWeight.Bold
@@ -146,7 +174,7 @@ fun DashboardScreen(
                             onClick = onRefresh,
                             modifier = Modifier.testTag("DashboardRetryButton")
                         ) {
-                            Text("Retry")
+                            Text(text = stringResource(R.string.retry))
                         }
                     }
                 }
@@ -184,12 +212,40 @@ fun DashboardScreen(
     }
 }
 
-@Preview(name = "Tablet Landscape", device = "spec:width=1280dp,height=800dp,dpi=240,orientation=landscape", showBackground = true)
+@TabletLandscapePreview
 @Composable
-fun DashboardScreenPreview() {
+private fun DashboardContentSuccessPreview() {
     BasketCoachTheme {
-        DashboardScreen(
+        DashboardContent(
             state = DashboardPreviewData.sampleUiState,
+            onGameSelected = {},
+            onTabSelected = {},
+            onNavigateToChat = {},
+            onRefresh = {}
+        )
+    }
+}
+
+@TabletLandscapePreview
+@Composable
+private fun DashboardContentLoadingPreview() {
+    BasketCoachTheme {
+        DashboardContent(
+            state = DashboardUiState(isLoading = true),
+            onGameSelected = {},
+            onTabSelected = {},
+            onNavigateToChat = {},
+            onRefresh = {}
+        )
+    }
+}
+
+@TabletLandscapePreview
+@Composable
+private fun DashboardContentErrorPreview() {
+    BasketCoachTheme {
+        DashboardContent(
+            state = DashboardUiState(errorMessage = "Failed to load Phase 1 dataset"),
             onGameSelected = {},
             onTabSelected = {},
             onNavigateToChat = {},
