@@ -64,7 +64,7 @@
     "title": "Tablet Landscape Dashboard UI",
     "user_visible_behavior": "The coach sees a two-pane tablet layout displaying game summaries on one side and proactive insights/drills on the other.",
     "depends_on": [],
-    "status": "passing",
+    "status": "accepted",
     "verification": "Compose UI tests render the dashboard components correctly in a landscape tablet configuration using dummy data.",
     "evidence": "gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug testDebugUnitTest lintDebug - 80 tests passed (10 in :domain, 42 in :data, 19 in :usecases, 9 in :app including 8 Compose UI tests in DashboardScreenTest and NavigationTest), 0 failures. BUILD SUCCESSFUL.",
     "notes": "Follow DESIGN.md and Material 3 adaptive layouts.",
