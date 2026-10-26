@@ -4,13 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
+import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardTab
+import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +20,24 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BasketCoachTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                var uiState by remember { mutableStateOf(DashboardPreviewData.sampleUiState) }
+
+                DashboardScreen(
+                    state = uiState,
+                    onGameSelected = { game: Game ->
+                        uiState = uiState.copy(selectedGame = game)
+                    },
+                    onTabSelected = { tab: DashboardTab ->
+                        uiState = uiState.copy(selectedTab = tab)
+                    },
+                    onNavigateToChat = {
+                        // Single-thread chat navigation hooked in feature_006/feature_008
+                    },
+                    onRefresh = {
+                        uiState = DashboardPreviewData.sampleUiState
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BasketCoachTheme {
-        Greeting("Android")
     }
 }
