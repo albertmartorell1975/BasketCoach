@@ -49,7 +49,7 @@
       "feature_002_data_parsing",
       "feature_003_devexpert_client"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "GetPhase1GamesUseCase, GenerateInsightsUseCase, and SendChatMessageUseCase are implemented and tested.",
     "evidence": "",
     "notes": "",

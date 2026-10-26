@@ -31,5 +31,11 @@
 * 🔷 **`[DOCUMENTER · workflow-documenter]`**: Documented post-review architecture in `ARCHITECTURE.md` (Sections 4 & 5), updated `CONSTRAINTS.md` with durable data layer rules, updated `README.md` with AI provider configuration options, updated `docs/features/feature_003_devexpert_client/spec.md` with completed checklists and Section 8 post-review architectural refinements. Zero executable code modified.
 * 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Worktree consolidation completed. Feature status set to `accepted`. 52/52 unit tests passing.
 
+## Active Feature
+
+### `feature_004_usecases` — Implement Core Use Cases
+* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Initiated feature pipeline for `feature_004_usecases`. Created branch `feature/feature_004_usecases`. Delegating Stage 1 to `workflow-planner`.
+* 🔵 **`[PLANNER · workflow-planner]`**: Generated unified feature specification at `docs/features/feature_004_usecases/spec.md`. Identified and resolved Clean Architecture boundary violation in `usecases/build.gradle.kts` (removing `implementation(project(":data"))`). Designed 6 core domain interactors (`GetPhase1GamesUseCase`, `GetGameByRoundUseCase`, `GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`, `GetChatMessagesUseCase`, `SendChatMessageUseCase`) and `GameContextFormatter` fulfilling Constraint #11. Ready for human review.
+
 ## Next Steps
-- Proceed to `feature_004_usecases`.
+- Human Checkpoint Review: approve specification before Stage 2 (`workflow-implementer`).
