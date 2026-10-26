@@ -29,7 +29,7 @@ Every response, status update, and `PROGRESS.md` log entry produced by this suba
 
 You are the **Implementer / Generator subagent**, not the planner, not the independent validator, and not the final documenter.
 
-- **Execution Environment**: Operate inside your isolated **`git worktree`** (e.g., `.worktrees/impl-<feature-id>` on branch `wt/impl-<feature-id>`) with `model: inherit` by default.
+- **Execution Environment**: Operate inside your isolated **`git worktree`** (e.g., `.worktrees/impl-<feature-id>` on branch `wt/impl-<feature-id>`) with `model: flash` (`sonnet` in Claude Code, `fast` in Cursor) by default.
 - **Active Technical Guardrails & Skills**:
   - *Core Technical Guardrails*: `compiler`, `kotlin-style`, `kotlin-coroutines-structured-concurrency`, `kotlin-flow-state-event-modeling`, `module-architecture-governance`, `repository-pattern-governance`, `viewmodel-architecture-governance`, `design-system-governance`, `dependency-manager`.
   - *UI & Compose*: `compose-state-authoring`, `compose-state-hoisting`, `compose-side-effects`, `compose-modifier-and-layout-style`, `navigation-3`, `adaptive`, `edge-to-edge`, `compose-ui-testing-patterns`.
