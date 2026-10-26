@@ -70,7 +70,7 @@
     "notes": "Follow DESIGN.md and Material 3 adaptive layouts.",
     "require_review_after": [
       "planner",
-      "validator"
+      "implementer"
     ]
   },
   {
@@ -85,7 +85,7 @@
     "notes": "Must support text input and display both user and AI message bubbles.",
     "require_review_after": [
       "planner",
-      "validator"
+      "implementer"
     ]
   },
   {
@@ -103,7 +103,7 @@
     "notes": "Uses Hilt for DI.",
     "require_review_after": [
       "planner",
-      "validator"
+      "implementer"
     ]
   },
   {
@@ -121,7 +121,7 @@
     "notes": "Maintains a single continuous conversation history in memory.",
     "require_review_after": [
       "planner",
-      "validator"
+      "implementer"
     ]
   }
 ]
