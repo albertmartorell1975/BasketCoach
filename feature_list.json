@@ -66,7 +66,7 @@
     "depends_on": [
       "feature_001_domain_models"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "Compose UI tests render the navigation shell (NavRail + TopBar) and the Dashboard screen components (Hero card, 4 KPI cards, 14-round bar chart, 14-match table) in a landscape tablet configuration using preview data.",
     "evidence": "",
     "notes": "Strictly scoped to :app (Shell + DashboardScreen). Follow DESIGN.md, docs/ui/screens/dashboard_vertical/, and avatar_coach.png. Omit the Match Detail modal dialog.",

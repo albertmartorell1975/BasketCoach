@@ -31,14 +31,19 @@
 * 🔷 **`[DOCUMENTER · workflow-documenter]`**: Documented post-review architecture in `ARCHITECTURE.md` (Sections 4 & 5), updated `CONSTRAINTS.md` with durable data layer rules, updated `README.md` with AI provider configuration options, updated `docs/features/feature_003_devexpert_client/spec.md` with completed checklists and Section 8 post-review architectural refinements. Zero executable code modified.
 * 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Worktree consolidation completed. Feature status set to `accepted`. 52/52 unit tests passing.
 
-## Active Feature
-
 ### `feature_004_usecases` — Implement Core Use Cases
 * 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Initiated feature pipeline for `feature_004_usecases`. Created branch `feature/feature_004_usecases`. Delegating Stage 1 to `workflow-planner`.
 * 🔵 **`[PLANNER · workflow-planner]`**: Generated unified feature specification at `docs/features/feature_004_usecases/spec.md`. Identified and resolved Clean Architecture boundary violation in `usecases/build.gradle.kts` (removing `implementation(project(":data"))`). Designed 6 core domain interactors (`GetPhase1GamesUseCase`, `GetGameByRoundUseCase`, `GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`, `GetChatMessagesUseCase`, `SendChatMessageUseCase`) and `GameContextFormatter` fulfilling Constraint #11. Approved by human review.
 * 🟡 **`[IMPLEMENTER · workflow-implementer]`**: Implemented core domain interactors (`GetPhase1GamesUseCase`, `GetGameByRoundUseCase`, `GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`, `GetChatMessagesUseCase`, `SendChatMessageUseCase`) and `GameContextFormatter` in `:usecases`. Purged illicit `:data` dependency from `usecases/build.gradle.kts` enforcing 100% pure Kotlin JVM layer purity. Added lightweight fakes and unit tests covering all 11 Acceptance Scenarios. Ran `@compiler` verification (`./gradlew :usecases:test :usecases:assemble`) — 19/19 tests passed; full suite (`:domain:test :data:test :usecases:test`) — 71/71 tests passed, 0 failures. Status: `passing`.
 * 🟢 **`[VALIDATOR · workflow-validator]`**: Evaluated `feature_004_usecases` across 4 levels. Verdict: `accept`. All 11 Acceptance Scenarios verified with passing tests. Clean Architecture & Security audit confirmed pure Kotlin JVM purity in `:usecases` (zero `android.*` dependencies, illicit `:data` dependency removed). 19 unit tests in `:usecases` passing; 71/71 tests passing across the entire project with 0 failures.
 * 🔷 **`[DOCUMENTER · workflow-documenter]`**: Added comprehensive English KDoc across `:usecases`, `:domain`, and `:data` public interfaces and classes (`GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`, `SendChatMessageUseCase`, `AiAnalysisRepository`, `ChatRepository`, `ChatMapper`). Updated `ARCHITECTURE.md` (updated Section 1 and created Section 3 for `:usecases` interactor architecture and clean `:domain` dependency boundary). Updated `README.md` with `:usecases` interactors and progress. Marked all checklist items in `docs/features/feature_004_usecases/spec.md` as `[x]` and set status to `accepted`. Zero executable code lines altered.
+* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Worktree consolidation and GitHub PR delivery completed. Feature status set to `accepted`. 71/71 unit tests passing.
+
+## Active Feature
+
+### `feature_005_dashboard_ui` — Tablet Landscape Dashboard UI
+* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Initiated feature pipeline for `feature_005_dashboard_ui` from clean `develop` after splitting Anàlisi UI into `feature_006_analysis_ui`.
+* 🔵 **`[PLANNER · workflow-planner]`**: Generated unified feature specification at `docs/features/feature_005_dashboard_ui/spec.md`. Scoped 100% to `:app` (Application Shell + Navigation Rail + Top Bar + `DashboardScreen`) with zero changes to `:domain`, `:data`, or `:usecases`. Included comprehensive UI/UX Sketch -> Composable Mapping Table, authentic Phase 1 statistics matching `docs/ui/screens/dashboard_vertical/code.html`, graphic asset conversion rules for `avatar_coach.png` to `.webp`, omission of the Match Inspector modal per user decision, 100% Catalan localization, and Robolectric Compose UI testing strategy.
 
 ## Next Steps
-- Hand off to `workflow-orchestrator` for worktree consolidation and final commit.
+- Human review checkpoint (`require_review_after: "planner"`) before handing off to `workflow-implementer`.
