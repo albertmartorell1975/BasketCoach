@@ -15,5 +15,6 @@ kotlin {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":data"))
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
