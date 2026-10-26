@@ -1,7 +1,6 @@
 package com.martorell.albert.basketcoach.ui.dashboard.model
 
 import androidx.annotation.StringRes
-import com.martorell.albert.basketcoach.R
 
 data class DashboardUiState(
     val summary: Phase1SummaryUiModel,
@@ -15,8 +14,8 @@ data class Phase1SummaryUiModel(
     val losses: Int,
     val winPercentage: Double,
     val totalGames: Int,
-    @param:StringRes val categoryRes: Int = R.string.topbar_category,
-    @param:StringRes val teamNameRes: Int = R.string.hero_club_name
+    @param:StringRes val categoryRes: Int,
+    @param:StringRes val teamNameRes: Int
 )
 
 data class DashboardKpisUiModel(
@@ -65,7 +64,7 @@ data class RoundEvolutionUiModel(
     val piaScore: Int,
     val rivalScore: Int,
     val isWin: Boolean,
-    val scoreBadge: String? = null
+    val scoreBadge: String
 )
 
 data class MatchRowUiModel(

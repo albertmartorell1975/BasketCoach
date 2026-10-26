@@ -29,8 +29,9 @@ fun BasketCoachApp(
             .testTag("basketcoach_app_root")
     ) {
         BasketCoachNavRail(
-            isDestinationSelected = { appState.isDestinationSelected(it) },
-            onDestinationSelected = { appState.navigateToRailDestination(it) }
+            navOptions = BasketCoachAppState.NAV_OPTIONS,
+            isRouteSelected = { appState.isRouteSelected(it) },
+            onRouteSelected = { appState.onNavItemClick(it) }
         )
 
         Column(

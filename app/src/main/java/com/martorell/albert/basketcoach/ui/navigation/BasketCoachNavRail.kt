@@ -34,8 +34,9 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
 @Composable
 fun BasketCoachNavRail(
-    isDestinationSelected: @Composable (NavRailDestination) -> Boolean,
-    onDestinationSelected: (NavRailDestination) -> Unit,
+    navOptions: List<TopLevelRoute<out Any>> = BasketCoachAppState.NAV_OPTIONS,
+    isRouteSelected: @Composable (Any) -> Boolean,
+    onRouteSelected: (Any) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -52,32 +53,38 @@ fun BasketCoachNavRail(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            NavRailDestination.entries.forEach { destination ->
-                val isSelected = isDestinationSelected(destination)
+            navOptions.forEach { navOption ->
+                val isSelected = isRouteSelected(navOption.route)
                 val backgroundColor = if (isSelected) Color.White else Color.Transparent
                 val contentColor = if (isSelected) PiaNavy else Color.White.copy(alpha = 0.7f)
                 val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                val testTag = when (navOption.route) {
+                    DashboardRoute -> "nav_item_dashboard"
+                    AnalysisRoute -> "nav_item_analysis"
+                    ChatRoute -> "nav_item_chat"
+                    else -> "nav_item_${navOption.route}"
+                }
 
                 Column(
                     modifier = Modifier
                         .size(width = 64.dp, height = 56.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(backgroundColor)
-                        .clickable { onDestinationSelected(destination) }
+                        .clickable { onRouteSelected(navOption.route) }
                         .padding(horizontal = 4.dp, vertical = 6.dp)
-                        .testTag("nav_item_${destination.name.lowercase()}"),
+                        .testTag(testTag),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = destination.icon,
-                        contentDescription = stringResource(destination.titleRes),
+                        imageVector = navOption.icon,
+                        contentDescription = stringResource(navOption.titleRes),
                         tint = contentColor,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = stringResource(destination.titleRes),
+                        text = stringResource(navOption.titleRes),
                         color = contentColor,
                         fontSize = 12.sp,
                         lineHeight = 14.sp,
@@ -106,9 +113,8 @@ fun BasketCoachNavRail(
 private fun BasketCoachNavRailPreview() {
     BasketCoachTheme {
         BasketCoachNavRail(
-            isDestinationSelected = { it == NavRailDestination.DASHBOARD },
-            onDestinationSelected = {}
+            isRouteSelected = { it == DashboardRoute },
+            onRouteSelected = {}
         )
     }
 }
-

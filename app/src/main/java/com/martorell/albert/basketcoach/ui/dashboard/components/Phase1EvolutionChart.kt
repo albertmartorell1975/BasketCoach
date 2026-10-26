@@ -183,7 +183,7 @@ private fun RoundBarColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        if (round.isWin && round.scoreBadge != null) {
+        if (round.isWin && round.scoreBadge.isNotEmpty()) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))

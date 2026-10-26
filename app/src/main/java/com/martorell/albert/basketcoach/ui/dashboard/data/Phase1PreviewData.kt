@@ -53,20 +53,20 @@ object Phase1PreviewData {
 
     val evolution = ScoringEvolutionUiModel(
         rounds = listOf(
-            RoundEvolutionUiModel(1, "J1", 62, 78, false),
-            RoundEvolutionUiModel(2, "J2", 70, 79, false),
+            RoundEvolutionUiModel(1, "J1", 62, 78, false, ""),
+            RoundEvolutionUiModel(2, "J2", 70, 79, false, ""),
             RoundEvolutionUiModel(3, "J3", 71, 68, true, "W 71-68"),
-            RoundEvolutionUiModel(4, "J4", 62, 78, false),
-            RoundEvolutionUiModel(5, "J5", 65, 71, false),
-            RoundEvolutionUiModel(6, "J6", 64, 81, false),
-            RoundEvolutionUiModel(7, "J7", 63, 70, false),
-            RoundEvolutionUiModel(8, "J8", 66, 80, false),
+            RoundEvolutionUiModel(4, "J4", 62, 78, false, ""),
+            RoundEvolutionUiModel(5, "J5", 65, 71, false, ""),
+            RoundEvolutionUiModel(6, "J6", 64, 81, false, ""),
+            RoundEvolutionUiModel(7, "J7", 63, 70, false, ""),
+            RoundEvolutionUiModel(8, "J8", 66, 80, false, ""),
             RoundEvolutionUiModel(9, "J9", 68, 65, true, "W 68-65"),
             RoundEvolutionUiModel(10, "J10", 67, 65, true, "W 67-65"),
-            RoundEvolutionUiModel(11, "J11", 58, 72, false),
-            RoundEvolutionUiModel(12, "J12", 58, 74, false),
-            RoundEvolutionUiModel(13, "J13", 61, 75, false),
-            RoundEvolutionUiModel(14, "J14", 69, 76, false)
+            RoundEvolutionUiModel(11, "J11", 58, 72, false, ""),
+            RoundEvolutionUiModel(12, "J12", 58, 74, false, ""),
+            RoundEvolutionUiModel(13, "J13", 61, 75, false, ""),
+            RoundEvolutionUiModel(14, "J14", 69, 76, false, "")
         )
     )
 
