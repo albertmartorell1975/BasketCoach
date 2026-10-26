@@ -9,4 +9,5 @@
 .cxx
 
 # Temporary Multi-Agent Git Worktrees
-.worktrees/.kotlin/
+.worktrees/
+.kotlin/
