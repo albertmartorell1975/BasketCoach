@@ -11,6 +11,10 @@ import com.martorell.albert.basketcoach.domain.model.Venue
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardTab
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 
+/**
+ * Preview fixture data providing realistic Phase 1 matches, AI tactical insights,
+ * and practice drills for Compose Previews and isolated UI testing.
+ */
 object DashboardPreviewData {
 
     private val sampleVenue = Venue(

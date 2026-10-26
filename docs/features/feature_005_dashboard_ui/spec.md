@@ -6,7 +6,7 @@
 * **`id`:** `feature_005_dashboard_ui`
 * **`area`:** `app`
 * **`depends_on`:** `[]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement the presentation components and two-pane Tablet Landscape Dashboard screen in `:app` for the Junior Men's Interterritorial basketball coach. The dashboard displays the 14 Phase 1 match fixtures and box scores on one pane, and proactive tactical AI insights and recommended practice drills for Phase 2 preparation on the other. It includes Club Esportiu Pia Sabadell branding, Material 3 design tokens, realistic dummy data for tablet landscape Compose previews, and an automated Compose UI test suite.
 * **Identified Ambiguities / Assumptions:**
@@ -158,28 +158,28 @@ No persistence changes required. (In-memory presentation state).
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, and `compose-modifier-and-layout-style`. Confirm topology is `Layer-Based (:domain, :usecases, :data, :app)` and orientation is locked to landscape.
-- [ ] **Dependencies & Build Setup (`gradle/libs.versions.toml` & `app/build.gradle.kts`):**
-  - [ ] Add `robolectric = "4.14.1"` to `[versions]`.
-  - [ ] Add `robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }` to `[libraries]`.
-  - [ ] In `app/build.gradle.kts`, add:
+- [x] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, and `compose-modifier-and-layout-style`. Confirm topology is `Layer-Based (:domain, :usecases, :data, :app)` and orientation is locked to landscape.
+- [x] **Dependencies & Build Setup (`gradle/libs.versions.toml` & `app/build.gradle.kts`):**
+  - [x] Add `robolectric = "4.14.1"` to `[versions]`.
+  - [x] Add `robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }` to `[libraries]`.
+  - [x] In `app/build.gradle.kts`, add:
     - `testImplementation(libs.robolectric)`
     - `testImplementation(libs.androidx.compose.ui.test.junit4)`
     - Enable `testOptions { unitTests.isIncludeAndroidResources = true }`.
-- [ ] **Manifest Orientation Lock (`app/src/main/AndroidManifest.xml`):**
-  - [ ] Set `android:screenOrientation="sensorLandscape"` on `MainActivity`.
-- [ ] **Visual Identity & Theme (`app/src/main/java/.../ui/theme`):**
-  - [ ] Update `Color.kt` with Pia Sabadell palette:
+- [x] **Manifest Orientation Lock (`app/src/main/AndroidManifest.xml`):**
+  - [x] Set `android:screenOrientation="sensorLandscape"` on `MainActivity`.
+- [x] **Visual Identity & Theme (`app/src/main/java/.../ui/theme`):**
+  - [x] Update `Color.kt` with Pia Sabadell palette:
     - Primary: `PiaBlue` (`#0D47A1` / `#1565C0`)
     - Secondary: `PiaNavy` (`#002171`)
     - Accent: `PiaAmber` (`#FFA000`)
     - Win Pill: `WinGreen` (`#2E7D32`)
     - Loss Pill: `LossRed` (`#C62828`)
     - Neutral: `SlateBackground` (`#F8F9FA`), `CardBackground` (`#FFFFFF`).
-  - [ ] Update `Theme.kt` to apply the palette across `BasketCoachTheme`.
-- [ ] **UI State Models (`app/src/main/java/.../ui/dashboard/model`):**
-  - [ ] Implement `DashboardTab` enum (`INSIGHTS`, `DRILLS`, `ALL`).
-  - [ ] Implement `DashboardUiState` data class:
+  - [x] Update `Theme.kt` to apply the palette across `BasketCoachTheme`.
+- [x] **UI State Models (`app/src/main/java/.../ui/dashboard/model`):**
+  - [x] Implement `DashboardTab` enum (`INSIGHTS`, `DRILLS`, `ALL`).
+  - [x] Implement `DashboardUiState` data class:
     - `val games: List<Game> = emptyList()`
     - `val selectedGame: Game? = null`
     - `val insights: List<Insight> = emptyList()`
@@ -187,41 +187,41 @@ No persistence changes required. (In-memory presentation state).
     - `val selectedTab: DashboardTab = DashboardTab.ALL`
     - `val isLoading: Boolean = false`
     - `val errorMessage: String? = null`
-- [ ] **Preview & Mock Data (`app/src/main/java/.../ui/dashboard/preview`):**
-  - [ ] Implement `DashboardPreviewData` containing realistic Phase 1 games (R1..R14 with Pia Sabadell scores, 3 wins, 11 losses), sample AI insights (`DEFENSE`, `OFFENSE`, `SYNERGY`), and practice drills.
-- [ ] **UI Presentation Components (`app/src/main/java/.../ui/dashboard/components`):**
-  - [ ] Implement `GameCard(game: Game, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier)`.
-  - [ ] Implement `SelectedGameDetailCard(game: Game, modifier: Modifier = Modifier)`.
-  - [ ] Implement `GameListPane(games: List<Game>, selectedGame: Game?, onGameSelected: (Game) -> Unit, modifier: Modifier = Modifier)`.
-  - [ ] Implement `InsightCard(insight: Insight, modifier: Modifier = Modifier)`.
-  - [ ] Implement `DrillCard(drill: Drill, modifier: Modifier = Modifier)`.
-  - [ ] Implement `InsightsDrillsPane(insights: List<Insight>, drills: List<Drill>, selectedTab: DashboardTab, onTabSelected: (DashboardTab) -> Unit, modifier: Modifier = Modifier)`.
-- [ ] **Root Dashboard Screen (`app/src/main/java/.../ui/dashboard/DashboardScreen.kt`):**
-  - [ ] Implement stateless `DashboardScreen(state: DashboardUiState, onGameSelected: (Game) -> Unit, onTabSelected: (DashboardTab) -> Unit, onNavigateToChat: () -> Unit, onRefresh: () -> Unit, modifier: Modifier = Modifier)`.
-  - [ ] Layout structure: `Scaffold` with TopAppBar, Row with `GameListPane` (weight 0.42f) and `InsightsDrillsPane` (weight 0.58f), separated by a vertical divider.
-  - [ ] Handle loading state (`CircularProgressIndicator`) and error banner.
-  - [ ] Add `@Preview` for Tablet Landscape (`device = "spec:width=1280dp,height=800dp,dpi=240,orientation=landscape"`).
-- [ ] **Compose UI Tests (`app/src/test/java/.../ui/dashboard/DashboardScreenTest.kt`):**
-  - [ ] Configure `@RunWith(RobolectricTestRunner::class)` and `@Config(qualifiers = "w1280dp-h800dp-land")`.
-  - [ ] Test 1: Verify two-pane layout renders 14 games in Left Pane and insights/drills in Right Pane.
-  - [ ] Test 2: Verify game click triggers `onGameSelected`.
-  - [ ] Test 3: Verify tab selection toggles between Insights, Drills, and All.
-  - [ ] Test 4: Verify "Ask Coach AI" click triggers `onNavigateToChat`.
-  - [ ] Test 5: Verify loading and error states render correctly.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Run `./gradlew :app:testDebugUnitTest :app:assembleDebug`.
-  - [ ] Execute canonical gate command `./gradlew testDebugUnitTest lintDebug --parallel --build-cache`.
-  - [ ] Verify 100% test pass rate with zero warnings or errors.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Preview & Mock Data (`app/src/main/java/.../ui/dashboard/preview`):**
+  - [x] Implement `DashboardPreviewData` containing realistic Phase 1 games (R1..R14 with Pia Sabadell scores, 3 wins, 11 losses), sample AI insights (`DEFENSE`, `OFFENSE`, `SYNERGY`), and practice drills.
+- [x] **UI Presentation Components (`app/src/main/java/.../ui/dashboard/components`):**
+  - [x] Implement `GameCard(game: Game, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier)`.
+  - [x] Implement `SelectedGameDetailCard(game: Game, modifier: Modifier = Modifier)`.
+  - [x] Implement `GameListPane(games: List<Game>, selectedGame: Game?, onGameSelected: (Game) -> Unit, modifier: Modifier = Modifier)`.
+  - [x] Implement `InsightCard(insight: Insight, modifier: Modifier = Modifier)`.
+  - [x] Implement `DrillCard(drill: Drill, modifier: Modifier = Modifier)`.
+  - [x] Implement `InsightsDrillsPane(insights: List<Insight>, drills: List<Drill>, selectedTab: DashboardTab, onTabSelected: (DashboardTab) -> Unit, modifier: Modifier = Modifier)`.
+- [x] **Root Dashboard Screen (`app/src/main/java/.../ui/dashboard/DashboardScreen.kt`):**
+  - [x] Implement stateless `DashboardScreen(state: DashboardUiState, onGameSelected: (Game) -> Unit, onTabSelected: (DashboardTab) -> Unit, onNavigateToChat: () -> Unit, onRefresh: () -> Unit, modifier: Modifier = Modifier)`.
+  - [x] Layout structure: `Scaffold` with TopAppBar, Row with `GameListPane` (weight 0.42f) and `InsightsDrillsPane` (weight 0.58f), separated by a vertical divider.
+  - [x] Handle loading state (`CircularProgressIndicator`) and error banner.
+  - [x] Add `@Preview` for Tablet Landscape (`device = "spec:width=1280dp,height=800dp,dpi=240,orientation=landscape"`).
+- [x] **Compose UI Tests (`app/src/test/java/.../ui/dashboard/DashboardScreenTest.kt`):**
+  - [x] Configure `@RunWith(RobolectricTestRunner::class)` and `@Config(qualifiers = "w1280dp-h800dp-land")`.
+  - [x] Test 1: Verify two-pane layout renders 14 games in Left Pane and insights/drills in Right Pane.
+  - [x] Test 2: Verify game click triggers `onGameSelected`.
+  - [x] Test 3: Verify tab selection toggles between Insights, Drills, and All.
+  - [x] Test 4: Verify "Ask Coach AI" click triggers `onNavigateToChat`.
+  - [x] Test 5: Verify loading and error states render correctly.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Run `./gradlew :app:testDebugUnitTest :app:assembleDebug`.
+  - [x] Execute canonical gate command `./gradlew testDebugUnitTest lintDebug --parallel --build-cache`.
+  - [x] Verify 100% test pass rate with zero warnings or errors.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_005_dashboard_ui` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] Tablet Landscape constraint is respected; `MainActivity` configured with `sensorLandscape`.
-- [ ] Stateless composable architecture with hoisted callbacks is properly applied.
-- [ ] Material 3 and Pia Sabadell visual tokens are implemented cleanly without hardcoded layout sizing on root modifiers.
-- [ ] Compose UI tests verify two-pane landscape layout, game selection, tab switching, and chat navigation triggers using semantics assertions.
-- [ ] `@compiler` verification evidence (`:app:testDebugUnitTest`, `:app:assembleDebug`, and gate command) is present and valid.
-- [ ] Structured validation report written to `docs/features/feature_005_dashboard_ui/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_005_dashboard_ui` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] Tablet Landscape constraint is respected; `MainActivity` configured with `sensorLandscape`.
+- [x] Stateless composable architecture with hoisted callbacks is properly applied.
+- [x] Material 3 and Pia Sabadell visual tokens are implemented cleanly without hardcoded layout sizing on root modifiers.
+- [x] Compose UI tests verify two-pane landscape layout, game selection, tab switching, and chat navigation triggers using semantics assertions.
+- [x] `@compiler` verification evidence (`:app:testDebugUnitTest`, `:app:assembleDebug`, and gate command) is present and valid.
+- [x] Structured validation report written to `docs/features/feature_005_dashboard_ui/validator/validation-report.md`.

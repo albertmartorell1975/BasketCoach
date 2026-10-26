@@ -46,6 +46,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
 import com.martorell.albert.basketcoach.ui.theme.TabletLandscapePreview
 
+/**
+ * Stateful dashboard entry composable for the BasketCoach tablet interface.
+ *
+ * Manages UI interactions and local screen state during UI-first feature phase,
+ * delegating pure presentation and layout rendering to [DashboardContent].
+ *
+ * @param onNavigateToChat Callback triggered when the coach clicks "Ask Coach AI".
+ * @param modifier Modifier applied to the outer layout.
+ */
 @Composable
 fun DashboardScreen(
     onNavigateToChat: () -> Unit,
@@ -69,6 +78,22 @@ fun DashboardScreen(
     )
 }
 
+/**
+ * Stateless dashboard presentation composable displaying Phase 1 match analysis in a tablet landscape layout.
+ *
+ * Renders a responsive two-pane interface consisting of:
+ * - Left pane (~42% width): [GameListPane] showing team record, selected game box score, and fixture cards.
+ * - Right pane (~58% width): [InsightsDrillsPane] featuring tabbed AI tactical insights and practice drills.
+ *
+ * Also handles centralized loading indicator and error banner states.
+ *
+ * @param state Current [DashboardUiState] to render.
+ * @param onGameSelected Callback when a match fixture is selected.
+ * @param onTabSelected Callback when switching between All, Insights, and Drills tabs.
+ * @param onNavigateToChat Callback when the user requests navigation to Coach AI.
+ * @param onRefresh Callback when retrying after an error.
+ * @param modifier Modifier applied to the root [Scaffold].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardContent(

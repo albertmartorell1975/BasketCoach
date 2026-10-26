@@ -8,6 +8,14 @@ private const val THEME_GROUP = "Themes"
 private const val ACCESSIBILITY_GROUP = "Accessibility"
 private const val MAX_FONT_SCALE = 1.5f
 
+/**
+ * Multi-preview annotation configured for Android Tablet Landscape (1280x800dp, 240dpi).
+ *
+ * Emits three preview configurations:
+ * 1. Light Theme
+ * 2. Dark Theme
+ * 3. Light Theme with 1.5x font scale for accessibility validation
+ */
 @Preview(
     name = "Tablet Landscape - Light",
     group = THEME_GROUP,
@@ -29,6 +37,9 @@ private const val MAX_FONT_SCALE = 1.5f
 )
 annotation class TabletLandscapePreview
 
+/**
+ * Multi-preview annotation for individual reusable UI components across Light and Dark themes.
+ */
 @Preview(name = "Component - Light", group = THEME_GROUP, showBackground = true)
 @Preview(name = "Component - Dark", group = THEME_GROUP, showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 annotation class ComponentPreview

@@ -34,6 +34,18 @@ import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
 import com.martorell.albert.basketcoach.ui.theme.WinGreen
 import com.martorell.albert.basketcoach.ui.theme.WinGreenContainer
 
+/**
+ * Clickable match fixture card representing an individual Phase 1 game.
+ *
+ * Highlights game outcome with colored W/L badges, opponent name, match date,
+ * home/away venue indication, final score, and point differential. Visually indicates
+ * active selection state with an elevated container and primary accent border.
+ *
+ * @param game The [Game] domain model to render.
+ * @param isSelected Whether this card is currently selected by the coach.
+ * @param onClick Callback triggered when the card is clicked.
+ * @param modifier Modifier applied to the outer [Card].
+ */
 @Composable
 fun GameCard(
     game: Game,

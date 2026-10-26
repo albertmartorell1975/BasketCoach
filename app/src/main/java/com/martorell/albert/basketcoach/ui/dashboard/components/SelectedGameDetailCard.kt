@@ -29,6 +29,18 @@ import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.LossRed
 import com.martorell.albert.basketcoach.ui.theme.WinGreen
 
+/**
+ * Detailed box score metrics inspector card for the currently selected game.
+ *
+ * Breaks down four core tactical categories:
+ * - Rebounds: offensive, defensive, and total.
+ * - Playmaking: assists, turnovers, and AST/TO ratio.
+ * - Shooting: 2PT% and 3PT%.
+ * - Discipline: personal fouls committed and FT%.
+ *
+ * @param game The selected [Game] whose team statistics will be displayed.
+ * @param modifier Modifier applied to the outer [Card].
+ */
 @Composable
 fun SelectedGameDetailCard(
     game: Game,

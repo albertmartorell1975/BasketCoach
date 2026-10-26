@@ -27,6 +27,20 @@ import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewDat
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 
+/**
+ * Right-hand dashboard pane displaying tactical AI insights and practice drills with tab filtering.
+ *
+ * Supports switching between:
+ * - [DashboardTab.ALL]: Displays both insights and practice drills sequentially.
+ * - [DashboardTab.INSIGHTS]: Shows only synthesized tactical AI insights.
+ * - [DashboardTab.DRILLS]: Shows only curated practice drill recommendations.
+ *
+ * @param insights List of [Insight] domain models.
+ * @param drills List of [Drill] domain models.
+ * @param selectedTab Currently active [DashboardTab] filter.
+ * @param onTabSelected Callback invoked when a tab is selected.
+ * @param modifier Modifier applied to the outer [Column].
+ */
 @Composable
 fun InsightsDrillsPane(
     insights: List<Insight>,

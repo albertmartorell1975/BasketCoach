@@ -190,4 +190,59 @@ BasketCoach integrates with the DevExpert Inference API and provides seamless fa
    - All network DTO properties (`InsightDto`, `DrillDto`, `AiAnalysisResponseDto`, `ChatCompletionRequestDto`, `ChatCompletionResponseDto`) are strictly mandatory without defaults, and the system prompt explicitly forbids omitting keys or setting them to null.
 5. **Exception Translation & Error Mapping (`data.util.ExceptionMapper`)**:
    - `Throwable.toDomainError()` maps timeouts to `DomainError.Network.Timeout`, 401 to `DomainError.Network.Unauthorized`, 500..599 to `DomainError.Network.ServerError`, and IO errors to `DomainError.Network.NoInternet`.
-   - `safeCall` preserves structured concurrency by immediately rethrowing `CancellationException`.
+   
+---
+
+## 7. UI & Presentation Layer Governance (`:app`)
+
+The `:app` module delivers a specialized **Tablet Landscape** interface optimized for basketball coaches reviewing historical game data and tactical insights.
+
+```text
+[ MainActivity (sensorLandscape) ]
+              │
+              ▼
+[ Navigation (NavHost + Destinations) ] ── (BasketCoachAppState)
+              │
+              ▼
+    [ DashboardScreen ] (Stateful Screen - State Management)
+              │
+              ▼
+    [ DashboardContent ] (Stateless Content - Scaffold & TopAppBar)
+        ├── Loading State (CircularProgressIndicator)
+        ├── Error State (Error Banner + Retry)
+        └── Success State (Two-Pane Horizontal Layout)
+                 ├── Left Pane (42%): [ GameListPane ]
+                 │         ├── TeamRecordCard (Wins/Losses summary)
+                 │         ├── SelectedGameDetailCard (Detailed box score)
+                 │         └── LazyColumn of [ GameCard ] (14 Phase 1 fixtures)
+                 │
+                 ├── [ VerticalDivider ]
+                 │
+                 └── Right Pane (58%): [ InsightsDrillsPane ]
+                           ├── PrimaryTabRow (All / Insights / Drills)
+                           └── LazyColumn
+                                 ├── [ InsightCard ] (DEFENSE, OFFENSE, SYNERGY, GENERAL)
+                                 └── [ DrillCard ] (Focus area, objective, step execution)
+```
+
+### Key UI Architectural Patterns
+
+1. **Navigation Structure (`navigation`)**:
+   - `Destination`: Type-safe `@Serializable` sealed interface defining root destinations (`Dashboard`, `Chat`).
+   - `BasketCoachAppState`: Hoisted state holder managing `NavHostController`, backstack destination observation, and global snackbar dispatch via `SnackbarHostState`.
+   - `Navigation`: Root composable graph encapsulating `NavHost` with `Destination.Dashboard` as `startDestination` and bottom-anchored `SnackbarHost`.
+
+2. **Stateful Screen / Stateless Content Separation**:
+   - **Stateful Screen (`DashboardScreen`)**: Collects UI state, binds high-level screen interactions, and hoists navigation callbacks (`onNavigateToChat`). Prepared for ViewModel integration in `feature_007_dashboard_integration`.
+   - **Stateless Content (`DashboardContent`)**: Pure composable receiving immutable `DashboardUiState` and emitting hoisted lambda callbacks (`onGameSelected`, `onTabSelected`, `onNavigateToChat`, `onRefresh`). Enables fast, deterministic Compose UI testing and multi-preview rendering.
+
+3. **Tablet Landscape Two-Pane Layout**:
+   - Locked to `android:screenOrientation="sensorLandscape"` in `AndroidManifest.xml` (tablet landscape target `w1280dp-h800dp`).
+   - Horizontal split separated by a subtle `VerticalDivider`:
+     - **`GameListPane` (~42% weight)**: Team summary record card (3W-11L, scoring and conceding averages), expandable/inspector `SelectedGameDetailCard` (rebounds, AST/TO, shooting splits, fouls), and scrollable list of 14 Phase 1 matches with W/L status badges.
+     - **`InsightsDrillsPane` (~58% weight)**: Dynamic tab row filtering between all recommendations, AI tactical insights categorized with color-coded chips, and structured practice drills with step-by-step instructions.
+
+4. **Design Tokens & Visual Identity (`ui/theme`)**:
+   - Club Esportiu Pia Sabadell color scheme (`PiaPrimaryBlue`, `PiaNavy`, basketball accent `PiaAmber`, `WinGreen`, `LossRed`).
+   - Multi-preview annotations (`@TabletLandscapePreview`, `@ComponentPreview`) providing light, dark, and 1.5x font scale accessibility verification directly in Android Studio.
+

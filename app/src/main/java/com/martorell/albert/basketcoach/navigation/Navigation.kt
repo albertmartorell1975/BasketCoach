@@ -11,6 +11,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
 
+/**
+ * Root navigation graph composable for the BasketCoach application.
+ *
+ * Configures the primary [NavHost] with [Destination.Dashboard] as the start destination
+ * and wires up the global [SnackbarHost] anchored to the bottom.
+ *
+ * @param appState The root application state holder containing the navigation controller.
+ */
 @Composable
 fun Navigation(
     appState: BasketCoachAppState = rememberBasketCoachAppState()

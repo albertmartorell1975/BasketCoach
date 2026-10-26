@@ -35,6 +35,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
 import com.martorell.albert.basketcoach.ui.theme.WinGreen
 
+/**
+ * Card composable presenting an AI tactical insight extracted from Phase 1 game analysis.
+ *
+ * Visualizes the insight category via color-coded chips (e.g., DEFENSE, OFFENSE, SYNERGY, GENERAL),
+ * insight headline, explanatory tactical context, and related game round indicator chips.
+ *
+ * @param insight The [Insight] domain model to render.
+ * @param modifier Modifier applied to the outer [Card].
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InsightCard(

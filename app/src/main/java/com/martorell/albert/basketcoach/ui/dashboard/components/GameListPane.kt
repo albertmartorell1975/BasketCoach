@@ -30,6 +30,15 @@ import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.LossRed
 import com.martorell.albert.basketcoach.ui.theme.WinGreen
 
+/**
+ * Left-hand dashboard pane displaying team record summary, selected box score details,
+ * and a scrollable fixture list of all 14 Phase 1 matches.
+ *
+ * @param games List of all [Game] models for Phase 1.
+ * @param selectedGame Currently selected [Game] for detailed box score metrics, or null.
+ * @param onGameSelected Callback invoked when a game fixture card is clicked.
+ * @param modifier Modifier applied to the outer [Column].
+ */
 @Composable
 fun GameListPane(
     games: List<Game>,

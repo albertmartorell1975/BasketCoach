@@ -29,6 +29,15 @@ import com.martorell.albert.basketcoach.ui.theme.ComponentPreview
 import com.martorell.albert.basketcoach.ui.theme.PiaAmber
 import com.martorell.albert.basketcoach.ui.theme.PiaPrimaryBlue
 
+/**
+ * Card composable presenting a practice drill recommendation.
+ *
+ * Displays drill focus area badge, drill title, coaching objective,
+ * and step-by-step numbered tactical execution instructions.
+ *
+ * @param drill The [Drill] domain model to present.
+ * @param modifier Modifier applied to the outer [Card].
+ */
 @Composable
 fun DrillCard(
     drill: Drill,

@@ -27,3 +27,4 @@ Alternatively, set them as environment variables or system properties. If `DEVEX
 - [x] **`feature_002_data_parsing`**: Phase 1 JSON dataset parsing and cached `GameRepositoryImpl` in `:data` (`accepted`).
 - [x] **`feature_003_devexpert_client`**: DevExpert & Gemini OpenAI-compatible API client, data sources, and repositories in `:data` (`accepted`).
 - [x] **`feature_004_usecases`**: Core business interactors in `:usecases` for game queries, AI tactical insights, and conversational chat (`accepted`).
+- [x] **`feature_005_dashboard_ui`**: Tablet Landscape two-pane dashboard UI, components, previews, and Compose UI tests in `:app` (`accepted`).
