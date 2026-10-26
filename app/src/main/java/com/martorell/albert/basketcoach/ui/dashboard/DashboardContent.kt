@@ -15,7 +15,11 @@ import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardHeroCar
 import com.martorell.albert.basketcoach.ui.dashboard.components.KpiCardRow
 import com.martorell.albert.basketcoach.ui.dashboard.components.Phase1EvolutionChart
 import com.martorell.albert.basketcoach.ui.dashboard.components.Phase1MatchesTable
+import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
 @Composable
@@ -38,5 +42,14 @@ fun DashboardContent(
         KpiCardRow(kpis = uiState.kpis)
         Phase1EvolutionChart(evolution = uiState.evolution)
         Phase1MatchesTable(matches = uiState.matches)
+    }
+}
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun DashboardContentPreview() {
+    BasketCoachTheme {
+        DashboardContent(uiState = Phase1PreviewData.uiState)
     }
 }

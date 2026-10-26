@@ -33,7 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardKpisUiModel
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRed
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRedBg
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
@@ -547,3 +551,13 @@ private fun KpiCardBase(
         }
     }
 }
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun KpiCardRowPreview() {
+    BasketCoachTheme {
+        KpiCardRow(kpis = Phase1PreviewData.kpis)
+    }
+}
+

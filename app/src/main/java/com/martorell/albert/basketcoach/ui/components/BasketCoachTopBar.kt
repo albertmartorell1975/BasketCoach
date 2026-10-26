@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaOutline
 import com.martorell.albert.basketcoach.ui.theme.PiaSuccessGreen
@@ -162,3 +165,13 @@ fun BasketCoachTopBar(
         )
     }
 }
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun BasketCoachTopBarPreview() {
+    BasketCoachTheme {
+        BasketCoachTopBar()
+    }
+}
+

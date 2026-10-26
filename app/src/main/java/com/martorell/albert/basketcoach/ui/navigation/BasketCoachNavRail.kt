@@ -27,6 +27,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
 @Composable
@@ -96,3 +99,16 @@ fun BasketCoachNavRail(
         )
     }
 }
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun BasketCoachNavRailPreview() {
+    BasketCoachTheme {
+        BasketCoachNavRail(
+            isDestinationSelected = { it == NavRailDestination.DASHBOARD },
+            onDestinationSelected = {}
+        )
+    }
+}
+

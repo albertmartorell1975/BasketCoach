@@ -29,7 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.Phase1SummaryUiModel
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRed
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRedBg
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
@@ -209,5 +213,14 @@ fun DashboardHeroCard(
                 }
             }
         }
+    }
+}
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun DashboardHeroCardPreview() {
+    BasketCoachTheme {
+        DashboardHeroCard(summary = Phase1PreviewData.summary)
     }
 }

@@ -30,7 +30,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.MatchRowUiModel
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRed
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRedBg
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
@@ -410,3 +414,13 @@ private fun TableDataRow(match: MatchRowUiModel) {
             .background(PiaOutline.copy(alpha = 0.15f))
     )
 }
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun Phase1MatchesTablePreview() {
+    BasketCoachTheme {
+        Phase1MatchesTable(matches = Phase1PreviewData.matches)
+    }
+}
+
