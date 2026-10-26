@@ -49,6 +49,16 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
 
+/**
+ * Horizontal row of four key performance indicator (KPI) metric cards:
+ * 1. Average Scoring (points vs opponent, net differential, progress bar).
+ * 2. Rebounds & Differential (total, offensive/defensive breakdown, tactical orange border accent).
+ * 3. Shooting Efficiency (eFG% headline, 2P/3P/FT mini stat boxes, navy progress bar).
+ * 4. Game Control (AST/TO ratio headline, AST and TO volume pills).
+ *
+ * @param kpis KPI metrics model for Phase 1.
+ * @param modifier Layout modifier applied to the row container.
+ */
 @Composable
 fun KpiCardRow(
     kpis: DashboardKpisUiModel,

@@ -28,6 +28,15 @@ private val PiaLightColorScheme = lightColorScheme(
     onError = PiaWhite
 )
 
+/**
+ * Core Material 3 theme wrapper for the BasketCoach application.
+ *
+ * Configures the custom Pia Sabadell color scheme, typography hierarchy, and shape tokens.
+ *
+ * @param darkTheme Whether system dark theme is active (defaults to light scheme).
+ * @param dynamicColor Whether dynamic system color is enabled (disabled to preserve Pia brand identity).
+ * @param content Composable tree to be wrapped by the theme.
+ */
 @Composable
 fun BasketCoachTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

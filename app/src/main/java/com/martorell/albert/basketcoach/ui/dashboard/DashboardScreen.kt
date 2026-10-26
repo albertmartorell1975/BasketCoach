@@ -10,6 +10,15 @@ import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 
+/**
+ * Entry composable for the Phase 1 Basketball Dashboard.
+ *
+ * Provides default static preview state [Phase1PreviewData.uiState] and forwards it to
+ * [DashboardContent] for layout rendering.
+ *
+ * @param modifier Layout modifier applied to the screen container.
+ * @param uiState State object containing Phase 1 summary, KPIs, evolution chart data, and match table rows.
+ */
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,

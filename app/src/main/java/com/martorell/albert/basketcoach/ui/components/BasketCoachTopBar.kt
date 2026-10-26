@@ -44,6 +44,14 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurface
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
 
+/**
+ * Fixed 64dp white top bar for the tablet landscape application shell.
+ *
+ * Displays the application brand title, competition category pill ("Junior Masculí Interterritorial"),
+ * green verified dataset status pill, and Head Coach profile avatar with name label.
+ *
+ * @param modifier Layout modifier applied to the top bar container.
+ */
 @Composable
 fun BasketCoachTopBar(
     modifier: Modifier = Modifier

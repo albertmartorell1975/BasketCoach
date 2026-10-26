@@ -46,6 +46,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainerLow
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
 
+/**
+ * High-density statistical table rendering all 14 Phase 1 fixtures across 16 statistical columns.
+ *
+ * Supports horizontal scrolling while maintaining legible 12sp typography, distinct win/loss
+ * row highlights, and score badge color coding.
+ *
+ * @param matches Ordered list of 14 match row models.
+ * @param modifier Layout modifier applied to the table container.
+ */
 @Composable
 fun Phase1MatchesTable(
     matches: List<MatchRowUiModel>,

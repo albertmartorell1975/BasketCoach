@@ -12,8 +12,17 @@ import com.martorell.albert.basketcoach.ui.dashboard.model.ScoringEvolutionUiMod
 import com.martorell.albert.basketcoach.ui.dashboard.model.ScoringKpiUiModel
 import com.martorell.albert.basketcoach.ui.dashboard.model.ShootingKpiUiModel
 
+/**
+ * Static authentic preview and fallback dataset for Phase 1 of the Junior Men's Interterritorial competition.
+ *
+ * Models the complete 14-game record (3 Victories, 11 Defeats) of CEB Escola Pia Sabadell,
+ * matching official statistics parsed from `dataset.json`.
+ */
 object Phase1PreviewData {
 
+    /**
+     * Phase 1 summary baseline with 3 wins, 11 losses, 21.4% win rate over 14 games.
+     */
     val summary = Phase1SummaryUiModel(
         wins = 3,
         losses = 11,
@@ -23,6 +32,9 @@ object Phase1PreviewData {
         teamNameRes = R.string.hero_club_name
     )
 
+    /**
+     * Aggregated KPI metrics for Phase 1 (scoring 64.6, rebounds 22.8, eFG% 40.5%, AST/TO 0.59).
+     */
     val kpis = DashboardKpisUiModel(
         scoring = ScoringKpiUiModel(
             averageScore = 64.6,
@@ -51,6 +63,9 @@ object Phase1PreviewData {
         )
     )
 
+    /**
+     * 14-round scoring evolution data points with green win badges on J3, J9, and J10.
+     */
     val evolution = ScoringEvolutionUiModel(
         rounds = listOf(
             RoundEvolutionUiModel(1, "J1", 62, 78, false, ""),
@@ -70,6 +85,9 @@ object Phase1PreviewData {
         )
     )
 
+    /**
+     * Complete list of 14 Phase 1 matches with 16 statistical columns per match.
+     */
     val matches = listOf(
         MatchRowUiModel(
             roundNumber = 1,
@@ -409,6 +427,9 @@ object Phase1PreviewData {
         )
     )
 
+    /**
+     * Root [DashboardUiState] aggregating all Phase 1 baseline summary, KPIs, chart, and table data.
+     */
     val uiState = DashboardUiState(
         summary = summary,
         kpis = kpis,

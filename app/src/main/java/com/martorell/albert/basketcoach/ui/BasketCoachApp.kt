@@ -17,6 +17,15 @@ import com.martorell.albert.basketcoach.ui.navigation.Navigation
 import com.martorell.albert.basketcoach.ui.navigation.rememberBasketCoachAppState
 import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
+/**
+ * Root composable for the BasketCoach tablet landscape application shell.
+ *
+ * Coordinates the fixed 80dp navy [BasketCoachNavRail] on the left and a content column
+ * containing the 64dp white [BasketCoachTopBar] and the active screen viewport managed by [Navigation].
+ *
+ * @param appState Hoisted state holder managing navigation controller and top-level routes.
+ * @param modifier Modifier to be applied to the root container layout.
+ */
 @Composable
 fun BasketCoachApp(
     appState: BasketCoachAppState = rememberBasketCoachAppState(),

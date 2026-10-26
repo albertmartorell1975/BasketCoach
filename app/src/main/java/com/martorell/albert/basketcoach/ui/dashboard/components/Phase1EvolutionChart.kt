@@ -42,6 +42,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurface
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
 
+/**
+ * 14-round scoring evolution bar chart comparing CEB Pia Sabadell vs opponent scores per match.
+ *
+ * Winning rounds (J3, J9, J10) are highlighted with success green bars, floating score badges
+ * (e.g. "W 71-68"), and bold green X-axis labels. Losses are rendered in standard navy vs slate.
+ *
+ * @param evolution Scoring evolution model containing round-by-round score data.
+ * @param modifier Layout modifier applied to the chart container.
+ */
 @Composable
 fun Phase1EvolutionChart(
     evolution: ScoringEvolutionUiModel,

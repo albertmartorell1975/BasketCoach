@@ -22,6 +22,13 @@ import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
+/**
+ * Scrollable presentation container assembling the four primary Phase 1 dashboard sections:
+ * [DashboardHeroCard], [KpiCardRow], [Phase1EvolutionChart], and [Phase1MatchesTable].
+ *
+ * @param uiState Immutable UI state containing complete Phase 1 metric models.
+ * @param modifier Layout modifier applied to the scrollable column.
+ */
 @Composable
 fun DashboardContent(
     uiState: DashboardUiState,

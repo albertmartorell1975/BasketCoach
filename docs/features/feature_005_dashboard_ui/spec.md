@@ -6,7 +6,7 @@
 * **`id`:** `feature_005_dashboard_ui`
 * **`area`:** `app`
 * **`depends_on`:** `["feature_001_domain_models"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement the tablet landscape application shell (fixed 80dp Navy Navigation Rail + 64dp White Top Bar with Coach Jordi profile avatar) and the Phase 1 Dashboard screen displaying the baseline hero summary card (3V-11D, 21.4%), 4 KPI metric cards, a 14-round scoring evolution bar chart (with green win badges for J3, J9, J10), and the consolidated 14-match 16-column statistical table. All text must be fully localized in **both Catalan and Spanish** (`res/values/strings.xml` and `res/values-es/strings.xml`).
 * **Identified Ambiguities / Assumptions:**
@@ -241,54 +241,54 @@ so I can quickly assess team strengths and systemic weaknesses to plan Phase 2 p
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, and `DESIGN.md`. Ensure zero modifications to `:domain`, `:data`, or `:usecases`.
-- [ ] **Dependencies & Gradle Configuration (`gradle/libs.versions.toml` & `app/build.gradle.kts`):**
-  - [ ] Add `robolectric = "4.14.1"` to `libs.versions.toml`.
-  - [ ] Add `testImplementation(libs.robolectric)` and Compose testing dependencies to `app/build.gradle.kts`.
-  - [ ] Enable `isIncludeAndroidResources = true` in `app/build.gradle.kts` under `android.testOptions.unitTests`.
-- [ ] **Manifest & Orientation (`app/src/main/AndroidManifest.xml`):**
-  - [ ] Configure `android:screenOrientation="sensorLandscape"` on `MainActivity`.
-- [ ] **Graphic Assets Conversion (`app/src/main/res/drawable/`):**
-  - [ ] Convert `docs/features/feature_005_dashboard_ui/ui/resources/avatar_coach.png` to `app/src/main/res/drawable/ic_avatar_coach.webp`.
-  - [ ] Convert `docs/features/feature_005_dashboard_ui/ui/resources/basketcoach_logo.png` to `app/src/main/res/drawable/ic_basketcoach_logo.webp`.
-- [ ] **Bilingual String Resources (`app/src/main/res/`):**
-  - [ ] Implement all string keys in Catalan at `app/src/main/res/values/strings.xml`.
-  - [ ] Implement all corresponding string keys in Spanish at `app/src/main/res/values-es/strings.xml`.
-- [ ] **Theme & Color Tokens (`app/src/main/java/com/martorell/albert/basketcoach/ui/theme/`):**
-  - [ ] Implement Pia Sabadell color palette in `Color.kt` (`PiaNavy`, `PiaTacticalOrange`, `PiaSuccessGreen`, `PiaDangerRed`, etc.).
-  - [ ] Update `Theme.kt` with fixed Pia light scheme and `dynamicColor = false`.
-- [ ] **Navigation & Shell Components (`app/src/main/java/com/martorell/albert/basketcoach/ui/`):**
-  - [ ] Create `Destinations.kt` (`DashboardRoute`, `AnalysisRoute`, `ChatRoute`, `TopLevelRoute`, `navigatePoppingUpToStartDestination`), `BasketCoachAppState.kt`, and `Navigation.kt`.
-  - [ ] Implement `BasketCoachNavRail.kt` (80dp, Navy, 3 destinations, active container styling).
-  - [ ] Implement `BasketCoachTopBar.kt` (64dp, White, title, verified green pill, avatar + coach info).
-  - [ ] Implement `PlaceholderScreen.kt` for Anàlisi and Chat.
-  - [ ] Implement `BasketCoachApp.kt` assembling NavRail + TopBar + active `Navigation(appState)` viewport.
-  - [ ] Update `MainActivity.kt` to launch `BasketCoachApp`.
-- [ ] **Dashboard UI Models & Authentic Preview Data (`ui/dashboard/`):**
-  - [ ] Implement immutable models in `ui/dashboard/model/DashboardUiState.kt`.
-  - [ ] Populate `ui/dashboard/data/Phase1PreviewData.kt` with authentic 14-game dataset and KPI totals matching `dataset.json` and `code.html`.
-- [ ] **Dashboard Screen Composables (`ui/dashboard/components/` & `ui/dashboard/`):**
-  - [ ] Implement `DashboardHeroCard.kt` (Phase 1 balance 3V-11D, 21.4%, 14 partits).
-  - [ ] Implement `KpiCardRow.kt` (4 cards: Anotació Mitjana, Rebots with Tactical Orange accent bar, eFG%, Control de Joc).
-  - [ ] Implement `Phase1EvolutionChart.kt` (14-round Pia vs Rival bar chart, J3/J9/J10 green highlights and badges, green X-axis labels).
-  - [ ] Implement `Phase1MatchesTable.kt` (14 matches, 16 columns, W/L color coding and score badges, bold Pia Sabadell).
-  - [ ] Implement `DashboardContent.kt` assembling the 4 sections in a vertical scrollable column.
-  - [ ] Implement `DashboardScreen.kt` stateful entry composable providing `Phase1PreviewData.uiState`.
-- [ ] **Robolectric Compose UI Testing (`app/src/test/`):**
-  - [ ] Implement `NavigationTest.kt` verifying NavRail rendering and destination switching.
-  - [ ] Implement `DashboardScreenTest.kt` verifying Hero card, 4 KPI cards, Evolution chart, and 14-match table rows.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Run `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug`.
-  - [ ] Verify zero compilation errors, zero lint errors, and 100% test pass rate.
-  - [ ] Record verification evidence in `PROGRESS.md` and set `feature_005_dashboard_ui` status to `"passing"`.
+- [x] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, and `DESIGN.md`. Ensure zero modifications to `:domain`, `:data`, or `:usecases`.
+- [x] **Dependencies & Gradle Configuration (`gradle/libs.versions.toml` & `app/build.gradle.kts`):**
+  - [x] Add `robolectric = "4.14.1"` to `libs.versions.toml`.
+  - [x] Add `testImplementation(libs.robolectric)` and Compose testing dependencies to `app/build.gradle.kts`.
+  - [x] Enable `isIncludeAndroidResources = true` in `app/build.gradle.kts` under `android.testOptions.unitTests`.
+- [x] **Manifest & Orientation (`app/src/main/AndroidManifest.xml`):**
+  - [x] Configure `android:screenOrientation="sensorLandscape"` on `MainActivity`.
+- [x] **Graphic Assets Conversion (`app/src/main/res/drawable/`):**
+  - [x] Convert `docs/features/feature_005_dashboard_ui/ui/resources/avatar_coach.png` to `app/src/main/res/drawable/ic_avatar_coach.webp`.
+  - [x] Convert `docs/features/feature_005_dashboard_ui/ui/resources/basketcoach_logo.png` to `app/src/main/res/drawable/ic_basketcoach_logo.webp`.
+- [x] **Bilingual String Resources (`app/src/main/res/`):**
+  - [x] Implement all string keys in Catalan at `app/src/main/res/values/strings.xml`.
+  - [x] Implement all corresponding string keys in Spanish at `app/src/main/res/values-es/strings.xml`.
+- [x] **Theme & Color Tokens (`app/src/main/java/com/martorell/albert/basketcoach/ui/theme/`):**
+  - [x] Implement Pia Sabadell color palette in `Color.kt` (`PiaNavy`, `PiaTacticalOrange`, `PiaSuccessGreen`, `PiaDangerRed`, etc.).
+  - [x] Update `Theme.kt` with fixed Pia light scheme and `dynamicColor = false`.
+- [x] **Navigation & Shell Components (`app/src/main/java/com/martorell/albert/basketcoach/ui/`):**
+  - [x] Create `Destinations.kt` (`DashboardRoute`, `AnalysisRoute`, `ChatRoute`, `TopLevelRoute`, `navigatePoppingUpToStartDestination`), `BasketCoachAppState.kt`, and `Navigation.kt`.
+  - [x] Implement `BasketCoachNavRail.kt` (80dp, Navy, 3 destinations, active container styling).
+  - [x] Implement `BasketCoachTopBar.kt` (64dp, White, title, verified green pill, avatar + coach info).
+  - [x] Implement `PlaceholderScreen.kt` for Anàlisi and Chat.
+  - [x] Implement `BasketCoachApp.kt` assembling NavRail + TopBar + active `Navigation(appState)` viewport.
+  - [x] Update `MainActivity.kt` to launch `BasketCoachApp`.
+- [x] **Dashboard UI Models & Authentic Preview Data (`ui/dashboard/`):**
+  - [x] Implement immutable models in `ui/dashboard/model/DashboardUiState.kt`.
+  - [x] Populate `ui/dashboard/data/Phase1PreviewData.kt` with authentic 14-game dataset and KPI totals matching `dataset.json` and `code.html`.
+- [x] **Dashboard Screen Composables (`ui/dashboard/components/` & `ui/dashboard/`):**
+  - [x] Implement `DashboardHeroCard.kt` (Phase 1 balance 3V-11D, 21.4%, 14 partits).
+  - [x] Implement `KpiCardRow.kt` (4 cards: Anotació Mitjana, Rebots with Tactical Orange accent bar, eFG%, Control de Joc).
+  - [x] Implement `Phase1EvolutionChart.kt` (14-round Pia vs Rival bar chart, J3/J9/J10 green highlights and badges, green X-axis labels).
+  - [x] Implement `Phase1MatchesTable.kt` (14 matches, 16 columns, W/L color coding and score badges, bold Pia Sabadell).
+  - [x] Implement `DashboardContent.kt` assembling the 4 sections in a vertical scrollable column.
+  - [x] Implement `DashboardScreen.kt` stateful entry composable providing `Phase1PreviewData.uiState`.
+- [x] **Robolectric Compose UI Testing (`app/src/test/`):**
+  - [x] Implement `NavigationTest.kt` verifying NavRail rendering and destination switching.
+  - [x] Implement `DashboardScreenTest.kt` verifying Hero card, 4 KPI cards, Evolution chart, and 14-match table rows.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Run `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug`.
+  - [x] Verify zero compilation errors, zero lint errors, and 100% test pass rate.
+  - [x] Record verification evidence in `PROGRESS.md` and set `feature_005_dashboard_ui` status to `"passing"`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
-- [ ] Implementation stays strictly within `feature_005_dashboard_ui` scope (`WIP=1`) and `:app` module. Zero modifications to `:domain`, `:data`, or `:usecases`.
-- [ ] All 7 Acceptance Scenarios satisfied with real Composable rendering.
-- [ ] Both Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`) are fully defined with matching keys and zero missing string resources.
-- [ ] Match Inspector Modal is completely omitted per user decision.
-- [ ] Graphic assets properly converted to `.webp` in `app/src/main/res/drawable/` (`ic_avatar_coach.webp`, `ic_basketcoach_logo.webp`).
-- [ ] `@compiler` verification evidence is valid: `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug` passing with zero errors.
-- [ ] Structured validation report written to `docs/features/feature_005_dashboard_ui/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_005_dashboard_ui` scope (`WIP=1`) and `:app` module. Zero modifications to `:domain`, `:data`, or `:usecases`.
+- [x] All 7 Acceptance Scenarios satisfied with real Composable rendering.
+- [x] Both Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`) are fully defined with matching keys and zero missing string resources.
+- [x] Match Inspector Modal is completely omitted per user decision.
+- [x] Graphic assets properly converted to `.webp` in `app/src/main/res/drawable/` (`ic_avatar_coach.webp`, `ic_basketcoach_logo.webp`).
+- [x] `@compiler` verification evidence is valid: `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug` passing with zero errors.
+- [x] Structured validation report written to `docs/features/feature_005_dashboard_ui/validator/validation-report.md`.

@@ -27,6 +27,13 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurface
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
 
+/**
+ * Clean placeholder screen composable displayed for features planned in subsequent phases (e.g. Anàlisi, Chat).
+ *
+ * @param title Section title to display in the placeholder card.
+ * @param subtitle Secondary category or descriptor text.
+ * @param modifier Layout modifier applied to the root container.
+ */
 @Composable
 fun PlaceholderScreen(
     title: String,

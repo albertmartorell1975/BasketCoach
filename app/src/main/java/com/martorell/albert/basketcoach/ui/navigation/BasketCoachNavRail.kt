@@ -32,6 +32,17 @@ import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
+/**
+ * Fixed 80dp navy navigation rail displaying top-level application destinations for tablet landscape.
+ *
+ * Renders destination items with custom pill styling, active state backgrounds, and strict
+ * minimum 12sp typography.
+ *
+ * @param navOptions List of top-level route descriptors to display.
+ * @param isRouteSelected Predicate determining if a route is currently selected.
+ * @param onRouteSelected Callback invoked when a destination is clicked.
+ * @param modifier Layout modifier applied to the rail container.
+ */
 @Composable
 fun BasketCoachNavRail(
     navOptions: List<TopLevelRoute<out Any>> = BasketCoachAppState.NAV_OPTIONS,

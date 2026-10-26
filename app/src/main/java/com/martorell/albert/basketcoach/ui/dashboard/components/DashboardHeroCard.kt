@@ -43,6 +43,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurface
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
 
+/**
+ * High-density hero card summarizing the Phase 1 competitive balance (3 Victories - 11 Defeats, 21.4%).
+ *
+ * Displays competition badges ("LÍNIA BASE FASE 1", verified dataset tag), club headline,
+ * category and team identifiers, and a right-aligned 14-match summary badge.
+ *
+ * @param summary Data model containing Phase 1 record and resource identifiers.
+ * @param modifier Layout modifier applied to the hero card container.
+ */
 @Composable
 fun DashboardHeroCard(
     summary: Phase1SummaryUiModel,
