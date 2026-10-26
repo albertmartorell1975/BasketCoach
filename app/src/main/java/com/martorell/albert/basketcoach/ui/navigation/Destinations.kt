@@ -7,25 +7,35 @@ import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.martorell.albert.basketcoach.R
+import kotlinx.serialization.Serializable
 
-enum class NavDestination(
+@Serializable
+object DashboardRoute
+
+@Serializable
+object AnalysisRoute
+
+@Serializable
+object ChatRoute
+
+enum class NavRailDestination(
     @param:StringRes val titleRes: Int,
     val icon: ImageVector,
-    val route: String
+    val route: Any
 ) {
     DASHBOARD(
         titleRes = R.string.nav_dashboard,
         icon = Icons.Filled.Dashboard,
-        route = "dashboard"
+        route = DashboardRoute
     ),
     ANALYSIS(
         titleRes = R.string.nav_analysis,
         icon = Icons.Filled.Insights,
-        route = "analysis"
+        route = AnalysisRoute
     ),
     CHAT(
         titleRes = R.string.nav_chat,
         icon = Icons.Filled.Forum,
-        route = "chat"
+        route = ChatRoute
     )
 }

@@ -31,8 +31,8 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
 @Composable
 fun BasketCoachNavRail(
-    selectedDestination: NavDestination,
-    onDestinationSelected: (NavDestination) -> Unit,
+    isDestinationSelected: @Composable (NavRailDestination) -> Boolean,
+    onDestinationSelected: (NavRailDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -49,8 +49,8 @@ fun BasketCoachNavRail(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            NavDestination.entries.forEach { destination ->
-                val isSelected = destination == selectedDestination
+            NavRailDestination.entries.forEach { destination ->
+                val isSelected = isDestinationSelected(destination)
                 val backgroundColor = if (isSelected) Color.White else Color.Transparent
                 val contentColor = if (isSelected) PiaNavy else Color.White.copy(alpha = 0.7f)
                 val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -62,7 +62,7 @@ fun BasketCoachNavRail(
                         .background(backgroundColor)
                         .clickable { onDestinationSelected(destination) }
                         .padding(horizontal = 4.dp, vertical = 6.dp)
-                        .testTag("nav_item_${destination.route}"),
+                        .testTag("nav_item_${destination.name.lowercase()}"),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
