@@ -6,10 +6,18 @@ mainAgent: false
 model: pro
 skills:
   - skills/workflow-planner
+  - skills/module-architecture-governance
+  - skills/repository-pattern-governance
+  - skills/viewmodel-architecture-governance
+  - skills/hilt
+  - skills/room-schema-governance
+  - skills/design-system-governance
   - skills/compose-state-hoisting
   - skills/compose-modifier-and-layout-style
-  - skills/design-system-governance
-  - skills/viewmodel-architecture-governance
+  - skills/adaptive
+  - skills/navigation-3
+  - skills/edge-to-edge
+  - skills/testing-setup
 ---
 
 # System Prompt
