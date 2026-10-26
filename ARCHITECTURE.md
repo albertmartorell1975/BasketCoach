@@ -4,17 +4,22 @@
 
 BasketCoach is structured around a **Layer-Based Clean Architecture** topology across four primary modules:
 
-```mermaid
-flowchart TD
-    app[":app (UI & Presentation)"]
-    usecases[":usecases (Interactors / Business Logic)"]
-    data[":data (Repositories & Data Sources)"]
-    domain[":domain (Entities & Contracts)"]
-
-    app --> usecases
-    app --> data
-    usecases --> domain
-    data --> domain
+```text
+      +-----------------------------------+
+      | :app (UI & Presentation)          |
+      +-----------------------------------+
+             |                     |
+             v                     v
++-------------------------+ +----------------------------------+
+| :usecases (Interactors) | | :data (Repositories & Sources)   |
++-------------------------+ +----------------------------------+
+             |                     |
+             |                     |
+             +--------+   +--------+
+                      v   v
+      +-----------------------------------+
+      | :domain (Entities & Contracts)    |
+      +-----------------------------------+
 ```
 
 ### Module Responsibilities & Dependencies
@@ -45,85 +50,39 @@ The `:domain` module is the innermost layer and embodies the core business rules
 
 ## 3. Core Domain Entities & Taxonomy
 
-```mermaid
-classDiagram
-    direction TB
-    class Game {
-        +Int round
-        +String date
-        +String time
-        +Venue venue
-        +String homeTeam
-        +String awayTeam
-        +Score finalScore
-        +TeamStats homeStats
-        +TeamStats awayStats
-        +Boolean isHomeGame
-        +Int teamScore
-        +Int opponentScore
-        +Boolean isWin
-        +String opponentName
-        +TeamStats teamStats
-        +TeamStats opponentStats
-        +Int pointDifferential
-    }
+```text
+[ Game ]
+ ├─ round: Int
+ ├─ date: String
+ ├─ time: String
+ ├─ isHomeGame: Boolean
+ ├─ isWin: Boolean
+ ├─ pointDifferential: Int
+ │
+ ├──> [ Score ] (homePoints, awayPoints)
+ ├──> [ Venue ] (city, arena, address)
+ └──> [ TeamStats ] (homeStats, awayStats)
+       ├─ points, totalRebounds, assists, steals, blocks
+       ├─ turnovers, personalFouls
+       └─ fg2Pct, fg3Pct, ftPct, efgPct...
 
-    class TeamStats {
-        +Double ftPct
-        +Double fg2Pct
-        +Double fg3Pct
-        +Double efgPct
-        +Int offensiveRebounds
-        +Int defensiveRebounds
-        +Int totalRebounds
-        +Int turnovers
-        +Int assists
-        +Double astToRatio
-        +Int steals
-        +Int blocks
-        +Int secondChancePoints
-        +Int fastBreakPoints
-        +Int personalFouls
-        +Int points
-    }
+[ Insight ]
+ ├─ id: String
+ ├─ title: String
+ ├─ description: String
+ └─ category: InsightCategory
 
-    class Score {
-        +Int homePoints
-        +Int awayPoints
-    }
+[ Drill ]
+ ├─ id: String
+ ├─ name: String
+ ├─ objective: String
+ └─ focusArea: String
 
-    class Venue {
-        +String city
-        +String arena
-        +String address
-    }
-
-    class Insight {
-        +String id
-        +String title
-        +String description
-        +InsightCategory category
-        +List~Int~ relatedGameRounds
-    }
-
-    class Drill {
-        +String id
-        +String name
-        +String objective
-        +List~String~ instructions
-        +String focusArea
-    }
-
-    class ChatMessage {
-        +String id
-        +MessageSender sender
-        +String text
-        +Long timestamp
-    }
-
-    Game --> Score
-    Game --> Venue
-    Game --> TeamStats
+[ ChatMessage ]
+ ├─ id: String
+ ├─ sender: MessageSender
+ ├─ text: String
+ └─ timestamp: Long
 ```
 
 ### Domain Repositories (Contracts in `:domain`)
@@ -137,12 +96,20 @@ classDiagram
 
 The `:data` module provides repository implementations and data sources while keeping `:domain` isolated from serialization annotations and transport schemas.
 
-```mermaid
-flowchart LR
-    Resource["dataset.json (Classpath Resource)"] -->|"InputStream"| Source["GameLocalDataSourceImpl (Dispatchers.IO)"]
-    Source -->|"List<GameDto>"| Repo["GameRepositoryImpl"]
-    Repo -->|"safeCall"| Mapper["GameMapper.toDomain()"]
-    Repo -->|"Result<List<Game>, DomainError>"| UseCases[":usecases Layer"]
+```text
+[ dataset.json (Classpath Resource) ]
+                 |
+                 v (InputStream)
+[ GameLocalDataSourceImpl (Dispatchers.IO) ]
+                 |
+                 v (List<GameDto>)
+[ GameRepositoryImpl ]
+                 |
+                 v (safeCall + GameMapper.toDomain())
+[ Result<List<Game>, DomainError> ]
+                 |
+                 v
+[ :usecases Layer ]
 ```
 
 ### Key Architectural Patterns for Historical Games
@@ -163,16 +130,26 @@ flowchart LR
 
 BasketCoach integrates with the DevExpert Inference API and provides seamless fallback to Google Gemini's OpenAI-compatible endpoint.
 
-```mermaid
-flowchart TD
-    Remote["DevExpert / Gemini Inference API"] <-->|"POST /v1/chat/completions"| AiRemote["AiRemoteDataSourceImpl (OkHttp)"]
-    AiRemote -->|"AiAnalysisResponseDto"| RepoAnalysis["AiAnalysisRepositoryImpl"]
-    RepoAnalysis <-->|"read/save"| LocalAnalysis["AiAnalysisLocalDataSource (In-Memory SSOT)"]
-    RepoAnalysis -->|"safeCall + toDomain()"| UseCasesAnalysis["AiAnalysisRepository"]
-
-    AiRemote -->|"Completion Text"| RepoChat["ChatRepositoryImpl"]
-    RepoChat <-->|"read/save"| LocalChat["ChatLocalDataSource (In-Memory SSOT)"]
-    RepoChat -->|"safeCall"| UseCasesChat["ChatRepository"]
+```text
+       [ DevExpert / Gemini Inference API ]
+                         ^
+                         | (POST /v1/chat/completions)
+                         v
+       [ AiRemoteDataSourceImpl (OkHttp) ]
+                         |
+        +----------------+----------------+
+        | (AiAnalysisResponseDto)         | (Completion Text)
+        v                                 v
+[ AiAnalysisRepositoryImpl ]      [ ChatRepositoryImpl ]
+        ^                                 ^
+        | (read/save)                     | (read/save)
+        v                                 v
+[ AiAnalysisLocalDataSource ]     [ ChatLocalDataSource ]
+       (In-Memory SSOT)                  (In-Memory SSOT)
+        |                                 |
+        | (safeCall + toDomain)           | (safeCall)
+        v                                 v
+[ AiAnalysisRepository ]          [ ChatRepository ]
 ```
 
 ### Key Architectural Patterns for AI Integration
