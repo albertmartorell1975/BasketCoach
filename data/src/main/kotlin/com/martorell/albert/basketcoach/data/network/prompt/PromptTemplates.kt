@@ -26,7 +26,22 @@ object PromptTemplates {
               "title": "Concise headline",
               "description": "Tactical explanation and data evidence",
               "category": "OFFENSE" | "DEFENSE" | "SYNERGY" | "GENERAL",
-              "relatedGameRounds": [1, 5, 8]
+              "relatedGameRounds": [1, 5, 8],
+              "type": "STRENGTH" | "IMPROVEMENT",
+              "contextTag": "e.g. Fase Ofensiva · Pintura",
+              "metric": {
+                "label": "Metric name",
+                "value": "58.4%",
+                "unit": "%",
+                "deltaText": "+8.2% sobre mitjana",
+                "sentiment": "POSITIVE",
+                "evidenceLabel": "Evidència Digital",
+                "evidenceValue": "14 Partits",
+                "datasetKey": "dataset:paint_eff"
+              },
+              "footerNote": "Summary observation",
+              "priority": "Crítica #1",
+              "exploreChatPrompt": "Suggested query to explore this area in chat"
             }
           ],
           "drills": [

@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * Structured DTO representing AI-generated tactical analysis and recommended practice drills.
- * All fields are strictly mandatory.
  *
  * @property insights Analytical findings extracted from past games.
  * @property drills Actionable practice drills targeting identified weaknesses or strengths.
@@ -15,18 +14,38 @@ data class AiAnalysisResponseDto(
     @SerialName("insights")
     val insights: List<InsightDto>,
     @SerialName("drills")
-    val drills: List<DrillDto>
+    val drills: List<DrillDto> = emptyList()
+)
+
+/**
+ * Structured metric data attached to a tactical insight.
+ */
+@Serializable
+data class InsightMetricDto(
+    @SerialName("label")
+    val label: String,
+    @SerialName("value")
+    val value: String,
+    @SerialName("unit")
+    val unit: String = "",
+    @SerialName("deltaText")
+    val deltaText: String? = null,
+    @SerialName("sentiment")
+    val sentiment: String = "NEUTRAL",
+    @SerialName("evidenceLabel")
+    val evidenceLabel: String? = null,
+    @SerialName("evidenceValue")
+    val evidenceValue: String? = null,
+    @SerialName("datasetKey")
+    val datasetKey: String? = null,
+    @SerialName("comparison")
+    val comparison: String? = null,
+    @SerialName("delta")
+    val delta: String? = null
 )
 
 /**
  * DTO representing a single tactical insight.
- * All fields are strictly mandatory.
- *
- * @property id Unique identifier.
- * @property title Concise title of the insight.
- * @property description Detailed tactical assessment.
- * @property category Category string ("OFFENSE", "DEFENSE", "SYNERGY", "GENERAL").
- * @property relatedGameRounds Competition round numbers where this pattern was observed.
  */
 @Serializable
 data class InsightDto(
@@ -39,18 +58,23 @@ data class InsightDto(
     @SerialName("category")
     val category: String,
     @SerialName("relatedGameRounds")
-    val relatedGameRounds: List<Int>
+    val relatedGameRounds: List<Int> = emptyList(),
+    @SerialName("type")
+    val type: String = "IMPROVEMENT",
+    @SerialName("contextTag")
+    val contextTag: String = "",
+    @SerialName("metric")
+    val metric: InsightMetricDto? = null,
+    @SerialName("footerNote")
+    val footerNote: String? = null,
+    @SerialName("priority")
+    val priority: String? = null,
+    @SerialName("exploreChatPrompt")
+    val exploreChatPrompt: String? = null
 )
 
 /**
  * DTO representing a tactical practice drill.
- * All fields are strictly mandatory.
- *
- * @property id Unique identifier.
- * @property name Title of the drill.
- * @property objective Primary skill or tactical objective.
- * @property instructions Step-by-step instructions.
- * @property focusArea Basketball focus area.
  */
 @Serializable
 data class DrillDto(

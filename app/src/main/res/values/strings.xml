@@ -1,45 +1,91 @@
 <resources>
     <string name="app_name">BasketCoach</string>
-    <string name="dashboard_title">BasketCoach</string>
-    <string name="dashboard_subtitle">CE Pia Sabadell Junior Blau • Phase 1 Analysis</string>
-    <string name="ask_coach_ai">Ask Coach AI</string>
-    <string name="phase_1_record">Phase 1 Record</string>
-    <string name="wins_badge">W</string>
-    <string name="losses_badge">L</string>
-    <string name="record_divider"> - </string>
-    <string name="avg_scored_format">Avg Scored: %.1f pts</string>
-    <string name="avg_conceded_format">Avg Conceded: %.1f pts</string>
-    <string name="round_number_format">Round %1$d</string>
-    <string name="home_venue">HOME</string>
-    <string name="away_venue">AWAY</string>
-    <string name="score_format">%1$d - %2$d</string>
-    <string name="match_fixtures_format">Match Fixtures (%1$d)</string>
-    <string name="round_box_score_format">Round %1$d Box Score</string>
-    <string name="vs_opponent_venue_format">vs %1$s (%2$s)</string>
-    <string name="home_title_case">Home</string>
-    <string name="away_title_case">Away</string>
-    <string name="metric_rebounds">Rebounds</string>
-    <string name="metric_playmaking">Playmaking</string>
-    <string name="metric_shooting">Shooting</string>
-    <string name="metric_discipline">Discipline</string>
-    <string name="rebounds_detail_format">Off %1$d / Def %2$d</string>
-    <string name="rebounds_total_format">Total: %1$d</string>
-    <string name="ast_to_counts_format">AST: %1$d / TO: %2$d</string>
-    <string name="ast_to_ratio_format">AST/TO: %.2f</string>
-    <string name="fg2_pct_format">2PT: %.1f%%</string>
-    <string name="fg3_pct_format">3PT: %.1f%%</string>
-    <string name="fouls_count_format">Fouls: %1$d</string>
-    <string name="ft_pct_format">FT: %.1f%%</string>
-    <string name="tab_all_format">All (%1$d)</string>
-    <string name="tab_insights_format">Insights (%1$d)</string>
-    <string name="tab_drills_format">Drills (%1$d)</string>
-    <string name="tactical_ai_insights">Tactical AI Insights</string>
-    <string name="recommended_practice_drills">Recommended Practice Drills</string>
-    <string name="related_games_label">Related Games:</string>
-    <string name="round_chip_format">R%1$d</string>
-    <string name="drill_objective_format">Objective: %1$s</string>
-    <string name="step_by_step_execution">Step-by-step Execution:</string>
-    <string name="loading_dashboard_analysis">Analyzing Phase 1 Performance...</string>
-    <string name="error_loading_dashboard">Error Loading Dashboard</string>
-    <string name="retry">Retry</string>
+    <string name="brand_name">BasketCoach</string>
+    <string name="team_category_subtitle">Junior Masculí Interterritorial</string>
+    <string name="team_full_name">Escola Pia Sabadell</string>
+    <string name="data_consolidated_badge">Dades consolidades · 14 partits 1a Fase</string>
+    <string name="coach_role_label">Head Coach</string>
+    <string name="coach_name">Jordi</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_analysis">Anàlisi</string>
+    <string name="nav_chat">Chat</string>
+
+    <!-- Baseline Hero -->
+    <string name="hero_baseline_label">LÍNIA BASE FASE 1 · DATASET.JSON VERIFICAT · 14/14 PARTITS</string>
+    <string name="hero_competitive_balance">Balanç Competitiu: 3 Victòries - 11 Derrotes (21.4% de victòries)</string>
+    <string name="hero_dashboard_balance">Balanç Competitiu: 3 Victòries - 11 Derrotes (3V - 11D)</string>
+    <string name="hero_win_pct_format">21.4% victòries</string>
+    <string name="hero_record_summary">3 Victòries / 11 Derrotes</string>
+    <string name="hero_matches_count_badge">14 PARTITS</string>
+    <string name="hero_rounds_registered">14/14 Jornades</string>
+    <string name="hero_register_badge">REGISTRE FASE 1</string>
+
+    <!-- Analysis Filter Tabs -->
+    <string name="tab_all_format">Tots (%1$d)</string>
+    <string name="tab_strengths_format">Fortaleses (%1$d)</string>
+    <string name="tab_improvements_format">Àrees de Millora (%1$d)</string>
+
+    <!-- Insight Card Anatomy -->
+    <string name="chip_strength">Fortalesa Tàctica</string>
+    <string name="chip_improvement">Àrea de Millora</string>
+    <string name="btn_explore_chat">Explorar al Xat</string>
+
+    <!-- KPI Cards -->
+    <string name="kpi_scoring_title">ANOTACIÓ MITJANA</string>
+    <string name="kpi_scoring_comparison">vs 73.7 ppg rival</string>
+    <string name="kpi_scoring_delta">-9.1 Diferencial net</string>
+    <string name="kpi_rebounding_title">REBOTS &amp; BALANÇ</string>
+    <string name="kpi_rebounding_comparison">reb/p (vs 30.6)</string>
+    <string name="kpi_rebounding_delta">Balanç negatiu (-7.8)</string>
+    <string name="kpi_reb_off_format">%.1f Ofensius</string>
+    <string name="kpi_reb_def_format">%.1f Defensius</string>
+    <string name="kpi_shooting_title">EFICIÈNCIA TIR (EFG%)</string>
+    <string name="kpi_shooting_comparison">global Fase 1</string>
+    <string name="kpi_shooting_2p_format">2P %.1f%%</string>
+    <string name="kpi_shooting_3p_format">3P %.1f%%</string>
+    <string name="kpi_shooting_ft_format">TL %.1f%%</string>
+    <string name="kpi_control_title">CONTROL DE JOC</string>
+    <string name="kpi_control_comparison">ràtio AST/TO</string>
+    <string name="kpi_control_ast_format">%.1f AST / p</string>
+    <string name="kpi_control_to_format">%.1f Pèrdues</string>
+    <string name="kpi_ast_label">%.1f AST</string>
+    <string name="kpi_to_label">%.1f TO</string>
+
+    <!-- Evolution Bar Chart -->
+    <string name="chart_title">Evolució de l\'Anotació i Resultats (Fase 1)</string>
+    <string name="chart_subtitle">Punts Pia Sabadell vs Rival — 3 Victòries destacades en verd (J3, J9, J10) i 11 derrotes</string>
+    <string name="legend_pia_win">Victòria Pia (W)</string>
+    <string name="legend_pia_loss">Pia Sabadell</string>
+    <string name="legend_rival">Rival</string>
+
+    <!-- 14-Match Table -->
+    <string name="table_title">Partits de la 1a Fase (14 Jornades Consolidades)</string>
+    <string name="table_subtitle">Desglossament complet del dataset amb resultats, seus i mètriques clau per enfrontament</string>
+    <string name="table_processed_badge">14 Partits Processats: 3 Victòries · 11 Derrotes</string>
+    <string name="wins_badge_format">%1$d Victòries</string>
+    <string name="losses_badge_format">%1$d Derrotes</string>
+    <string name="th_round">JORNADA</string>
+    <string name="th_match">PARTIT</string>
+    <string name="th_score">MARCADOR</string>
+    <string name="th_efg">EFG%</string>
+    <string name="th_2p">2P%</string>
+    <string name="th_3p">3P%</string>
+    <string name="th_ft">TL%</string>
+    <string name="th_reb">REB (O/D)</string>
+    <string name="th_ast">AST</string>
+    <string name="th_to">TO</string>
+    <string name="th_ast_to">AST/TO</string>
+    <string name="th_rob">ROB</string>
+    <string name="th_tap">TAP</string>
+    <string name="th_pf">PF</string>
+    <string name="th_second_chance">2A OPCIÓ</string>
+    <string name="th_counterattack">C. ATAC</string>
+    <string name="round_short_format">J%1$d</string>
+
+    <!-- System States -->
+    <string name="loading_analysis">Carregant anàlisi de la 1a Fase...</string>
+    <string name="error_loading">Error carregant les dades</string>
+    <string name="retry">Reintentar</string>
 </resources>

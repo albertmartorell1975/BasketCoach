@@ -8,15 +8,23 @@ import kotlinx.serialization.Serializable
 sealed interface Destination {
 
     /**
-     * Dashboard screen destination displaying Phase 1 match results, box scores,
-     * tactical AI insights, and recommended practice drills.
+     * Dashboard overview destination with KPI cards, scoring evolution bar chart,
+     * and consolidated 14-match statistical table.
      */
     @Serializable
     data object Dashboard : Destination
 
     /**
-     * AI chat assistant screen destination for interactive tactical Q&A with Coach AI.
+     * Tactical analysis destination displaying the 3-column grid of strengths and improvement areas.
      */
     @Serializable
-    data object Chat : Destination
+    data object Analysis : Destination
+
+    /**
+     * Socratic AI chat assistant screen destination for interactive tactical Q&A.
+     *
+     * @property initialPrompt Optional pre-populated prompt from "Explorar al Xat".
+     */
+    @Serializable
+    data class Chat(val initialPrompt: String? = null) : Destination
 }

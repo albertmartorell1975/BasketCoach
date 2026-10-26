@@ -8,37 +8,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PiaPrimaryBlueLight,
+    primary = PiaNavy,
     onPrimary = Color.White,
-    primaryContainer = PiaNavy,
+    primaryContainer = PiaNavyDark,
     onPrimaryContainer = Color.White,
-    secondary = PiaAmberLight,
-    onSecondary = Color.Black,
-    tertiary = PiaAmber,
-    background = DarkBackground,
+    secondary = PiaTacticalOrange,
+    onSecondary = Color.White,
+    tertiary = PiaSuccessGreen,
+    background = Color(0xFF121826),
     onBackground = Color(0xFFE2E8F0),
-    surface = DarkSurface,
+    surface = Color(0xFF1E293B),
     onSurface = Color(0xFFE2E8F0),
-    surfaceVariant = DarkSurfaceVariant,
-    onSurfaceVariant = Color(0xFF94A3B8)
+    surfaceVariant = Color(0xFF334155),
+    onSurfaceVariant = Color(0xFF94A3B8),
+    outline = PiaOutline
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PiaPrimaryBlue,
+    primary = PiaNavy,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFD6E4FF),
+    primaryContainer = PiaSurfaceVariant,
     onPrimaryContainer = PiaNavy,
-    secondary = PiaNavy,
+    secondary = PiaTacticalOrange,
     onSecondary = Color.White,
-    tertiary = PiaAmber,
-    onTertiary = Color(0xFF2E1500),
-    background = SlateBackground,
-    onBackground = TextPrimary,
-    surface = CardBackground,
-    onSurface = TextPrimary,
-    surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = TextSecondary,
-    outline = OutlineLight
+    tertiary = PiaSuccessGreen,
+    onTertiary = Color.White,
+    background = PiaBackground,
+    onBackground = PiaTextPrimary,
+    surface = PiaSurface,
+    onSurface = PiaTextPrimary,
+    surfaceVariant = PiaSurfaceVariant,
+    onSurfaceVariant = PiaTextMuted,
+    outline = PiaOutline
 )
 
 @Composable

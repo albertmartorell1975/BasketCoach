@@ -5,6 +5,9 @@ import com.martorell.albert.basketcoach.data.network.dto.InsightDto
 import com.martorell.albert.basketcoach.domain.model.Drill
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
+import com.martorell.albert.basketcoach.domain.model.InsightMetric
+import com.martorell.albert.basketcoach.domain.model.InsightType
+import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 import java.util.UUID
 
 /**
@@ -16,7 +19,26 @@ fun InsightDto.toDomain(defaultId: String = UUID.randomUUID().toString()): Insig
         title = title,
         description = description,
         category = InsightCategory.fromString(category),
-        relatedGameRounds = relatedGameRounds
+        relatedGameRounds = relatedGameRounds,
+        type = InsightType.fromString(type),
+        contextTag = contextTag,
+        metric = metric?.let {
+            InsightMetric(
+                label = it.label,
+                value = it.value,
+                unit = it.unit,
+                deltaText = it.deltaText,
+                sentiment = MetricSentiment.fromString(it.sentiment),
+                evidenceLabel = it.evidenceLabel,
+                evidenceValue = it.evidenceValue,
+                datasetKey = it.datasetKey,
+                comparison = it.comparison,
+                delta = it.delta
+            )
+        },
+        footerNote = footerNote,
+        priority = priority,
+        exploreChatPrompt = exploreChatPrompt
     )
 }
 

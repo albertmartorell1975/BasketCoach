@@ -5,13 +5,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.martorell.albert.basketcoach.domain.model.Game
-import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardTab
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.dashboard.preview.DashboardPreviewData
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -27,146 +23,78 @@ class DashboardScreenTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun rendersTwoPaneLandscapeLayoutWithGamesAndInsights() {
+    fun rendersDashboardWithHeroKpisChartAndMatchesTable() {
         val state = DashboardPreviewData.sampleUiState
 
         composeTestRule.setContent {
             BasketCoachTheme {
                 DashboardContent(
                     state = state,
-                    onGameSelected = {},
-                    onTabSelected = {},
                     onNavigateToChat = {},
                     onRefresh = {}
                 )
             }
         }
 
+        // Verify root screen and main sections
         composeTestRule.onNodeWithTag("DashboardScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("GameListPane").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("InsightsDrillsPane").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("TeamRecordCard").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("AskCoachAiButton").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("DashboardHeroCard").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("KpiCardRow").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Phase1EvolutionChart").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Phase1MatchesTable").assertIsDisplayed()
 
-        // Check Round 3 is displayed
-        composeTestRule.onNodeWithTag("GameCard_Round_3").assertIsDisplayed()
+        // Verify 4 KPI cards
+        composeTestRule.onNodeWithTag("KpiCard_SCORING").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("KpiCard_REBOUNDING").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("KpiCard_SHOOTING").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("KpiCard_CONTROL").assertIsDisplayed()
+
+        // Verify win badges in chart (J3, J9, J10)
+        composeTestRule.onNodeWithTag("Chart_WinBadge_J3").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Chart_WinBadge_J9").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Chart_WinBadge_J10").assertIsDisplayed()
+
+        // Verify match rows in consolidated table exist
+        composeTestRule.onNodeWithTag("MatchRow_1").assertExists()
+        composeTestRule.onNodeWithTag("MatchRow_3").assertExists()
+        composeTestRule.onNodeWithTag("MatchRow_14").assertExists()
     }
 
     @Test
-    fun gameCardClick_triggersOnGameSelected() {
-        var selected: Game? = null
-        val state = DashboardPreviewData.sampleUiState
-
-        composeTestRule.setContent {
-            BasketCoachTheme {
-                DashboardContent(
-                    state = state,
-                    onGameSelected = { selected = it },
-                    onTabSelected = {},
-                    onNavigateToChat = {},
-                    onRefresh = {}
-                )
-            }
-        }
-
-        composeTestRule.onNodeWithTag("GameCard_Round_1").performClick()
-        assertNotNull(selected)
-        assertEquals(1, selected?.round)
-    }
-
-    @Test
-    fun tabSelection_switchesFilter() {
-        var clickedTab: DashboardTab? = null
-        val state = DashboardPreviewData.sampleUiState
-
-        composeTestRule.setContent {
-            BasketCoachTheme {
-                DashboardContent(
-                    state = state,
-                    onGameSelected = {},
-                    onTabSelected = { clickedTab = it },
-                    onNavigateToChat = {},
-                    onRefresh = {}
-                )
-            }
-        }
-
-        composeTestRule.onNodeWithTag("DashboardTab_DRILLS").performClick()
-        assertEquals(DashboardTab.DRILLS, clickedTab)
-    }
-
-    @Test
-    fun chatButton_triggersNavigateToChat() {
-        var chatNavigated = false
-        val state = DashboardPreviewData.sampleUiState
-
-        composeTestRule.setContent {
-            BasketCoachTheme {
-                DashboardContent(
-                    state = state,
-                    onGameSelected = {},
-                    onTabSelected = {},
-                    onNavigateToChat = { chatNavigated = true },
-                    onRefresh = {}
-                )
-            }
-        }
-
-        composeTestRule.onNodeWithTag("AskCoachAiButton").performClick()
-        assertTrue(chatNavigated)
-    }
-
-    @Test
-    fun loadingState_displaysProgressIndicator() {
+    fun displaysLoadingIndicatorWhenLoading() {
         val state = DashboardUiState(isLoading = true)
 
         composeTestRule.setContent {
             BasketCoachTheme {
                 DashboardContent(
                     state = state,
-                    onGameSelected = {},
-                    onTabSelected = {},
                     onNavigateToChat = {},
                     onRefresh = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithTag("DashboardLoadingIndicator").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("Dashboard_LoadingIndicator").assertIsDisplayed()
     }
 
     @Test
-    fun errorState_displaysErrorMessageAndRetry() {
+    fun displaysErrorBannerAndHandlesRefresh() {
         var refreshed = false
-        val state = DashboardUiState(errorMessage = "Failed to load Phase 1 dataset")
+        val state = DashboardUiState(errorMessage = "Network connection failed")
 
         composeTestRule.setContent {
             BasketCoachTheme {
                 DashboardContent(
                     state = state,
-                    onGameSelected = {},
-                    onTabSelected = {},
                     onNavigateToChat = {},
                     onRefresh = { refreshed = true }
                 )
             }
         }
 
-        composeTestRule.onNodeWithTag("DashboardErrorBanner").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Failed to load Phase 1 dataset").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("DashboardRetryButton").performClick()
+        composeTestRule.onNodeWithTag("Dashboard_ErrorBanner").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Network connection failed").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Reintentar").performClick()
         assertTrue(refreshed)
-    }
-
-    @Test
-    fun statefulDashboardScreen_rendersInitialState() {
-        composeTestRule.setContent {
-            BasketCoachTheme {
-                DashboardScreen(onNavigateToChat = {})
-            }
-        }
-
-        composeTestRule.onNodeWithTag("DashboardScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("GameListPane").assertIsDisplayed()
     }
 }
