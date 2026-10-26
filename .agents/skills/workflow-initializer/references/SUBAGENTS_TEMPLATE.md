@@ -4,6 +4,17 @@ During **PHASE 3: Project Customization**, materialize the subagent configuratio
 
 This template establishes the canonical definition of subagents for each provider SDK. The `workflow-initializer` skill uses these blocks to create the physical files required by each AI tool, injecting the skills dynamically from `SUBAGENT_SKILLS.json` plus any catalog plugins installed in `.agents/skills/`.
 
+## Role-Tuned Model Tier Matrix
+
+Each subagent is assigned the optimal model tier for its cognitive profile across providers:
+
+| Subagent Role | Cognitive Profile | Antigravity / Gemini | Claude Code | Cursor |
+| :--- | :--- | :--- | :--- | :--- |
+| 🔵 **`workflow-planner`** | Deep architectural reasoning & specification design | `pro` | `opus` | `inherit` |
+| 🟡 **`workflow-implementer`** | High-speed deterministic code & test generation | `flash` | `sonnet` | `fast` |
+| 🟢 **`workflow-validator`** | Strict independent 4-level audit & security analysis | `pro` | `opus` | `inherit` |
+| 🔷 **`workflow-documenter`** | Fast KDoc & Markdown documentation synthesis | `flash` | `haiku` | `fast` |
+
 ---
 
 ## 1. Git Ignore Rule (All Providers)
@@ -27,7 +38,7 @@ name: workflow-planner
 description: Feature Planner and Specification Architect subagent for the Android AI Workflow Foundation. Analyzes repository architecture and feature requirements in a clean context to produce the unified implementation specification at docs/features/<feature-id>/spec.md without modifying executable code.
 subagent: true
 mainAgent: false
-model: inherit
+model: pro
 skills:
 [INJECT_PLANNER_SKILLS]
 ---
@@ -46,7 +57,7 @@ name: workflow-implementer
 description: Implementer subagent for the Android AI Workflow Foundation. Implements planned features from docs/features/<feature-id>/spec.md (or repairs findings from validation repair brief) in an isolated git worktree and runs @compiler verification.
 subagent: true
 mainAgent: false
-model: inherit
+model: flash
 skills:
 [INJECT_IMPLEMENTER_SKILLS]
 ---
@@ -68,7 +79,7 @@ name: workflow-validator
 description: Strictly read-only independent Validator subagent for the Android AI Workflow Foundation. Audits implemented features across 4 levels (Spec Contract, Clean Architecture & Security, Compiler/Test Evidence, Runtime) in an isolated git worktree without modifying any repository files and returns an accept/revise/block verdict with an Implementation Repair Brief to workflow-orchestrator.
 subagent: true
 mainAgent: false
-model: inherit
+model: pro
 skills:
 [INJECT_VALIDATOR_SKILLS]
 ---
@@ -87,7 +98,7 @@ name: workflow-documenter
 description: Documenter subagent for the Android AI Workflow Foundation. Runs after validation acceptance in an isolated git worktree to add English KDoc and update durable project documentation without altering executable code.
 subagent: true
 mainAgent: false
-model: inherit
+model: flash
 skills:
 [INJECT_DOCUMENTER_SKILLS]
 ---
@@ -129,7 +140,7 @@ You MUST strictly follow these skills (read them from `.agents/skills/`):
 ---
 name: workflow-implementer
 description: Implementer subagent for the Android AI Workflow Foundation. Implements planned features from docs/features/<feature-id>/spec.md (or repairs findings from validation repair brief) in an isolated git worktree and runs @compiler verification.
-model: inherit
+model: fast
 ---
 You are the **Workflow Implementer** subagent (🟡 `[IMPLEMENTER · workflow-implementer]`). Always start by reading `.agents/skills/workflow-implementer/SKILL.md` and `docs/features/<feature-id>/spec.md`. Prefix every response and `PROGRESS.md` entry with: 🟡 `[IMPLEMENTER · workflow-implementer]`.
 
@@ -167,7 +178,7 @@ You MUST strictly follow these skills (read them from `.agents/skills/`):
 ---
 name: workflow-documenter
 description: Documenter subagent for the Android AI Workflow Foundation. Runs after validation acceptance in an isolated git worktree to add English KDoc and update durable project documentation without altering executable code.
-model: inherit
+model: fast
 ---
 You are the **Workflow Documenter** subagent (🔷 `[DOCUMENTER · workflow-documenter]`). Always start by reading `.agents/skills/workflow-documenter/SKILL.md`, `docs/features/<feature-id>/spec.md`. Prefix every response and `PROGRESS.md` entry with: 🔷 `[DOCUMENTER · workflow-documenter]`.
 
@@ -192,7 +203,7 @@ When **Claude Code** is selected, materialize the four files under `.claude/agen
 ---
 name: workflow-planner
 description: Feature Planner and Specification Architect subagent for the Android AI Workflow Foundation. Analyzes repository architecture and feature requirements in a clean context to produce the unified implementation specification at docs/features/<feature-id>/spec.md without modifying executable code.
-model: inherit
+model: opus
 color: blue
 skills:
 [INJECT_PLANNER_SKILLS]
@@ -209,7 +220,7 @@ You are the Specification Architect. You analyze the project state and write ONL
 ---
 name: workflow-implementer
 description: Implementer subagent for the Android AI Workflow Foundation. Implements planned features from docs/features/<feature-id>/spec.md (or repairs findings from validation repair brief) in an isolated git worktree and runs @compiler verification.
-model: inherit
+model: sonnet
 isolation: worktree
 color: yellow
 skills:
@@ -230,7 +241,7 @@ You are the Clean Architecture Implementer. You implement production code and un
 ---
 name: workflow-validator
 description: Strictly read-only independent Validator subagent for the Android AI Workflow Foundation. Audits implemented features across 4 levels (Spec Contract, Clean Architecture & Security, Compiler/Test Evidence, Runtime) in an isolated git worktree and returns an accept/revise/block verdict with an Implementation Repair Brief to workflow-orchestrator.
-model: inherit
+model: opus
 isolation: worktree
 color: green
 disallowedTools:
@@ -251,7 +262,7 @@ You have no file modification tools enabled. Do not attempt to write or edit any
 ---
 name: workflow-documenter
 description: Documenter subagent for the Android AI Workflow Foundation. Runs after validation acceptance in an isolated git worktree to add English KDoc and update durable project documentation without altering executable code.
-model: inherit
+model: haiku
 isolation: worktree
 color: cyan
 skills:
