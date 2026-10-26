@@ -66,7 +66,7 @@
     "depends_on": [],
     "status": "passing",
     "verification": "Compose UI tests render the dashboard components correctly in a landscape tablet configuration using dummy data.",
-    "evidence": "gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug testDebugUnitTest lintDebug - 78 tests passed (10 in :domain, 42 in :data, 19 in :usecases, 7 in :app including 6 Compose UI tests in DashboardScreenTest), 0 failures. BUILD SUCCESSFUL.",
+    "evidence": "gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug testDebugUnitTest lintDebug - 80 tests passed (10 in :domain, 42 in :data, 19 in :usecases, 9 in :app including 8 Compose UI tests in DashboardScreenTest and NavigationTest), 0 failures. BUILD SUCCESSFUL.",
     "notes": "Follow DESIGN.md and Material 3 adaptive layouts.",
     "require_review_after": [
       "planner",
