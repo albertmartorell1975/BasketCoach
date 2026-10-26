@@ -64,7 +64,7 @@
     "title": "Tablet Landscape Dashboard UI",
     "user_visible_behavior": "The coach sees a two-pane tablet layout displaying game summaries on one side and proactive insights/drills on the other.",
     "depends_on": [],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "Compose UI tests render the dashboard components correctly in a landscape tablet configuration using dummy data.",
     "evidence": "",
     "notes": "Follow DESIGN.md and Material 3 adaptive layouts.",
