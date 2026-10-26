@@ -49,6 +49,12 @@
       "skillPath": ".agents/skills/compose-modifier-and-layout-style/SKILL.md",
       "computedHash": "7fb596bc55f1c58173065e20e32036a00d991d11b7d731fdc9583092f2492032"
     },
+    "compose-navigation-architecture": {
+      "source": "albertmartorell1975/android-ai-workflow-foundation",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/compose-navigation-architecture/SKILL.md",
+      "computedHash": "766a32c35eefa961b328c87ab1dd129ce310d15c52689bd40c31467499d4dc72"
+    },
     "compose-side-effects": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
@@ -83,7 +89,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/design-system-governance/SKILL.md",
-      "computedHash": "dbdb18380bb2afd5a05fcc7936027a2ac4e03fa2dd6ae3858c84ba3b424cbd9d"
+      "computedHash": "778478c1a3ef55833b8ac09b27067a01434dcf6c7bbe16cd4ec14090b6398bf9"
     },
     "edge-to-edge": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -167,7 +173,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/repository-pattern-governance/SKILL.md",
-      "computedHash": "b9b2273a1ba9ca939f581786799342f70feeaf2a769f90df59985d34825b1ee9"
+      "computedHash": "aa775009657cfd9797342c716a1dcd28d05171f2364efb362317a7e4ffe1c1bd"
     },
     "room-schema-governance": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
@@ -185,7 +191,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/viewmodel-architecture-governance/SKILL.md",
-      "computedHash": "1511c13ba31e8854131bf6b2504998ed4e03f7ed6d1ce1910f6fe43ed2df84ce"
+      "computedHash": "0ad5c2a9c28be7ffcc7088101ab82094d9a132f0b4d2dcc41021e7da053f0f5d"
     },
     "workflow-documenter": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",
