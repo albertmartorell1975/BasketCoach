@@ -64,7 +64,7 @@ class ChatRepositoryImplTest {
 
     @Test
     fun `sendMessage appends coach message, invokes remoteDataSource with history and context, and appends ai message`() = runTest {
-        val sendResult = repository.sendMessage("How do we improve defense?", "Phase 1 context")
+        val sendResult = repository.sendMessage("How do we improve defense?", emptyList())
 
         assertTrue(sendResult is Result.Success)
         val aiMessage = (sendResult as Result.Success).data
@@ -82,7 +82,7 @@ class ChatRepositoryImplTest {
         assertEquals("AI response text", messageList[1].text)
 
         assertEquals("How do we improve defense?", fakeRemoteDataSource.capturedPrompt)
-        assertEquals("Phase 1 context", fakeRemoteDataSource.capturedContext)
+        assertEquals("No games recorded for Phase 1.", fakeRemoteDataSource.capturedContext)
         assertTrue(fakeRemoteDataSource.capturedHistory.isEmpty())
     }
 

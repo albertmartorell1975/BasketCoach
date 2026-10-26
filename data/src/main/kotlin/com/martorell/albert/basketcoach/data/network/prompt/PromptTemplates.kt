@@ -4,9 +4,6 @@ import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.OUR_TEAM_NAME
 import java.util.Locale
 
-/**
- * System and user prompt templates grounding the AI in the Basquet Pia Sabadell Junior Interterritorial context.
- */
 object PromptTemplates {
 
     val ANALYSIS_SYSTEM_PROMPT: String = """
@@ -50,9 +47,14 @@ object PromptTemplates {
         Be concise, professional, insightful, and basketball-grounded. Always reply in the same language the coach speaks to you.
     """.trimIndent()
 
-    /**
-     * Summarizes the 14 Phase 1 games into a structured textual briefing for the LLM.
-     */
+    fun buildChatSystemPrompt(gameContext: String?): String {
+        return if (!gameContext.isNullOrBlank()) {
+            "$CHAT_SYSTEM_PROMPT\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
+        } else {
+            CHAT_SYSTEM_PROMPT
+        }
+    }
+
     fun formatGameSummary(games: List<Game>): String {
         if (games.isEmpty()) return "No games recorded for Phase 1."
 
@@ -103,9 +105,6 @@ object PromptTemplates {
         return summaryBuilder.toString()
     }
 
-    /**
-     * Builds the analysis prompt requesting structured insights and drills grounded in the game summary.
-     */
     fun buildAnalysisUserPrompt(gameSummary: String): String {
         return """
             Here is the complete Phase 1 match data for $OUR_TEAM_NAME:
