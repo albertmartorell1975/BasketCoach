@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.ui.dashboard.data
 
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardKpisUiModel
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.dashboard.model.GameControlKpiUiModel
@@ -18,8 +19,8 @@ object Phase1PreviewData {
         losses = 11,
         winPercentage = 21.4,
         totalGames = 14,
-        category = "Junior Masculí Interterritorial",
-        teamName = "CEB Escola Pia Sabadell"
+        categoryRes = R.string.topbar_category,
+        teamNameRes = R.string.hero_club_name
     )
 
     val kpis = DashboardKpisUiModel(

@@ -151,13 +151,13 @@ fun DashboardHeroCard(
                         }
                         Text(text = "·", color = PiaTextMuted, fontSize = 12.sp)
                         Text(
-                            text = stringResource(R.string.topbar_category),
+                            text = stringResource(summary.categoryRes),
                             color = PiaTextMuted,
                             fontSize = 12.sp
                         )
                         Text(text = "·", color = PiaTextMuted, fontSize = 12.sp)
                         Text(
-                            text = stringResource(R.string.hero_club_name),
+                            text = stringResource(summary.teamNameRes),
                             color = PiaTextMuted,
                             fontSize = 12.sp
                         )
