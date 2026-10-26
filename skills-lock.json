@@ -215,7 +215,7 @@
       "source": "albertmartorell1975/android-ai-workflow-foundation",
       "sourceType": "github",
       "skillPath": ".agents/skills/workflow-planner/SKILL.md",
-      "computedHash": "a196af0a468b87b7052b130f33746bb7a49cddffb2c08beeb2b0bf93866a17cd"
+      "computedHash": "92defff1be82b5ee91795760d3344eb61447d6e584c80afd5f21c96af1c4c366"
     },
     "workflow-validator": {
       "source": "albertmartorell1975/android-ai-workflow-foundation",

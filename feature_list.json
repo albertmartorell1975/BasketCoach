@@ -62,23 +62,55 @@
     "id": "feature_005_dashboard_ui",
     "area": "app",
     "title": "Tablet Landscape Dashboard UI",
-    "user_visible_behavior": "The coach sees a two-pane tablet layout displaying game summaries on one side and proactive insights/drills on the other.",
-    "depends_on": [],
+    "user_visible_behavior": "The coach sees the tablet landscape application shell (fixed 80dp Navy Navigation Rail and 64dp White Top Bar with Coach Jordi avatar) and the Dashboard screen displaying the Phase 1 baseline hero card (3V-11D, 21.4%), 4 KPI cards, a 14-round scoring evolution bar chart, and the consolidated 14-match statistical table (16 columns).",
+    "depends_on": [
+      "feature_001_domain_models"
+    ],
     "status": "not_started",
-    "verification": "Compose UI tests render the dashboard components correctly in a landscape tablet configuration using dummy data.",
+    "verification": "Compose UI tests render the navigation shell (NavRail + TopBar) and the Dashboard screen components (Hero card, 4 KPI cards, 14-round bar chart, 14-match table) in a landscape tablet configuration using preview data.",
     "evidence": "",
-    "notes": "Follow DESIGN.md and Material 3 adaptive layouts.",
+    "notes": "Strictly scoped to :app (Shell + DashboardScreen). Follow DESIGN.md, docs/ui/screens/dashboard_vertical/, and avatar_coach.png. Omit the Match Detail modal dialog.",
     "require_review_after": [
       "planner",
       "implementer"
+    ],
+    "design_refs": [
+      "docs/ui/screens/dashboard_vertical/screen.png",
+      "docs/ui/screens/dashboard_vertical/code.html",
+      "docs/features/feature_005_dashboard_ui/ui/resources/avatar_coach.png",
+      "docs/ui/basquet_pia_design_system.jpeg"
     ]
   },
   {
-    "id": "feature_006_chat_ui",
+    "id": "feature_006_analysis_ui",
+    "area": "app",
+    "title": "Tablet Landscape Analysis UI",
+    "user_visible_behavior": "The coach navigates to the Anàlisi screen to view the Phase 1 baseline hero card, filter insights by Tots, Fortaleses, or Àrees de Millora, inspect a 3-column grid of rich tactical strength and improvement cards with empirical metric panels, and tap 'Explorar al Xat' on improvement areas.",
+    "depends_on": [
+      "feature_005_dashboard_ui"
+    ],
+    "status": "not_started",
+    "verification": "Domain/Data unit tests verify expanded Insight metric models and mapping; Compose UI tests verify Anàlisi screen rendering, segmented filtering, and 'Explorar al Xat' navigation.",
+    "evidence": "",
+    "notes": "Includes :domain and :data expansion for Insight (InsightType, InsightMetric, MetricSentiment, contextTag, priority, footerNote, exploreChatPrompt) and AnalysisScreen in :app based on docs/ui/screens/analisis_landscape/.",
+    "require_review_after": [
+      "planner",
+      "implementer"
+    ],
+    "design_refs": [
+      "docs/ui/screens/analisis_landscape/screen.png",
+      "docs/ui/screens/analisis_landscape/code.html",
+      "docs/ui/basquet_pia_design_system.jpeg"
+    ]
+  },
+  {
+    "id": "feature_007_chat_ui",
     "area": "app",
     "title": "Tablet Single-Thread Chat UI",
-    "user_visible_behavior": "The coach sees a single, continuous chat thread interface where they can type questions and view AI responses.",
-    "depends_on": [],
+    "user_visible_behavior": "The coach sees a single, continuous chat thread interface where they can type questions, select tactical reflection areas, and view AI responses and drill recommendations.",
+    "depends_on": [
+      "feature_005_dashboard_ui"
+    ],
     "status": "not_started",
     "verification": "Compose UI tests render the chat messages list and input field correctly.",
     "evidence": "",
@@ -86,19 +118,24 @@
     "require_review_after": [
       "planner",
       "implementer"
+    ],
+    "design_refs": [
+      "docs/ui/screens/chat_general/screen.png",
+      "docs/ui/screens/chat_detalle/screen.png",
+      "docs/ui/basquet_pia_design_system.jpeg"
     ]
   },
   {
-    "id": "feature_007_dashboard_integration",
+    "id": "feature_008_dashboard_integration",
     "area": "app",
     "title": "Connect Dashboard to Real Data",
-    "user_visible_behavior": "The dashboard populates with real Phase 1 game data and real AI insights loaded via the Use Cases.",
+    "user_visible_behavior": "The Dashboard screen populates with real Phase 1 game data and computed KPI/chart/table metrics loaded via GetPhase1GamesUseCase.",
     "depends_on": [
       "feature_004_usecases",
       "feature_005_dashboard_ui"
     ],
     "status": "not_started",
-    "verification": "The Dashboard ViewModel successfully fetches data from Use Cases and updates its UI state.",
+    "verification": "The Dashboard ViewModel successfully fetches Phase 1 games from Use Cases and updates its UI state following MVVM Passive Initialization.",
     "evidence": "",
     "notes": "Uses Hilt for DI.",
     "require_review_after": [
@@ -107,13 +144,31 @@
     ]
   },
   {
-    "id": "feature_008_chat_integration",
+    "id": "feature_009_analysis_integration",
     "area": "app",
-    "title": "Connect Chat to DevExpert API",
-    "user_visible_behavior": "When the coach sends a message, it uses the DevExpert API and appends the real response to the chat.",
+    "title": "Connect Analysis to Real Data",
+    "user_visible_behavior": "The Anàlisi screen populates with real AI tactical strengths and improvement areas loaded via GenerateInsightsUseCase.",
     "depends_on": [
       "feature_004_usecases",
-      "feature_006_chat_ui"
+      "feature_006_analysis_ui"
+    ],
+    "status": "not_started",
+    "verification": "The Analysis ViewModel successfully fetches insights from Use Cases and updates its UI state following MVVM Passive Initialization.",
+    "evidence": "",
+    "notes": "Uses Hilt for DI.",
+    "require_review_after": [
+      "planner",
+      "implementer"
+    ]
+  },
+  {
+    "id": "feature_010_chat_integration",
+    "area": "app",
+    "title": "Connect Chat to DevExpert API",
+    "user_visible_behavior": "When the coach sends a message (or navigates via 'Explorar al Xat'), it uses the DevExpert API via Use Cases and appends the real response to the chat thread.",
+    "depends_on": [
+      "feature_004_usecases",
+      "feature_007_chat_ui"
     ],
     "status": "not_started",
     "verification": "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
