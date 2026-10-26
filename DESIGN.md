@@ -36,4 +36,4 @@ When implementing features that require visual assets:
 
 ## 5. Layout Principles
 * **Tablet Landscape Only**: High-density 1280x800dp landscape layout. Navigation Rail on the left (80dp), content canvas spanning remaining width.
-* **Language & Localization**: All user-facing strings are localized in **Catalan** (`res/values/strings.xml`), reflecting the local basketball club context (CE Escola Pia Sabadell).
+* **Language & Localization**: All user-facing strings are localized in **Catalan** (`res/values/strings.xml`) and **Spanish** (`res/values-es/strings.xml`), reflecting the local basketball club context (CE Escola Pia Sabadell).
