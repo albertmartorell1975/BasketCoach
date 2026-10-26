@@ -154,7 +154,7 @@ fun Phase1EvolutionChart(
 
                     Text(
                         text = labelText,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         fontWeight = labelWeight,
                         color = labelColor,
                         textAlign = TextAlign.Center,
@@ -194,9 +194,9 @@ private fun RoundBarColumn(
                 Text(
                     text = round.scoreBadge,
                     color = Color.White,
-                    fontSize = 10.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    lineHeight = 11.sp,
+                    lineHeight = 13.sp,
                     textAlign = TextAlign.Center
                 )
             }

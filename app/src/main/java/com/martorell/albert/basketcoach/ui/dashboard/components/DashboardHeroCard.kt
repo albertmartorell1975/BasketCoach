@@ -96,7 +96,7 @@ fun DashboardHeroCard(
                             Text(
                                 text = stringResource(R.string.hero_baseline_tag),
                                 color = PiaNavy,
-                                fontSize = 11.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -145,7 +145,7 @@ fun DashboardHeroCard(
                             Text(
                                 text = stringResource(R.string.hero_win_pct),
                                 color = PiaDangerRed,
-                                fontSize = 11.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -173,7 +173,7 @@ fun DashboardHeroCard(
                     Text(
                         text = stringResource(R.string.hero_summary_balance),
                         color = PiaTextMuted,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
@@ -186,7 +186,7 @@ fun DashboardHeroCard(
 
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(48.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(PiaNavy.copy(alpha = 0.1f)),
                     contentAlignment = Alignment.Center
@@ -205,9 +205,9 @@ fun DashboardHeroCard(
                         Text(
                             text = stringResource(R.string.hero_summary_games_label),
                             color = PiaNavy,
-                            fontSize = 9.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 10.sp
+                            lineHeight = 12.sp
                         )
                     }
                 }

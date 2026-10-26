@@ -147,9 +147,9 @@ fun BasketCoachTopBar(
                         Text(
                             text = stringResource(R.string.topbar_coach_name),
                             color = PiaTextMuted,
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
-                            lineHeight = 12.sp
+                            lineHeight = 14.sp
                         )
                     }
                 }

@@ -79,8 +79,8 @@ fun BasketCoachNavRail(
                     Text(
                         text = stringResource(destination.titleRes),
                         color = contentColor,
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
                         fontWeight = fontWeight,
                         textAlign = TextAlign.Center,
                         maxLines = 1,

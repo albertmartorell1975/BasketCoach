@@ -222,7 +222,7 @@ private fun HeaderCell(
 ) {
     Text(
         text = text,
-        fontSize = 10.sp,
+        fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         letterSpacing = 0.5.sp,
         color = if (isPrimary) PiaNavy else PiaTextMuted,
@@ -263,7 +263,7 @@ private fun TableDataRow(match: MatchRowUiModel) {
             val awayIsPia = match.awayTeam.contains("Pia")
             Text(
                 text = match.awayTeam,
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 fontWeight = if (awayIsPia) FontWeight.Bold else FontWeight.Normal,
                 color = if (awayIsPia) PiaTextPrimary else PiaTextMuted
             )
@@ -391,7 +391,7 @@ private fun TableDataRow(match: MatchRowUiModel) {
 
         Text(
             text = match.secondChance,
-            fontSize = 11.sp,
+            fontSize = 12.sp,
             color = PiaTextPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier.width(105.dp)
@@ -399,7 +399,7 @@ private fun TableDataRow(match: MatchRowUiModel) {
 
         Text(
             text = match.fastBreak,
-            fontSize = 11.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             color = PiaTextPrimary,
             textAlign = TextAlign.Center,

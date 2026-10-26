@@ -125,14 +125,14 @@ private fun KpiCardScoring(
             ) {
                 Text(
                     text = stringResource(R.string.kpi_scoring_net_diff),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaDangerRed
                 )
             }
             Text(
                 text = stringResource(R.string.kpi_scoring_games),
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 color = PiaTextMuted
             )
         }
@@ -189,7 +189,7 @@ private fun KpiCardRebounds(
             ) {
                 Text(
                     text = stringResource(R.string.kpi_rebounds_title),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaTextMuted,
                     letterSpacing = 0.5.sp
@@ -242,7 +242,7 @@ private fun KpiCardRebounds(
             ) {
                 Text(
                     text = stringResource(R.string.kpi_rebounds_negative_balance),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaDangerRed
                 )
@@ -384,12 +384,12 @@ private fun MiniStatBox(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = label,
-                fontSize = 10.sp,
+                fontSize = 12.sp,
                 color = PiaTextMuted
             )
             Text(
                 text = value,
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = PiaTextPrimary
             )
@@ -443,14 +443,14 @@ private fun KpiCardGameControl(
             ) {
                 Text(
                     text = stringResource(R.string.kpi_gamecontrol_ast_pill),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaDangerRed
                 )
             }
             Text(
                 text = stringResource(R.string.kpi_gamecontrol_to_pill),
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 color = PiaTextMuted
             )
         }
@@ -524,7 +524,7 @@ private fun KpiCardBase(
             ) {
                 Text(
                     text = title,
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaTextMuted,
                     letterSpacing = 0.5.sp
