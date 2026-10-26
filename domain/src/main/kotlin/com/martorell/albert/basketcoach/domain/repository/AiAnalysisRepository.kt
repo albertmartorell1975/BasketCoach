@@ -2,27 +2,30 @@ package com.martorell.albert.basketcoach.domain.repository
 
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Drill
+import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.Result
 
 /**
- * Domain repository contract defining operations to retrieve AI-generated tactical insights
- * and recommended practice drills grounded in match context.
+ * Domain repository contract defining operations for AI-driven tactical analysis and practice drills.
+ *
+ * Implementations provide tactical insights and training exercises grounded in Phase 1 match history,
+ * leveraging remote inference providers with local caching.
  */
 interface AiAnalysisRepository {
     /**
-     * Retrieves AI-generated insights detailing team strengths, weaknesses, and tactical patterns.
+     * Generates or retrieves cached tactical insights based on the provided list of matches.
      *
-     * @param gameContext Textual summary of Phase 1 games and metrics.
-     * @return [Result.Success] containing the list of [Insight] entities, or [Result.Error] with [DomainError].
+     * @param games The list of historical [Game] fixtures used to ground the analysis.
+     * @return [Result.Success] containing the list of [Insight] items, or [Result.Error] with [DomainError].
      */
-    suspend fun getInsights(gameContext: String): Result<List<Insight>, DomainError>
+    suspend fun getInsights(games: List<Game>): Result<List<Insight>, DomainError>
 
     /**
-     * Retrieves tactical practice drills designed to address identified areas for improvement.
+     * Generates or retrieves cached practice drill recommendations based on the provided list of matches.
      *
-     * @param gameContext Textual summary of Phase 1 games and metrics.
-     * @return [Result.Success] containing the list of [Drill] entities, or [Result.Error] with [DomainError].
+     * @param games The list of historical [Game] fixtures used to ground the drills.
+     * @return [Result.Success] containing the list of [Drill] items, or [Result.Error] with [DomainError].
      */
-    suspend fun getDrills(gameContext: String): Result<List<Drill>, DomainError>
+    suspend fun getDrills(games: List<Game>): Result<List<Drill>, DomainError>
 }
