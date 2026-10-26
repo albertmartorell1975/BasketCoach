@@ -121,12 +121,15 @@ so I can quickly assess team strengths and systemic weaknesses to plan Phase 2 p
 * `app/src/main/res/drawable/ic_avatar_coach.webp` — converted from `docs/features/feature_005_dashboard_ui/ui/resources/avatar_coach.png`.
 * `app/src/main/res/drawable/ic_basketcoach_logo.webp` — converted from `docs/features/feature_005_dashboard_ui/ui/resources/basketcoach_logo.png`.
 
-#### `:app` — Shell & Navigation
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/navigation/NavDestination.kt` — `Dashboard`, `Analysis`, `Chat` with string resource ids.
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/navigation/BasketCoachNavRail.kt` — fixed 80dp Navy Navigation Rail.
+#### `:app` — Shell & Navigation (`compose-navigation-architecture`)
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/navigation/Destinations.kt` — `@Serializable` routes (`DashboardRoute`, `AnalysisRoute`, `ChatRoute`), `TopLevelRoute<T : Any>`, and `navigatePoppingUpToStartDestination`.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/navigation/BasketCoachAppState.kt` — `BasketCoachAppState` with `NAV_OPTIONS`, `isRouteSelected` (hierarchy-aware), and `rememberBasketCoachAppState`.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/navigation/Navigation.kt` — Type-safe `NavHost` routing `DashboardRoute`, `AnalysisRoute`, and `ChatRoute`.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/navigation/BasketCoachNavRail.kt` — fixed 80dp Navy Navigation Rail consuming `TopLevelRoute`.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/components/BasketCoachTopBar.kt` — fixed 64dp White header bar.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/placeholder/PlaceholderScreen.kt` — clean placeholder for Anàlisi and Chat.
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/BasketCoachApp.kt` — application root shell.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/BasketCoachApp.kt` — application root shell hoisted with `BasketCoachAppState`.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/theme/Previews.kt` — `@BcThemePreview` and `@BcDevicePreview` multipreview annotations.
 * `app/src/main/java/com/martorell/albert/basketcoach/MainActivity.kt` — entry Activity.
 
 #### `:app` — Dashboard Components & Preview Data
@@ -255,11 +258,11 @@ so I can quickly assess team strengths and systemic weaknesses to plan Phase 2 p
   - [ ] Implement Pia Sabadell color palette in `Color.kt` (`PiaNavy`, `PiaTacticalOrange`, `PiaSuccessGreen`, `PiaDangerRed`, etc.).
   - [ ] Update `Theme.kt` with fixed Pia light scheme and `dynamicColor = false`.
 - [ ] **Navigation & Shell Components (`app/src/main/java/com/martorell/albert/basketcoach/ui/`):**
-  - [ ] Create `NavDestination.kt` (`Dashboard`, `Analysis`, `Chat`) with string resource bindings.
+  - [ ] Create `Destinations.kt` (`DashboardRoute`, `AnalysisRoute`, `ChatRoute`, `TopLevelRoute`, `navigatePoppingUpToStartDestination`), `BasketCoachAppState.kt`, and `Navigation.kt`.
   - [ ] Implement `BasketCoachNavRail.kt` (80dp, Navy, 3 destinations, active container styling).
   - [ ] Implement `BasketCoachTopBar.kt` (64dp, White, title, verified green pill, avatar + coach info).
   - [ ] Implement `PlaceholderScreen.kt` for Anàlisi and Chat.
-  - [ ] Implement `BasketCoachApp.kt` assembling NavRail + TopBar + active content viewport.
+  - [ ] Implement `BasketCoachApp.kt` assembling NavRail + TopBar + active `Navigation(appState)` viewport.
   - [ ] Update `MainActivity.kt` to launch `BasketCoachApp`.
 - [ ] **Dashboard UI Models & Authentic Preview Data (`ui/dashboard/`):**
   - [ ] Implement immutable models in `ui/dashboard/model/DashboardUiState.kt`.
