@@ -6,17 +6,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.analysis.AnalysisScreen
 import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
 import com.martorell.albert.basketcoach.ui.placeholder.PlaceholderScreen
 
-/**
- * Primary navigation host composable defining top-level destination graphs and routes.
- *
- * Hosts destinations for [DashboardRoute], [AnalysisRoute], and [ChatRoute].
- *
- * @param appState Application state holder containing the [NavHostController].
- * @param modifier Layout modifier applied to the root [NavHost].
- */
 @Composable
 fun Navigation(
     appState: BasketCoachAppState,
@@ -31,9 +24,10 @@ fun Navigation(
             DashboardScreen()
         }
         composable<AnalysisRoute> {
-            PlaceholderScreen(
-                title = stringResource(R.string.nav_analysis),
-                subtitle = stringResource(R.string.topbar_category)
+            AnalysisScreen(
+                onNavigateToChat = { _ ->
+                    appState.navigateToChat()
+                }
             )
         }
         composable<ChatRoute> {

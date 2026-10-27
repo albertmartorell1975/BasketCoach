@@ -64,4 +64,16 @@
     <string name="table_col_second_chance">2A OPCIÓ</string>
     <string name="table_col_fast_break">C. ATAC</string>
     <string name="placeholder_phase2_note">Aquesta funcionalitat s\'activarà a la Fase 2.</string>
+    <string name="analysis_filter_all">Tots (%d)</string>
+    <string name="analysis_filter_strengths">Fortaleses (%d)</string>
+    <string name="analysis_filter_improvements">Àrees de Millora (%d)</string>
+    <string name="analysis_hero_phase1_register">REGISTRE FASE 1</string>
+    <string name="analysis_hero_phase1_rounds">14 / 14 Jornades</string>
+    <string name="analysis_badge_strength">Fortalesa Tàctica</string>
+    <string name="analysis_badge_improvement">Àrea de Millora</string>
+    <string name="analysis_btn_explore_chat">Explorar al Xat</string>
+    <string name="analysis_cd_filter_dot">Indicador d\'estat</string>
+    <string name="analysis_cd_verified_badge">Verificat</string>
+    <string name="analysis_cd_warning_badge">Alerta tàctica</string>
+    <string name="analysis_empty_state">No hi ha elements en aquesta categoria</string>
 </resources>
