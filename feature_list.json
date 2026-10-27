@@ -89,7 +89,7 @@
     "depends_on": [
       "feature_005_dashboard_ui"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "Domain/Data unit tests verify expanded Insight metric models and mapping; Compose UI tests verify Anàlisi screen rendering, segmented filtering, and 'Explorar al Xat' navigation.",
     "evidence": "",
     "notes": "Includes :domain and :data expansion for Insight (InsightType, InsightMetric, MetricSentiment, contextTag, priority, footerNote, exploreChatPrompt) and AnalysisScreen in :app based on docs/ui/screens/analisis_landscape/.",
