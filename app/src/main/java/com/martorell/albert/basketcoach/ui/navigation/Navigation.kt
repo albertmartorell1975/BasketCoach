@@ -2,13 +2,12 @@ package com.martorell.albert.basketcoach.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.martorell.albert.basketcoach.R
+import androidx.navigation.toRoute
 import com.martorell.albert.basketcoach.ui.analysis.AnalysisScreen
+import com.martorell.albert.basketcoach.ui.chat.ChatScreen
 import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
-import com.martorell.albert.basketcoach.ui.placeholder.PlaceholderScreen
 
 @Composable
 fun Navigation(
@@ -25,16 +24,14 @@ fun Navigation(
         }
         composable<AnalysisRoute> {
             AnalysisScreen(
-                onNavigateToChat = { _ ->
-                    appState.navigateToChat()
+                onNavigateToChat = { prompt ->
+                    appState.navigateToChat(prompt)
                 }
             )
         }
-        composable<ChatRoute> {
-            PlaceholderScreen(
-                title = stringResource(R.string.nav_chat),
-                subtitle = stringResource(R.string.topbar_category)
-            )
+        composable<ChatRoute> { backStackEntry ->
+            val chatRoute = backStackEntry.toRoute<ChatRoute>()
+            ChatScreen(initialPrompt = chatRoute.initialPrompt)
         }
     }
 }
