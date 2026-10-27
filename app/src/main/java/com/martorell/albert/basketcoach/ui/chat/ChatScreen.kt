@@ -8,12 +8,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.martorell.albert.basketcoach.R
-import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
-import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatSummaryCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 
 @Composable
@@ -26,7 +23,7 @@ fun ChatScreen(
     var leftPaneMode by remember {
         mutableStateOf(if (isExploringFromAnalysis) ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE else ChatLeftPaneMode.TOPIC_LIST)
     }
-    var activeTopicId by remember { mutableStateOf("rebound_control") }
+    var activeTopicId by remember { mutableStateOf(ChatPreviewData.DEFAULT_TOPIC_ID) }
     var inputText by remember { mutableStateOf(initialPrompt) }
     var messages by remember { mutableStateOf(ChatPreviewData.initialMessages) }
     var isSending by remember { mutableStateOf(false) }
@@ -53,7 +50,7 @@ fun ChatScreen(
         state = currentState,
         onTopicClick = { topic ->
             activeTopicId = topic.id
-            if (topic.id == "rebound_control") {
+            if (topic.id == ChatPreviewData.DEFAULT_TOPIC_ID) {
                 leftPaneMode = ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
             }
         },
@@ -65,57 +62,14 @@ fun ChatScreen(
         },
         onSend = {
             if (inputText.isNotBlank()) {
-                val newCoachMessage = ChatMessageUiModel(
-                    id = "msg_${System.currentTimeMillis()}",
-                    sender = MessageSender.COACH,
-                    senderName = "Coach Jordi",
-                    senderRole = "Entrenador Principal",
-                    timestamp = "10:25",
-                    text = inputText.trim(),
-                    hasCalloutQuestion = false,
-                    calloutQuestionText = "",
-                    calloutSubText = "",
-                    hasDrillOptions = false,
-                    drillOptions = emptyList(),
-                    hasSummaryCard = false,
-                    summaryCard = ChatSummaryCardUiModel.EMPTY
-                )
-                messages = messages + newCoachMessage
+                messages = messages + ChatPreviewData.createCoachMessage(inputText)
                 inputText = ""
             }
         },
         onDrillOptionSelect = { drill ->
-            val confirmationMsg = ChatMessageUiModel(
-                id = "msg_${System.currentTimeMillis()}_coach",
-                sender = MessageSender.COACH,
-                senderName = "Coach Jordi",
-                senderRole = "Entrenador Principal",
-                timestamp = "10:22",
-                text = "Comencem amb l'${drill.optionTag} (${drill.title}) els dimecres. Prioritzem crear l'hàbit de contacte abans d'anar a buscar la pilota.",
-                hasCalloutQuestion = false,
-                calloutQuestionText = "",
-                calloutSubText = "",
-                hasDrillOptions = false,
-                drillOptions = emptyList(),
-                hasSummaryCard = false,
-                summaryCard = ChatSummaryCardUiModel.EMPTY
-            )
-            val summaryAiMsg = ChatMessageUiModel(
-                id = "msg_${System.currentTimeMillis()}_ai",
-                sender = MessageSender.AI,
-                senderName = "BasketCoach",
-                senderRole = "Focus Integrat",
-                timestamp = "10:23",
-                text = "Molt d'acord, Jordi. Queda sintetitzat i incorporat a la planificació formativa de la Fase 2:",
-                hasCalloutQuestion = false,
-                calloutQuestionText = "",
-                calloutSubText = "",
-                hasDrillOptions = false,
-                drillOptions = emptyList(),
-                hasSummaryCard = true,
-                summaryCard = ChatPreviewData.summaryCard
-            )
-            messages = messages + confirmationMsg + summaryAiMsg
+            messages = messages +
+                ChatPreviewData.createDrillConfirmationMessage(drill) +
+                ChatPreviewData.createSummaryAiMessage()
         },
         modifier = modifier
     )

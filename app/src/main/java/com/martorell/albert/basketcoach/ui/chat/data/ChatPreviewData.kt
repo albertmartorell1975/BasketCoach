@@ -12,6 +12,8 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 
 object ChatPreviewData {
 
+    const val DEFAULT_TOPIC_ID = "rebound_control"
+
     val defaultMetaHeader = ChatMetaHeaderUiModel(
         spaceTag = "Espai de Reflexió Tàctica · 1a Fase",
         phaseSubtitle = "Interterritorial Grup 02 · 14 Jornades analitzades",
@@ -181,10 +183,58 @@ object ChatPreviewData {
         metaHeader = defaultMetaHeader,
         leftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
         topicList = defaultTopicList,
-        activeTopicId = "rebound_control",
+        activeTopicId = DEFAULT_TOPIC_ID,
         diagnosticEvidence = defaultDiagnosticEvidence,
         messages = emptyList(),
         inputText = "",
         isSending = false
+    )
+
+    fun createCoachMessage(text: String): ChatMessageUiModel = ChatMessageUiModel(
+        id = "msg_${System.currentTimeMillis()}",
+        sender = MessageSender.COACH,
+        senderName = "Coach Jordi",
+        senderRole = "Entrenador Principal",
+        timestamp = "10:25",
+        text = text.trim(),
+        hasCalloutQuestion = false,
+        calloutQuestionText = "",
+        calloutSubText = "",
+        hasDrillOptions = false,
+        drillOptions = emptyList(),
+        hasSummaryCard = false,
+        summaryCard = ChatSummaryCardUiModel.EMPTY
+    )
+
+    fun createDrillConfirmationMessage(drill: ChatDrillOptionUiModel): ChatMessageUiModel = ChatMessageUiModel(
+        id = "msg_${System.currentTimeMillis()}_coach",
+        sender = MessageSender.COACH,
+        senderName = "Coach Jordi",
+        senderRole = "Entrenador Principal",
+        timestamp = "10:22",
+        text = "Comencem amb l'${drill.optionTag} (${drill.title}) els dimecres. Prioritzem crear l'hàbit de contacte abans d'anar a buscar la pilota.",
+        hasCalloutQuestion = false,
+        calloutQuestionText = "",
+        calloutSubText = "",
+        hasDrillOptions = false,
+        drillOptions = emptyList(),
+        hasSummaryCard = false,
+        summaryCard = ChatSummaryCardUiModel.EMPTY
+    )
+
+    fun createSummaryAiMessage(): ChatMessageUiModel = ChatMessageUiModel(
+        id = "msg_${System.currentTimeMillis()}_ai",
+        sender = MessageSender.AI,
+        senderName = "BasketCoach",
+        senderRole = "Focus Integrat",
+        timestamp = "10:23",
+        text = "Molt d'acord, Jordi. Queda sintetitzat i incorporat a la planificació formativa de la Fase 2:",
+        hasCalloutQuestion = false,
+        calloutQuestionText = "",
+        calloutSubText = "",
+        hasDrillOptions = false,
+        drillOptions = emptyList(),
+        hasSummaryCard = true,
+        summaryCard = summaryCard
     )
 }
