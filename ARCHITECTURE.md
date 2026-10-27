@@ -237,3 +237,46 @@ The `:app` module delivers a specialized high-density user experience strictly o
 ## 8. Tactical Analysis Presentation Architecture (`:app`)
 
 The Analysis screen (`AnalysisScreen`) provides Coach Jordi with an actionable, high-density tactical diagnosis of Phase 1 competition findings, optimized for Tablet Landscape (`1280x800dp`).
+
+
+---
+
+## 9. Tablet Socratic Chat UI Architecture (`:app`)
+
+The Chat screen (`ChatScreen`) provides Coach Jordi with a high-density, tablet-optimized conversational AI workbench for translating Phase 1 competition findings (3V-11D) into concrete Phase 2 training microcycles and drill commitments.
+
+```text
++-----------------------------------------------------------------------------------------------+
+| BasketCoachNavRail | ChatMetaHeader: Espai de Reflexió Tàctica · 1a Fase | 3V-11D | Junior A  |
+| (80dp Pia Navy)    +--------------------------------------------------------------------------+
+|                    | LEFT WORKBENCH PANE (4 Cols)       | RIGHT CONVERSATION PANE (8 Cols)     |
+|                    | Mode A: ChatTopicList              | ChatRightPane:                       |
+|                    |   ├─ Topic 1: Rebot Defensiu       |   ├─ Header: BasketCoach Socràtic    |
+|                    |   ├─ Topic 2: Ràtio AST/TO         |   ├─ ChatMessageStream:              |
+|                    |   ├─ Topic 3: Pèrdues Q3           |   │    ├─ AiMessageBubble            |
+|                    |   └─ Topic 4: Xat Obert            |   │    │    ├─ Callout Question      |
+|                    |                                    |   │    │    └─ Drill Options (A / B) |
+|                    | Mode B: ChatDiagnosticEvidenceView |   │    ├─ CoachMessageBubble         |
+|                    |   ├─ 2-Metric Box Score Bar        |   │    └─ AssistantSummaryCard       |
+|                    |   ├─ Zero-Assumption Rule Card     |   │         (Phase 2 Commitment)     |
+|                    |   ├─ ChatHalfCourtCanvas (Compose) |   └─ ChatInputBar:                   |
+|                    |   └─ "← Tots els fils" Toggle      |        [Text Field] [Send (48dp)]    |
++-----------------------------------------------------------------------------------------------+
+```
+
+### Key Architectural Patterns for Chat UI
+1. **Two-Pane Tablet Workbench with Seamless Mode Switching**:
+   - The left pane operates as a stateful coordinator (`ChatLeftPane`) alternating between `ChatLeftPaneMode.TOPIC_LIST` (the 4 tactical intervention threads) and `ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE` (in-depth box score metrics, Zero-Assumption rule validation, and custom Compose `ChatHalfCourtCanvas` court visualizer).
+   - A prominent "← Tots els fils" navigation toggle allows Coach Jordi to seamlessly return to the overview without losing dialogue context.
+2. **Single Continuous Thread Mandate (Constraint #6)**:
+   - Selecting an intervention topic card pre-grounds or filters ongoing analytical context within a single continuous conversation stream rather than creating fragmented multi-session tabs or database session splits.
+3. **Diagnostic Evidence Hand-off from Analysis Screen**:
+   - `ChatRoute` declares `@Serializable data class ChatRoute(val initialPrompt: String = "")`.
+   - When Coach Jordi taps "Explorar al Xat" on an Analysis card, `navigateToChat(prompt)` passes the intent. `ChatScreen` pre-fills the prompt, automatically switches the left pane to `ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE`, and activates the corresponding intervention focus.
+4. **Interactive Socratic Drill Choices & Agreement Cards**:
+   - `AiMessageBubble` embeds interactive `AssistantDrillOptionCard` choices (Option A vs Option B) with merged accessibility semantics (`mergeDescendants = true`).
+   - Tapping an option appends Coach Jordi's confirmation message and triggers an AI response containing the `AssistantSummaryCard` synthesizing the weekly practice commitment (e.g., "Capacitat de Tancar el Rebot Defensiu", < 9.5 pts 2a oportunitat, 4 setmanes).
+5. **Strict Default-Free & Non-Nullable UI Models (Constraint #17)**:
+   - All 8 UI presentation models in `ui.chat.model` (`ChatUiState`, `ChatMetaHeaderUiModel`, `ChatTopicCardUiModel`, `ChatDiagnosticEvidenceUiModel`, `ChatMessageUiModel`, `ChatDrillOptionUiModel`, `ChatSummaryCardUiModel`, `ChatLeftPaneMode`) enforce 0 defaults and 0 nullable properties. Absent card attachments use sentinel objects (`ChatSummaryCardUiModel.EMPTY`).
+6. **Minimum Typography Governance (Constraint #16)**:
+   - All text rendered across topic cards, metric badges, half-court diagram labels, bubbles, and input fields enforces a minimum size of `12.sp` (never `10.sp` or `11.sp`).

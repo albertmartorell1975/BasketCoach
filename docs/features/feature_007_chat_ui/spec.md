@@ -6,7 +6,7 @@
 * **`id`:** `feature_007_chat_ui`
 * **`area`:** `app`
 * **`depends_on`:** `["feature_005_dashboard_ui"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement the high-density Tablet Landscape single-thread conversational AI assistant screen (`ChatScreen`) in `:app` matching the authoritative prototypes in `docs/ui/screens/chat_general/` and `docs/ui/screens/chat_detalle/`. The coach interacts with a continuous conversation thread, selects tactical reflection areas ("Àrees d'Intervenció · 1a Fase"), inspects deep diagnostic evidence and spatial court distributions, reviews AI Socratic inquiry and formative practice drill recommendations (Option A & Option B), selects drill choices directly in the thread, types custom tactical reflections, and seamlessly receives pre-grounded exploration prompts when navigating from the Analysis screen ("Explorar al Xat").
 * **Identified Ambiguities / Assumptions:**
@@ -198,49 +198,49 @@ No persistence changes required in this UI phase (in-memory chat persistence is 
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md` (Constraints #1, #6, #8, #16, #17), and Layer-Based Clean Architecture boundaries (`:app` only).
-- [ ] **Navigation Route & AppState Wiring (`:app`):**
-  - [ ] Update `ChatRoute` in `Destinations.kt` to `@Serializable data class ChatRoute(val initialPrompt: String = "")`.
-  - [ ] Overload `navigateToChat(prompt: String = "")` in `BasketCoachAppState.kt`.
-  - [ ] Update `Navigation.kt` to pass `chatRoute.initialPrompt` into `ChatScreen`.
-- [ ] **Presentation UI Models (`ui.chat.model`):**
-  - [ ] Implement `ChatMetaHeaderUiModel`, `ChatTopicCardUiModel`, `ChatDiagnosticEvidenceUiModel`, `ChatDrillOptionUiModel`, `ChatSummaryCardUiModel`, `ChatMessageUiModel`, `ChatLeftPaneMode`, and `ChatUiState`.
-  - [ ] Ensure **zero default parameter values** and **zero nullable fields** across all models.
-- [ ] **Preview Data Factory (`ui.chat.data`):**
-  - [ ] Implement `ChatPreviewData` with the 4 authentic intervention areas, diagnostic evidence metrics, and the full multi-turn Socratic dialogue from `chat_detalle`.
-- [ ] **Composables Decomposition (`ui.chat` & `ui.chat.components`):**
-  - [ ] Build `ChatMetaHeader` with blinking tactical orange dot, title/subtitle, and balance pills.
-  - [ ] Build `ChatTopicCard` and `ChatTopicList` with priority badge, metric pill, and Socratic Pia coaching card.
-  - [ ] Build `ChatDiagnosticEvidenceView` with 2-metric bar, Zero-Assumption rule card, and methodology reminder.
-  - [ ] Build `ChatHalfCourtCanvas` using Jetpack Compose `Canvas` rendering 3pt arc, paint, free throw circle, rim, and perimeter/interior heat clusters.
-  - [ ] Build `ChatLeftPane` coordinating topic list and diagnostic view.
-  - [ ] Build `CoachMessageBubble` (Pia Navy, right-aligned, coach avatar).
-  - [ ] Build `AiMessageBubble` (left-aligned, assistant badge, callout question box, drill option cards with action buttons, summary card).
-  - [ ] Build `ChatWelcomeState` (basketball + brain icon, greeting, intro text).
-  - [ ] Build `ChatMessageStream` (LazyColumn with bubbles).
-  - [ ] Build `ChatInputBar` (TextField with placeholder, min 48x48dp Send button, footer engine label).
-  - [ ] Build `ChatRightPane` assembling header, message stream/welcome, and input bar.
-  - [ ] Build `ChatContent` (stateless workbench coordinating meta header, left pane, and right pane).
-  - [ ] Build `ChatScreen` (stateful screen managing remembered messages, input text, active topic, left pane mode, and drill selection).
-- [ ] **Bilingual String Resources (`res/values/strings.xml` & `res/values-es/strings.xml`):**
-  - [ ] Add 100% paired Catalan and Spanish strings for all chat titles, badges, prompts, drill options, and buttons.
-- [ ] **Testing & Integration (`app/src/test`):**
-  - [ ] Implement `ChatScreenTest.kt` with Robolectric Compose UI tests covering workbench rendering, topic switching, bubble anatomy, drill selection, text input/send, and bilingual localization.
-  - [ ] Update `NavigationTest.kt` ensuring navigation to Chat asserts real chat content.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Run `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug` and ensure 0 failures and 0 lint errors.
-  - [ ] Run full project test suite (`./gradlew test assembleDebug`) ensuring 100% passing tests across all modules.
+- [x] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md` (Constraints #1, #6, #8, #16, #17), and Layer-Based Clean Architecture boundaries (`:app` only).
+- [x] **Navigation Route & AppState Wiring (`:app`):**
+  - [x] Update `ChatRoute` in `Destinations.kt` to `@Serializable data class ChatRoute(val initialPrompt: String = "")`.
+  - [x] Overload `navigateToChat(prompt: String = "")` in `BasketCoachAppState.kt`.
+  - [x] Update `Navigation.kt` to pass `chatRoute.initialPrompt` into `ChatScreen`.
+- [x] **Presentation UI Models (`ui.chat.model`):**
+  - [x] Implement `ChatMetaHeaderUiModel`, `ChatTopicCardUiModel`, `ChatDiagnosticEvidenceUiModel`, `ChatDrillOptionUiModel`, `ChatSummaryCardUiModel`, `ChatMessageUiModel`, `ChatLeftPaneMode`, and `ChatUiState`.
+  - [x] Ensure **zero default parameter values** and **zero nullable fields** across all models.
+- [x] **Preview Data Factory (`ui.chat.data`):**
+  - [x] Implement `ChatPreviewData` with the 4 authentic intervention areas, diagnostic evidence metrics, and the full multi-turn Socratic dialogue from `chat_detalle`.
+- [x] **Composables Decomposition (`ui.chat` & `ui.chat.components`):**
+  - [x] Build `ChatMetaHeader` with blinking tactical orange dot, title/subtitle, and balance pills.
+  - [x] Build `ChatTopicCard` and `ChatTopicList` with priority badge, metric pill, and Socratic Pia coaching card.
+  - [x] Build `ChatDiagnosticEvidenceView` with 2-metric bar, Zero-Assumption rule card, and methodology reminder.
+  - [x] Build `ChatHalfCourtCanvas` using Jetpack Compose `Canvas` rendering 3pt arc, paint, free throw circle, rim, and perimeter/interior heat clusters.
+  - [x] Build `ChatLeftPane` coordinating topic list and diagnostic view.
+  - [x] Build `CoachMessageBubble` (Pia Navy, right-aligned, coach avatar).
+  - [x] Build `AiMessageBubble` (left-aligned, assistant badge, callout question box, drill option cards with action buttons, summary card).
+  - [x] Build `ChatWelcomeState` (basketball + brain icon, greeting, intro text).
+  - [x] Build `ChatMessageStream` (LazyColumn with bubbles).
+  - [x] Build `ChatInputBar` (TextField with placeholder, min 48x48dp Send button, footer engine label).
+  - [x] Build `ChatRightPane` assembling header, message stream/welcome, and input bar.
+  - [x] Build `ChatContent` (stateless workbench coordinating meta header, left pane, and right pane).
+  - [x] Build `ChatScreen` (stateful screen managing remembered messages, input text, active topic, left pane mode, and drill selection).
+- [x] **Bilingual String Resources (`res/values/strings.xml` & `res/values-es/strings.xml`):**
+  - [x] Add 100% paired Catalan and Spanish strings for all chat titles, badges, prompts, drill options, and buttons.
+- [x] **Testing & Integration (`app/src/test`):**
+  - [x] Implement `ChatScreenTest.kt` with Robolectric Compose UI tests covering workbench rendering, topic switching, bubble anatomy, drill selection, text input/send, and bilingual localization.
+  - [x] Update `NavigationTest.kt` ensuring navigation to Chat asserts real chat content.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Run `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug` and ensure 0 failures and 0 lint errors.
+  - [x] Run full project test suite (`./gradlew test assembleDebug`) ensuring 100% passing tests across all modules.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_007_chat_ui` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] Zero changes made outside `:app` (`:domain`, `:data`, `:usecases` untouched).
-- [ ] Single continuous chat thread enforced (Constraint #6) with zero multi-session fragmentation.
-- [ ] Strict default-free and non-nullable UI models enforced (Constraint #17).
-- [ ] Minimum font size of `12.sp` strictly enforced across all text elements (Constraint #16).
-- [ ] All 7 Acceptance Scenarios satisfied with authentic interactive behavior.
-- [ ] 100% key parity across Catalan and Spanish string resources.
-- [ ] All unit and Compose UI tests pass without errors; `@compiler` verification clean.
-- [ ] Structured validation report written to `docs/features/feature_007_chat_ui/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_007_chat_ui` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] Zero changes made outside `:app` (`:domain`, `:data`, `:usecases` untouched).
+- [x] Single continuous chat thread enforced (Constraint #6) with zero multi-session fragmentation.
+- [x] Strict default-free and non-nullable UI models enforced (Constraint #17).
+- [x] Minimum font size of `12.sp` strictly enforced across all text elements (Constraint #16).
+- [x] All 7 Acceptance Scenarios satisfied with authentic interactive behavior.
+- [x] 100% key parity across Catalan and Spanish string resources.
+- [x] All unit and Compose UI tests pass without errors; `@compiler` verification clean.
+- [x] Structured validation report written to `docs/features/feature_007_chat_ui/validator/validation-report.md`.
