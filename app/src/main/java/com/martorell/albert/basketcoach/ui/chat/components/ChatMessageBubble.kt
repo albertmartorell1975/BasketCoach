@@ -6,6 +6,14 @@ import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 
+/**
+ * Dispatches message bubble rendering based on the sender: [CoachMessageBubble] for Coach Jordi
+ * or [AiMessageBubble] for BasketCoach AI.
+ *
+ * @param model Presentation model for the message ([ChatMessageUiModel]).
+ * @param onDrillOptionSelect Callback fired when a drill option is selected.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatMessageBubble(
     model: ChatMessageUiModel,

@@ -31,6 +31,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Contextual meta header bar for the tactical reflection workspace.
+ *
+ * Displays a pulsating tactical orange indicator, the active workspace title, round count subtitle,
+ * and pill badges representing the Phase 1 team balance and division.
+ *
+ * @param model Presentation model containing header labels and pills ([ChatMetaHeaderUiModel]).
+ * @param modifier Composable modifier for layout adjustment.
+ */
 @Composable
 fun ChatMetaHeader(
     model: ChatMetaHeaderUiModel,
@@ -58,32 +67,38 @@ fun ChatMetaHeader(
         ) {
             Box(
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(8.dp)
                     .clip(CircleShape)
                     .alpha(alpha)
                     .background(PiaTacticalOrange)
             )
-            Text(
-                text = model.spaceTag,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = PiaNavy
-            )
-            Text(
-                text = "/",
-                fontSize = 12.sp,
-                color = PiaTextMuted
-            )
-            Text(
-                text = model.phaseSubtitle,
-                fontSize = 12.sp,
-                color = PiaTextMuted
-            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = model.spaceTag,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = PiaNavy
+                )
+                Text(
+                    text = "·",
+                    fontSize = 14.sp,
+                    color = PiaTextMuted
+                )
+                Text(
+                    text = model.phaseSubtitle,
+                    fontSize = 12.sp,
+                    color = PiaTextMuted
+                )
+            }
         }
 
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
@@ -94,21 +109,22 @@ fun ChatMetaHeader(
                 Text(
                     text = model.balancePill,
                     fontSize = 12.sp,
-                    color = PiaNavy,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = PiaNavy
                 )
             }
+
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(999.dp))
-                    .background(PiaNavy.copy(alpha = 0.1f))
+                    .background(PiaTacticalOrange.copy(alpha = 0.12f))
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(
                     text = model.teamPill,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = PiaNavy
+                    color = PiaTacticalOrange
                 )
             }
         }

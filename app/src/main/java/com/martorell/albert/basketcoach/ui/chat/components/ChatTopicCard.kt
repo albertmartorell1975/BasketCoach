@@ -41,6 +41,14 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Interactive card component representing a single tactical intervention area or open inquiry thread.
+ *
+ * @param model Presentation data for this topic ([ChatTopicCardUiModel]).
+ * @param isActive Whether this topic card is currently selected.
+ * @param onClick Callback triggered on click.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatTopicCard(
     model: ChatTopicCardUiModel,

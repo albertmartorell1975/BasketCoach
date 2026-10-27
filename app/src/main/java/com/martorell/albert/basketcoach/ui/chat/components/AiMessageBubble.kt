@@ -34,6 +34,16 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Left-aligned message bubble component representing AI Assistant responses.
+ *
+ * Features an assistant avatar badge, traceable evidence role tags, optional Socratic callout questions,
+ * interactive drill recommendation cards, and microcycle commitment summary cards.
+ *
+ * @param model Message presentation model ([ChatMessageUiModel]).
+ * @param onDrillOptionSelect Callback fired when an embedded drill option is chosen.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun AiMessageBubble(
     model: ChatMessageUiModel,

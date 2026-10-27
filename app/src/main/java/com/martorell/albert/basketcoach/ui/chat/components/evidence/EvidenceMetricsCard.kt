@@ -35,6 +35,16 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainerLow
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Box-score metric comparison card in the left diagnostic evidence pane.
+ *
+ * Shows priority badge, "← Tots els fils" navigation toggle, primary/secondary metrics with deltas,
+ * and the Zero-Assumption rule empirical corroboration note.
+ *
+ * @param model Diagnostic evidence presentation model ([ChatDiagnosticEvidenceUiModel]).
+ * @param onBackToTopics Callback fired when the back toggle is tapped.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun EvidenceMetricsCard(
     model: ChatDiagnosticEvidenceUiModel,

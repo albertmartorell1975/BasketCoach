@@ -15,6 +15,16 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 
+/**
+ * Vertically scrollable message stream list displaying conversation bubbles.
+ *
+ * Automatically scrolls to the newest message whenever the message count increases.
+ *
+ * @param messages Ordered list of messages to display.
+ * @param onDrillOptionSelect Callback fired when a formative drill choice is selected.
+ * @param modifier Composable modifier for layout customization.
+ * @param listState Optional hoisted [LazyListState] for scroll control.
+ */
 @Composable
 fun ChatMessageStream(
     messages: List<ChatMessageUiModel>,

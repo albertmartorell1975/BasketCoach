@@ -21,6 +21,20 @@ import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
+/**
+ * Stateless main workbench layout for the Tablet Landscape Single-Thread Chat screen.
+ *
+ * Assembles the context meta header, the 4-column left pane ([ChatLeftPane]), and the 8-column
+ * right conversational pane ([ChatRightPane]) in a tablet-optimized landscape grid.
+ *
+ * @param state Current immutable UI state ([ChatUiState]).
+ * @param onTopicClick Callback triggered when an intervention topic card is tapped.
+ * @param onBackToTopics Callback triggered to return from diagnostic evidence to the topics list.
+ * @param onInputChange Callback triggered when the input text changes.
+ * @param onSend Callback triggered to dispatch a new coach message.
+ * @param onDrillOptionSelect Callback triggered when a formative drill option is selected.
+ * @param modifier Composable modifier for outer layout customization.
+ */
 @Composable
 fun ChatContent(
     state: ChatUiState,

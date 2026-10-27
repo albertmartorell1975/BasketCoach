@@ -13,6 +13,15 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 
+/**
+ * Stateful entry composable for the Tablet Landscape Single-Thread Chat workbench.
+ *
+ * Manages local interaction state (left pane mode, active topic, draft input text, and dynamic
+ * appended messages from drill option selections) while hoisting rendering to stateless [ChatContent].
+ *
+ * @param initialPrompt Optional pre-grounded prompt passed when navigating from the Analysis screen.
+ * @param modifier Composable modifier for outer layout customization.
+ */
 @Composable
 fun ChatScreen(
     initialPrompt: String = "",

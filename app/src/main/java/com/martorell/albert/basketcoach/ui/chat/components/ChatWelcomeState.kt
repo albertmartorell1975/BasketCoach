@@ -30,6 +30,13 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Welcome state component displayed in the conversational stream when no messages are present.
+ *
+ * Guides Coach Jordi on how to start a tactical inquiry or select an intervention thread.
+ *
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatWelcomeState(
     modifier: Modifier = Modifier

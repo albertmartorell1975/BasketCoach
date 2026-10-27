@@ -37,6 +37,16 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainerLow
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Bottom message entry bar with single-line text input, keyboard IME Send action,
+ * min 48x48dp Send icon button, and AI engine status caption.
+ *
+ * @param text Current text value in the input field.
+ * @param onTextChange Callback fired on text value modification.
+ * @param onSend Callback fired on send action.
+ * @param isSending Whether a send operation is in progress.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatInputBar(
     text: String,

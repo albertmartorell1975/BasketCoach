@@ -30,6 +30,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainerLow
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Left pane component presenting the list of Phase 1 tactical intervention areas and the
+ * Socratic Pia methodology card.
+ *
+ * @param topics List of topic cards to render ([ChatTopicCardUiModel]).
+ * @param activeTopicId Identifier of the currently selected topic.
+ * @param onTopicClick Callback triggered when a card is clicked.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatTopicList(
     topics: List<ChatTopicCardUiModel>,

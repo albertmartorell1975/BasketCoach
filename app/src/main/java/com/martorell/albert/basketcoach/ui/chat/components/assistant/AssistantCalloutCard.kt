@@ -25,6 +25,13 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurface
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Callout box embedded inside an AI message highlighting a key Socratic coaching inquiry.
+ *
+ * @param questionText Primary bold inquiry question text.
+ * @param subText Contextual coaching guidance or empirical observation.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun AssistantCalloutCard(
     questionText: String,

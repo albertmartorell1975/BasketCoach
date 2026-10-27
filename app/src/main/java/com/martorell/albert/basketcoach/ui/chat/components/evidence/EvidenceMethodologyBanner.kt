@@ -26,6 +26,13 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Banner component displaying the Socratic Pia coaching cycle reminder in the left diagnostic evidence pane.
+ *
+ * @param title Methodology title.
+ * @param cycle Sequence of coaching steps (e.g., "Evidència → Reflexió → Exercicis → Compromís").
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun EvidenceMethodologyBanner(
     title: String,

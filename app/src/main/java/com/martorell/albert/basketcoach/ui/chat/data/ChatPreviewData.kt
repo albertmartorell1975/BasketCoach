@@ -10,6 +10,12 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatSummaryCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 
+/**
+ * Static preview and mock data factory for the Tablet Single-Thread Chat UI.
+ *
+ * Supplies authentic Phase 1 intervention topics, empirical diagnostic evidence matching
+ * the authoritative `chat_detalle` prototype, and a multi-turn Socratic dialogue.
+ */
 object ChatPreviewData {
 
     const val DEFAULT_TOPIC_ID = "rebound_control"

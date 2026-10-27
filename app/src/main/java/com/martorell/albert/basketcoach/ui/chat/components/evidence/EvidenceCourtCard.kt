@@ -29,6 +29,12 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaSurface
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 
+/**
+ * Container card for the basketball half-court spatial distribution visualizer in the left diagnostic evidence pane.
+ *
+ * @param model Diagnostic evidence model containing zone frequency percentages ([ChatDiagnosticEvidenceUiModel]).
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun EvidenceCourtCard(
     model: ChatDiagnosticEvidenceUiModel,

@@ -13,6 +13,18 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 
+/**
+ * Left workbench pane coordinator supporting animated mode switching between the intervention
+ * topic list ([ChatTopicList]) and deep diagnostic evidence ([ChatDiagnosticEvidenceView]).
+ *
+ * @param mode Active display mode ([ChatLeftPaneMode]).
+ * @param topics List of available intervention topic cards.
+ * @param activeTopicId Identifier of the currently active topic.
+ * @param diagnosticEvidence Deep empirical diagnostic evidence model.
+ * @param onTopicClick Callback fired when a topic card is selected.
+ * @param onBackToTopics Callback fired to switch back to the topic list.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatLeftPane(
     mode: ChatLeftPaneMode,

@@ -32,6 +32,14 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Phase 2 training commitment summary card embedded in an AI message upon drill selection.
+ *
+ * Highlights the confirmed pedagogical focus, statistical goal, and microcycle schedule.
+ *
+ * @param model Presentation model for the summary commitment ([ChatSummaryCardUiModel]).
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun AssistantSummaryCard(
     model: ChatSummaryCardUiModel,

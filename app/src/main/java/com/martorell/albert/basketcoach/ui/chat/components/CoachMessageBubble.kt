@@ -28,6 +28,14 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Right-aligned message bubble component representing Coach Jordi's tactical input.
+ *
+ * Styled in Pia Navy container with top-right square corner and Coach avatar.
+ *
+ * @param model Message presentation model ([ChatMessageUiModel]).
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun CoachMessageBubble(
     model: ChatMessageUiModel,

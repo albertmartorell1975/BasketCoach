@@ -37,6 +37,18 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Right workbench pane containing the assistant header, scrollable conversation stream (or empty state),
+ * and the fixed bottom message input bar.
+ *
+ * @param messages List of conversation messages ([ChatMessageUiModel]).
+ * @param inputText Current text in the input bar.
+ * @param isSending Whether a message send action is currently in flight.
+ * @param onInputChange Callback fired when the input text changes.
+ * @param onSend Callback fired to dispatch the current input text.
+ * @param onDrillOptionSelect Callback fired when a formative drill choice is clicked.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatRightPane(
     messages: List<ChatMessageUiModel>,

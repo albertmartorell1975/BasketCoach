@@ -39,6 +39,20 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Custom Compose [Canvas] component rendering FIBA basketball half-court geometry and
+ * empirical perimeter vs. interior shot/rebound heat clusters.
+ *
+ * Strictly enforces a minimum typography size of 12.sp on all rendered zone labels per Constraint #16.
+ *
+ * @param perimeterPct Total percentage of conceded opportunities originating from perimeter.
+ * @param interiorPct Total percentage of conceded opportunities originating from interior/paint.
+ * @param leftWingPct Left wing zone frequency percentage.
+ * @param topOfKeyPct Top of the key zone frequency percentage.
+ * @param rightWingPct Right wing zone frequency percentage.
+ * @param paintPct Paint zone frequency percentage.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun ChatHalfCourtCanvas(
     perimeterPct: String,

@@ -34,6 +34,16 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
+/**
+ * Formative practice drill recommendation card embedded in an AI message.
+ *
+ * Supports side-by-side comparison of drill options (e.g., Option A vs Option B) with
+ * merged accessibility semantics (`mergeDescendants = true`) and a direct selection action.
+ *
+ * @param drill Presentation model for the drill option ([ChatDrillOptionUiModel]).
+ * @param onSelect Callback fired when the drill card or action button is tapped.
+ * @param modifier Composable modifier for layout customization.
+ */
 @Composable
 fun AssistantDrillOptionCard(
     drill: ChatDrillOptionUiModel,
