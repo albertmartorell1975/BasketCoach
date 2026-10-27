@@ -111,9 +111,9 @@
     "depends_on": [
       "feature_005_dashboard_ui"
     ],
-    "status": "in_progress",
+    "status": "passing",
     "verification": "Compose UI tests render the chat messages list and input field correctly.",
-    "evidence": "",
+    "evidence": "gradlew :app:assembleDebug lintDebug test - 93 unit and Compose UI tests passed (13 in :domain, 33 in :data, 15 in :usecases, 32 in :app across 6 ChatScreenTest and 3 NavigationTest), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors.",
     "notes": "Must support text input and display both user and AI message bubbles.",
     "require_review_after": [
       "planner",

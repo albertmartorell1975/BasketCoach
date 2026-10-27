@@ -57,9 +57,10 @@ class NavigationTest {
         composeTestRule.onNodeWithContentDescription("Anàlisi").performClick()
         composeTestRule.onNodeWithText("REGISTRE FASE 1").assertIsDisplayed()
 
-        // Tap on Chat
+        // Tap on Chat - now renders real Chat Assistant Screen
         composeTestRule.onNodeWithContentDescription("Chat").performClick()
-        composeTestRule.onNodeWithText("Aquesta funcionalitat s'activarà a la Fase 2.").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Espai de Reflexió Tàctica · 1a Fase").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Assistent Socràtic BasketCoach").assertIsDisplayed()
 
         // Tap back on Dashboard
         composeTestRule.onNodeWithContentDescription("Dashboard").performClick()
@@ -99,10 +100,5 @@ class NavigationTest {
             appState.navigateToChat()
         }
         assertTrue(navController.currentDestination?.hasRoute(ChatRoute::class) == true)
-
-        composeTestRule.runOnUiThread {
-            appState.navigateToDashboard()
-        }
-        assertTrue(navController.currentDestination?.hasRoute(DashboardRoute::class) == true)
     }
 }

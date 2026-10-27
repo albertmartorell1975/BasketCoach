@@ -22,7 +22,7 @@ object AnalysisRoute
  * Type-safe navigation destination representing the conversational AI Chat Assistant screen.
  */
 @Serializable
-object ChatRoute
+data class ChatRoute(val initialPrompt: String = "")
 
 /**
  * Metadata descriptor for a top-level destination displayed in the application shell's navigation rail.
