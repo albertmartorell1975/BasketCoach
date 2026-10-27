@@ -30,7 +30,7 @@ class DashboardStaticStateTest {
         assertEquals(R.string.nav_analysis, options[1].titleRes)
         assertEquals(Icons.Filled.Insights, options[1].icon)
 
-        assertEquals(ChatRoute, options[2].route)
+        assertEquals(ChatRoute(), options[2].route)
         assertEquals(R.string.nav_chat, options[2].titleRes)
         assertEquals(Icons.Filled.Forum, options[2].icon)
     }
