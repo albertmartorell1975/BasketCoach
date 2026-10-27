@@ -2,17 +2,11 @@ package com.martorell.albert.basketcoach.ui.chat
 
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasAnyDescendant
-import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.printToLog
 import com.martorell.albert.basketcoach.ui.chat.components.AiMessageBubble
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
@@ -35,7 +29,7 @@ class ChatScreenTest {
     fun chatScreen_rendersWorkbenchLayout() {
         composeTestRule.setContent {
             BasketCoachTheme {
-                ChatScreen()
+                ChatScreen(initialPrompt = "")
             }
         }
 
@@ -50,7 +44,7 @@ class ChatScreenTest {
     fun chatScreen_topicSelection_switchesToDiagnosticEvidence() {
         composeTestRule.setContent {
             BasketCoachTheme {
-                ChatScreen()
+                ChatScreen(initialPrompt = "")
             }
         }
 
@@ -73,7 +67,7 @@ class ChatScreenTest {
     fun chatScreen_drillSelection_appendsConfirmationAndSummary() {
         composeTestRule.setContent {
             BasketCoachTheme {
-                ChatScreen()
+                ChatScreen(initialPrompt = "")
             }
         }
 
@@ -112,7 +106,7 @@ class ChatScreenTest {
     fun chatScreen_textInputAndSend_appendsCoachBubble() {
         composeTestRule.setContent {
             BasketCoachTheme {
-                ChatScreen()
+                ChatScreen(initialPrompt = "")
             }
         }
 
@@ -144,7 +138,7 @@ class ChatScreenTest {
     fun chatScreen_spanishLocalization() {
         composeTestRule.setContent {
             BasketCoachTheme {
-                ChatScreen()
+                ChatScreen(initialPrompt = "")
             }
         }
 
