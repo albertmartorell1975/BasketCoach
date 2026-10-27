@@ -1,57 +1,50 @@
 package com.martorell.albert.basketcoach.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val PiaLightColorScheme = lightColorScheme(
+    primary = PiaNavy,
+    onPrimary = PiaWhite,
+    primaryContainer = PiaNavy,
+    onPrimaryContainer = PiaWhite,
+    secondary = PiaNavy,
+    onSecondary = PiaWhite,
+    secondaryContainer = PiaSurfaceVariant,
+    onSecondaryContainer = PiaTextPrimary,
+    tertiary = PiaTacticalOrange,
+    onTertiary = PiaWhite,
+    background = PiaBackground,
+    onBackground = PiaTextPrimary,
+    surface = PiaSurface,
+    onSurface = PiaTextPrimary,
+    surfaceVariant = PiaSurfaceVariant,
+    onSurfaceVariant = PiaTextMuted,
+    outline = PiaOutline,
+    outlineVariant = PiaSlate,
+    error = PiaDangerRed,
+    onError = PiaWhite
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
-
+/**
+ * Core Material 3 theme wrapper for the BasketCoach application.
+ *
+ * Configures the custom Pia Sabadell color scheme, typography hierarchy, and shape tokens.
+ *
+ * @param darkTheme Whether system dark theme is active (defaults to light scheme).
+ * @param dynamicColor Whether dynamic system color is enabled (disabled to preserve Pia brand identity).
+ * @param content Composable tree to be wrapped by the theme.
+ */
 @Composable
 fun BasketCoachTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = PiaLightColorScheme,
         typography = Typography,
         content = content
     )

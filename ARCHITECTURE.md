@@ -191,3 +191,43 @@ BasketCoach integrates with the DevExpert Inference API and provides seamless fa
 5. **Exception Translation & Error Mapping (`data.util.ExceptionMapper`)**:
    - `Throwable.toDomainError()` maps timeouts to `DomainError.Network.Timeout`, 401 to `DomainError.Network.Unauthorized`, 500..599 to `DomainError.Network.ServerError`, and IO errors to `DomainError.Network.NoInternet`.
    - `safeCall` preserves structured concurrency by immediately rethrowing `CancellationException`.
+
+
+---
+
+## 7. Presentation & Navigation Architecture (`:app`)
+
+The `:app` module delivers a specialized high-density user experience strictly optimized for **Android Tablets in Landscape orientation** (`1280x800dp`).
+
+```text
++-----------------------------------------------------------------------------------------------+
+| BasketCoachNavRail (80dp Navy) | BasketCoachTopBar (64dp White)                               |
+|                                +--------------------------------------------------------------+
+| [Dashboard]                    | Dynamic Viewport (Navigation Host)                           |
+| [Anàlisi]                      |   - DashboardScreen (Phase 1 Baseline)                       |
+| [Chat]                         |       ├─ DashboardHeroCard (3V-11D, 21.4%, 14 games)         |
+|                                |       ├─ KpiCardRow (kpi/: Scoring, Rebounds, Shooting, Control)  |
+|                                |       ├─ Phase1EvolutionChart (14-round bars, green badges)  |
+|                                |       └─ Phase1MatchesTable (table/: 14 matches, 16 cols)     |
+|                                |   - PlaceholderScreen (Anàlisi / Chat)                       |
++-----------------------------------------------------------------------------------------------+
+```
+
+### Key Architectural Patterns for UI & Presentation
+1. **AppState & Destinations Pattern (`ui.navigation`)**:
+   - `Destinations.kt` models top-level routes as Kotlin `@Serializable` objects (`DashboardRoute`, `AnalysisRoute`, `ChatRoute`).
+   - `TopLevelRoute<T : Any>` encapsulates the string resource label, route instance, and Material icon vector for navigation rail items.
+   - `BasketCoachAppState` holds the `NavHostController`, application `CoroutineScope`, and `SnackbarHostState`. It evaluates the active route via destination hierarchy traversal (`currentDestination?.hierarchy?.any { it.hasRoute(route::class) } == true`).
+   - State-preserving tab switching is guaranteed via `navigatePoppingUpToStartDestination(route)` using `popUpTo(graph.findStartDestination().id) { saveState = true }`, `launchSingleTop = true`, and `restoreState = true`.
+2. **Decoupled & Passive Composables**:
+   - Entry screen composables (`DashboardScreen`, `PlaceholderScreen`) receive zero `NavController` or `BasketCoachAppState` parameters. All navigation intents and event callbacks are hoisted to callers, ensuring 100% decoupling from Jetpack Navigation.
+3. **Composable Decomposition & Hierarchy**:
+   - `BasketCoachApp`: Root application shell coordinating the 80dp `BasketCoachNavRail` on the left and a content column with `BasketCoachTopBar` and `Navigation(appState)`.
+   - `BasketCoachTopBar`: 64dp white top bar displaying the application title, category pill ("Junior Masculí Interterritorial"), verified dataset status pill, and Head Coach profile avatar with name.
+   - `DashboardContent`: Vertically scrollable column assembling the four primary dashboard cards (`DashboardHeroCard`, `KpiCardRow`, `Phase1EvolutionChart`, `Phase1MatchesTable`).
+4. **Strict Default-Free & Non-Nullable UI State Models (`ui.dashboard.model`)**:
+   - `DashboardUiState` and its constituent sub-models (`Phase1SummaryUiModel`, `DashboardKpisUiModel`, `ScoringEvolutionUiModel`, `MatchRowUiModel`) model all UI properties as non-nullable types with **zero default parameter values**.
+   - UI mappers and static data providers (`Phase1PreviewData`) serve as the sole authoritative source of UI state, preventing accidental fallback bugs or silent omissions.
+5. **Design System & Typographic Governance (`ui.theme`)**:
+   - Strictly enforces a minimum typography size of `12.sp` across all labels, pills, chart axis texts, and table cells to guarantee readability on physical tablet displays.
+   - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate themes (Light, Dark, RTL, Large Font) and form factors (Tablet Landscape, Phone Landscape) across all composables.

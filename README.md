@@ -7,7 +7,7 @@ BasketCoach follows a **Layer-Based Clean Architecture** pattern across four pri
 - **`:domain`**: Core business entities (`Game`, `TeamStats`, `Score`, `Venue`, `Insight`, `Drill`), typed errors (`DomainError`), and repository contracts (`GameRepository`, `AiAnalysisRepository`, `ChatRepository`). Pure Kotlin JVM with zero external dependencies.
 - **`:usecases`**: Pure Kotlin JVM domain interactors (`GetPhase1GamesUseCase`, `GetGameByRoundUseCase`, `GenerateInsightsUseCase`, `GetPracticeDrillsUseCase`, `GetChatMessagesUseCase`, `SendChatMessageUseCase`) orchestrating analytical and conversational workflows with strict dependency solely on `:domain`.
 - **`:data`**: Repository implementations, local fixture data sources (`GameLocalDataSource`), in-memory SSOT caching, and OpenAI-compatible AI client (`AiRemoteDataSource`) supporting DevExpert and Google Gemini.
-- **`:app`**: Tablet Landscape Jetpack Compose UI (two-pane dashboard and single-thread chat assistant) using Hilt and MVVM Hybrid UI State.
+- **`:app`**: Tablet Landscape Jetpack Compose UI (two-pane dashboard, navigation shell, and single-thread chat assistant) using Hilt and MVVM Hybrid UI State.
 
 ## AI Configuration & Credentials
 
@@ -27,3 +27,9 @@ Alternatively, set them as environment variables or system properties. If `DEVEX
 - [x] **`feature_002_data_parsing`**: Phase 1 JSON dataset parsing and cached `GameRepositoryImpl` in `:data` (`accepted`).
 - [x] **`feature_003_devexpert_client`**: DevExpert & Gemini OpenAI-compatible API client, data sources, and repositories in `:data` (`accepted`).
 - [x] **`feature_004_usecases`**: Core business interactors in `:usecases` for game queries, AI tactical insights, and conversational chat (`accepted`).
+- [x] **`feature_005_dashboard_ui`**: Tablet Landscape Dashboard UI (80dp NavRail, 64dp TopBar, Hero card, 4 KPI cards, 14-round evolution chart, 14-match table) in `:app` (`accepted`).
+- [ ] **`feature_006_analysis_ui`**: Tablet Landscape Analysis UI (hero card, 3-filter segmented control, tactical insight cards with metric panels) in `:app` (`not_started`).
+- [ ] **`feature_007_chat_ui`**: Tablet Single-Thread Chat UI (continuous message history, prompt reflections, AI responses) in `:app` (`not_started`).
+- [ ] **`feature_008_dashboard_integration`**: Connect Dashboard to Real Data via `GetPhase1GamesUseCase` and ViewModel in `:app` (`not_started`).
+- [ ] **`feature_009_analysis_integration`**: Connect Analysis to Real Data via `GenerateInsightsUseCase` and ViewModel in `:app` (`not_started`).
+- [ ] **`feature_010_chat_integration`**: Connect Chat to DevExpert API via `SendChatMessageUseCase` and ViewModel in `:app` (`not_started`).

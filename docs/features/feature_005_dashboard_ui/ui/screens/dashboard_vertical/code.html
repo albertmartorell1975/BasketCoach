@@ -1,0 +1,596 @@
+<!DOCTYPE html><html lang="ca" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="web_dashboard" name="shell-type">
+<title>BasketCoach - Dashboard Junior Masculí Interterritorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #c5c6cf; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9e9e9e; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-tint": "#4d5e86",
+            "surface-dim": "#dadada",
+            "on-error-container": "#93000a",
+            "surface": "#FFFFFF",
+            "surface-variant": "#ECEEF2",
+            "tertiary-container": "#5b1700",
+            "on-secondary-container": "#616363",
+            "surface-container": "#eeeeee",
+            "on-background": "#1a1c1c",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#061a3f",
+            "danger-red": "#D32F2F",
+            "secondary-fixed": "#e2e2e2",
+            "surface-container-highest": "#e2e2e2",
+            "outline-variant": "#c5c6cf",
+            "on-tertiary-fixed-variant": "#842500",
+            "on-surface-variant": "#45464e",
+            "tertiary-fixed": "#ffdbd0",
+            "on-tertiary": "#ffffff",
+            "primary": "#1D2E54",
+            "secondary-fixed-dim": "#c6c6c7",
+            "inverse-on-surface": "#f1f1f1",
+            "success-green": "#008C45",
+            "text-muted": "#616161",
+            "surface-container-low": "#f5f5f5",
+            "on-primary-fixed-variant": "#36466d",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#1a1c1c",
+            "text-primary": "#1A1A1A",
+            "secondary-container": "#dfe0e0",
+            "error": "#ba1a1a",
+            "inverse-primary": "#b5c6f5",
+            "primary-fixed-dim": "#b5c6f5",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#370a00",
+            "on-secondary-fixed-variant": "#454747",
+            "surface-bright": "#f9f9f9",
+            "inverse-surface": "#2f3131",
+            "outline": "#D1D5DB",
+            "tactical-orange": "#F15A24",
+            "error-container": "#ffdad6",
+            "primary-fixed": "#d9e2ff",
+            "tertiary-fixed-dim": "#ffb59e",
+            "on-tertiary-fixed": "#3a0b00",
+            "on-surface": "#1a1c1c",
+            "on-error": "#ffffff",
+            "on-primary-container": "#8696c2",
+            "secondary": "#5d5f5f",
+            "surface-container-high": "#e8e8e8",
+            "background": "#F5F5F5",
+            "on-tertiary-container": "#ff652f",
+            "primary-container": "#1D2E54"
+          },
+          fontFamily: {
+            "body": ["Roboto Flex", "sans-serif"],
+            "heading": ["Roboto Flex", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background font-body text-text-primary antialiased min-h-screen flex">
+<!-- 1. BARRA LATERAL FIXA ESQUERRA -->
+<aside class="fixed left-0 top-0 h-full w-20 bg-primary z-50 flex flex-col items-center py-4 border-r border-white/10 shadow-xl"><nav class="flex-1 flex flex-col items-center gap-2 w-full px-2"><a aria-current="page" class="w-16 h-14 flex flex-col items-center justify-center transition-all bg-surface text-primary rounded-xl font-bold shadow" data-path="dashboard" href="#" title="Dashboard"><span class="material-symbols-outlined text-2xl text-primary" style="font-variation-settings: 'FILL' 1;">dashboard</span><span class="text-[10px] leading-tight text-center mt-0.5 font-bold">Dashboard</span></a><a class="w-16 h-14 rounded-xl flex flex-col items-center justify-center text-white/70 hover:bg-white/10 hover:text-white transition-all" data-path="global-team-analysis" href="#" title="Anàlisi Global"><span class="material-symbols-outlined text-2xl">insights</span><span class="text-[10px] leading-tight text-center mt-0.5">Anàlisi</span></a><a class="w-16 h-14 rounded-xl flex flex-col items-center justify-center text-white/70 hover:bg-white/10 hover:text-white transition-all" data-path="coaching-chat" href="#" title="Coaching Chat"><span class="material-symbols-outlined text-2xl">forum</span><span class="text-[10px] leading-tight text-center mt-0.5">Chat</span></a></nav></aside>
+<!-- CONTINGUT PRINCIPAL -->
+<div class="pl-20 flex-1 flex flex-col min-h-screen w-[calc(100%-5rem)] max-w-full overflow-x-hidden">
+<!-- CAPÇALERA SUPERIOR -->
+<header class="fixed top-0 left-20 right-0 h-16 backdrop-blur-md border-b border-outline/30 z-40 flex items-center justify-between px-8 shadow-sm bg-surface"><div class="flex items-center gap-3"><div class="flex items-center gap-2"><span class="text-xl font-bold tracking-tight text-primary">BasketCoach</span></div><span class="bg-primary/5 text-primary font-semibold text-xs px-3 py-1 rounded-full border-0">Junior Masculí Interterritorial</span></div><div class="flex items-center gap-4"><div class="flex items-center gap-1.5 bg-[#E8F5E9] text-success-green px-3 py-1.5 rounded-lg border border-success-green/20"><span class="material-symbols-outlined text-success-green text-base" style="font-variation-settings: 'FILL' 1;">check_circle</span><span class="text-xs font-semibold">Dades consolidades · 14 partits 1a Fase</span></div><div class="flex items-center gap-2 pl-2 border-l border-outline/30"><img alt="Head Coach" class="w-9 h-9 rounded-full object-cover shrink-0 ring-2 ring-primary/20 shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1XSw4WceqZRX_paaN4XH2olA-DYAMW5kwcmnZEfISB7-YVNpmksvmzN4sJrVHB-KvMzbw_9RKfZ7TS1h6WbdNuFrZmi4QfycPfm0wUd0CHIT_OrSp8e-v6yu3z0dMg1MNKuLrwE22NzrNTgbIDEyVFKHPoQ0sCgINEW3ssCO2ExWC-_uZu7ACmeLMj2xMadovOc12CTc3i9E2dkDhYYxm7vTM40iR4GUrduLyzWYZ5iAhz8rWHSLJXKwthG"><div class="hidden sm:flex flex-col text-left"><span class="text-xs font-bold text-text-primary leading-tight">Head Coach</span><span class="text-[10px] text-text-muted leading-tight">Jordi</span></div></div></div></header>
+<!-- MAIN BODY -->
+<main class="w-full pt-20 pb-12 px-8 space-y-6 box-border block">
+<!-- 2. RESUM SUPERIOR DE LÍNIA BASE (KISS, 1a Fase) -->
+<div class="bg-surface rounded-xl p-5 border border-outline/30 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"><div class="flex items-start gap-4"><div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">scoreboard</span></div><div><div class="flex items-center gap-2"><span class="text-xs uppercase tracking-wider px-2 py-0.5 rounded bg-primary/10 text-primary font-bold">Línia Base Fase 1</span><span class="text-xs text-text-muted font-medium flex items-center gap-1"><span class="material-symbols-outlined text-sm text-success-green">verified</span> dataset.json verificat · 14/14 partits</span></div><h1 class="text-2xl font-bold text-text-primary tracking-tight mt-0.5">Balanç Competitiu: 3 Victòries - 11 Derrotes (3V - 11D)</h1><p class="text-xs text-text-muted mt-0.5 flex items-center gap-2"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2 py-0.5 rounded">21.4% victòries</span><span class="">·</span><span class="">Junior Masculí Interterritorial</span><span class="">·</span><span class="">CEB Escola Pia Sabadell</span></p></div></div><div class="flex items-center gap-3 self-start md:self-center"><div class="text-right"><span class="text-[11px] uppercase font-bold text-text-muted block">Balanç Fase 1</span><span class="text-xs font-bold text-danger-red">3 Victòries / 11 Derrotes</span></div><div class="w-11 h-11 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center font-bold text-xs"><span class="text-base leading-none">14</span><span class="text-[9px] uppercase leading-none mt-0.5">Partits</span></div></div></div>
+<!-- 4 TARGETES DE MÈTRIQUES CLAU -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"><!-- 1. Anotació mitjana --><div class="bg-surface rounded-xl p-4 border border-outline/30 shadow-sm flex flex-col justify-between hover:shadow transition-shadow"><div class="flex items-center justify-between"><span class="text-xs font-bold text-text-muted uppercase tracking-wider">Anotació Mitjana</span><span class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-lg">sports_basketball</span></span></div><div class="my-2"><div class="flex items-baseline gap-2"><span class="text-3xl font-extrabold text-text-primary tracking-tight">64.6</span><span class="text-xs font-medium text-text-muted">vs 73.7 ppg rival</span></div><div class="flex items-center gap-1.5 mt-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-[#FFEBEE] text-danger-red">-9.1 Diferencial net</span><span class="text-[11px] text-text-muted">14 partits</span></div></div><div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden"><div class="bg-danger-red h-full rounded-full" style="width: 47%;"></div></div></div><!-- 2. Rebots & Balanç --><div class="bg-surface rounded-xl p-4 border border-outline/30 shadow-sm flex flex-col justify-between hover:shadow transition-shadow relative overflow-hidden"><div class="absolute top-0 right-0 w-1.5 h-full bg-tactical-orange"></div><div class="flex items-center justify-between"><span class="text-xs font-bold text-text-muted uppercase tracking-wider">Rebots &amp; Balanç</span><span class="w-8 h-8 rounded-lg bg-tactical-orange/10 flex items-center justify-center text-tactical-orange"><span class="material-symbols-outlined text-lg">height</span></span></div><div class="my-2"><div class="flex items-baseline gap-2"><span class="text-3xl font-extrabold text-text-primary tracking-tight">22.8</span><span class="text-xs font-medium text-text-muted">reb/p (vs 30.6)</span></div><div class="flex items-center gap-1.5 mt-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-[#FFEBEE] text-danger-red">Balanç negatiu (-7.8)</span></div></div><div class="flex items-center justify-between text-xs text-text-muted border-t border-outline/20 pt-1.5"><span class=""><strong>5.9</strong> Ofensius</span><span class=""><strong>16.9</strong> Defensius</span></div></div><!-- 3. Eficiència Tir (eFG%) --><div class="bg-surface rounded-xl p-4 border border-outline/30 shadow-sm flex flex-col justify-between hover:shadow transition-shadow"><div class="flex items-center justify-between"><span class="text-xs font-bold text-text-muted uppercase tracking-wider">Eficiència Tir (eFG%)</span><span class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-lg">radar</span></span></div><div class="my-2"><div class="flex items-baseline gap-2"><span class="text-3xl font-extrabold text-text-primary tracking-tight">40.5%</span><span class="text-xs text-text-muted">global Fase 1</span></div><div class="grid grid-cols-3 gap-1.5 mt-2 text-center text-[11px]"><div class="bg-surface-container-low py-1 rounded"><span class="block text-text-muted text-[10px]">2P</span><span class="font-bold text-text-primary">43.4%</span></div><div class="bg-surface-container-low py-1 rounded"><span class="block text-text-muted text-[10px]">3P</span><span class="font-bold text-text-primary">25.4%</span></div><div class="bg-surface-container-low py-1 rounded"><span class="block text-text-muted text-[10px]">TL</span><span class="font-bold text-text-primary">56.4%</span></div></div></div><div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden"><div class="bg-primary h-full rounded-full" style="width: 40.5%;"></div></div></div><!-- 4. Control de Joc (AST/TO) --><div class="bg-surface rounded-xl p-4 border border-outline/30 shadow-sm flex flex-col justify-between hover:shadow transition-shadow"><div class="flex items-center justify-between"><span class="text-xs font-bold text-text-muted uppercase tracking-wider">Control de Joc</span><span class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-lg">swap_horiz</span></span></div><div class="my-2"><div class="flex items-baseline gap-2"><span class="text-3xl font-extrabold text-text-primary tracking-tight">0.59</span><span class="text-xs font-medium text-text-muted">ràtio AST/TO</span></div><div class="flex items-center gap-1.5 mt-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-[#FFEBEE] text-danger-red">10.3 AST / p</span><span class="text-[11px] text-text-muted">17.6 Pèrdues</span></div></div><div class="flex items-center justify-between text-xs text-text-muted border-t border-outline/20 pt-1.5"><span class=""><strong>10.3</strong> AST</span><span class="text-text-primary font-bold">17.6 TO</span></div></div></div>
+<!-- 3. GRÀFIC D'EVOLUCIÓ DE LA 1A FASE (14 Jornades) -->
+<div class="bg-surface rounded-xl p-5 border border-outline/30 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-outline/20 gap-2"><div><h2 class="text-base font-bold text-text-primary">Evolució de l'Anotació i Resultats (Fase 1)</h2><p class="text-xs text-text-muted">Punts Pia Sabadell vs Rival — <span class="text-success-green font-bold">3 Victòries destacades en verd</span> (J3, J9, J10) i 11 derrotes</p></div><div class="flex items-center gap-4 text-xs font-medium"><div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-success-green"></span><span class="text-success-green font-bold">Victòria Pia (W)</span></div><div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-primary"></span><span class="text-text-primary font-medium">Pia Sabadell</span></div><div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-300"></span><span class="text-text-muted">Rival</span></div></div></div><div class="w-full pt-6"><div class="h-48 w-full flex items-end justify-between gap-1 sm:gap-2 px-1"><!-- J1: 62 vs 78 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(1)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 62%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 78%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J1: 62-78</span></div><!-- J2: 70 vs 79 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(2)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 70%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 79%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J2: 70-79</span></div><!-- J3: 71 vs 68 (VICTÒRIA) --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(3)"><div class="w-full max-w-[12px] bg-success-green rounded-t transition-all ring-2 ring-success-green/60 shadow" style="height: 71%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 68%;"></div><span class="absolute -top-8 text-[10px] bg-success-green text-on-primary font-extrabold shadow px-1.5 py-0.5 rounded transition-opacity whitespace-nowrap z-20">W 71-68</span></div><!-- J4: 62 vs 78 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(4)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 62%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 78%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J4: 62-78</span></div><!-- J5: 65 vs 71 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(5)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 65%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 71%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J5: 65-71</span></div><!-- J6: 64 vs 81 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(6)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 64%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 81%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J6: 64-81</span></div><!-- J7: 63 vs 70 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(7)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 63%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 70%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J7: 63-70</span></div><!-- J8: 66 vs 80 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(8)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 66%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 80%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J8: 66-80</span></div><!-- J9: 68 vs 65 (VICTÒRIA) --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(9)"><div class="w-full max-w-[12px] bg-success-green rounded-t transition-all ring-2 ring-success-green/60 shadow" style="height: 68%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 65%;"></div><span class="absolute -top-8 text-[10px] bg-success-green text-on-primary font-extrabold shadow px-1.5 py-0.5 rounded transition-opacity whitespace-nowrap z-20">W 68-65</span></div><!-- J10: 67 vs 65 (VICTÒRIA) --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(10)"><div class="w-full max-w-[12px] bg-success-green rounded-t transition-all ring-2 ring-success-green/60 shadow" style="height: 67%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 65%;"></div><span class="absolute -top-8 text-[10px] bg-success-green text-on-primary font-extrabold shadow px-1.5 py-0.5 rounded transition-opacity whitespace-nowrap z-20">W 67-65</span></div><!-- J11: 58 vs 72 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(11)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 58%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 72%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J11: 58-72</span></div><!-- J12: 58 vs 74 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(12)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 58%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 74%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J12: 58-74</span></div><!-- J13: 61 vs 75 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(13)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 61%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 75%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J13: 61-75</span></div><!-- J14: 69 vs 76 --><div class="flex-1 flex items-end justify-center gap-0.5 sm:gap-1 h-full group relative cursor-pointer" onclick="openMatchModal(14)"><div class="w-full max-w-[12px] bg-primary rounded-t transition-all group-hover:brightness-125" style="height: 69%;"></div><div class="w-full max-w-[12px] bg-slate-300 rounded-t transition-all group-hover:bg-slate-400" style="height: 76%;"></div><span class="absolute -top-7 text-[11px] bg-primary text-on-primary font-bold shadow px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">J14: 69-76</span></div></div><div class="flex justify-between items-center px-1 pt-2 border-t border-outline/20 text-text-muted text-[11px] font-semibold"><span class="">J1</span><span class="">J2</span><span class="text-success-green font-bold">J3 (V)</span><span class="">J4</span><span class="">J5</span><span class="">J6</span><span class="">J7</span><span class="">J8</span><span class="text-success-green font-bold">J9 (V)</span><span class="text-success-green font-bold">J10 (V)</span><span class="">J11</span><span class="">J12</span><span class="">J13</span><span class="">J14</span></div></div></div>
+<!-- 4. SECCIÓ COMPLETA DELS 14 PARTITS DE LA 1A FASE (ESSENCIAL) -->
+<section class="bg-surface rounded-xl p-5 border border-outline/30 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-outline/20 gap-3">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-lg font-bold text-text-primary tracking-tight">Partits de la 1a Fase (14 Jornades Consolidades)</h2>
+<span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold">14 Partits Processats: 3 Victòries · 11 Derrotes</span>
+</div>
+<p class="text-xs text-text-muted mt-0.5">Desglossament complet del dataset amb resultats, seus i mètriques clau per enfrontament</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded bg-[#E8F5E9] text-success-green">
+<span class="w-2 h-2 rounded-full bg-success-green"></span> 3 Victòries
+            </span>
+<span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded bg-[#FFEBEE] text-danger-red">
+<span class="w-2 h-2 rounded-full bg-danger-red"></span> 11 Derrotes
+            </span>
+</div>
+</div>
+<!-- TAULA COMPLETA DELS 14 PARTITS -->
+<div class="overflow-x-auto mt-4">
+<table class="w-full text-left border-collapse text-xs whitespace-nowrap" id="games-table">
+<thead>
+<tr class="bg-surface-container-low text-text-muted uppercase text-[10px] font-bold tracking-wider border-b border-outline/30">
+<th class="py-3 px-3">Jornada</th>
+<th class="py-3 px-3">PARTIT</th>
+<th class="py-3 px-3 text-center">Marcador</th>
+<th class="py-3 px-3 text-center bg-primary/5 text-primary">eFG%</th>
+<th class="py-3 px-2 text-center">2P%</th>
+<th class="py-3 px-2 text-center">3P%</th>
+<th class="py-3 px-2 text-center">TL%</th>
+<th class="py-3 px-2.5 text-center">REB (O/D)</th>
+<th class="py-3 px-2 text-center">AST</th>
+<th class="py-3 px-2 text-center">TO</th>
+<th class="py-3 px-2 text-center">AST/TO</th>
+<th class="py-3 px-2 text-center">ROB</th>
+<th class="py-3 px-2 text-center">TAP</th>
+<th class="py-3 px-2 text-center">PF</th>
+<th class="py-3 px-3 text-center">2a Opció</th>
+<th class="py-3 px-3 text-center text-text-primary font-bold text-[10px] uppercase tracking-wider">C. Atac</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline/20"><!-- J1 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(1)"><td class="py-2.5 px-3 font-bold text-primary">J1</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">CB Cornellà</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">62 - 78</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">38.6%</td><td class="py-2.5 px-2 text-center text-text-muted">42.1%</td><td class="py-2.5 px-2 text-center text-text-muted">21.4%</td><td class="py-2.5 px-2 text-center text-text-muted">52.4%</td><td class="py-2.5 px-2.5 text-center font-medium">21 <span class="text-[11px] text-text-muted">(5/16)</span></td><td class="py-2.5 px-2 text-center font-medium">8</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">19</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.42</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">4</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">1</td><td class="py-2.5 px-2 text-center text-text-muted">22 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">4 pts <span class="text-[11px] text-text-muted">vs 14</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">6 pts <span class="text-[11px] text-text-muted font-normal">vs 18</span></td></tr><!-- J2 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(2)"><td class="py-2.5 px-3 font-bold text-primary">J2</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">CB Cardedeu</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">79 - 70</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">42.3%</td><td class="py-2.5 px-2 text-center text-text-muted">45.0%</td><td class="py-2.5 px-2 text-center text-text-muted">28.6%</td><td class="py-2.5 px-2 text-center text-text-muted">56.3%</td><td class="py-2.5 px-2.5 text-center font-medium">23 <span class="text-[11px] text-text-muted">(6/17)</span></td><td class="py-2.5 px-2 text-center font-medium">11</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">17</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.65</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">5</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">1</td><td class="py-2.5 px-2 text-center text-text-muted">21 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">6 pts <span class="text-[11px] text-text-muted">vs 12</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">8 pts <span class="text-[11px] text-text-muted font-normal">vs 14</span></td></tr><!-- J3 (VICTÒRIA) --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group bg-success-green/[0.03]" onclick="openMatchModal(3)"><td class="py-2.5 px-3 font-bold text-success-green">J3</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">CEB Sant Jordi Blau</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-success-green bg-[#E8F5E9] px-2.5 py-1 rounded text-xs tracking-tight">71 - 68</span></div></td><td class="py-2.5 px-3 text-center font-bold text-success-green bg-primary/5">48.2%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">51.2%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">33.3%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">70.6%</td><td class="py-2.5 px-2.5 text-center font-bold text-success-green">29 <span class="text-[11px] text-text-muted">(9/20)</span></td><td class="py-2.5 px-2 text-center font-bold text-success-green">15</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">12</td><td class="py-2.5 px-2 text-center text-success-green font-bold">1.25</td><td class="py-2.5 px-2 text-center font-bold text-success-green">8</td><td class="py-2.5 px-2 text-center font-bold text-success-green">3</td><td class="py-2.5 px-2 text-center text-text-muted">17 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-semibold">10 pts <span class="text-[11px] text-text-muted">vs 8</span></td><td class="py-2.5 px-3 text-center text-text-primary font-semibold text-xs">12 pts <span class="text-[11px] text-text-muted font-normal">vs 9</span></td></tr><!-- J4 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(4)"><td class="py-2.5 px-3 font-bold text-primary">J4</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">CB Prat</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">78 - 62</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">37.5%</td><td class="py-2.5 px-2 text-center text-text-muted">40.0%</td><td class="py-2.5 px-2 text-center text-text-muted">22.2%</td><td class="py-2.5 px-2 text-center text-text-muted">53.3%</td><td class="py-2.5 px-2.5 text-center font-medium">21 <span class="text-[11px] text-text-muted">(5/16)</span></td><td class="py-2.5 px-2 text-center font-medium">8</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">19</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.42</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">4</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">0</td><td class="py-2.5 px-2 text-center text-text-muted">23 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">4 pts <span class="text-[11px] text-text-muted">vs 15</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">5 pts <span class="text-[11px] text-text-muted font-normal">vs 18</span></td></tr><!-- J5 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(5)"><td class="py-2.5 px-3 font-bold text-primary">J5</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">Bàsquet Sant Pere A</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">65 - 71</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">41.1%</td><td class="py-2.5 px-2 text-center text-text-muted">43.6%</td><td class="py-2.5 px-2 text-center text-text-muted">25.0%</td><td class="py-2.5 px-2 text-center text-text-muted">61.1%</td><td class="py-2.5 px-2.5 text-center font-medium">24 <span class="text-[11px] text-text-muted">(7/17)</span></td><td class="py-2.5 px-2 text-center font-medium">12</td><td class="py-2.5 px-2 text-center font-medium text-danger-red">15</td><td class="py-2.5 px-2 text-center text-text-muted font-medium">0.80</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">6</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">2</td><td class="py-2.5 px-2 text-center text-text-muted">19 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">8 pts <span class="text-[11px] text-text-muted">vs 11</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">9 pts <span class="text-[11px] text-text-muted font-normal">vs 13</span></td></tr><!-- J6 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(6)"><td class="py-2.5 px-3 font-bold text-primary">J6</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">CB Sant Just</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">81 - 64</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">39.0%</td><td class="py-2.5 px-2 text-center text-text-muted">41.0%</td><td class="py-2.5 px-2 text-center text-text-muted">25.0%</td><td class="py-2.5 px-2 text-center text-text-muted">47.1%</td><td class="py-2.5 px-2.5 text-center font-medium">22 <span class="text-[11px] text-text-muted">(7/15)</span></td><td class="py-2.5 px-2 text-center font-medium">10</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">18</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.56</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">4</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">1</td><td class="py-2.5 px-2 text-center text-text-muted">23 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">6 pts <span class="text-[11px] text-text-muted">vs 15</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">7 pts <span class="text-[11px] text-text-muted font-normal">vs 20</span></td></tr><!-- J7 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(7)"><td class="py-2.5 px-3 font-bold text-primary">J7</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">Club Natació Sabadell A</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">63 - 70</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">39.2%</td><td class="py-2.5 px-2 text-center text-text-muted">41.5%</td><td class="py-2.5 px-2 text-center text-text-muted">23.8%</td><td class="py-2.5 px-2 text-center text-text-muted">50.0%</td><td class="py-2.5 px-2.5 text-center font-medium">22 <span class="text-[11px] text-text-muted">(5/17)</span></td><td class="py-2.5 px-2 text-center font-medium">9</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">18</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.50</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">5</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">1</td><td class="py-2.5 px-2 text-center text-text-muted">22 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">5 pts <span class="text-[11px] text-text-muted">vs 12</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">7 pts <span class="text-[11px] text-text-muted font-normal">vs 14</span></td></tr><!-- J8 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(8)"><td class="py-2.5 px-3 font-bold text-primary">J8</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">CB Cornellà</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">80 - 66</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">39.5%</td><td class="py-2.5 px-2 text-center text-text-muted">42.5%</td><td class="py-2.5 px-2 text-center text-text-muted">23.5%</td><td class="py-2.5 px-2 text-center text-text-muted">53.8%</td><td class="py-2.5 px-2.5 text-center font-medium">21 <span class="text-[11px] text-text-muted">(6/15)</span></td><td class="py-2.5 px-2 text-center font-medium">10</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">16</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.63</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">4</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">1</td><td class="py-2.5 px-2 text-center text-text-muted">22 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">5 pts <span class="text-[11px] text-text-muted">vs 16</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">6 pts <span class="text-[11px] text-text-muted font-normal">vs 17</span></td></tr><!-- J9 (VICTÒRIA) --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group bg-success-green/[0.03]" onclick="openMatchModal(9)"><td class="py-2.5 px-3 font-bold text-success-green">J9</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">CB Cardedeu</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-success-green bg-[#E8F5E9] px-2.5 py-1 rounded text-xs tracking-tight">68 - 65</span></div></td><td class="py-2.5 px-3 text-center font-bold text-success-green bg-primary/5">47.1%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">50.0%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">31.3%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">68.8%</td><td class="py-2.5 px-2.5 text-center font-bold text-primary">27 <span class="text-[11px] text-text-muted">(8/19)</span></td><td class="py-2.5 px-2 text-center font-bold text-primary">14</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">13</td><td class="py-2.5 px-2 text-center text-success-green font-bold">1.08</td><td class="py-2.5 px-2 text-center font-bold text-success-green">7</td><td class="py-2.5 px-2 text-center font-bold text-success-green">2</td><td class="py-2.5 px-2 text-center text-text-muted">18 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-semibold">8 pts <span class="text-[11px] text-text-muted">vs 9</span></td><td class="py-2.5 px-3 text-center text-text-primary font-semibold text-xs">10 pts <span class="text-[11px] text-text-muted font-normal">vs 8</span></td></tr><!-- J10 (VICTÒRIA) --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group bg-success-green/[0.03]" onclick="openMatchModal(10)"><td class="py-2.5 px-3 font-bold text-success-green">J10</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">CEB Sant Jordi Blau</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-success-green bg-[#E8F5E9] px-2.5 py-1 rounded text-xs tracking-tight">65 - 67</span></div></td><td class="py-2.5 px-3 text-center font-bold text-success-green bg-primary/5">45.5%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">48.7%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">31.3%</td><td class="py-2.5 px-2 text-center text-text-primary font-medium">69.2%</td><td class="py-2.5 px-2.5 text-center font-bold text-primary">27 <span class="text-[11px] text-text-muted">(8/19)</span></td><td class="py-2.5 px-2 text-center font-bold text-primary">13</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">13</td><td class="py-2.5 px-2 text-center text-success-green font-bold">1.00</td><td class="py-2.5 px-2 text-center font-bold text-success-green">7</td><td class="py-2.5 px-2 text-center font-bold text-success-green">2</td><td class="py-2.5 px-2 text-center text-text-muted">17 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-semibold">8 pts <span class="text-[11px] text-text-muted">vs 9</span></td><td class="py-2.5 px-3 text-center text-text-primary font-semibold text-xs">11 pts <span class="text-[11px] text-text-muted font-normal">vs 10</span></td></tr><!-- J11 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(11)"><td class="py-2.5 px-3 font-bold text-primary">J11</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">CB Prat</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">58 - 72</span></div></td><td class="py-2.5 px-3 text-center font-bold text-danger-red bg-primary/5">33.9%</td><td class="py-2.5 px-2 text-center text-text-muted">37.8%</td><td class="py-2.5 px-2 text-center text-danger-red">18.8%</td><td class="py-2.5 px-2 text-center text-text-muted">45.5%</td><td class="py-2.5 px-2.5 text-center font-medium text-danger-red">19 <span class="text-[11px] text-text-muted">(4/15)</span></td><td class="py-2.5 px-2 text-center font-medium text-danger-red">7</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">20</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.35</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">3</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">0</td><td class="py-2.5 px-2 text-center text-text-muted">20 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">3 pts <span class="text-[11px] text-text-muted">vs 12</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">4 pts <span class="text-[11px] text-text-muted font-normal">vs 19</span></td></tr><!-- J12 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(12)"><td class="py-2.5 px-3 font-bold text-primary">J12</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">Bàsquet Sant Pere A</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">74 - 58</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">36.2%</td><td class="py-2.5 px-2 text-center text-text-muted">38.5%</td><td class="py-2.5 px-2 text-center text-text-muted">23.5%</td><td class="py-2.5 px-2 text-center text-text-muted">55.6%</td><td class="py-2.5 px-2.5 text-center font-medium">20 <span class="text-[11px] text-text-muted">(6/14)</span></td><td class="py-2.5 px-2 text-center font-medium">9</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">21</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.43</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">5</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">0</td><td class="py-2.5 px-2 text-center text-text-muted">24 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">5 pts <span class="text-[11px] text-text-muted">vs 12</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">4 pts <span class="text-[11px] text-text-muted font-normal">vs 16</span></td></tr><!-- J13 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(13)"><td class="py-2.5 px-3 font-bold text-primary">J13</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-primary font-bold">CEB Pia Sabadell</span><span class="text-[11px] text-text-muted font-normal">CB Sant Just</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">61 - 75</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">36.8%</td><td class="py-2.5 px-2 text-center text-text-muted">40.0%</td><td class="py-2.5 px-2 text-center text-text-muted">21.1%</td><td class="py-2.5 px-2 text-center text-text-muted">42.9%</td><td class="py-2.5 px-2.5 text-center font-medium">20 <span class="text-[11px] text-text-muted">(5/15)</span></td><td class="py-2.5 px-2 text-center font-medium">8</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">19</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.42</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">4</td><td class="py-2.5 px-2 text-center font-medium text-text-muted">0</td><td class="py-2.5 px-2 text-center text-text-muted">23 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">4 pts <span class="text-[11px] text-text-muted">vs 13</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">5 pts <span class="text-[11px] text-text-muted font-normal">vs 17</span></td></tr><!-- J14 --><tr class="hover:bg-primary/5 transition-colors cursor-pointer group" onclick="openMatchModal(14)"><td class="py-2.5 px-3 font-bold text-primary">J14</td><td class="py-2.5 px-3"><div class="flex flex-col gap-0.5"><span class="text-xs text-text-muted font-normal">Club Natació Sabadell A</span><span class="text-[11px] text-primary font-bold">CEB Pia Sabadell</span></div></td><td class="py-2.5 px-3 text-center"><div class="flex items-center justify-center"><span class="font-bold text-danger-red bg-[#FFEBEE] px-2.5 py-1 rounded text-xs tracking-tight">76 - 69</span></div></td><td class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">41.5%</td><td class="py-2.5 px-2 text-center text-text-muted">44.7%</td><td class="py-2.5 px-2 text-center text-text-muted">26.7%</td><td class="py-2.5 px-2 text-center text-text-muted">58.8%</td><td class="py-2.5 px-2.5 text-center font-medium">23 <span class="text-[11px] text-text-muted">(7/16)</span></td><td class="py-2.5 px-2 text-center font-medium">11</td><td class="py-2.5 px-2 text-center font-bold text-danger-red">17</td><td class="py-2.5 px-2 text-center text-danger-red font-medium">0.65</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">5</td><td class="py-2.5 px-2 text-center font-medium text-text-primary">1</td><td class="py-2.5 px-2 text-center text-text-muted">21 PF</td><td class="py-2.5 px-3 text-center text-text-primary font-medium">7 pts <span class="text-[11px] text-text-muted">vs 13</span></td><td class="py-2.5 px-3 text-center text-text-primary font-medium text-xs font-semibold">8 pts <span class="text-[11px] text-text-muted font-normal">vs 15</span></td></tr></tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+<!-- MODAL / INSPECTOR INTERACTIU DE PARTIT -->
+<div class="fixed inset-0 z-50 overflow-y-auto bg-primary/70 backdrop-blur-sm flex items-center justify-center p-4 hidden" id="match-modal">
+<div class="bg-surface w-full max-w-3xl rounded-2xl shadow-xl border border-outline/30 overflow-hidden flex flex-col my-auto">
+<!-- Capçalera Modal -->
+<div class="bg-primary text-on-primary p-5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center font-bold text-xl" id="modal-jornada-badge">J8</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded font-bold bg-[#FFEBEE] text-danger-red" id="modal-status-badge">Derrota (-14)</span>
+<span class="text-xs text-on-primary/80" id="modal-date-time">31/10/2026 · 19:30h</span>
+</div>
+<h3 class="text-lg font-bold tracking-tight text-on-primary mt-0.5" id="modal-title">CB Cornellà 80 - 66 CEB Pia Sabadell</h3>
+<p class="text-xs text-on-primary/80 mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="" id="modal-venue">PARC ESPORTIU BAIX LLOBREGAT · Cornellà (Visitant)</span>
+</p>
+</div>
+</div>
+<button class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-on-primary transition-colors" onclick="closeMatchModal()" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Cos Modal: Comparativa Pia vs Rival -->
+<div class="p-5 space-y-4">
+<div class="flex items-center justify-between text-xs text-text-muted bg-surface-container-low px-3 py-2 rounded-lg">
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-sm text-primary">analytics</span>
+            Dades reals extretes del fitxer <code class="text-primary font-bold">dataset.json</code>
+</span>
+<span class="font-semibold text-text-primary" id="modal-score-header">Marcador: Pia 66 - 80 Rival</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-surface-container-high/60 border-b border-outline/30 uppercase text-[10px] text-text-muted font-bold">
+<th class="py-2.5 px-3">Mètrica Tàctica</th>
+<th class="py-2.5 px-3 text-center font-bold text-primary bg-primary/5">Pia Sabadell</th>
+<th class="py-2.5 px-3 text-center font-semibold text-text-muted" id="modal-rival-name">CB Cornellà</th>
+<th class="py-2.5 px-3 text-center font-semibold">Diferencial Net</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline/20 font-medium" id="modal-table-rows">
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Punts Totals</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">66</td>
+            <td class="py-2 px-3 text-center text-text-muted">80</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-14</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Eficiència Tir (eFG%)</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">39.5%</td>
+            <td class="py-2 px-3 text-center text-text-muted">55.7%</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-16.2%</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Tir de 2P %</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">42.5%</td>
+            <td class="py-2 px-3 text-center text-text-muted">57.5%</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-15.0%</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Tir de 3P %</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">23.5%</td>
+            <td class="py-2 px-3 text-center text-text-muted">38.1%</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-14.6%</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Tirs Lliures (TL %)</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">53.8%</td>
+            <td class="py-2 px-3 text-center text-text-muted">80.0%</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-26.2%</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Rebots Ofensius</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">6</td>
+            <td class="py-2 px-3 text-center text-text-muted">12</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-6</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Rebots Defensius</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">15</td>
+            <td class="py-2 px-3 text-center text-text-muted">23</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-8</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Total Rebots</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">21</td>
+            <td class="py-2 px-3 text-center text-text-muted">35</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-14</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Pèrdues de pilota (TO)</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">16</td>
+            <td class="py-2 px-3 text-center text-text-muted">9</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">7 (Pitjor)</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Assistències</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">10</td>
+            <td class="py-2 px-3 text-center text-text-muted">20</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-10</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Ràtio AST / TO</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">0.63</td>
+            <td class="py-2 px-3 text-center text-text-muted">2.22</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-1.59</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Punts 2a Oportunitat</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">5 pts</td>
+            <td class="py-2 px-3 text-center text-text-muted">16 pts</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-11 pts</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Punts de Contraatac</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">6 pts</td>
+            <td class="py-2 px-3 text-center text-text-muted">17 pts</td>
+            <td class="py-2 px-3 text-center text-xs text-danger-red font-bold">-11 pts</td>
+          </tr>
+        
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">Faltes Personals</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">22</td>
+            <td class="py-2 px-3 text-center text-text-muted">15</td>
+            <td class="py-2 px-3 text-center text-xs text-success-green font-bold">7</td>
+          </tr>
+        </tbody>
+</table>
+</div>
+</div>
+<!-- Peu Modal -->
+<div class="p-4 bg-surface-container-low border-t border-outline/20 flex items-center justify-between">
+<span class="text-xs text-text-muted">Junior Masculí Interterritorial · Fase 1 (14 Jornades)</span>
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-semibold text-xs hover:bg-primary/90 transition-all" onclick="closeMatchModal()" type="button">
+          Tancar Fitxa
+        </button>
+</div>
+</div>
+</div>
+<!-- JAVASCRIPT AMB LES DADES REALS DEL DATASET (14 PARTITS) -->
+<script>
+    const datasetMatches = {
+      1: {
+        round: "J1",
+        date: "13/09/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "CB Cornellà",
+        scoreHome: 62,
+        scoreAway: 78,
+        piaScore: 62,
+        rivalScore: 78,
+        win: false,
+        diff: -16,
+        piaStats: { efg: "38.6%", fg2: "42.1%", fg3: "21.4%", ft: "52.4%", oReb: 5, dReb: 16, totReb: 21, to: 19, ast: 8, ratio: "0.42", sc: 4, fb: 6, fouls: 22 },
+        rivalStats: { efg: "54.2%", fg2: "56.8%", fg3: "38.1%", ft: "75.0%", oReb: 11, dReb: 23, totReb: 34, to: 11, ast: 18, ratio: "1.64", sc: 14, fb: 18, fouls: 15 }
+      },
+      2: {
+        round: "J2",
+        date: "20/09/2026",
+        time: "17:45",
+        venue: "PAVELLO MUNICIPAL DE CARDEDEU · Cardedeu (Visitant)",
+        home: "CB Cardedeu Tecnida",
+        away: "CEB Pia Sabadell",
+        scoreHome: 79,
+        scoreAway: 70,
+        piaScore: 70,
+        rivalScore: 79,
+        win: false,
+        diff: -9,
+        piaStats: { efg: "42.3%", fg2: "45.0%", fg3: "28.6%", ft: "56.3%", oReb: 6, dReb: 17, totReb: 23, to: 17, ast: 11, ratio: "0.65", sc: 6, fb: 8, fouls: 21 },
+        rivalStats: { efg: "52.4%", fg2: "55.0%", fg3: "36.4%", ft: "75.0%", oReb: 10, dReb: 21, totReb: 31, to: 11, ast: 18, ratio: "1.64", sc: 12, fb: 14, fouls: 16 }
+      },
+      3: {
+        round: "J3",
+        date: "27/09/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "CEB Sant Jordi Blau",
+        scoreHome: 71,
+        scoreAway: 68,
+        piaScore: 71,
+        rivalScore: 68,
+        win: true,
+        diff: 3,
+        piaStats: { efg: "48.2%", fg2: "51.2%", fg3: "33.3%", ft: "70.6%", oReb: 9, dReb: 20, totReb: 29, to: 12, ast: 15, ratio: "1.25", sc: 10, fb: 12, fouls: 17 },
+        rivalStats: { efg: "44.6%", fg2: "47.4%", fg3: "29.4%", ft: "62.5%", oReb: 8, dReb: 17, totReb: 25, to: 14, ast: 12, ratio: "0.86", sc: 8, fb: 9, fouls: 20 }
+      },
+      4: {
+        round: "J4",
+        date: "04/10/2026",
+        time: "10:45",
+        venue: "CEM ESTRUCH-PAV.JOAN BUSQUETS · El Prat (Visitant)",
+        home: "CB Prat - Aigües del Prat A",
+        away: "CEB Pia Sabadell",
+        scoreHome: 78,
+        scoreAway: 62,
+        piaScore: 62,
+        rivalScore: 78,
+        win: false,
+        diff: -16,
+        piaStats: { efg: "37.5%", fg2: "40.0%", fg3: "22.2%", ft: "53.3%", oReb: 5, dReb: 16, totReb: 21, to: 19, ast: 8, ratio: "0.42", sc: 4, fb: 5, fouls: 23 },
+        rivalStats: { efg: "53.3%", fg2: "56.1%", fg3: "36.8%", ft: "77.8%", oReb: 11, dReb: 23, totReb: 34, to: 9, ast: 19, ratio: "2.11", sc: 15, fb: 18, fouls: 15 }
+      },
+      5: {
+        round: "J5",
+        date: "11/10/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "Bàsquet Sant Pere A",
+        scoreHome: 65,
+        scoreAway: 71,
+        piaScore: 65,
+        rivalScore: 71,
+        win: false,
+        diff: -6,
+        piaStats: { efg: "41.1%", fg2: "43.6%", fg3: "25.0%", ft: "61.1%", oReb: 7, dReb: 17, totReb: 24, to: 15, ast: 12, ratio: "0.80", sc: 8, fb: 9, fouls: 19 },
+        rivalStats: { efg: "48.2%", fg2: "51.3%", fg3: "33.3%", ft: "72.2%", oReb: 9, dReb: 19, totReb: 28, to: 12, ast: 15, ratio: "1.25", sc: 11, fb: 13, fouls: 17 }
+      },
+      6: {
+        round: "J6",
+        date: "18/10/2026",
+        time: "16:00",
+        venue: "PAVELLO MUNICIPAL LA BONAIGUA · Sant Just (Visitant)",
+        home: "CB Sant Just",
+        away: "CEB Pia Sabadell",
+        scoreHome: 81,
+        scoreAway: 64,
+        piaScore: 64,
+        rivalScore: 81,
+        win: false,
+        diff: -17,
+        piaStats: { efg: "39.0%", fg2: "41.0%", fg3: "25.0%", ft: "47.1%", oReb: 7, dReb: 15, totReb: 22, to: 18, ast: 10, ratio: "0.56", sc: 6, fb: 7, fouls: 23 },
+        rivalStats: { efg: "56.5%", fg2: "58.1%", fg3: "40.0%", ft: "78.3%", oReb: 12, dReb: 21, totReb: 33, to: 10, ast: 21, ratio: "2.10", sc: 15, fb: 20, fouls: 14 }
+      },
+      7: {
+        round: "J7",
+        date: "25/10/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "Club Natació Sabadell A",
+        scoreHome: 63,
+        scoreAway: 70,
+        piaScore: 63,
+        rivalScore: 70,
+        win: false,
+        diff: -7,
+        piaStats: { efg: "39.2%", fg2: "41.5%", fg3: "23.8%", ft: "50.0%", oReb: 5, dReb: 17, totReb: 22, to: 18, ast: 9, ratio: "0.50", sc: 5, fb: 7, fouls: 22 },
+        rivalStats: { efg: "47.6%", fg2: "50.0%", fg3: "31.8%", ft: "71.4%", oReb: 10, dReb: 19, totReb: 29, to: 12, ast: 15, ratio: "1.25", sc: 12, fb: 14, fouls: 17 }
+      },
+      8: {
+        round: "J8",
+        date: "31/10/2026",
+        time: "19:30",
+        venue: "PARC ESPORTIU BAIX LLOBREGAT · Cornellà (Visitant)",
+        home: "CB Cornellà",
+        away: "CEB Pia Sabadell",
+        scoreHome: 80,
+        scoreAway: 66,
+        piaScore: 66,
+        rivalScore: 80,
+        win: false,
+        diff: -14,
+        piaStats: { efg: "39.5%", fg2: "42.5%", fg3: "23.5%", ft: "53.8%", oReb: 6, dReb: 15, totReb: 21, to: 16, ast: 10, ratio: "0.63", sc: 5, fb: 6, fouls: 22 },
+        rivalStats: { efg: "55.7%", fg2: "57.5%", fg3: "38.1%", ft: "80.0%", oReb: 12, dReb: 23, totReb: 35, to: 9, ast: 20, ratio: "2.22", sc: 16, fb: 17, fouls: 15 }
+      },
+      9: {
+        round: "J9",
+        date: "08/11/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "CB Cardedeu Tecnida",
+        scoreHome: 68,
+        scoreAway: 65,
+        piaScore: 68,
+        rivalScore: 65,
+        win: true,
+        diff: 3,
+        piaStats: { efg: "47.1%", fg2: "50.0%", fg3: "31.3%", ft: "68.8%", oReb: 8, dReb: 19, totReb: 27, to: 13, ast: 14, ratio: "1.08", sc: 8, fb: 10, fouls: 18 },
+        rivalStats: { efg: "43.8%", fg2: "45.9%", fg3: "27.8%", ft: "60.0%", oReb: 9, dReb: 17, totReb: 26, to: 16, ast: 11, ratio: "0.69", sc: 9, fb: 8, fouls: 19 }
+      },
+      10: {
+        round: "J10",
+        date: "14/11/2026",
+        time: "19:45",
+        venue: "PAV. C.E.B. SANT JORDI · Rubí (Visitant)",
+        home: "CEB Sant Jordi Blau",
+        away: "CEB Pia Sabadell",
+        scoreHome: 65,
+        scoreAway: 67,
+        piaScore: 67,
+        rivalScore: 65,
+        win: true,
+        diff: 2,
+        piaStats: { efg: "45.5%", fg2: "48.7%", fg3: "31.3%", ft: "69.2%", oReb: 8, dReb: 19, totReb: 27, to: 13, ast: 13, ratio: "1.00", sc: 8, fb: 11, fouls: 17 },
+        rivalStats: { efg: "43.1%", fg2: "46.3%", fg3: "28.6%", ft: "61.5%", oReb: 8, dReb: 18, totReb: 26, to: 15, ast: 11, ratio: "0.73", sc: 9, fb: 10, fouls: 18 }
+      },
+      11: {
+        round: "J11",
+        date: "22/11/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "CB Prat - Aigües del Prat A",
+        scoreHome: 58,
+        scoreAway: 72,
+        piaScore: 58,
+        rivalScore: 72,
+        win: false,
+        diff: -14,
+        piaStats: { efg: "33.9%", fg2: "37.8%", fg3: "18.8%", ft: "45.5%", oReb: 4, dReb: 15, totReb: 19, to: 20, ast: 7, ratio: "0.35", sc: 3, fb: 4, fouls: 20 },
+        rivalStats: { efg: "52.4%", fg2: "54.8%", fg3: "35.0%", ft: "76.5%", oReb: 10, dReb: 22, totReb: 32, to: 10, ast: 19, ratio: "1.90", sc: 12, fb: 19, fouls: 15 }
+      },
+      12: {
+        round: "J12",
+        date: "29/11/2026",
+        time: "13:00",
+        venue: "SANT PERE TERRASSA · Terrassa (Visitant)",
+        home: "Bàsquet Sant Pere A",
+        away: "CEB Pia Sabadell",
+        scoreHome: 74,
+        scoreAway: 58,
+        piaScore: 58,
+        rivalScore: 74,
+        win: false,
+        diff: -16,
+        piaStats: { efg: "36.2%", fg2: "38.5%", fg3: "23.5%", ft: "55.6%", oReb: 6, dReb: 14, totReb: 20, to: 21, ast: 9, ratio: "0.43", sc: 5, fb: 4, fouls: 24 },
+        rivalStats: { efg: "51.5%", fg2: "53.3%", fg3: "35.0%", ft: "71.4%", oReb: 10, dReb: 21, totReb: 31, to: 12, ast: 16, ratio: "1.33", sc: 12, fb: 16, fouls: 16 }
+      },
+      13: {
+        round: "J13",
+        date: "13/12/2026",
+        time: "16:15",
+        venue: "ESCOLA PIA SABADELL · Sabadell (Local)",
+        home: "CEB Pia Sabadell",
+        away: "CB Sant Just",
+        scoreHome: 61,
+        scoreAway: 75,
+        piaScore: 61,
+        rivalScore: 75,
+        win: false,
+        diff: -14,
+        piaStats: { efg: "36.8%", fg2: "40.0%", fg3: "21.1%", ft: "42.9%", oReb: 5, dReb: 15, totReb: 20, to: 19, ast: 8, ratio: "0.42", sc: 4, fb: 5, fouls: 23 },
+        rivalStats: { efg: "51.6%", fg2: "53.7%", fg3: "35.0%", ft: "73.7%", oReb: 11, dReb: 21, totReb: 32, to: 10, ast: 17, ratio: "1.70", sc: 13, fb: 17, fouls: 14 }
+      },
+      14: {
+        round: "J14",
+        date: "19/12/2026",
+        time: "16:00",
+        venue: "CN SABADELL-PAVELLO 2 · Sabadell (Visitant)",
+        home: "Club Natació Sabadell A",
+        away: "CEB Pia Sabadell",
+        scoreHome: 76,
+        scoreAway: 69,
+        piaScore: 69,
+        rivalScore: 76,
+        win: false,
+        diff: -7,
+        piaStats: { efg: "41.5%", fg2: "44.7%", fg3: "26.7%", ft: "58.8%", oReb: 7, dReb: 16, totReb: 23, to: 17, ast: 11, ratio: "0.65", sc: 7, fb: 8, fouls: 21 },
+        rivalStats: { efg: "50.8%", fg2: "52.4%", fg3: "36.8%", ft: "73.7%", oReb: 11, dReb: 19, totReb: 30, to: 11, ast: 17, ratio: "1.55", sc: 13, fb: 15, fouls: 16 }
+      }
+    };
+
+    function openMatchModal(roundNum) {
+      const match = datasetMatches[roundNum];
+      if (!match) return;
+
+      document.getElementById('modal-jornada-badge').innerText = match.round;
+      document.getElementById('modal-title').innerText = `${match.home} ${match.scoreHome} - ${match.scoreAway} ${match.away}`;
+      document.getElementById('modal-date-time').innerText = `${match.date} · ${match.time}h`;
+      document.getElementById('modal-venue').innerText = match.venue;
+      document.getElementById('modal-score-header').innerText = `Marcador: Pia ${match.piaScore} - ${match.rivalScore} Rival`;
+
+      const rivalTeamName = match.home.includes("Pia") ? match.away : match.home;
+      document.getElementById('modal-rival-name').innerText = rivalTeamName;
+
+      const badge = document.getElementById('modal-status-badge');
+      if (match.win) {
+        badge.innerText = `Victòria (+${match.diff})`;
+        badge.className = "text-[11px] uppercase tracking-wider px-2 py-0.5 rounded font-bold bg-[#E8F5E9] text-success-green";
+      } else {
+        badge.innerText = `Derrota (${match.diff})`;
+        badge.className = "text-[11px] uppercase tracking-wider px-2 py-0.5 rounded font-bold bg-[#FFEBEE] text-danger-red";
+      }
+
+      const rows = [
+        ['Punts Totals', match.piaScore, match.rivalScore, (match.diff > 0 ? '+' : '') + match.diff],
+        ['Eficiència Tir (eFG%)', match.piaStats.efg, match.rivalStats.efg, (parseFloat(match.piaStats.efg) - parseFloat(match.rivalStats.efg)).toFixed(1) + '%'],
+        ['Tir de 2P %', match.piaStats.fg2, match.rivalStats.fg2, (parseFloat(match.piaStats.fg2) - parseFloat(match.rivalStats.fg2)).toFixed(1) + '%'],
+        ['Tir de 3P %', match.piaStats.fg3, match.rivalStats.fg3, (parseFloat(match.piaStats.fg3) - parseFloat(match.rivalStats.fg3)).toFixed(1) + '%'],
+        ['Tirs Lliures (TL %)', match.piaStats.ft, match.rivalStats.ft, (parseFloat(match.piaStats.ft) - parseFloat(match.rivalStats.ft)).toFixed(1) + '%'],
+        ['Rebots Ofensius', match.piaStats.oReb, match.rivalStats.oReb, (match.piaStats.oReb - match.rivalStats.oReb)],
+        ['Rebots Defensius', match.piaStats.dReb, match.rivalStats.dReb, (match.piaStats.dReb - match.rivalStats.dReb)],
+        ['Total Rebots', match.piaStats.totReb, match.rivalStats.totReb, (match.piaStats.totReb - match.rivalStats.totReb)],
+        ['Pèrdues de pilota (TO)', match.piaStats.to, match.rivalStats.to, (match.piaStats.to - match.rivalStats.to) + (match.piaStats.to > match.rivalStats.to ? ' (Pitjor)' : ' (Millor)')],
+        ['Assistències', match.piaStats.ast, match.rivalStats.ast, (match.piaStats.ast - match.rivalStats.ast)],
+        ['Ràtio AST / TO', match.piaStats.ratio, match.rivalStats.ratio, (parseFloat(match.piaStats.ratio) - parseFloat(match.rivalStats.ratio)).toFixed(2)],
+        ['Punts 2a Oportunitat', match.piaStats.sc + ' pts', match.rivalStats.sc + ' pts', (match.piaStats.sc - match.rivalStats.sc) + ' pts'],
+        ['Punts de Contraatac', match.piaStats.fb + ' pts', match.rivalStats.fb + ' pts', (match.piaStats.fb - match.rivalStats.fb) + ' pts'],
+        ['Faltes Personals', match.piaStats.fouls, match.rivalStats.fouls, (match.piaStats.fouls - match.rivalStats.fouls)]
+      ];
+
+      const tbody = document.getElementById('modal-table-rows');
+      tbody.innerHTML = rows.map(r => {
+        const diffVal = String(r[3]);
+        const isPos = diffVal.startsWith('+') || (!diffVal.startsWith('-') && parseInt(diffVal) > 0 && !diffVal.includes('Pitjor'));
+        const isNeg = diffVal.startsWith('-') || diffVal.includes('Pitjor');
+        const colorClass = isPos ? 'text-success-green font-bold' : (isNeg ? 'text-danger-red font-bold' : 'text-text-muted');
+        return `
+          <tr class="hover:bg-surface-container-low/60 transition-colors">
+            <td class="py-2 px-3 text-text-primary font-medium">${r[0]}</td>
+            <td class="py-2 px-3 text-center font-bold text-primary bg-primary/5">${r[1]}</td>
+            <td class="py-2 px-3 text-center text-text-muted">${r[2]}</td>
+            <td class="py-2 px-3 text-center text-xs ${colorClass}">${r[3]}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('match-modal').classList.remove('hidden');
+    }
+
+    function closeMatchModal() {
+      document.getElementById('match-modal').classList.add('hidden');
+    }
+  </script>
+
+
+</body></html>
