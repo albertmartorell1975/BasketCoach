@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
+
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,7 +63,7 @@ fun Phase1EvolutionChart(
             .background(PiaSurface)
             .border(1.dp, PiaOutline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             .padding(20.dp)
-            .testTag("phase1_evolution_chart")
+
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(

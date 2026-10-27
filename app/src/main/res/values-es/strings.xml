@@ -32,6 +32,11 @@
     <string name="kpi_gamecontrol_ratio">ratio AST/TO</string>
     <string name="kpi_gamecontrol_ast_pill">10.3 AST / p</string>
     <string name="kpi_gamecontrol_to_pill">17.6 Pérdidas</string>
+    <string name="kpi_stat_2p">2P</string>
+    <string name="kpi_stat_3p">3P</string>
+    <string name="kpi_stat_ft">TL</string>
+    <string name="kpi_stat_ast">AST</string>
+    <string name="kpi_stat_to">TO</string>
     <string name="chart_title">Evolución de la Anotación y Resultados (Fase 1)</string>
     <string name="chart_subtitle">Puntos Pia Sabadell vs Rival — 3 Victorias destacadas en verde (J3, J9, J10) y 11 derrotas</string>
     <string name="chart_legend_win">Victoria Pia (V)</string>

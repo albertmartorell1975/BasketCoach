@@ -9,12 +9,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardHeroCard
-import com.martorell.albert.basketcoach.ui.dashboard.components.KpiCardRow
+import com.martorell.albert.basketcoach.ui.dashboard.components.kpi.KpiCardRow
 import com.martorell.albert.basketcoach.ui.dashboard.components.Phase1EvolutionChart
-import com.martorell.albert.basketcoach.ui.dashboard.components.Phase1MatchesTable
+import com.martorell.albert.basketcoach.ui.dashboard.components.table.Phase1MatchesTable
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
@@ -41,8 +40,7 @@ fun DashboardContent(
             .fillMaxSize()
             .background(PiaBackground)
             .verticalScroll(scrollState)
-            .padding(horizontal = 32.dp, vertical = 24.dp)
-            .testTag("dashboard_content"),
+            .padding(horizontal = 32.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         DashboardHeroCard(summary = uiState.summary)

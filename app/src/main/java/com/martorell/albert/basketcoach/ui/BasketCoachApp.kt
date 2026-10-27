@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import com.martorell.albert.basketcoach.ui.components.BasketCoachTopBar
 import com.martorell.albert.basketcoach.ui.navigation.BasketCoachAppState
 import com.martorell.albert.basketcoach.ui.navigation.BasketCoachNavRail
@@ -23,19 +22,18 @@ import com.martorell.albert.basketcoach.ui.theme.PiaBackground
  * Coordinates the fixed 80dp navy [BasketCoachNavRail] on the left and a content column
  * containing the 64dp white [BasketCoachTopBar] and the active screen viewport managed by [Navigation].
  *
- * @param appState Hoisted state holder managing navigation controller and top-level routes.
  * @param modifier Modifier to be applied to the root container layout.
+ * @param appState Hoisted state holder managing navigation controller and top-level routes.
  */
 @Composable
 fun BasketCoachApp(
-    appState: BasketCoachAppState = rememberBasketCoachAppState(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    appState: BasketCoachAppState = rememberBasketCoachAppState()
 ) {
     Row(
         modifier = modifier
             .fillMaxSize()
             .background(PiaBackground)
-            .testTag("basketcoach_app_root")
     ) {
         BasketCoachNavRail(
             navOptions = BasketCoachAppState.NAV_OPTIONS,

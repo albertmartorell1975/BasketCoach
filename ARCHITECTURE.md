@@ -206,9 +206,9 @@ The `:app` module delivers a specialized high-density user experience strictly o
 | [Dashboard]                    | Dynamic Viewport (Navigation Host)                           |
 | [Anàlisi]                      |   - DashboardScreen (Phase 1 Baseline)                       |
 | [Chat]                         |       ├─ DashboardHeroCard (3V-11D, 21.4%, 14 games)         |
-|                                |       ├─ KpiCardRow (Scoring, Rebounds, Shooting, Control)   |
+|                                |       ├─ KpiCardRow (kpi/: Scoring, Rebounds, Shooting, Control)  |
 |                                |       ├─ Phase1EvolutionChart (14-round bars, green badges)  |
-|                                |       └─ Phase1MatchesTable (14 matches, 16 statistical cols)|
+|                                |       └─ Phase1MatchesTable (table/: 14 matches, 16 cols)     |
 |                                |   - PlaceholderScreen (Anàlisi / Chat)                       |
 +-----------------------------------------------------------------------------------------------+
 ```

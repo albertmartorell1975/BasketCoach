@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,24 +37,23 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
  * Renders destination items with custom pill styling, active state backgrounds, and strict
  * minimum 12sp typography.
  *
- * @param navOptions List of top-level route descriptors to display.
  * @param isRouteSelected Predicate determining if a route is currently selected.
  * @param onRouteSelected Callback invoked when a destination is clicked.
  * @param modifier Layout modifier applied to the rail container.
+ * @param navOptions List of top-level route descriptors to display.
  */
 @Composable
 fun BasketCoachNavRail(
-    navOptions: List<TopLevelRoute<out Any>> = BasketCoachAppState.NAV_OPTIONS,
     isRouteSelected: @Composable (Any) -> Boolean,
     onRouteSelected: (Any) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navOptions: List<TopLevelRoute<out Any>> = BasketCoachAppState.NAV_OPTIONS
 ) {
     Box(
         modifier = modifier
             .width(80.dp)
             .fillMaxHeight()
             .background(PiaNavy)
-            .testTag("nav_rail")
     ) {
         Column(
             modifier = Modifier
@@ -69,12 +67,6 @@ fun BasketCoachNavRail(
                 val backgroundColor = if (isSelected) Color.White else Color.Transparent
                 val contentColor = if (isSelected) PiaNavy else Color.White.copy(alpha = 0.7f)
                 val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                val testTag = when (navOption.route) {
-                    DashboardRoute -> "nav_item_dashboard"
-                    AnalysisRoute -> "nav_item_analysis"
-                    ChatRoute -> "nav_item_chat"
-                    else -> "nav_item_${navOption.route}"
-                }
 
                 Column(
                     modifier = Modifier
@@ -82,8 +74,7 @@ fun BasketCoachNavRail(
                         .clip(RoundedCornerShape(12.dp))
                         .background(backgroundColor)
                         .clickable { onRouteSelected(navOption.route) }
-                        .padding(horizontal = 4.dp, vertical = 6.dp)
-                        .testTag(testTag),
+                        .padding(horizontal = 4.dp, vertical = 6.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {

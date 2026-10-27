@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,7 +63,6 @@ fun DashboardHeroCard(
             .background(PiaSurface)
             .border(1.dp, PiaOutline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             .padding(20.dp)
-            .testTag("dashboard_hero_card")
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

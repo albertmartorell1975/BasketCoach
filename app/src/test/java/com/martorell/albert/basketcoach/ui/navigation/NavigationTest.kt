@@ -4,11 +4,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.ComposeNavigator
@@ -25,7 +23,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [34], qualifiers = "w1280dp-h800dp-land")
 class NavigationTest {
 
     @get:Rule
@@ -39,9 +37,9 @@ class NavigationTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("nav_rail").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("top_bar").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("dashboard_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Dashboard").assertIsDisplayed()
+        composeTestRule.onNodeWithText("BasketCoach").assertIsDisplayed()
+        composeTestRule.onNodeWithText("LÍNIA BASE FASE 1").assertIsDisplayed()
     }
 
     @Test
@@ -53,21 +51,19 @@ class NavigationTest {
         }
 
         // Starts on Dashboard
-        composeTestRule.onNodeWithTag("dashboard_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithText("LÍNIA BASE FASE 1").assertIsDisplayed()
 
         // Tap on Analysis
-        composeTestRule.onNodeWithTag("nav_item_analysis").performClick()
-        composeTestRule.onNodeWithTag("placeholder_screen").assertIsDisplayed()
-        composeTestRule.onNode(hasText("Anàlisi") and hasAnyAncestor(hasTestTag("placeholder_screen"))).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Anàlisi").performClick()
+        composeTestRule.onNodeWithText("Aquesta funcionalitat s'activarà a la Fase 2.").assertIsDisplayed()
 
         // Tap on Chat
-        composeTestRule.onNodeWithTag("nav_item_chat").performClick()
-        composeTestRule.onNodeWithTag("placeholder_screen").assertIsDisplayed()
-        composeTestRule.onNode(hasText("Chat") and hasAnyAncestor(hasTestTag("placeholder_screen"))).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Chat").performClick()
+        composeTestRule.onNodeWithText("Aquesta funcionalitat s'activarà a la Fase 2.").assertIsDisplayed()
 
         // Tap back on Dashboard
-        composeTestRule.onNodeWithTag("nav_item_dashboard").performClick()
-        composeTestRule.onNodeWithTag("dashboard_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Dashboard").performClick()
+        composeTestRule.onNodeWithText("LÍNIA BASE FASE 1").assertIsDisplayed()
     }
 
     @Test
