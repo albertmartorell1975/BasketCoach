@@ -26,7 +26,21 @@ object PromptTemplates {
               "title": "Concise headline",
               "description": "Tactical explanation and data evidence",
               "category": "OFFENSE" | "DEFENSE" | "SYNERGY" | "GENERAL",
-              "relatedGameRounds": [1, 5, 8]
+              "relatedGameRounds": [1, 5, 8],
+              "type": "STRENGTH" | "IMPROVEMENT",
+              "contextTag": "e.g. Fase Ofensiva · Pintura",
+              "metric": {
+                "primaryLabel": "Percentatge T2 Zona",
+                "primaryValue": "58.4%",
+                "primarySubValue": "+8.2% sobre mitjana lliga",
+                "secondaryLabel": "Punts / Pos.",
+                "secondaryValue": "1.24 pts/pos",
+                "secondaryTag": "dataset:paint_eff",
+                "sentiment": "POSITIVE" | "NEGATIVE" | "NEUTRAL"
+              },
+              "priority": "Alta",
+              "footerNote": "Factor diferencial en victòries.",
+              "exploreChatPrompt": "Quins exercicis d'entrenament podem aplicar per a la Fase 2?"
             }
           ],
           "drills": [

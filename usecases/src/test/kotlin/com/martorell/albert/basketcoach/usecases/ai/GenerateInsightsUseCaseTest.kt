@@ -3,6 +3,10 @@ package com.martorell.albert.basketcoach.usecases.ai
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
+import com.martorell.albert.basketcoach.domain.model.InsightMetric
+import com.martorell.albert.basketcoach.domain.model.InsightType
+import com.martorell.albert.basketcoach.domain.model.MetricSentiment
+
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.usecases.fakes.FakeAiAnalysisRepository
 import com.martorell.albert.basketcoach.usecases.fakes.FakeGameRepository
@@ -38,7 +42,21 @@ class GenerateInsightsUseCaseTest {
                 title = "Defensive Rebounding Vulnerability",
                 description = "Conceding second chance points in losses.",
                 category = InsightCategory.DEFENSE,
-                relatedGameRounds = listOf(2)
+                relatedGameRounds = listOf(2),
+                type = InsightType.IMPROVEMENT,
+                contextTag = "Rebot",
+                metric = InsightMetric(
+                    primaryLabel = "Rebots Ofensius Concedits",
+                    primaryValue = "11.6",
+                    primarySubValue = "14.8 pts de 2a oportunitat",
+                    secondaryLabel = "Diferència",
+                    secondaryValue = "-7.8 reb",
+                    secondaryTag = "dataset:reb",
+                    sentiment = MetricSentiment.NEGATIVE
+                ),
+                priority = "Alta",
+                footerNote = "Pilar corrector",
+                exploreChatPrompt = "Com millorar el rebot?"
             )
         )
         fakeGameRepository.gamesToReturn = Result.Success(games)

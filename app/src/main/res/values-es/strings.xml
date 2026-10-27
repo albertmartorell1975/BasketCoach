@@ -64,4 +64,16 @@
     <string name="table_col_second_chance">2ª OPCIÓN</string>
     <string name="table_col_fast_break">C. ATAQUE</string>
     <string name="placeholder_phase2_note">Esta funcionalidad se activará en la Fase 2.</string>
+    <string name="analysis_filter_all">Todos (%d)</string>
+    <string name="analysis_filter_strengths">Fortalezas (%d)</string>
+    <string name="analysis_filter_improvements">Áreas de Mejora (%d)</string>
+    <string name="analysis_hero_phase1_register">REGISTRO FASE 1</string>
+    <string name="analysis_hero_phase1_rounds">14 / 14 Jornadas</string>
+    <string name="analysis_badge_strength">Fortaleza Táctica</string>
+    <string name="analysis_badge_improvement">Área de Mejora</string>
+    <string name="analysis_btn_explore_chat">Explorar en el Chat</string>
+    <string name="analysis_cd_filter_dot">Indicador de estado</string>
+    <string name="analysis_cd_verified_badge">Verificado</string>
+    <string name="analysis_cd_warning_badge">Alerta táctica</string>
+    <string name="analysis_empty_state">No hay elementos en esta categoría</string>
 </resources>

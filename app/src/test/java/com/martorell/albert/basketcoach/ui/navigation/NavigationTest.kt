@@ -55,7 +55,7 @@ class NavigationTest {
 
         // Tap on Analysis
         composeTestRule.onNodeWithContentDescription("Anàlisi").performClick()
-        composeTestRule.onNodeWithText("Aquesta funcionalitat s'activarà a la Fase 2.").assertIsDisplayed()
+        composeTestRule.onNodeWithText("REGISTRE FASE 1").assertIsDisplayed()
 
         // Tap on Chat
         composeTestRule.onNodeWithContentDescription("Chat").performClick()
