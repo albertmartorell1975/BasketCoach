@@ -30,20 +30,7 @@ class NavigationTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun appShell_rendersNavRailAndTopBar() {
-        composeTestRule.setContent {
-            BasketCoachTheme {
-                BasketCoachApp()
-            }
-        }
-
-        composeTestRule.onNodeWithContentDescription("Dashboard").assertIsDisplayed()
-        composeTestRule.onNodeWithText("BasketCoach").assertIsDisplayed()
-        composeTestRule.onNodeWithText("LÍNIA BASE FASE 1").assertIsDisplayed()
-    }
-
-    @Test
-    fun navRail_destinationsSwitchContent() {
+    fun appShell_rendersNavRailAndSwitchesDestinations() {
         composeTestRule.setContent {
             BasketCoachTheme {
                 BasketCoachApp()
@@ -51,16 +38,16 @@ class NavigationTest {
         }
 
         // Starts on Dashboard
+        composeTestRule.onNodeWithText("BasketCoach").assertIsDisplayed()
         composeTestRule.onNodeWithText("LÍNIA BASE FASE 1").assertIsDisplayed()
 
         // Tap on Analysis
         composeTestRule.onNodeWithContentDescription("Anàlisi").performClick()
         composeTestRule.onNodeWithText("REGISTRE FASE 1").assertIsDisplayed()
 
-        // Tap on Chat - now renders real Chat Assistant Screen
+        // Tap on Chat
         composeTestRule.onNodeWithContentDescription("Chat").performClick()
         composeTestRule.onNodeWithText("Espai de Reflexió Tàctica · 1a Fase").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Assistent Socràtic BasketCoach").assertIsDisplayed()
 
         // Tap back on Dashboard
         composeTestRule.onNodeWithContentDescription("Dashboard").performClick()

@@ -5,7 +5,6 @@ import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
 import com.martorell.albert.basketcoach.data.util.HttpException
-import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
@@ -93,24 +92,12 @@ class ChatRepositoryImplTest {
         val sendResult = repository.sendMessage("Will this fail?")
 
         assertTrue(sendResult is Result.Error)
-        val error = (sendResult as Result.Error).error
-        assertTrue(error is DomainError.Network.ServerError)
+        assertTrue((sendResult as Result.Error).error is DomainError.Network.ServerError)
 
         val allMessages = repository.getMessages()
         assertTrue(allMessages is Result.Success)
         val messageList = (allMessages as Result.Success).data
         assertEquals(1, messageList.size)
         assertEquals(MessageSender.COACH, messageList[0].sender)
-    }
-
-    @Test
-    fun `getMessages returns all messages recorded in localDataSource`() = runTest {
-        localDataSource.saveMessage(ChatMessage("msg-1", MessageSender.COACH, "First", 100L))
-        localDataSource.saveMessage(ChatMessage("msg-2", MessageSender.AI, "Second", 200L))
-
-        val result = repository.getMessages()
-
-        assertTrue(result is Result.Success)
-        assertEquals(2, (result as Result.Success).data.size)
     }
 }

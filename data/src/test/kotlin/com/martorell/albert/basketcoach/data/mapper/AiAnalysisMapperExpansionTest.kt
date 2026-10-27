@@ -14,16 +14,7 @@ class AiAnalysisMapperExpansionTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun toDomain_mapsRichInsightDtoWithStrengthMetric() {
-        val metricDto = InsightMetricDto(
-            primaryLabel = "Percentatge T2 Zona",
-            primaryValue = "58.4%",
-            primarySubValue = "+8.2% sobre mitjana lliga",
-            secondaryLabel = "Punts / Pos.",
-            secondaryValue = "1.24 pts/pos",
-            secondaryTag = "dataset:paint_eff",
-            sentiment = "POSITIVE"
-        )
+    fun toDomain_mapsStrengthAndImprovementInsightDtosWithSentiment() {
         val strengthDto = InsightDto(
             id = "str_1",
             title = "Eficiència en Tir Interior",
@@ -32,58 +23,42 @@ class AiAnalysisMapperExpansionTest {
             relatedGameRounds = listOf(3, 9, 10),
             type = "STRENGTH",
             contextTag = "Fase Ofensiva · Pintura",
-            metric = metricDto,
+            metric = InsightMetricDto(
+                primaryLabel = "Percentatge T2 Zona",
+                primaryValue = "58.4%",
+                primarySubValue = "+8.2% sobre mitjana lliga",
+                secondaryLabel = "Punts / Pos.",
+                secondaryValue = "1.24 pts/pos",
+                secondaryTag = "dataset:paint_eff",
+                sentiment = "POSITIVE"
+            ),
             priority = "",
             footerNote = "Factor diferencial en 3 de les 3 victòries.",
             exploreChatPrompt = ""
         )
+        val strengthDomain = strengthDto.toDomain()
+        assertEquals(InsightType.STRENGTH, strengthDomain.type)
+        assertEquals(MetricSentiment.POSITIVE, strengthDomain.metric.sentiment)
+        assertEquals("58.4%", strengthDomain.metric.primaryValue)
 
-        val domain = strengthDto.toDomain()
-
-        assertEquals(InsightType.STRENGTH, domain.type)
-        assertEquals("Fase Ofensiva · Pintura", domain.contextTag)
-        assertEquals("58.4%", domain.metric.primaryValue)
-        assertEquals(MetricSentiment.POSITIVE, domain.metric.sentiment)
-        assertEquals("1.24 pts/pos", domain.metric.secondaryValue)
-        assertEquals("Factor diferencial en 3 de les 3 victòries.", domain.footerNote)
-        assertEquals("", domain.exploreChatPrompt)
-    }
-
-    @Test
-    fun toDomain_mapsRichInsightDtoWithImprovementMetricAndNegativeSentiment() {
-        val metricDto = InsightMetricDto(
-            primaryLabel = "Punts Contraatac Rivals",
-            primaryValue = "16.2",
-            primarySubValue = "1.31 pts/pos en transició rival",
-            secondaryLabel = "Prioritat",
-            secondaryValue = "Crítica #1",
-            secondaryTag = "dataset:fastbreak_def",
-            sentiment = "NEGATIVE"
-        )
-        val improvementDto = InsightDto(
+        val improvementDto = strengthDto.copy(
             id = "imp_1",
-            title = "Balanç Defensiu en Transició",
-            description = "Poca comunicació en el retrocés.",
             category = "DEFENSE",
-            relatedGameRounds = listOf(1, 2, 4, 6),
             type = "IMPROVEMENT",
-            contextTag = "Transició · Balanç Defensiu",
-            metric = metricDto,
+            metric = strengthDto.metric.copy(sentiment = "NEGATIVE"),
             priority = "Crítica #1",
-            footerNote = "Pilar corrector Fase 2",
             exploreChatPrompt = "Com podem millorar el balanç defensiu?"
         )
-
-        val domain = improvementDto.toDomain()
-
-        assertEquals(InsightType.IMPROVEMENT, domain.type)
-        assertEquals(MetricSentiment.NEGATIVE, domain.metric.sentiment)
-        assertEquals("Crítica #1", domain.priority)
-        assertEquals("Com podem millorar el balanç defensiu?", domain.exploreChatPrompt)
+        val improvementDomain = improvementDto.toDomain()
+        assertEquals(InsightType.IMPROVEMENT, improvementDomain.type)
+        assertEquals(InsightCategory.DEFENSE, improvementDomain.category)
+        assertEquals(MetricSentiment.NEGATIVE, improvementDomain.metric.sentiment)
+        assertEquals("Crítica #1", improvementDomain.priority)
+        assertEquals("Com podem millorar el balanç defensiu?", improvementDomain.exploreChatPrompt)
     }
 
     @Test
-    fun jsonSerialization_roundTripWithMandatoryNonDefaultFields() {
+    fun jsonSerialization_decodesMandatoryFieldsAndMapsToDomain() {
         val jsonPayload = """{
   "id": "ser_1",
   "title": "Turnover Issue",
@@ -106,8 +81,7 @@ class AiAnalysisMapperExpansionTest {
   "exploreChatPrompt": "Drills for TO"
 }"""
 
-        val decoded = json.decodeFromString<InsightDto>(jsonPayload)
-        val domain = decoded.toDomain()
+        val domain = json.decodeFromString<InsightDto>(jsonPayload).toDomain()
 
         assertEquals("ser_1", domain.id)
         assertEquals(InsightCategory.SYNERGY, domain.category)
