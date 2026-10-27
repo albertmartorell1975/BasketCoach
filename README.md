@@ -28,7 +28,7 @@ Alternatively, set them as environment variables or system properties. If `DEVEX
 - [x] **`feature_003_devexpert_client`**: DevExpert & Gemini OpenAI-compatible API client, data sources, and repositories in `:data` (`accepted`).
 - [x] **`feature_004_usecases`**: Core business interactors in `:usecases` for game queries, AI tactical insights, and conversational chat (`accepted`).
 - [x] **`feature_005_dashboard_ui`**: Tablet Landscape Dashboard UI (80dp NavRail, 64dp TopBar, Hero card, 4 KPI cards, 14-round evolution chart, 14-match table) in `:app` (`accepted`).
-- [ ] **`feature_006_analysis_ui`**: Tablet Landscape Analysis UI (hero card, 3-filter segmented control, tactical insight cards with metric panels) in `:app` (`not_started`).
+- [x] **`feature_006_analysis_ui`**: Tablet Landscape Analysis UI (hero card, 3-filter segmented control, tactical insight cards with metric panels) in `:app` (`not_started`). (accepted)
 - [ ] **`feature_007_chat_ui`**: Tablet Single-Thread Chat UI (continuous message history, prompt reflections, AI responses) in `:app` (`not_started`).
 - [ ] **`feature_008_dashboard_integration`**: Connect Dashboard to Real Data via `GetPhase1GamesUseCase` and ViewModel in `:app` (`not_started`).
 - [ ] **`feature_009_analysis_integration`**: Connect Analysis to Real Data via `GenerateInsightsUseCase` and ViewModel in `:app` (`not_started`).

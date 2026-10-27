@@ -6,7 +6,7 @@
 * **`id`:** `feature_006_analysis_ui`
 * **`area`:** `app`
 * **`depends_on`:** `["feature_005_dashboard_ui"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement the high-density Tablet Landscape Analysis screen (`AnalysisScreen`) in `:app` along with the necessary domain model and data DTO expansions. The coach navigates to the Anàlisi screen via the fixed Navigation Rail to view the Phase 1 baseline hero card (consolidated 3V-11D, 21.4%), filter tactical insights via segmented tabs ("Tots", "Fortaleses", "Àrees de Millora"), inspect a responsive 3-column grid of rich tactical strength and improvement cards with empirical metric panels, and trigger the "Explorar al Xat" action intent to the Chat assistant.
 * **Identified Ambiguities / Assumptions:**
@@ -214,57 +214,57 @@ so I can identify priority fixes for Phase 2 and immediately launch the AI assis
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, and `DESIGN.md`. Ensure strict compliance with Constraint #16 (minimum 12sp font size) and Constraint #17 (default-free non-nullable UI models).
-- [ ] **Domain Layer Expansion (`:domain`):**
-  - [ ] Implement `InsightType` enum (`STRENGTH`, `IMPROVEMENT`).
-  - [ ] Implement `MetricSentiment` enum (`POSITIVE`, `NEGATIVE`, `NEUTRAL`).
-  - [ ] Implement `InsightMetric` data class with `primaryLabel`, `primaryValue`, `primarySubValue`, `secondaryLabel`, `secondaryValue`, `secondaryTag`, `sentiment`.
-  - [ ] Expand `Insight` with `type: InsightType = InsightType.IMPROVEMENT`, `contextTag: String = ""`, `metric: InsightMetric? = null`, `priority: String = ""`, `footerNote: String = ""`, `exploreChatPrompt: String? = null`.
-  - [ ] Create `InsightModelExpansionTest.kt` in `domain/src/test/kotlin/` verifying legacy compatibility and metric precision.
-- [ ] **Data Layer Expansion (`:data`):**
-  - [ ] Implement `@Serializable` `InsightMetricDto`.
-  - [ ] Expand `@Serializable` `InsightDto` with default-safe fields for serialization compatibility.
-  - [ ] Update `AiAnalysisMapper.kt` mapping `InsightMetricDto` -> `InsightMetric` and string type -> `InsightType`.
-  - [ ] Update `PromptTemplates.kt` system instructions detailing the metric schema.
-  - [ ] Create `AiAnalysisMapperExpansionTest.kt` in `data/src/test/kotlin/` verifying DTO-to-Domain mapping.
-- [ ] **Bilingual String Resources (`:app`):**
-  - [ ] Add all Analysis string keys in Catalan at `app/src/main/res/values/strings.xml`.
-  - [ ] Add all matching Analysis string keys in Spanish at `app/src/main/res/values-es/strings.xml`.
-- [ ] **Presentation State Models & Preview Data (`ui/analysis/` in `:app`):**
-  - [ ] Implement `InsightFilterTab` enum (`ALL`, `STRENGTHS`, `IMPROVEMENTS`).
-  - [ ] Implement `InsightCardUiModel` (100% default-free and non-nullable per Constraint #17).
-  - [ ] Implement `AnalysisUiState` (100% default-free and non-nullable per Constraint #17).
-  - [ ] Implement `AnalysisPreviewData.kt` with 5 authentic cards matching `code.html` (2 Strengths: Tir Interior, Protecció de Cistella; 3 Improvements: Balanç Defensiu, Rebot Defensiu, Pèrdues 3Q).
-- [ ] **Analysis UI Composables (`ui/analysis/components/` & `ui/analysis/` in `:app`):**
-  - [ ] Implement `AnalysisFilterTabs.kt` (segmented container, active Navy pill, dot indicators).
-  - [ ] Implement `AnalysisHeroCard.kt` (Phase 1 summary + Register + Filter tabs).
-  - [ ] Implement `InsightCard.kt` (category pill, context tag, title, description, empirical metric panel, footer, "Explorar al Xat" button).
-  - [ ] Implement `InsightCardGrid.kt` (3-column responsive grid layout).
-  - [ ] Implement `AnalysisContent.kt` (stateless scrollable canvas assembling hero card and card grid).
-  - [ ] Implement `AnalysisScreen.kt` (stateful entry composable managing tab state and hoisting `onNavigateToChat`).
-- [ ] **Navigation Wiring (`ui/navigation/Navigation.kt` in `:app`):**
-  - [ ] Replace `PlaceholderScreen` for `AnalysisRoute` with `AnalysisScreen(onNavigateToChat = { prompt -> appState.navigateToChat() })`.
-- [ ] **Robolectric Compose UI Testing (`app/src/test/`):**
-  - [ ] Implement `AnalysisScreenTest.kt` verifying:
+- [x] **MANDATORY Pre-Check:** Verify `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, and `DESIGN.md`. Ensure strict compliance with Constraint #16 (minimum 12sp font size) and Constraint #17 (default-free non-nullable UI models).
+- [x] **Domain Layer Expansion (`:domain`):**
+  - [x] Implement `InsightType` enum (`STRENGTH`, `IMPROVEMENT`).
+  - [x] Implement `MetricSentiment` enum (`POSITIVE`, `NEGATIVE`, `NEUTRAL`).
+  - [x] Implement `InsightMetric` data class with `primaryLabel`, `primaryValue`, `primarySubValue`, `secondaryLabel`, `secondaryValue`, `secondaryTag`, `sentiment`.
+  - [x] Expand `Insight` with `type: InsightType = InsightType.IMPROVEMENT`, `contextTag: String = ""`, `metric: InsightMetric? = null`, `priority: String = ""`, `footerNote: String = ""`, `exploreChatPrompt: String? = null`.
+  - [x] Create `InsightModelExpansionTest.kt` in `domain/src/test/kotlin/` verifying legacy compatibility and metric precision.
+- [x] **Data Layer Expansion (`:data`):**
+  - [x] Implement `@Serializable` `InsightMetricDto`.
+  - [x] Expand `@Serializable` `InsightDto` with default-safe fields for serialization compatibility.
+  - [x] Update `AiAnalysisMapper.kt` mapping `InsightMetricDto` -> `InsightMetric` and string type -> `InsightType`.
+  - [x] Update `PromptTemplates.kt` system instructions detailing the metric schema.
+  - [x] Create `AiAnalysisMapperExpansionTest.kt` in `data/src/test/kotlin/` verifying DTO-to-Domain mapping.
+- [x] **Bilingual String Resources (`:app`):**
+  - [x] Add all Analysis string keys in Catalan at `app/src/main/res/values/strings.xml`.
+  - [x] Add all matching Analysis string keys in Spanish at `app/src/main/res/values-es/strings.xml`.
+- [x] **Presentation State Models & Preview Data (`ui/analysis/` in `:app`):**
+  - [x] Implement `InsightFilterTab` enum (`ALL`, `STRENGTHS`, `IMPROVEMENTS`).
+  - [x] Implement `InsightCardUiModel` (100% default-free and non-nullable per Constraint #17).
+  - [x] Implement `AnalysisUiState` (100% default-free and non-nullable per Constraint #17).
+  - [x] Implement `AnalysisPreviewData.kt` with 5 authentic cards matching `code.html` (2 Strengths: Tir Interior, Protecció de Cistella; 3 Improvements: Balanç Defensiu, Rebot Defensiu, Pèrdues 3Q).
+- [x] **Analysis UI Composables (`ui/analysis/components/` & `ui/analysis/` in `:app`):**
+  - [x] Implement `AnalysisFilterTabs.kt` (segmented container, active Navy pill, dot indicators).
+  - [x] Implement `AnalysisHeroCard.kt` (Phase 1 summary + Register + Filter tabs).
+  - [x] Implement `InsightCard.kt` (category pill, context tag, title, description, empirical metric panel, footer, "Explorar al Xat" button).
+  - [x] Implement `InsightCardGrid.kt` (3-column responsive grid layout).
+  - [x] Implement `AnalysisContent.kt` (stateless scrollable canvas assembling hero card and card grid).
+  - [x] Implement `AnalysisScreen.kt` (stateful entry composable managing tab state and hoisting `onNavigateToChat`).
+- [x] **Navigation Wiring (`ui/navigation/Navigation.kt` in `:app`):**
+  - [x] Replace `PlaceholderScreen` for `AnalysisRoute` with `AnalysisScreen(onNavigateToChat = { prompt -> appState.navigateToChat() })`.
+- [x] **Robolectric Compose UI Testing (`app/src/test/`):**
+  - [x] Implement `AnalysisScreenTest.kt` verifying:
     - Screen renders 5 tactical cards under "Tots (5)".
     - Tapping "Fortaleses (2)" filters grid to 2 cards.
     - Tapping "Àrees de Millora (3)" filters grid to 3 cards.
     - Tapping "Explorar al Xat" triggers the navigation callback with the tactical prompt.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Run `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug`.
-  - [ ] Ensure 100% test pass rate across all modules and 0 lint/compilation errors.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Run `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug`.
+  - [x] Ensure 100% test pass rate across all modules and 0 lint/compilation errors.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_006_analysis_ui` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] `:domain` maintains pure Kotlin JVM isolation with zero `android.*` dependencies.
-- [ ] All 8 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
-- [ ] Presentation models in `:app` strictly obey Constraint #17 (zero defaults, zero nullable fields).
-- [ ] All typography across cards and badges strictly obeys Constraint #16 (minimum font size `12.sp`).
-- [ ] Both Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`) have 100% key parity with zero missing strings.
-- [ ] Segmented filtering and 'Explorar al Xat' navigation intent work seamlessly without UI glitches.
-- [ ] `@compiler` verification evidence (`:domain:test`, `:data:test`, `:app:testDebugUnitTest`, `:app:assembleDebug`, `lintDebug`) is present and valid.
-- [ ] Structured validation report written to `docs/features/feature_006_analysis_ui/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_006_analysis_ui` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] `:domain` maintains pure Kotlin JVM isolation with zero `android.*` dependencies.
+- [x] All 8 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
+- [x] Presentation models in `:app` strictly obey Constraint #17 (zero defaults, zero nullable fields).
+- [x] All typography across cards and badges strictly obeys Constraint #16 (minimum font size `12.sp`).
+- [x] Both Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`) have 100% key parity with zero missing strings.
+- [x] Segmented filtering and 'Explorar al Xat' navigation intent work seamlessly without UI glitches.
+- [x] `@compiler` verification evidence (`:domain:test`, `:data:test`, `:app:testDebugUnitTest`, `:app:assembleDebug`, `lintDebug`) is present and valid.
+- [x] Structured validation report written to `docs/features/feature_006_analysis_ui/validator/validation-report.md`.

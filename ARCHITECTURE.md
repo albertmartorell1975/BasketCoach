@@ -231,3 +231,9 @@ The `:app` module delivers a specialized high-density user experience strictly o
 5. **Design System & Typographic Governance (`ui.theme`)**:
    - Strictly enforces a minimum typography size of `12.sp` across all labels, pills, chart axis texts, and table cells to guarantee readability on physical tablet displays.
    - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate themes (Light, Dark, RTL, Large Font) and form factors (Tablet Landscape, Phone Landscape) across all composables.
+
+---
+
+## 8. Tactical Analysis Presentation Architecture (`:app`)
+
+The Analysis screen (`AnalysisScreen`) provides Coach Jordi with an actionable, high-density tactical diagnosis of Phase 1 competition findings, optimized for Tablet Landscape (`1280x800dp`).
