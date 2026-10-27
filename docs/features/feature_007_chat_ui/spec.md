@@ -151,7 +151,10 @@ so I can select practice drills and refine weekly training microcycles for Phase
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatMessageStream.kt` — create; scrollable list of messages.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatMessageBubble.kt` — create; dispatches to Coach or AI bubble.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/CoachMessageBubble.kt` — create; right-aligned Pia Navy bubble.
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/AiMessageBubble.kt` — create; left-aligned assistant bubble with callouts, drill option cards, and summary card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/AiMessageBubble.kt` — create; left-aligned assistant bubble orchestrating callouts, drill option cards, and summary card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ai/AiCalloutCard.kt` — create; tactical reflection callout card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ai/AiDrillOptionCard.kt` — create; interactive drill choice card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ai/AiSummaryCard.kt` — create; Phase 2 agreement summary card.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatInputBar.kt` — create; input text field, solid send button (min 48x48dp), and engine footer.
 * `app/src/main/res/values/strings.xml` — modify; add all Catalan chat strings.
 * `app/src/main/res/values-es/strings.xml` — modify; add all Spanish chat strings with 100% key parity.
