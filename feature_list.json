@@ -111,7 +111,7 @@
     "depends_on": [
       "feature_005_dashboard_ui"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "Compose UI tests render the chat messages list and input field correctly.",
     "evidence": "",
     "notes": "Must support text input and display both user and AI message bubbles.",
@@ -180,3 +180,4 @@
     ]
   }
 ]
+
