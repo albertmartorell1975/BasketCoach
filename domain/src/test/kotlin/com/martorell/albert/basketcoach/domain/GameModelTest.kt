@@ -6,6 +6,9 @@ import com.martorell.albert.basketcoach.domain.model.Drill
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
+import com.martorell.albert.basketcoach.domain.model.InsightMetric
+import com.martorell.albert.basketcoach.domain.model.InsightType
+import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.model.Score
@@ -174,7 +177,21 @@ class GameModelTest {
             title = "Defensive Rebounding Deficit",
             description = "Team concedes too many second-chance points.",
             category = InsightCategory.DEFENSE,
-            relatedGameRounds = listOf(1, 4, 6, 8, 11, 13)
+            relatedGameRounds = listOf(1, 4, 6, 8, 11, 13),
+            type = InsightType.IMPROVEMENT,
+            contextTag = "Rebot",
+            metric = InsightMetric(
+                primaryLabel = "Rebots",
+                primaryValue = "11.6",
+                primarySubValue = "Deficit",
+                secondaryLabel = "Impacte",
+                secondaryValue = "14.8 pts",
+                secondaryTag = "dataset:reb",
+                sentiment = MetricSentiment.NEGATIVE
+            ),
+            priority = "Alta",
+            footerNote = "Crític",
+            exploreChatPrompt = "Com millorar el rebot?"
         )
 
         assertEquals("insight_1", insight.id)
