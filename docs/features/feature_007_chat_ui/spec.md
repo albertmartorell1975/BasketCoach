@@ -144,14 +144,20 @@ so I can select practice drills and refine weekly training microcycles for Phase
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatLeftPane.kt` — create; coordinator switching between `ChatTopicList` and `ChatDiagnosticEvidenceView`.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatTopicList.kt` — create; intervention areas list and Socratic methodology card.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatTopicCard.kt` — create; individual intervention area card.
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatDiagnosticEvidenceView.kt` — create; diagnostic header card, 2-metric bar, Zero-Assumption rule card, court visualizer, and cycle reminder.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatDiagnosticEvidenceView.kt` — create; diagnostic left pane coordinator delegating to evidence subcomponents.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/evidence/EvidenceMetricsCard.kt` — create; diagnostic header card, 2-metric bar, and Zero-Assumption rule card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/evidence/EvidenceCourtCard.kt` — create; court visualizer card wrapper around half-court canvas.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/evidence/EvidenceMethodologyBanner.kt` — create; Pia methodology cycle reminder banner.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatHalfCourtCanvas.kt` — create; custom Compose canvas rendering half-court geometry and perimeter/interior heat clusters.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatRightPane.kt` — create; assistant header, conversation canvas, and input bar.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatWelcomeState.kt` — create; welcome greeting for empty threads.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatMessageStream.kt` — create; scrollable list of messages.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatMessageBubble.kt` — create; dispatches to Coach or AI bubble.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/CoachMessageBubble.kt` — create; right-aligned Pia Navy bubble.
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/AiMessageBubble.kt` — create; left-aligned assistant bubble with callouts, drill option cards, and summary card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/AiMessageBubble.kt` — create; left-aligned assistant bubble orchestrating callouts, drill option cards, and summary card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/assistant/AssistantCalloutCard.kt` — create; tactical reflection callout card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/assistant/AssistantDrillOptionCard.kt` — create; interactive drill choice card.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/assistant/AssistantSummaryCard.kt` — create; Phase 2 agreement summary card.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/chat/components/ChatInputBar.kt` — create; input text field, solid send button (min 48x48dp), and engine footer.
 * `app/src/main/res/values/strings.xml` — modify; add all Catalan chat strings.
 * `app/src/main/res/values-es/strings.xml` — modify; add all Spanish chat strings with 100% key parity.
