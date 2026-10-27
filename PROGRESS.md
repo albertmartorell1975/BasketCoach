@@ -61,7 +61,8 @@
 
 ### `feature_007_chat_ui` — Tablet Single-Thread Chat UI
 * 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`**: Initiated feature pipeline for `feature_007_chat_ui` on branch `feature/feature_007_chat_ui`. Delegating Stage 1 to `workflow-planner`.
+* 🔵 **`[PLANNER · workflow-planner]`**: Generated unified feature specification at `docs/features/feature_007_chat_ui/spec.md`. Harmonized general and detailed prototypes (`chat_general` and `chat_detalle`) into a two-pane tablet workbench with left-pane mode switching (Topic List vs Diagnostic Evidence with custom Compose Canvas half-court visualizer), interactive Socratic drill recommendation cards (Option A vs Option B), coach text input, seamless pre-grounded prompt handoff from Analysis (`ChatRoute(initialPrompt)`), strict default-free non-nullable UI models (Constraint #17), and minimum 12sp typography (Constraint #16). Zero changes outside `:app`. Ready for Human Checkpoint review.
 
 ## Next Steps
-- Stage 1 Planning with `workflow-planner` to create unified specification at `docs/features/feature_007_chat_ui/spec.md`.
-- Human Checkpoint review after Stage 1 (per `require_review_after: ["planner", "implementer"]`).
+- Human Checkpoint review of `docs/features/feature_007_chat_ui/spec.md` (Stage 1).
+- Upon approval, spawn `workflow-implementer` in isolated worktree `.worktrees/impl-feature_007_chat_ui` for Stage 2 Implementation.
