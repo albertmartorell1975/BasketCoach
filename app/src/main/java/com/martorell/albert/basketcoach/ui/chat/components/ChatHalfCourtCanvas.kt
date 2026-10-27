@@ -241,7 +241,7 @@ fun ChatHalfCourtCanvas(
                         .background(PiaTacticalOrange)
                 )
                 Text(
-                    text = stringResource(R.string.chat_court_perimeter_legend),
+                    text = stringResource(R.string.chat_court_perimeter_legend, perimeterPct),
                     fontSize = 12.sp,
                     color = PiaTextMuted
                 )
@@ -257,7 +257,7 @@ fun ChatHalfCourtCanvas(
                         .background(PiaNavy)
                 )
                 Text(
-                    text = stringResource(R.string.chat_court_interior_legend),
+                    text = stringResource(R.string.chat_court_interior_legend, interiorPct),
                     fontSize = 12.sp,
                     color = PiaTextMuted
                 )

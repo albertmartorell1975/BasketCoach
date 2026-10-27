@@ -79,27 +79,27 @@
 
 <!-- Chat Screen Strings (Catalan) -->
     <string name="chat_meta_space_tag">Espai de Reflexió Tàctica · 1a Fase</string>
-    <string name="chat_meta_phase_subtitle">Interterritorial Grup 02 · 14 Jornades analitzades</string>
-    <string name="chat_meta_balance_pill">Balanç: 3V - 11D</string>
+    <string name="chat_meta_phase_subtitle">Interterritorial Grup %1$s · %2$d Jornades analitzades</string>
+    <string name="chat_meta_balance_pill">Balanç: %1$dV - %2$dD</string>
     <string name="chat_meta_team_pill">Junior A Masculí</string>
     <string name="chat_topics_header_tag">Àrees d\'Intervenció · 1a Fase</string>
     <string name="chat_topics_title">Tria un Fil de Treball</string>
-    <string name="chat_topics_subtitle">Selecciona una àrea detectada per la IA o inicia una consulta lliure sobre els 14 partits.</string>
+    <string name="chat_topics_subtitle">Selecciona una àrea detectada per la IA o inicia una consulta lliure sobre els %1$d partits.</string>
     <string name="chat_topics_back_toggle">← Tots els fils</string>
     <string name="chat_methodology_title">Mètode Socràtic Pia</string>
     <string name="chat_methodology_desc">Les conclusions de cada diàleg s\'estructuren en microcicles de treball per als entrenaments de la setmana.</string>
     <string name="chat_methodology_cycle">Evidència → Reflexió → Exercicis → Compromís</string>
     <string name="chat_assistant_title">Assistent Socràtic BasketCoach</string>
     <string name="chat_assistant_status">Connexió Assistent Activa · Model Jun. Pia</string>
-    <string name="chat_baseline_pill">Línia Base: 14 Partits Consolidats</string>
-    <string name="chat_welcome_title">Hola Jordi, com enfoquem la planificació d\'aquesta setmana?</string>
-    <string name="chat_welcome_subtitle">L\'anàlisi de la 1a Fase (3V - 11D) mostra patrons clars on podem intervenir en els entrenaments de dimarts i dijous. Selecciona un fil de treball a l\'esquerra o escriu directament qualsevol reflexió o consulta tàctica a la barra inferior.</string>
+    <string name="chat_baseline_pill">Línia Base: %1$d Partits Consolidats</string>
+    <string name="chat_welcome_title">Hola %1$s, com enfoquem la planificació d\'aquesta setmana?</string>
+    <string name="chat_welcome_subtitle">L\'anàlisi de la 1a Fase (%1$s) mostra patrons clars on podem intervenir en els entrenaments de dimarts i dijous. Selecciona un fil de treball a l\'esquerra o escriu directament qualsevol reflexió o consulta tàctica a la barra inferior.</string>
     <string name="chat_input_placeholder">Escriu una pregunta o reflexió lliure sobre la 1a fase...</string>
     <string name="chat_btn_send">Enviar missatge</string>
     <string name="chat_footer_engine">BasketCoach Pia Sabadell · Motor d\'Anàlisi Interterritorial</string>
     <string name="chat_court_origin_title">Origen dels Rebots Concedits</string>
-    <string name="chat_court_perimeter_badge">61% Perímetre</string>
-    <string name="chat_court_perimeter_legend">Rebot Exterior (61% Total)</string>
-    <string name="chat_court_interior_legend">Rebot Interior (39%)</string>
+    <string name="chat_court_perimeter_badge">%1$s Perímetre</string>
+    <string name="chat_court_perimeter_legend">Rebot Exterior (%1$s Total)</string>
+    <string name="chat_court_interior_legend">Rebot Interior (%1$s)</string>
     <string name="chat_assistant_avatar_initial">P</string>
 </resources>

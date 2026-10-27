@@ -72,7 +72,7 @@ fun EvidenceCourtCard(
                     )
                 }
                 Text(
-                    text = stringResource(R.string.chat_court_perimeter_badge),
+                    text = stringResource(R.string.chat_court_perimeter_badge, model.courtPerimeterPct),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaTacticalOrange

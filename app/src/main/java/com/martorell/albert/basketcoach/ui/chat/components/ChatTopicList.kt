@@ -64,7 +64,7 @@ fun ChatTopicList(
                 color = PiaNavy
             )
             Text(
-                text = stringResource(R.string.chat_topics_subtitle),
+                text = stringResource(R.string.chat_topics_subtitle, 14),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
                 lineHeight = 16.sp

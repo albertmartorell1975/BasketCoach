@@ -83,7 +83,7 @@ fun ChatWelcomeState(
         }
 
         Text(
-            text = stringResource(R.string.chat_welcome_title),
+            text = stringResource(R.string.chat_welcome_title, "Jordi"),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = PiaNavy,
@@ -91,7 +91,7 @@ fun ChatWelcomeState(
         )
 
         Text(
-            text = stringResource(R.string.chat_welcome_subtitle),
+            text = stringResource(R.string.chat_welcome_subtitle, "3V - 11D"),
             fontSize = 14.sp,
             color = PiaTextMuted,
             textAlign = TextAlign.Center,

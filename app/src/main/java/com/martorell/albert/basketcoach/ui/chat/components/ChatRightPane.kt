@@ -134,7 +134,7 @@ fun ChatRightPane(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = stringResource(R.string.chat_baseline_pill),
+                            text = stringResource(R.string.chat_baseline_pill, 14),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = PiaNavy

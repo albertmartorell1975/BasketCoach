@@ -39,8 +39,8 @@ fun ChatScreen(
 
     val metaHeader = ChatMetaHeaderUiModel(
         spaceTag = stringResource(R.string.chat_meta_space_tag),
-        phaseSubtitle = stringResource(R.string.chat_meta_phase_subtitle),
-        balancePill = stringResource(R.string.chat_meta_balance_pill),
+        phaseSubtitle = stringResource(R.string.chat_meta_phase_subtitle, "02", 14),
+        balancePill = stringResource(R.string.chat_meta_balance_pill, 3, 11),
         teamPill = stringResource(R.string.chat_meta_team_pill)
     )
 
