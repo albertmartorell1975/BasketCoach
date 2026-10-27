@@ -4,11 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Structured DTO representing AI-generated tactical analysis and recommended practice drills.
- * All fields are strictly mandatory.
+ * Root network response DTO returned by the AI inference service for tactical analysis.
  *
- * @property insights Analytical findings extracted from past games.
- * @property drills Actionable practice drills targeting identified weaknesses or strengths.
+ * @property insights Collection of tactical strengths and areas of improvement ([InsightDto]).
+ * @property drills Collection of practice drill recommendations ([DrillDto]).
  */
 @Serializable
 data class AiAnalysisResponseDto(
@@ -19,14 +18,21 @@ data class AiAnalysisResponseDto(
 )
 
 /**
- * DTO representing a single tactical insight.
- * All fields are strictly mandatory.
+ * Network Data Transfer Object representing a single tactical insight.
  *
- * @property id Unique identifier.
- * @property title Concise title of the insight.
- * @property description Detailed tactical assessment.
- * @property category Category string ("OFFENSE", "DEFENSE", "SYNERGY", "GENERAL").
- * @property relatedGameRounds Competition round numbers where this pattern was observed.
+ * Adheres strictly to Constraint #14 with mandatory non-nullable properties.
+ *
+ * @property id Unique identifier of the insight.
+ * @property title Tactical headline summarizing the finding.
+ * @property description Detailed tactical analysis describing the finding.
+ * @property category Category classification string matching [InsightCategory].
+ * @property relatedGameRounds Competition rounds supporting this insight.
+ * @property type Insight classification string ("STRENGTH" or "IMPROVEMENT").
+ * @property contextTag Contextual game phase tag.
+ * @property metric Empirical statistical container ([InsightMetricDto]).
+ * @property priority Urgency or priority tag.
+ * @property footerNote Explanatory note or evidence summary for the footer.
+ * @property exploreChatPrompt Grounding prompt dispatched to conversational AI.
  */
 @Serializable
 data class InsightDto(
@@ -39,18 +45,29 @@ data class InsightDto(
     @SerialName("category")
     val category: String,
     @SerialName("relatedGameRounds")
-    val relatedGameRounds: List<Int>
+    val relatedGameRounds: List<Int>,
+    @SerialName("type")
+    val type: String,
+    @SerialName("contextTag")
+    val contextTag: String,
+    @SerialName("metric")
+    val metric: InsightMetricDto,
+    @SerialName("priority")
+    val priority: String,
+    @SerialName("footerNote")
+    val footerNote: String,
+    @SerialName("exploreChatPrompt")
+    val exploreChatPrompt: String
 )
 
 /**
- * DTO representing a tactical practice drill.
- * All fields are strictly mandatory.
+ * Network Data Transfer Object representing a recommended practice drill.
  *
- * @property id Unique identifier.
- * @property name Title of the drill.
- * @property objective Primary skill or tactical objective.
- * @property instructions Step-by-step instructions.
- * @property focusArea Basketball focus area.
+ * @property id Unique identifier of the drill.
+ * @property name Title of the training drill.
+ * @property objective Coaching objective and tactical purpose of the exercise.
+ * @property instructions Step-by-step coaching instructions for running the drill.
+ * @property focusArea Primary tactical focus area addressed by this drill.
  */
 @Serializable
 data class DrillDto(

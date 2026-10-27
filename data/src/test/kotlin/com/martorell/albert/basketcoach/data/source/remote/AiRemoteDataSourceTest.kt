@@ -60,7 +60,21 @@ class AiRemoteDataSourceTest {
                   "title": "Turnover Crisis",
                   "description": "High turnover rate in losses",
                   "category": "OFFENSE",
-                  "relatedGameRounds": [1, 2]
+                  "relatedGameRounds": [1, 2],
+                  "type": "IMPROVEMENT",
+                  "contextTag": "Pèrdues",
+                  "metric": {
+                    "primaryLabel": "Pèrdues",
+                    "primaryValue": "42%",
+                    "primarySubValue": "AST/TO 0.51",
+                    "secondaryLabel": "Impacte",
+                    "secondaryValue": "6.4 pts",
+                    "secondaryTag": "dataset:to",
+                    "sentiment": "NEGATIVE"
+                  },
+                  "priority": "Alta",
+                  "footerNote": "Pilar corrector",
+                  "exploreChatPrompt": "Com reduir pèrdues?"
                 }
               ],
               "drills": [

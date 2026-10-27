@@ -4,6 +4,8 @@ import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.DrillDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightDto
+import com.martorell.albert.basketcoach.data.network.dto.InsightMetricDto
+
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
 import com.martorell.albert.basketcoach.data.util.HttpException
@@ -62,7 +64,21 @@ class AiAnalysisRepositoryImplTest {
                     title = "Turnover Vulnerability",
                     description = "Too many lost balls in transition",
                     category = "OFFENSE",
-                    relatedGameRounds = listOf(1)
+                    relatedGameRounds = listOf(1),
+                    type = "IMPROVEMENT",
+                    contextTag = "Transició",
+                    metric = InsightMetricDto(
+                        primaryLabel = "Pèrdues",
+                        primaryValue = "42%",
+                        primarySubValue = "AST/TO 0.51",
+                        secondaryLabel = "Impacte",
+                        secondaryValue = "6.4 pts",
+                        secondaryTag = "dataset:to",
+                        sentiment = "NEGATIVE"
+                    ),
+                    priority = "Alta",
+                    footerNote = "Crític",
+                    exploreChatPrompt = "Com millorar?"
                 )
             ),
             drills = listOf(
@@ -92,7 +108,19 @@ class AiAnalysisRepositoryImplTest {
     fun `getDrills uses shared cache when getInsights was called first without second remote call`() = runTest {
         val dto = AiAnalysisResponseDto(
             insights = listOf(
-                InsightDto("i1", "Title", "Desc", "DEFENSE", listOf(1))
+                InsightDto(
+                    id = "i1",
+                    title = "Title",
+                    description = "Desc",
+                    category = "DEFENSE",
+                    relatedGameRounds = listOf(1),
+                    type = "IMPROVEMENT",
+                    contextTag = "Tag",
+                    metric = InsightMetricDto("L", "V", "S", "SL", "SV", "ST", "NEGATIVE"),
+                    priority = "Alta",
+                    footerNote = "Note",
+                    exploreChatPrompt = "Prompt"
+                )
             ),
             drills = listOf(
                 DrillDto("d1", "Drill 1", "Obj 1", listOf("Step 1"), "Focus")
