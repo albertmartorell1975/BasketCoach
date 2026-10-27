@@ -101,4 +101,5 @@
     <string name="chat_court_perimeter_badge">61% Perímetre</string>
     <string name="chat_court_perimeter_legend">Rebot Exterior (61% Total)</string>
     <string name="chat_court_interior_legend">Rebot Interior (39%)</string>
+    <string name="chat_assistant_avatar_initial">P</string>
 </resources>

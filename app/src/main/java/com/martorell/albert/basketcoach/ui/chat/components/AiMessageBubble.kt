@@ -15,12 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.martorell.albert.basketcoach.ui.chat.components.ai.AiCalloutCard
-import com.martorell.albert.basketcoach.ui.chat.components.ai.AiDrillOptionCard
-import com.martorell.albert.basketcoach.ui.chat.components.ai.AiSummaryCard
+import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.chat.components.assistant.AssistantCalloutCard
+import com.martorell.albert.basketcoach.ui.chat.components.assistant.AssistantDrillOptionCard
+import com.martorell.albert.basketcoach.ui.chat.components.assistant.AssistantSummaryCard
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
@@ -51,7 +53,7 @@ fun AiMessageBubble(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "P",
+                text = stringResource(R.string.chat_assistant_avatar_initial),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = PiaWhite
@@ -117,7 +119,7 @@ fun AiMessageBubble(
                     )
 
                     if (model.hasCalloutQuestion) {
-                        AiCalloutCard(
+                        AssistantCalloutCard(
                             questionText = model.calloutQuestionText,
                             subText = model.calloutSubText
                         )
@@ -129,7 +131,7 @@ fun AiMessageBubble(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             model.drillOptions.forEach { drill ->
-                                AiDrillOptionCard(
+                                AssistantDrillOptionCard(
                                     drill = drill,
                                     onSelect = onDrillOptionSelect,
                                     modifier = Modifier.weight(1f)
@@ -139,7 +141,7 @@ fun AiMessageBubble(
                     }
 
                     if (model.hasSummaryCard) {
-                        AiSummaryCard(
+                        AssistantSummaryCard(
                             model = model.summaryCard
                         )
                     }

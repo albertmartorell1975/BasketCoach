@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.ui.chat.components.ai
+package com.martorell.albert.basketcoach.ui.chat.components.assistant
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,7 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
 @Composable
-fun AiCalloutCard(
+fun AssistantCalloutCard(
     questionText: String,
     subText: String,
     modifier: Modifier = Modifier
