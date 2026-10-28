@@ -40,12 +40,23 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = getPhase1GamesUseCase()) {
                 is Result.Success -> {
-                    val successContent = mapper.toSuccess(result.data)
-                    _uiState.update {
-                        DashboardUiState(
-                            content = successContent,
-                            isRefreshing = false
-                        )
+                    if (result.data.isEmpty()) {
+                        _uiState.update {
+                            DashboardUiState(
+                                content = DashboardUiContent.Error(
+                                    message = "No s'han trobat partits de la 1a Fase al conjunt de dades."
+                                ),
+                                isRefreshing = false
+                            )
+                        }
+                    } else {
+                        val successContent = mapper.toSuccess(result.data)
+                        _uiState.update {
+                            DashboardUiState(
+                                content = successContent,
+                                isRefreshing = false
+                            )
+                        }
                     }
                 }
                 is Result.Error -> {

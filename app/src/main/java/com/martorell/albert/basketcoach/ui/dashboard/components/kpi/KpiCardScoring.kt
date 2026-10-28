@@ -67,7 +67,7 @@ fun KpiCardScoring(
                 letterSpacing = (-0.5).sp
             )
             Text(
-                text = stringResource(R.string.kpi_scoring_opp),
+                text = stringResource(R.string.kpi_scoring_opp, kpis.scoring.opponentAverageScore),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 color = PiaTextMuted,
@@ -88,14 +88,14 @@ fun KpiCardScoring(
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.kpi_scoring_net_diff),
+                    text = stringResource(R.string.kpi_scoring_net_diff, kpis.scoring.netDifferential),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaDangerRed
                 )
             }
             Text(
-                text = stringResource(R.string.kpi_scoring_games),
+                text = stringResource(R.string.kpi_scoring_games, kpis.scoring.gamesCount),
                 fontSize = 12.sp,
                 color = PiaTextMuted
             )

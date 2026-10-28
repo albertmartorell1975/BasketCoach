@@ -43,29 +43,28 @@ class DashboardUiMapperTest {
         // Evolution assertions
         assertEquals(14, success.evolution.rounds.size)
         assertTrue(success.evolution.rounds[2].isWin)
-        assertEquals("W 71-68", success.evolution.rounds[2].scoreBadge)
+        assertEquals(71, success.evolution.rounds[2].piaScore)
+        assertEquals(68, success.evolution.rounds[2].rivalScore)
         assertTrue(success.evolution.rounds[8].isWin)
-        assertEquals("W 68-65", success.evolution.rounds[8].scoreBadge)
+        assertEquals(68, success.evolution.rounds[8].piaScore)
+        assertEquals(65, success.evolution.rounds[8].rivalScore)
         assertTrue(success.evolution.rounds[9].isWin)
-        assertEquals("W 67-65", success.evolution.rounds[9].scoreBadge)
+        assertEquals(67, success.evolution.rounds[9].piaScore)
+        assertEquals(65, success.evolution.rounds[9].rivalScore)
 
         // Match table assertions
         assertEquals(14, success.matches.size)
-        assertEquals("CEB Pia Sabadell", success.matches[0].homeTeam)
+        assertEquals("CEB Escola Pia Sabadell", success.matches[0].homeTeam)
         assertEquals("CB Cornellà", success.matches[0].awayTeam)
-        assertEquals("62 - 78", success.matches[0].scoreDisplay)
+        assertEquals(62, success.matches[0].homePoints)
+        assertEquals(78, success.matches[0].awayPoints)
+        assertEquals(22, success.matches[0].personalFouls)
+        assertEquals(4, success.matches[0].secondChancePoints)
+        assertEquals(14, success.matches[0].opponentSecondChancePoints)
     }
 
-    @Test
-    fun should_HandleEmptyGamesList_gracefully() {
-        val success = mapper.toSuccess(emptyList())
-
-        assertEquals(0, success.summary.wins)
-        assertEquals(0, success.summary.losses)
-        assertEquals(0.0, success.summary.winPercentage, 0.0)
-        assertEquals(0, success.summary.totalGames)
-        assertEquals(0.0, success.kpis.scoring.averageScore, 0.0)
-        assertTrue(success.evolution.rounds.isEmpty())
-        assertTrue(success.matches.isEmpty())
+    @Test(expected = IllegalArgumentException::class)
+    fun should_ThrowIllegalArgumentException_when_GamesListIsEmpty() {
+        mapper.toSuccess(emptyList())
     }
 }

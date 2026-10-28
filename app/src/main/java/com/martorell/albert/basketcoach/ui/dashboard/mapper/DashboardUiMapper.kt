@@ -12,33 +12,13 @@ import com.martorell.albert.basketcoach.ui.dashboard.model.RoundEvolutionUiModel
 import com.martorell.albert.basketcoach.ui.dashboard.model.ScoringEvolutionUiModel
 import com.martorell.albert.basketcoach.ui.dashboard.model.ScoringKpiUiModel
 import com.martorell.albert.basketcoach.ui.dashboard.model.ShootingKpiUiModel
-import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 class DashboardUiMapper @Inject constructor() {
 
     fun toSuccess(games: List<Game>): DashboardUiContent.Success {
-        if (games.isEmpty()) {
-            return DashboardUiContent.Success(
-                summary = Phase1SummaryUiModel(
-                    wins = 0,
-                    losses = 0,
-                    winPercentage = 0.0,
-                    totalGames = 0,
-                    categoryRes = R.string.topbar_category,
-                    teamNameRes = R.string.hero_club_name
-                ),
-                kpis = DashboardKpisUiModel(
-                    scoring = ScoringKpiUiModel(0.0, 0.0, 0.0, 0, 0f),
-                    rebounds = ReboundsKpiUiModel(0.0, 0.0, 0.0, 0.0, 0.0),
-                    shooting = ShootingKpiUiModel(0.0, 0.0, 0.0, 0.0),
-                    gameControl = GameControlKpiUiModel(0.0, 0.0, 0.0)
-                ),
-                evolution = ScoringEvolutionUiModel(emptyList()),
-                matches = emptyList()
-            )
-        }
+        require(games.isNotEmpty()) { "Cannot compute Phase 1 dashboard metrics from an empty game list." }
 
         val sortedGames = games.sortedBy { it.round }
         val totalGames = sortedGames.size
@@ -108,43 +88,40 @@ class DashboardUiMapper @Inject constructor() {
         )
 
         val evolutionRounds = sortedGames.map { game ->
-            val scoreBadge = if (game.isWin) "W ${game.teamScore}-${game.opponentScore}" else ""
             RoundEvolutionUiModel(
                 roundNumber = game.round,
-                roundLabel = "J${game.round}",
                 piaScore = game.teamScore,
                 rivalScore = game.opponentScore,
-                isWin = game.isWin,
-                scoreBadge = scoreBadge
+                isWin = game.isWin
             )
         }
 
         val matchRows = sortedGames.map { game ->
-            val isPiaHome = game.isHomeGame
-            val scoreDisplay = "${game.finalScore.homePoints} - ${game.finalScore.awayPoints}"
             MatchRowUiModel(
                 roundNumber = game.round,
-                roundLabel = "J${game.round}",
-                homeTeam = normalizeTeamName(game.homeTeam),
-                awayTeam = normalizeTeamName(game.awayTeam),
-                isPiaHome = isPiaHome,
-                piaScore = game.teamScore,
-                rivalScore = game.opponentScore,
+                homeTeam = formatTeamDisplayName(game.homeTeam),
+                awayTeam = formatTeamDisplayName(game.awayTeam),
+                isPiaHome = game.isHomeGame,
+                homePoints = game.finalScore.homePoints,
+                awayPoints = game.finalScore.awayPoints,
                 isWin = game.isWin,
-                scoreDisplay = scoreDisplay,
-                efg = "${formatOneDecimal(game.teamStats.efgPct)}%",
-                fg2 = "${formatOneDecimal(game.teamStats.fg2Pct)}%",
-                fg3 = "${formatOneDecimal(game.teamStats.fg3Pct)}%",
-                ft = "${formatOneDecimal(game.teamStats.ftPct)}%",
-                rebounds = "${game.teamStats.totalRebounds} (${game.teamStats.offensiveRebounds}/${game.teamStats.defensiveRebounds})",
+                efgPct = roundToOneDecimal(game.teamStats.efgPct),
+                fg2Pct = roundToOneDecimal(game.teamStats.fg2Pct),
+                fg3Pct = roundToOneDecimal(game.teamStats.fg3Pct),
+                ftPct = roundToOneDecimal(game.teamStats.ftPct),
+                totalRebounds = game.teamStats.totalRebounds,
+                offensiveRebounds = game.teamStats.offensiveRebounds,
+                defensiveRebounds = game.teamStats.defensiveRebounds,
                 ast = game.teamStats.assists,
                 to = game.teamStats.turnovers,
-                astTo = String.format(Locale.US, "%.2f", game.teamStats.astToRatio),
+                astTo = roundToTwoDecimals(game.teamStats.astToRatio),
                 stl = game.teamStats.steals,
                 blk = game.teamStats.blocks,
-                pf = "${game.teamStats.personalFouls} PF",
-                secondChance = "${game.teamStats.secondChancePoints} pts vs ${game.opponentStats.secondChancePoints}",
-                fastBreak = "${game.teamStats.fastBreakPoints} pts vs ${game.opponentStats.fastBreakPoints}"
+                personalFouls = game.teamStats.personalFouls,
+                secondChancePoints = game.teamStats.secondChancePoints,
+                opponentSecondChancePoints = game.opponentStats.secondChancePoints,
+                fastBreakPoints = game.teamStats.fastBreakPoints,
+                opponentFastBreakPoints = game.opponentStats.fastBreakPoints
             )
         }
 
@@ -156,10 +133,10 @@ class DashboardUiMapper @Inject constructor() {
         )
     }
 
-    private fun normalizeTeamName(rawName: String): String {
+    private fun formatTeamDisplayName(rawName: String): String {
         val upper = rawName.uppercase().trim()
         return when {
-            upper.contains("BASQUETPIASABADELL") || upper.contains("PIA SABADELL") -> "CEB Pia Sabadell"
+            upper.contains("BASQUETPIASABADELL") || upper.contains("PIA SABADELL") -> "CEB Escola Pia Sabadell"
             upper.contains("CORNELL") -> "CB Cornellà"
             upper.contains("CARDEDEU") -> "CB Cardedeu"
             upper.contains("SANT JORDI") -> "CEB Sant Jordi Blau"
@@ -177,9 +154,5 @@ class DashboardUiMapper @Inject constructor() {
 
     private fun roundToTwoDecimals(value: Double): Double {
         return (value * 100.0).roundToInt() / 100.0
-    }
-
-    private fun formatOneDecimal(value: Double): String {
-        return String.format(Locale.US, "%.1f", value)
     }
 }

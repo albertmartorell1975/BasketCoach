@@ -87,14 +87,14 @@ fun KpiCardGameControl(
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.kpi_gamecontrol_ast_pill),
+                    text = stringResource(R.string.kpi_gamecontrol_ast_pill, kpis.gameControl.assistsPerGame),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaDangerRed
                 )
             }
             Text(
-                text = stringResource(R.string.kpi_gamecontrol_to_pill),
+                text = stringResource(R.string.kpi_gamecontrol_to_pill, kpis.gameControl.turnoversPerGame),
                 fontSize = 12.sp,
                 color = PiaTextMuted
             )

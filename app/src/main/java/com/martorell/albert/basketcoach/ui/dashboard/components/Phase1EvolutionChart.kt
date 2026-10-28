@@ -157,7 +157,8 @@ fun Phase1EvolutionChart(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 evolution.rounds.forEach { round ->
-                    val labelText = if (round.isWin) "${round.roundLabel} (V)" else round.roundLabel
+                    val roundLabel = stringResource(R.string.round_label_format, round.roundNumber)
+                    val labelText = if (round.isWin) "$roundLabel (V)" else roundLabel
                     val labelColor = if (round.isWin) PiaSuccessGreen else PiaTextMuted
                     val labelWeight = if (round.isWin) FontWeight.Bold else FontWeight.SemiBold
 
@@ -192,7 +193,7 @@ private fun RoundBarColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        if (round.isWin && round.scoreBadge.isNotEmpty()) {
+        if (round.isWin) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
@@ -201,7 +202,7 @@ private fun RoundBarColumn(
                     .offset(y = (-4).dp)
             ) {
                 Text(
-                    text = round.scoreBadge,
+                    text = stringResource(R.string.chart_win_badge, round.piaScore, round.rivalScore),
                     color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.ExtraBold,

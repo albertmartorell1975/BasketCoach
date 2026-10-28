@@ -130,7 +130,11 @@ fun DashboardHeroCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = stringResource(R.string.hero_competitive_balance),
+                        text = stringResource(
+                            R.string.hero_competitive_balance,
+                            summary.wins,
+                            summary.losses
+                        ),
                         color = PiaTextPrimary,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
@@ -150,7 +154,7 @@ fun DashboardHeroCard(
                                 .padding(horizontal = 8.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                text = stringResource(R.string.hero_win_pct),
+                                text = stringResource(R.string.hero_win_pct, summary.winPercentage),
                                 color = PiaDangerRed,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
@@ -184,7 +188,7 @@ fun DashboardHeroCard(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(R.string.hero_summary_score),
+                        text = stringResource(R.string.hero_summary_score, summary.wins, summary.losses),
                         color = PiaDangerRed,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold

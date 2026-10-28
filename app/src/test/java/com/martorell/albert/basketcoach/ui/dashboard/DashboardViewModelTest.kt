@@ -1,5 +1,7 @@
 package com.martorell.albert.basketcoach.ui.dashboard
 
+import com.martorell.albert.basketcoach.data.repository.GameRepositoryImpl
+import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSourceImpl
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Result
@@ -9,6 +11,7 @@ import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.usecases.game.GetPhase1GamesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -25,6 +28,9 @@ class DashboardViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val mapper = DashboardUiMapper()
+    private val realGames: List<Game> = runBlocking {
+        (GameRepositoryImpl(GameLocalDataSourceImpl()).getPhase1Games() as Result.Success).data
+    }
 
     @Before
     fun setUp() {
@@ -40,7 +46,7 @@ class DashboardViewModelTest {
     fun should_RemainPassiveInitially_and_TransitionToSuccess_when_LoadDashboardInvoked() = runTest {
         val fakeRepo = object : GameRepository {
             override suspend fun getPhase1Games(): Result<List<Game>, DomainError> =
-                Result.Success(emptyList())
+                Result.Success(realGames)
             override suspend fun getGameByRound(round: Int): Result<Game, DomainError> =
                 Result.Error(DomainError.Local.NotFound)
         }
@@ -68,7 +74,7 @@ class DashboardViewModelTest {
                 return if (shouldFail) {
                     Result.Error(DomainError.Local.NotFound)
                 } else {
-                    Result.Success(emptyList())
+                    Result.Success(realGames)
                 }
             }
             override suspend fun getGameByRound(round: Int): Result<Game, DomainError> =

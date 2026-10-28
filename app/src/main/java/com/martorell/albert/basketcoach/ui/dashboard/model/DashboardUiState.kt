@@ -156,68 +156,71 @@ data class ScoringEvolutionUiModel(
  * UI model representing a single round's scoring outcome in the evolution chart.
  *
  * @property roundNumber Competition round index (1..14).
- * @property roundLabel Short round identifier (e.g. "J1").
  * @property piaScore Points scored by CEB Pia Sabadell.
  * @property rivalScore Points scored by the opponent team.
  * @property isWin `true` if Pia Sabadell won the match; `false` otherwise.
- * @property scoreBadge Text badge displayed above winning bars (e.g. "W 71-68").
  */
 data class RoundEvolutionUiModel(
     val roundNumber: Int,
-    val roundLabel: String,
     val piaScore: Int,
     val rivalScore: Int,
-    val isWin: Boolean,
-    val scoreBadge: String
+    val isWin: Boolean
 )
 
 /**
  * UI model representing a single fixture row in the 16-column Phase 1 statistical table.
  *
+ * Holds pure numerical, boolean and string identifiers; Compose formatting and internationalization
+ * are handled at the presentation layer.
+ *
  * @property roundNumber Round index (1..14).
- * @property roundLabel Round label (e.g. "J1").
- * @property homeTeam Home team name.
- * @property awayTeam Away team name.
+ * @property homeTeam Home team display name.
+ * @property awayTeam Away team display name.
  * @property isPiaHome `true` if Pia Sabadell was the home team; `false` if away.
- * @property piaScore Points scored by Pia Sabadell.
- * @property rivalScore Points scored by opponent.
+ * @property homePoints Points scored by the home team.
+ * @property awayPoints Points scored by the away team.
  * @property isWin `true` if Pia won the match; `false` otherwise.
- * @property scoreDisplay Formatted score string (e.g. "62 - 78").
- * @property efg Formatted effective field goal percentage string (e.g. "41.2%").
- * @property fg2 Formatted two-point shooting percentage string.
- * @property fg3 Formatted three-point shooting percentage string.
- * @property ft Formatted free throw percentage string.
- * @property rebounds Total rebounds string with offensive/defensive split (e.g. "24 (6/18)").
+ * @property efgPct Effective field goal percentage.
+ * @property fg2Pct Two-point field goal percentage.
+ * @property fg3Pct Three-point field goal percentage.
+ * @property ftPct Free throw percentage.
+ * @property totalRebounds Total team rebounds.
+ * @property offensiveRebounds Offensive rebounds.
+ * @property defensiveRebounds Defensive rebounds.
  * @property ast Total assists.
  * @property to Total turnovers.
- * @property astTo Assist-to-turnover ratio string.
+ * @property astTo Assist-to-turnover ratio.
  * @property stl Total steals.
  * @property blk Total blocks.
- * @property pf Total personal fouls committed string.
- * @property secondChance Second-chance points string.
- * @property fastBreak Fast-break points string.
+ * @property personalFouls Personal fouls committed.
+ * @property secondChancePoints Second-chance points scored.
+ * @property opponentSecondChancePoints Second-chance points conceded.
+ * @property fastBreakPoints Fast-break points scored.
+ * @property opponentFastBreakPoints Fast-break points conceded.
  */
 data class MatchRowUiModel(
     val roundNumber: Int,
-    val roundLabel: String,
     val homeTeam: String,
     val awayTeam: String,
     val isPiaHome: Boolean,
-    val piaScore: Int,
-    val rivalScore: Int,
+    val homePoints: Int,
+    val awayPoints: Int,
     val isWin: Boolean,
-    val scoreDisplay: String,
-    val efg: String,
-    val fg2: String,
-    val fg3: String,
-    val ft: String,
-    val rebounds: String,
+    val efgPct: Double,
+    val fg2Pct: Double,
+    val fg3Pct: Double,
+    val ftPct: Double,
+    val totalRebounds: Int,
+    val offensiveRebounds: Int,
+    val defensiveRebounds: Int,
     val ast: Int,
     val to: Int,
-    val astTo: String,
+    val astTo: Double,
     val stl: Int,
     val blk: Int,
-    val pf: String,
-    val secondChance: String,
-    val fastBreak: String
+    val personalFouls: Int,
+    val secondChancePoints: Int,
+    val opponentSecondChancePoints: Int,
+    val fastBreakPoints: Int,
+    val opponentFastBreakPoints: Int
 )
