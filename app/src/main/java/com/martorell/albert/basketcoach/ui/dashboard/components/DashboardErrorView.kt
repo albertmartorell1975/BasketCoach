@@ -1,6 +1,5 @@
 package com.martorell.albert.basketcoach.ui.dashboard.components
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,10 +29,11 @@ import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRed
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
+import com.martorell.albert.basketcoach.ui.util.UiText
 
 @Composable
 fun DashboardErrorView(
-    @StringRes messageRes: Int,
+    message: UiText,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -64,7 +64,7 @@ fun DashboardErrorView(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = stringResource(messageRes),
+                    text = message.asString(),
                     fontSize = 13.sp,
                     color = PiaTextMuted,
                     textAlign = TextAlign.Center
@@ -92,7 +92,7 @@ fun DashboardErrorView(
 private fun DashboardErrorViewPreview() {
     BasketCoachTheme {
         DashboardErrorView(
-            messageRes = R.string.dashboard_error_empty,
+            message = UiText.StringResource(R.string.dashboard_error_empty),
             onRetry = {}
         )
     }

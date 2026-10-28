@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
@@ -43,7 +43,7 @@ class DashboardScreenTest {
     fun dashboardScreen_rendersErrorStateAndTriggersRetry() {
         var retried = false
         val errorState = DashboardUiState(
-            content = DashboardUiContent.Error(R.string.dashboard_error_empty),
+            content = DashboardUiContent.Error(DomainError.Local.NotFound),
             isRefreshing = false
         )
         composeTestRule.setContent {

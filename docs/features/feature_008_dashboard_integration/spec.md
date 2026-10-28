@@ -52,7 +52,7 @@ so that Coach Jordi can review the real competitive baseline (3V-11D, 21.4% win 
 #### Scenario 3: Error State & Retry Recovery
 * **Given** `GetPhase1GamesUseCase` returns `Result.Error(DomainError.Local.NotFound)`
 * **When** `loadDashboard()` executes
-* **Then** `DashboardViewModel` emits `DashboardUiContent.Error(message = ...)`
+* **Then** `DashboardViewModel` emits `DashboardUiContent.Error(error = DomainError.Local.NotFound)`
 * **And** `DashboardScreen` displays the error alert with a "Reintentar" retry button
 * **When** Coach Jordi taps "Reintentar" and the use case returns `Result.Success`
 * **Then** `DashboardViewModel` re-executes the load and transitions to `DashboardUiContent.Success`.
@@ -109,7 +109,9 @@ so that Coach Jordi can review the real competitive baseline (3V-11D, 21.4% win 
 * `app/src/main/AndroidManifest.xml` — modify; register `android:name=".BasketCoachApplication"`.
 * `app/src/main/java/com/martorell/albert/basketcoach/di/DataSourceModule.kt` — create; provides `GameLocalDataSource` as singleton.
 * `app/src/main/java/com/martorell/albert/basketcoach/di/RepositoryModule.kt` — create; provides `GameRepository` as singleton.
-* `app/src/main/java/com/martorell/albert/basketcoach/ui/dashboard/model/DashboardUiState.kt` — modify; redefine `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` and `sealed interface DashboardUiContent` (`Loading`, `Success`, `Error`).
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/util/UiText.kt` — create; sealed interface transporting `DynamicString` and `StringResource` to Compose without leaking Android `Context` or `R.string` into ViewModels.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/dashboard/mapper/DashboardErrorExt.kt` — create; UI extension mapping `DomainError` to `UiText`.
+* `app/src/main/java/com/martorell/albert/basketcoach/ui/dashboard/model/DashboardUiState.kt` — modify; redefine `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` and `sealed interface DashboardUiContent` (`Loading`, `Success`, `Error(val error: DomainError)`).
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/dashboard/mapper/DashboardUiMapper.kt` — create; pure Kotlin transformation mapping `List<Game>` to `DashboardUiContent.Success`.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/dashboard/DashboardViewModel.kt` — create; `@HiltViewModel` managing passive loading, atomic `_uiState.update`, error handling, and concurrency guarding.
 * `app/src/main/java/com/martorell/albert/basketcoach/ui/dashboard/components/DashboardLoadingView.kt` — create; high-density tablet loading indicator.
@@ -178,7 +180,7 @@ No persistence changes required. (Static 14-game dataset loaded via `GameLocalDa
   - [ ] Implement `RepositoryModule` providing `GameRepository`.
 - [ ] **Presentation Models & Mapper (`:app`):**
   - [ ] Redefine `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` adhering strictly to Constraint #17 (no default values, no nullable fields).
-  - [ ] Define `sealed interface DashboardUiContent` with `Loading`, `Success(val summary, val kpis, val evolution, val matches)`, and `Error(val message)`.
+  - [ ] Define `sealed interface DashboardUiContent` with `Loading`, `Success(val summary, val kpis, val evolution, val matches)`, and `Error(val error: DomainError)`.
   - [ ] Implement `DashboardUiMapper`:
     - Computes 3V-11D record, 21.4% win percentage.
     - Computes 4 KPI pillars: Scoring (64.6 vs 73.7, net -9.1), Rebounds (22.8 vs 30.6, net -7.8, off 6.3, def 16.5), Shooting (eFG% 40.5%, 2P 43.4%, 3P 25.4%, FT 56.4%), Game Control (AST/TO 0.59, AST 10.3, TO 17.6).

@@ -1,6 +1,7 @@
 package com.martorell.albert.basketcoach.ui.dashboard.model
 
 import androidx.annotation.StringRes
+import com.martorell.albert.basketcoach.domain.model.DomainError
 
 /**
  * Root UI state model for the Phase 1 Basketball Dashboard adhering to the Hybrid UI State Pattern.
@@ -40,10 +41,10 @@ sealed interface DashboardUiContent {
     /**
      * Error state displaying feedback and enabling retry recovery.
      *
-     * @property messageRes String resource ID describing the error to the user.
+     * @property error Typed domain error describing the failure reason.
      */
     data class Error(
-        @param:StringRes val messageRes: Int
+        val error: DomainError
     ) : DashboardUiContent
 }
 

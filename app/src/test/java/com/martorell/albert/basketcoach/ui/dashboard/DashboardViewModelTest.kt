@@ -1,13 +1,11 @@
 package com.martorell.albert.basketcoach.ui.dashboard
 
-import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.data.repository.GameRepositoryImpl
 import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSourceImpl
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
-import com.martorell.albert.basketcoach.ui.dashboard.mapper.DashboardErrorMapper
 import com.martorell.albert.basketcoach.ui.dashboard.mapper.DashboardUiMapper
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.usecases.game.GetPhase1GamesUseCase
@@ -30,7 +28,6 @@ class DashboardViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val mapper = DashboardUiMapper()
-    private val errorMapper = DashboardErrorMapper()
     private val realGames: List<Game> = runBlocking {
         (GameRepositoryImpl(GameLocalDataSourceImpl()).getPhase1Games() as Result.Success).data
     }
@@ -54,7 +51,7 @@ class DashboardViewModelTest {
                 Result.Error(DomainError.Local.NotFound)
         }
         val useCase = GetPhase1GamesUseCase(fakeRepo)
-        val viewModel = DashboardViewModel(useCase, mapper, errorMapper)
+        val viewModel = DashboardViewModel(useCase, mapper)
 
         // 1. Passive initialization check: zero active work triggered
         assertTrue(viewModel.uiState.value.content is DashboardUiContent.Loading)
@@ -84,7 +81,7 @@ class DashboardViewModelTest {
                 Result.Error(DomainError.Local.NotFound)
         }
         val useCase = GetPhase1GamesUseCase(fakeRepo)
-        val viewModel = DashboardViewModel(useCase, mapper, errorMapper)
+        val viewModel = DashboardViewModel(useCase, mapper)
 
         // Initial error load
         viewModel.loadDashboard()
@@ -92,7 +89,7 @@ class DashboardViewModelTest {
 
         val errorContent = viewModel.uiState.value.content
         assertTrue(errorContent is DashboardUiContent.Error)
-        assertEquals(R.string.dashboard_error_empty, (errorContent as DashboardUiContent.Error).messageRes)
+        assertEquals(DomainError.Local.NotFound, (errorContent as DashboardUiContent.Error).error)
 
         // Retry recovery
         shouldFail = false

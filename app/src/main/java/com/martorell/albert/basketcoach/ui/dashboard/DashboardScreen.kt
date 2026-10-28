@@ -9,10 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardErrorView
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardLoadingView
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
+import com.martorell.albert.basketcoach.ui.dashboard.mapper.toDashboardUiText
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
@@ -72,7 +73,7 @@ fun DashboardScreen(
             }
             is DashboardUiContent.Error -> {
                 DashboardErrorView(
-                    messageRes = content.messageRes,
+                    message = content.error.toDashboardUiText(),
                     onRetry = onRetry
                 )
             }
@@ -114,7 +115,7 @@ private fun DashboardScreenErrorPreview() {
     BasketCoachTheme {
         DashboardScreen(
             uiState = DashboardUiState(
-                content = DashboardUiContent.Error(R.string.dashboard_error_empty),
+                content = DashboardUiContent.Error(DomainError.Local.NotFound),
                 isRefreshing = false
             )
         )
