@@ -158,76 +158,76 @@ No persistence changes required. (Static 14-game dataset loaded via `GameLocalDa
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `ARCHITECTURE.md`, `CONSTRAINTS.md`, and `hilt/SKILL.md`. Ensure pure Kotlin JVM isolation for `:domain` and `:usecases`.
-- [ ] **Build & Version Catalog Configuration:**
-  - [ ] Update `gradle/libs.versions.toml`:
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `ARCHITECTURE.md`, `CONSTRAINTS.md`, and `hilt/SKILL.md`. Ensure pure Kotlin JVM isolation for `:domain` and `:usecases`.
+- [x] **Build & Version Catalog Configuration:**
+  - [x] Update `gradle/libs.versions.toml`:
     - `hilt = "2.52"`
     - `ksp = "2.2.10-2.0.2"`
     - `hilt-navigation-compose = "1.2.0"`
     - `javax-inject = "1"`
     - `hilt-android-testing = "2.52"`
     - Define libraries and plugins.
-  - [ ] Update `build.gradle.kts` (root) adding `ksp` and `hilt-android` plugins (`apply false`).
-  - [ ] Update `usecases/build.gradle.kts` adding `implementation(libs.javax.inject)`.
-  - [ ] Update `app/build.gradle.kts` applying `ksp` and `hilt.android` plugins and adding Hilt dependencies.
-- [ ] **UseCase Constructor Injection (`:usecases`):**
-  - [ ] Annotate `GetPhase1GamesUseCase` with `@Inject constructor(private val gameRepository: GameRepository)`.
-- [ ] **Hilt Dependency Injection Setup (`:app`):**
-  - [ ] Implement `BasketCoachApplication` annotated with `@HiltAndroidApp`.
-  - [ ] Register `BasketCoachApplication` in `app/src/main/AndroidManifest.xml`.
-  - [ ] Annotate `MainActivity` with `@AndroidEntryPoint`.
-  - [ ] Implement `DataSourceModule` providing `GameLocalDataSource`.
-  - [ ] Implement `RepositoryModule` providing `GameRepository`.
-- [ ] **Presentation Models & Mapper (`:app`):**
-  - [ ] Redefine `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` adhering strictly to Constraint #17 (no default values, no nullable fields).
-  - [ ] Define `sealed interface DashboardUiContent` with `Loading`, `Success(val summary, val kpis, val evolution, val matches)`, and `Error(val error: DomainError)`.
-  - [ ] Implement `DashboardUiMapper`:
+  - [x] Update `build.gradle.kts` (root) adding `ksp` and `hilt-android` plugins (`apply false`).
+  - [x] Update `usecases/build.gradle.kts` adding `implementation(libs.javax.inject)`.
+  - [x] Update `app/build.gradle.kts` applying `ksp` and `hilt.android` plugins and adding Hilt dependencies.
+- [x] **UseCase Constructor Injection (`:usecases`):**
+  - [x] Annotate `GetPhase1GamesUseCase` with `@Inject constructor(private val gameRepository: GameRepository)`.
+- [x] **Hilt Dependency Injection Setup (`:app`):**
+  - [x] Implement `BasketCoachApplication` annotated with `@HiltAndroidApp`.
+  - [x] Register `BasketCoachApplication` in `app/src/main/AndroidManifest.xml`.
+  - [x] Annotate `MainActivity` with `@AndroidEntryPoint`.
+  - [x] Implement `DataSourceModule` providing `GameLocalDataSource`.
+  - [x] Implement `RepositoryModule` providing `GameRepository`.
+- [x] **Presentation Models & Mapper (`:app`):**
+  - [x] Redefine `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` adhering strictly to Constraint #17 (no default values, no nullable fields).
+  - [x] Define `sealed interface DashboardUiContent` with `Loading`, `Success(val summary, val kpis, val evolution, val matches)`, and `Error(val error: DomainError)`.
+  - [x] Implement `DashboardUiMapper`:
     - Computes 3V-11D record, 21.4% win percentage.
     - Computes 4 KPI pillars: Scoring (64.6 vs 73.7, net -9.1), Rebounds (22.8 vs 30.6, net -7.8, off 6.3, def 16.5), Shooting (eFG% 40.5%, 2P 43.4%, 3P 25.4%, FT 56.4%), Game Control (AST/TO 0.59, AST 10.3, TO 17.6).
     - Formats 14 round evolution data points with green win badges for J3, J9, and J10.
     - Formats 14 match rows across 16 columns with normalized team names.
-- [ ] **ViewModel Implementation (`:app`):**
-  - [ ] Implement `DashboardViewModel @Inject constructor(getPhase1GamesUseCase, mapper) : ViewModel()`.
-  - [ ] Enforce Passive Initialization Mandate: Constructor/init is strictly passive.
-  - [ ] Expose `uiState: StateFlow<DashboardUiState>`.
-  - [ ] Implement `fun loadDashboard()` with atomic `_uiState.update` and concurrency guard (`if (state.value.isRefreshing) return`).
-- [ ] **Composable Views & Navigation (`:app`):**
-  - [ ] Implement `DashboardLoadingView` (PiaNavy spinner + 14sp text).
-  - [ ] Implement `DashboardErrorView` (PiaDangerRed alert + 12sp+ message + "Reintentar" button).
-  - [ ] Update `DashboardScreen` to handle `Loading`, `Error`, and `Success` with `LaunchedEffect(Unit)` triggering `loadDashboard()`.
-  - [ ] Update `DashboardContent` to consume `DashboardUiContent.Success`.
-  - [ ] Update `Navigation.kt` to wire `DashboardViewModel` with decoupling support.
-  - [ ] Update `Phase1PreviewData.uiState` to wrap `DashboardUiContent.Success`.
-- [ ] **Bilingual String Resources (`:app`):**
-  - [ ] Add loading, error, and retry strings to `res/values/strings.xml` (Catalan).
-  - [ ] Add corresponding strings to `res/values-es/strings.xml` (Spanish) with 100% key parity.
-- [ ] **Pragmatic High-Value Testing (Strict Budget: 6 tests total):**
-  - [ ] `DashboardUiMapperTest` (2 tests):
+- [x] **ViewModel Implementation (`:app`):**
+  - [x] Implement `DashboardViewModel @Inject constructor(getPhase1GamesUseCase, mapper) : ViewModel()`.
+  - [x] Enforce Passive Initialization Mandate: Constructor/init is strictly passive.
+  - [x] Expose `uiState: StateFlow<DashboardUiState>`.
+  - [x] Implement `fun loadDashboard()` with atomic `_uiState.update` and concurrency guard (`if (state.value.isRefreshing) return`).
+- [x] **Composable Views & Navigation (`:app`):**
+  - [x] Implement `DashboardLoadingView` (PiaNavy spinner + 14sp text).
+  - [x] Implement `DashboardErrorView` (PiaDangerRed alert + 12sp+ message + "Reintentar" button).
+  - [x] Update `DashboardScreen` to handle `Loading`, `Error`, and `Success` with `LaunchedEffect(Unit)` triggering `loadDashboard()`.
+  - [x] Update `DashboardContent` to consume `DashboardUiContent.Success`.
+  - [x] Update `Navigation.kt` to wire `DashboardViewModel` with decoupling support.
+  - [x] Update `Phase1PreviewData.uiState` to wrap `DashboardUiContent.Success`.
+- [x] **Bilingual String Resources (`:app`):**
+  - [x] Add loading, error, and retry strings to `res/values/strings.xml` (Catalan).
+  - [x] Add corresponding strings to `res/values-es/strings.xml` (Spanish) with 100% key parity.
+- [x] **Pragmatic High-Value Testing (Strict Budget: 6 tests total):**
+  - [x] `DashboardUiMapperTest` (2 tests):
     1. `should_MapGamesToDashboardUiState_when_ValidGamesProvided` (verifies math calculations across all 4 pillars and table rows).
     2. `should_HandleEmptyGamesList_gracefully` (verifies boundary condition with zero games).
-  - [ ] `DashboardViewModelTest` (2 tests):
+  - [x] `DashboardViewModelTest` (2 tests):
     1. `should_RemainPassiveInitially_and_TransitionToSuccess_when_LoadDashboardInvoked` (verifies passive init and successful transition).
     2. `should_TransitionToError_when_UseCaseReturnsError_and_RecoverOnRetry` (verifies error handling and recovery).
   - [ ] `DashboardScreenTest` (2 tests):
     1. `dashboardScreen_rendersLoadingState`
     2. `dashboardScreen_rendersErrorStateAndTriggersRetry`
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug`.
-  - [ ] Execute full project check `./gradlew test assemble` to verify zero regression across `:domain`, `:data`, `:usecases`, and `:app`.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug`.
+  - [x] Execute full project check `./gradlew test assemble` to verify zero regression across `:domain`, `:data`, `:usecases`, and `:app`.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_008_dashboard_integration` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
-- [ ] Pure Kotlin JVM purity of `:domain` and `:usecases` is preserved (zero `android.*` framework dependencies; `:usecases` uses JSR-330 `javax.inject`).
-- [ ] Passive Initialization Mandate is respected (no coroutine launches in ViewModel `init`).
-- [ ] Hybrid UI State Pattern and atomic `MutableStateFlow.update` are respected.
-- [ ] Presentation models adhere strictly to Constraint #17 (zero defaults, zero nullable fields).
-- [ ] Minimum typography of `12.sp` is respected (Constraint #16).
-- [ ] 100% string key parity between Catalan and Spanish resource files.
-- [ ] Pragmatic test budget respected: 1 to 3 tests per class, 4 to 8 tests total across the feature slice; zero redundant or watermelon tests.
+- [x] Implementation stays strictly within `feature_008_dashboard_integration` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
+- [x] Pure Kotlin JVM purity of `:domain` and `:usecases` is preserved (zero `android.*` framework dependencies; `:usecases` uses JSR-330 `javax.inject`).
+- [x] Passive Initialization Mandate is respected (no coroutine launches in ViewModel `init`).
+- [x] Hybrid UI State Pattern and atomic `MutableStateFlow.update` are respected.
+- [x] Presentation models adhere strictly to Constraint #17 (zero defaults, zero nullable fields).
+- [x] Minimum typography of `12.sp` is respected (Constraint #16).
+- [x] 100% string key parity between Catalan and Spanish resource files.
+- [x] Pragmatic test budget respected: 1 to 3 tests per class, 4 to 8 tests total across the feature slice; zero redundant or watermelon tests.
 - [ ] `@compiler` verification suite passes cleanly (`assembleDebug`, `lintDebug`, `test`).
-- [ ] Structured validation report written to `docs/features/feature_008_dashboard_integration/validator/validation-report.md`.
+- [x] Structured validation report written to `docs/features/feature_008_dashboard_integration/validator/validation-report.md`.

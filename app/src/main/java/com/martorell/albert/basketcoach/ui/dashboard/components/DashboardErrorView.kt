@@ -31,6 +31,13 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.util.UiText
 
+/**
+ * Error state card with danger styling, localized message, and retry button for the Dashboard.
+ *
+ * @param message Localized [UiText] describing the error.
+ * @param onRetry Callback triggered when the user taps the retry button.
+ * @param modifier Layout modifier applied to the error container.
+ */
 @Composable
 fun DashboardErrorView(
     message: UiText,

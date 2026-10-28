@@ -16,6 +16,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel orchestrating presentation state for the Phase 1 Basketball Dashboard.
+ *
+ * Adheres strictly to:
+ * - **Passive Initialization Mandate**: Constructor and `init` blocks trigger zero coroutine launches
+ *   or repository calls. Initial state defaults passively to [DashboardUiContent.Loading].
+ * - **Hybrid UI State Pattern**: [DashboardUiState] encapsulates mutually exclusive content
+ *   ([DashboardUiContent.Loading], [DashboardUiContent.Success], [DashboardUiContent.Error])
+ *   alongside additive overlay flags ([DashboardUiState.isRefreshing]).
+ * - **Atomic UDF Updates**: All state mutations execute via [MutableStateFlow.update] to prevent race conditions.
+ * - **Zero Resource Leakage**: Exposes typed [DomainError] on error states without referencing Android `R.string`.
+ *
+ * @property getPhase1GamesUseCase Interactor retrieving all 14 Phase 1 competition fixtures.
+ * @property mapper Mathematical transformation engine producing [DashboardUiContent.Success].
+ */
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val getPhase1GamesUseCase: GetPhase1GamesUseCase,
@@ -28,8 +43,19 @@ class DashboardViewModel @Inject constructor(
             isRefreshing = false
         )
     )
+
+    /**
+     * Reactive stream of immutable [DashboardUiState] observed by the UI layer.
+     */
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
+    /**
+     * Asynchronously loads Phase 1 game fixtures and computes dashboard performance metrics.
+     *
+     * Protected by an idempotent concurrency guard: concurrent invocations while [DashboardUiState.isRefreshing]
+     * is `true` are safely ignored. Transitions to [DashboardUiContent.Success] on successful non-empty data,
+     * or [DashboardUiContent.Error] on use case failure or empty fixture datasets.
+     */
     fun loadDashboard() {
         if (_uiState.value.isRefreshing) return
 

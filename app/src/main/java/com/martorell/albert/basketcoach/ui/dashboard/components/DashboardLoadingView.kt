@@ -21,6 +21,11 @@ import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Tablet-optimized centered loading indicator displaying a PiaNavy spinner and descriptive text.
+ *
+ * @param modifier Layout modifier applied to the loading container.
+ */
 @Composable
 fun DashboardLoadingView(
     modifier: Modifier = Modifier

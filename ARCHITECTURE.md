@@ -232,6 +232,39 @@ The `:app` module delivers a specialized high-density user experience strictly o
    - Strictly enforces a minimum typography size of `12.sp` across all labels, pills, chart axis texts, and table cells to guarantee readability on physical tablet displays.
    - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate themes (Light, Dark, RTL, Large Font) and form factors (Tablet Landscape, Phone Landscape) across all composables.
 
+
+### 7.1 Dashboard Integration Architecture (eature_008_dashboard_integration)
+
+The Phase 1 Dashboard connects to authentic domain fixtures through a decoupled MVVM integration adhering strictly to clean architectural boundaries:
+
+1. **Hilt Dependency Injection Setup (di)**:
+   - BasketCoachApplication triggers Hilt root generation via @HiltAndroidApp.
+   - DataSourceModule and RepositoryModule install into SingletonComponent using abstract @Binds methods (indGameLocalDataSource and indGameRepository) for zero-cost static delegates rather than runtime factory allocations.
+   - Core domain :domain remains 100% pure Kotlin JVM (zero DI dependencies). :usecases uses JSR-330 javax.inject.Inject on GetPhase1GamesUseCase without any Android SDK or Hilt Gradle plugins.
+
+2. **Passive ViewModel Lifecycle & Hybrid UI State (DashboardViewModel)**:
+   - Adheres strictly to the **Passive Initialization Mandate**: zero coroutines or repository queries are launched in constructor or init blocks. Initial state defaults passively to DashboardUiContent.Loading.
+   - Data loading is explicitly triggered from Compose via LaunchedEffect(Unit) { viewModel.loadDashboard() }.
+   - DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean) models mutually exclusive states (Loading, Success, Error(DomainError)) while retaining the additive isRefreshing overlay flag.
+   - Idempotent concurrency guarding prevents duplicate in-flight requests (if (_uiState.value.isRefreshing) return).
+   - All state mutations are performed atomically via MutableStateFlow.update { ... }.
+
+3. **Authoritative Mathematical Transformation (DashboardUiMapper)**:
+   - DashboardUiMapper is the single source of truth for presentation calculations. It transforms raw domain Game entities into DashboardUiContent.Success:
+     - Summary record: 3V-11D, 21.4% win rate over 14 games.
+     - 4 KPI pillars: Scoring (64.6 vs 73.7, net -9.1), Rebounds (22.8 vs 30.4, net -7.6, off 6.3, def 16.5), Shooting (eFG% 40.5%, 2P 43.4%, 3P 25.4%, FT 56.4%), and Game Control (AST/TO 0.65, assists 10.3, turnovers 17.6).
+     - 14-round scoring progression bars with win flags for J3, J9, and J10.
+     - 14-row statistical table across 16 statistical columns with normalized team names.
+
+4. **Zero-Resource-Leakage Error Handling (UiText)**:
+   - DashboardViewModel exposes raw DomainError in DashboardUiContent.Error(error = result.error). It contains zero imports of Android R.string.
+   - Error string translation occurs strictly in the UI layer via DomainError.toDashboardUiText(): UiText, mapping DomainError.Local.NotFound to R.string.dashboard_error_empty and unexpected failures to R.string.dashboard_error_generic.
+
+5. **Pragmatic Pure JVM Presentation Testing (Constraint #18)**:
+   - Presentation tests are 100% pure JVM unit tests without Robolectric:
+     - DashboardUiMapperTest (2 tests): Mathematical calculation integrity and empty list exception boundary.
+     - DashboardViewModelTest (2 tests): Passive initialization, successful data loading, error handling, and retry recovery.
+
 ---
 
 ## 8. Tactical Analysis Presentation Architecture (`:app`)
