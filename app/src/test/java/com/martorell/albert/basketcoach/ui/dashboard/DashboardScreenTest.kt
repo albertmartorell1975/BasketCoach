@@ -3,9 +3,13 @@ package com.martorell.albert.basketcoach.ui.dashboard
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
+import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
+import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,6 +22,43 @@ class DashboardScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @Test
+    fun dashboardScreen_rendersLoadingState() {
+        val loadingState = DashboardUiState(
+            content = DashboardUiContent.Loading,
+            isRefreshing = false
+        )
+        composeTestRule.setContent {
+            BasketCoachTheme {
+                DashboardScreen(uiState = loadingState)
+            }
+        }
+
+        composeTestRule.onNodeWithText("Carregant dades de la 1a Fase...").assertIsDisplayed()
+    }
+
+    @Test
+    fun dashboardScreen_rendersErrorStateAndTriggersRetry() {
+        var retried = false
+        val errorState = DashboardUiState(
+            content = DashboardUiContent.Error("Dades no disponibles"),
+            isRefreshing = false
+        )
+        composeTestRule.setContent {
+            BasketCoachTheme {
+                DashboardScreen(
+                    uiState = errorState,
+                    onRetry = { retried = true }
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Error en carregar les dades").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Dades no disponibles").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Reintentar").assertIsDisplayed().performClick()
+        assertTrue(retried)
+    }
 
     @Test
     fun dashboardScreen_rendersHeroBalanceAndFourKpiMetrics() {

@@ -12,6 +12,8 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.martorell.albert.basketcoach.ui.BasketCoachApp
+import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
+import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +35,9 @@ class NavigationTest {
     fun appShell_rendersNavRailAndSwitchesDestinations() {
         composeTestRule.setContent {
             BasketCoachTheme {
-                BasketCoachApp()
+                BasketCoachApp(
+                    dashboardScreen = { DashboardScreen(uiState = Phase1PreviewData.uiState) }
+                )
             }
         }
 
@@ -72,7 +76,10 @@ class NavigationTest {
                 )
             }
             BasketCoachTheme {
-                BasketCoachApp(appState = appState)
+                BasketCoachApp(
+                    appState = appState,
+                    dashboardScreen = { DashboardScreen(uiState = Phase1PreviewData.uiState) }
+                )
             }
         }
 

@@ -102,4 +102,9 @@
     <string name="chat_court_perimeter_legend">Rebote Exterior (%1$s Total)</string>
     <string name="chat_court_interior_legend">Rebote Interior (%1$s)</string>
     <string name="chat_assistant_avatar_initial">P</string>
+    <string name="dashboard_loading">Cargando datos de la 1ª Fase...</string>
+    <string name="dashboard_error_title">Error al cargar los datos</string>
+    <string name="dashboard_error_retry">Reintentar</string>
+    <string name="dashboard_error_empty">No se han encontrado partidos de la 1ª Fase en el conjunto de datos.</string>
+    <string name="dashboard_error_generic">Se ha producido un error inesperado al cargar los datos.</string>
 </resources>

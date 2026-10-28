@@ -3,19 +3,49 @@ package com.martorell.albert.basketcoach.ui.dashboard.model
 import androidx.annotation.StringRes
 
 /**
- * Immutable root UI state model for the Phase 1 Basketball Dashboard.
+ * Root UI state model for the Phase 1 Basketball Dashboard adhering to the Hybrid UI State Pattern.
  *
- * @property summary High-level Phase 1 record and balance overview.
- * @property kpis Aggregated key performance indicators across the four analytical pillars.
- * @property evolution Round-by-round scoring progression data.
- * @property matches Complete list of 14 match records displayed in the statistical table.
+ * @property content The primary mutually exclusive state (Loading, Success, Error).
+ * @property isRefreshing Additive overlay flag indicating background or pull-to-refresh execution.
  */
 data class DashboardUiState(
-    val summary: Phase1SummaryUiModel,
-    val kpis: DashboardKpisUiModel,
-    val evolution: ScoringEvolutionUiModel,
-    val matches: List<MatchRowUiModel>
+    val content: DashboardUiContent,
+    val isRefreshing: Boolean
 )
+
+/**
+ * Mutually exclusive content phases for the Phase 1 Dashboard screen.
+ */
+sealed interface DashboardUiContent {
+    /**
+     * Initial or passive loading state before domain data is resolved.
+     */
+    data object Loading : DashboardUiContent
+
+    /**
+     * Successful data state containing computed Phase 1 metrics, KPIs, evolution chart, and matches table.
+     *
+     * @property summary High-level Phase 1 record and balance overview.
+     * @property kpis Aggregated key performance indicators across the four analytical pillars.
+     * @property evolution Round-by-round scoring progression data.
+     * @property matches Complete list of 14 match records displayed in the statistical table.
+     */
+    data class Success(
+        val summary: Phase1SummaryUiModel,
+        val kpis: DashboardKpisUiModel,
+        val evolution: ScoringEvolutionUiModel,
+        val matches: List<MatchRowUiModel>
+    ) : DashboardUiContent
+
+    /**
+     * Error state displaying feedback and enabling retry recovery.
+     *
+     * @property message User-facing localized error description.
+     */
+    data class Error(
+        val message: String
+    ) : DashboardUiContent
+}
 
 /**
  * UI model representing the Phase 1 team summary and competitive balance.

@@ -2,6 +2,7 @@ package com.martorell.albert.basketcoach.ui.dashboard.data
 
 import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardKpisUiModel
+import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.dashboard.model.GameControlKpiUiModel
 import com.martorell.albert.basketcoach.ui.dashboard.model.MatchRowUiModel
@@ -430,10 +431,15 @@ object Phase1PreviewData {
     /**
      * Root [DashboardUiState] aggregating all Phase 1 baseline summary, KPIs, chart, and table data.
      */
-    val uiState = DashboardUiState(
+    val success = DashboardUiContent.Success(
         summary = summary,
         kpis = kpis,
         evolution = evolution,
         matches = matches
+    )
+
+    val uiState = DashboardUiState(
+        content = success,
+        isRefreshing = false
     )
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.martorell.albert.basketcoach.ui.components.BasketCoachTopBar
+import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
 import com.martorell.albert.basketcoach.ui.navigation.BasketCoachAppState
 import com.martorell.albert.basketcoach.ui.navigation.BasketCoachNavRail
 import com.martorell.albert.basketcoach.ui.navigation.Navigation
@@ -24,11 +25,13 @@ import com.martorell.albert.basketcoach.ui.theme.PiaBackground
  *
  * @param modifier Modifier to be applied to the root container layout.
  * @param appState Hoisted state holder managing navigation controller and top-level routes.
+ * @param dashboardScreen Content slot for the dashboard destination, defaulting to [DashboardScreen].
  */
 @Composable
 fun BasketCoachApp(
     modifier: Modifier = Modifier,
-    appState: BasketCoachAppState = rememberBasketCoachAppState()
+    appState: BasketCoachAppState = rememberBasketCoachAppState(),
+    dashboardScreen: @Composable () -> Unit = { DashboardScreen() }
 ) {
     Row(
         modifier = modifier
@@ -53,7 +56,10 @@ fun BasketCoachApp(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Navigation(appState = appState)
+                Navigation(
+                    appState = appState,
+                    dashboardScreen = dashboardScreen
+                )
             }
         }
     }

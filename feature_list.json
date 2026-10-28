@@ -134,9 +134,9 @@
       "feature_004_usecases",
       "feature_005_dashboard_ui"
     ],
-    "status": "in_progress",
+    "status": "passing",
     "verification": "The Dashboard ViewModel successfully fetches Phase 1 games from Use Cases and updates its UI state following MVVM Passive Initialization.",
-    "evidence": "",
+    "evidence": "gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug test assemble - 16 unit and Compose UI tests in :app passed (4 in DashboardScreenTest, 2 in DashboardUiMapperTest, 2 in DashboardViewModelTest, 2 in NavigationTest, 3 in AnalysisScreenTest, 3 in ChatScreenTest), assembleDebug and assembleRelease SUCCESSFUL, lintDebug SUCCESSFUL with 0 errors. Full suite test assemble across :domain, :data, :usecases, :app SUCCESSFUL with 0 failures.",
     "notes": "Uses Hilt for DI.",
     "require_review_after": [
       "planner",

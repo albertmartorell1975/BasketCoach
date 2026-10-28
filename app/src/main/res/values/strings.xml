@@ -102,4 +102,9 @@
     <string name="chat_court_perimeter_legend">Rebot Exterior (%1$s Total)</string>
     <string name="chat_court_interior_legend">Rebot Interior (%1$s)</string>
     <string name="chat_assistant_avatar_initial">P</string>
+    <string name="dashboard_loading">Carregant dades de la 1a Fase...</string>
+    <string name="dashboard_error_title">Error en carregar les dades</string>
+    <string name="dashboard_error_retry">Reintentar</string>
+    <string name="dashboard_error_empty">No s\'han trobat partits de la 1a Fase al conjunt de dades.</string>
+    <string name="dashboard_error_generic">S\'ha produït un error inesperat en carregar les dades.</string>
 </resources>
