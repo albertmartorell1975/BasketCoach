@@ -93,3 +93,29 @@ private fun DashboardScreenPreview() {
         DashboardScreen(uiState = Phase1PreviewData.uiState)
     }
 }
+
+@BcThemePreview
+@Composable
+private fun DashboardScreenLoadingPreview() {
+    BasketCoachTheme {
+        DashboardScreen(
+            uiState = DashboardUiState(
+                content = DashboardUiContent.Loading,
+                isRefreshing = false
+            )
+        )
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardScreenErrorPreview() {
+    BasketCoachTheme {
+        DashboardScreen(
+            uiState = DashboardUiState(
+                content = DashboardUiContent.Error("No s'han pogut carregar les dades de la 1a Fase."),
+                isRefreshing = false
+            )
+        )
+    }
+}

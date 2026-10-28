@@ -24,6 +24,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaDangerRed
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
@@ -81,5 +83,16 @@ fun DashboardErrorView(
                 }
             }
         }
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardErrorViewPreview() {
+    BasketCoachTheme {
+        DashboardErrorView(
+            errorMessage = "No s'han pogut carregar les dades de la 1a Fase.",
+            onRetry = {}
+        )
     }
 }
