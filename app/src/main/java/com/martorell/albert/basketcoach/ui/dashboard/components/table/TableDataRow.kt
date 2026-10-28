@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.MatchRowUiModel
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
@@ -32,6 +34,7 @@ import com.martorell.albert.basketcoach.ui.theme.PiaSuccessGreen
 import com.martorell.albert.basketcoach.ui.theme.PiaSuccessGreenBg
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaTextPrimary
+import java.util.Locale
 
 /**
  * Data row rendering a single match's statistics across 16 aligned columns.
@@ -59,7 +62,7 @@ internal fun TableDataRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = match.roundLabel,
+                text = stringResource(R.string.round_label_format, match.roundNumber),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = roundTextColor,
@@ -96,7 +99,7 @@ internal fun TableDataRow(
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = match.scoreDisplay,
+                        text = stringResource(R.string.table_score_format, match.homePoints, match.awayPoints),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = scoreTextColor
@@ -106,7 +109,7 @@ internal fun TableDataRow(
 
             val efgColor = if (match.isWin) PiaSuccessGreen else PiaNavy
             Text(
-                text = match.efg,
+                text = stringResource(R.string.table_pct_format, match.efgPct),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = efgColor,
@@ -115,7 +118,7 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.fg2,
+                text = stringResource(R.string.table_pct_format, match.fg2Pct),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
                 textAlign = TextAlign.Center,
@@ -123,7 +126,7 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.fg3,
+                text = stringResource(R.string.table_pct_format, match.fg3Pct),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
                 textAlign = TextAlign.Center,
@@ -131,7 +134,7 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.ft,
+                text = stringResource(R.string.table_pct_format, match.ftPct),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
                 textAlign = TextAlign.Center,
@@ -139,7 +142,12 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.rebounds,
+                text = stringResource(
+                    R.string.table_rebounds_format,
+                    match.totalRebounds,
+                    match.offensiveRebounds,
+                    match.defensiveRebounds
+                ),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 color = if (match.isWin) PiaSuccessGreen else PiaTextPrimary,
@@ -170,7 +178,7 @@ internal fun TableDataRow(
             val ratioColor = if (match.isWin) PiaSuccessGreen else if (match.to >= 16) PiaDangerRed else PiaTextMuted
             val ratioWeight = if (match.isWin) FontWeight.Bold else FontWeight.Medium
             Text(
-                text = match.astTo,
+                text = String.format(Locale.US, "%.2f", match.astTo),
                 fontSize = 12.sp,
                 fontWeight = ratioWeight,
                 color = ratioColor,
@@ -196,7 +204,7 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.pf,
+                text = stringResource(R.string.table_pf_format, match.personalFouls),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
                 textAlign = TextAlign.Center,
@@ -204,7 +212,11 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.secondChance,
+                text = stringResource(
+                    R.string.table_pts_vs_format,
+                    match.secondChancePoints,
+                    match.opponentSecondChancePoints
+                ),
                 fontSize = 12.sp,
                 color = PiaTextPrimary,
                 textAlign = TextAlign.Center,
@@ -212,7 +224,11 @@ internal fun TableDataRow(
             )
 
             Text(
-                text = match.fastBreak,
+                text = stringResource(
+                    R.string.table_pts_vs_format,
+                    match.fastBreakPoints,
+                    match.opponentFastBreakPoints
+                ),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = PiaTextPrimary,

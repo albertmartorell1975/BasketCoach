@@ -7,7 +7,7 @@ import com.martorell.albert.basketcoach.data.network.dto.ChatCompletionResponseD
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatRole
 import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
-import com.martorell.albert.basketcoach.data.util.HttpException
+import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json

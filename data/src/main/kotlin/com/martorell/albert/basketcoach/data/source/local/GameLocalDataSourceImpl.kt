@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.io.FileNotFoundException
 import java.io.InputStream
+import javax.inject.Inject
 
 /**
  * Implementation of [GameLocalDataSource] reading the bundled classpath resource (`dataset.json`).
@@ -25,6 +26,17 @@ class GameLocalDataSourceImpl(
         GameLocalDataSourceImpl::class.java.classLoader?.getResourceAsStream(DATASET_FILE_NAME)
     }
 ) : GameLocalDataSource {
+
+    @Inject
+    constructor() : this(
+        json = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        },
+        jsonStreamProvider = {
+            GameLocalDataSourceImpl::class.java.classLoader?.getResourceAsStream(DATASET_FILE_NAME)
+        }
+    )
 
     @Volatile
     private var cachedGames: List<GameDto>? = null

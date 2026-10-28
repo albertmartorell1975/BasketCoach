@@ -1,32 +1,90 @@
 package com.martorell.albert.basketcoach.ui.dashboard
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.martorell.albert.basketcoach.domain.model.DomainError
+import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardErrorView
+import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardLoadingView
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
+import com.martorell.albert.basketcoach.ui.dashboard.mapper.toDashboardUiText
+import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 
 /**
- * Entry composable for the Phase 1 Basketball Dashboard.
+ * Stateful entry composable for the Phase 1 Basketball Dashboard.
  *
- * Provides default static preview state [Phase1PreviewData.uiState] and forwards it to
- * [DashboardContent] for layout rendering.
+ * Injects [DashboardViewModel], triggers passive data loading via [LaunchedEffect], and
+ * delegates presentation rendering to the stateless overload.
  *
  * @param modifier Layout modifier applied to the screen container.
- * @param uiState State object containing Phase 1 summary, KPIs, evolution chart data, and match table rows.
+ * @param viewModel Hilt-injected ViewModel managing dashboard state.
  */
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    uiState: DashboardUiState = Phase1PreviewData.uiState
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
-    DashboardContent(
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadDashboard()
+    }
+
+    DashboardScreen(
         uiState = uiState,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier,
+        onRetry = viewModel::loadDashboard
     )
+}
+
+/**
+ * Stateless presentation composable for the Phase 1 Basketball Dashboard.
+ *
+ * Renders [DashboardLoadingView], [DashboardErrorView], or [DashboardContent] based on
+ * the active [DashboardUiContent] phase.
+ *
+ * @param uiState Immutable UI state coordinating mutually exclusive content and refresh flags.
+ * @param modifier Layout modifier applied to the screen container.
+ * @param onRetry Callback triggered when the coach taps the retry button on error.
+ */
+@Composable
+fun DashboardScreen(
+    uiState: DashboardUiState,
+    modifier: Modifier = Modifier,
+    onRetry: () -> Unit = {}
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when (val content = uiState.content) {
+            is DashboardUiContent.Loading -> {
+                DashboardLoadingView()
+            }
+            is DashboardUiContent.Error -> {
+                DashboardErrorView(
+                    message = content.error.toDashboardUiText(),
+                    onRetry = onRetry
+                )
+            }
+            is DashboardUiContent.Success -> {
+                DashboardContent(
+                    uiState = content,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+    }
 }
 
 @BcThemePreview
@@ -34,6 +92,32 @@ fun DashboardScreen(
 @Composable
 private fun DashboardScreenPreview() {
     BasketCoachTheme {
-        DashboardScreen()
+        DashboardScreen(uiState = Phase1PreviewData.uiState)
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardScreenLoadingPreview() {
+    BasketCoachTheme {
+        DashboardScreen(
+            uiState = DashboardUiState(
+                content = DashboardUiContent.Loading,
+                isRefreshing = false
+            )
+        )
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardScreenErrorPreview() {
+    BasketCoachTheme {
+        DashboardScreen(
+            uiState = DashboardUiState(
+                content = DashboardUiContent.Error(DomainError.Local.NotFound),
+                isRefreshing = false
+            )
+        )
     }
 }

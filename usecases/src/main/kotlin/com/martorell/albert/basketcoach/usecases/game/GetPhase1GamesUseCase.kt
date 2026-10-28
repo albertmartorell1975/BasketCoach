@@ -4,13 +4,14 @@ import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
+import javax.inject.Inject
 
 /**
  * Domain interactor to retrieve the complete set of 14 Phase 1 basketball matches.
  *
  * @property gameRepository Domain repository providing access to match box scores.
  */
-class GetPhase1GamesUseCase(
+class GetPhase1GamesUseCase @Inject constructor(
     private val gameRepository: GameRepository
 ) {
     /**

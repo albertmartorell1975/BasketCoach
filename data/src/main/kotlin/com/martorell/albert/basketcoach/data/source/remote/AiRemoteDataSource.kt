@@ -7,7 +7,7 @@ import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
  * Remote data source abstraction for communicating with OpenAI-compatible AI inference endpoints
  * (such as DevExpert Inference or Google Gemini).
  *
- * Implementations throw technical framework exceptions (e.g. [java.io.IOException], [com.martorell.albert.basketcoach.data.util.HttpException])
+ * Implementations throw technical framework exceptions (e.g. [java.io.IOException], [com.martorell.albert.basketcoach.data.mapper.HttpException])
  * directly, allowing repositories to map them into domain errors via safe execution.
  */
 interface AiRemoteDataSource {

@@ -116,7 +116,7 @@ fun KpiCardRebounds(
                     letterSpacing = (-0.5).sp
                 )
                 Text(
-                    text = stringResource(R.string.kpi_rebounds_opp),
+                    text = stringResource(R.string.kpi_rebounds_opp, kpis.rebounds.opponentAverageRebounds),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = PiaTextMuted,
@@ -133,7 +133,7 @@ fun KpiCardRebounds(
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.kpi_rebounds_negative_balance),
+                    text = stringResource(R.string.kpi_rebounds_negative_balance, kpis.rebounds.netDifferential),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaDangerRed

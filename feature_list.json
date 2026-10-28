@@ -1,183 +1,184 @@
 [
-  {
-    "id": "feature_001_domain_models",
-    "area": "domain",
-    "title": "Define Core Basketball Domain Entities",
-    "user_visible_behavior": "None (Internal API). The application will have standard models for Game, TeamStats, OpponentStats, Insight, and Drill based on the rulebook.",
-    "depends_on": [],
-    "status": "accepted",
-    "verification": "Domain objects exist in the :domain module without Android dependencies.",
-    "evidence": "gradlew :domain:test :domain:assemble - 7 tests passed (round3HomeWinCalculation, round1HomeLossCalculation, round10AwayWinCalculation, teamStatsMetricIntegrity, insightAndDrillEntities, chatMessageSenderTests, resultFunctionalMappingTests), 0 failures. BUILD SUCCESSFUL.",
-    "notes": "Consult docs/general/basket_rules.pdf."
-  },
-  {
-    "id": "feature_002_data_parsing",
-    "area": "data",
-    "title": "Parse Phase 1 Dataset",
-    "user_visible_behavior": "None (Internal API). The application can read and parse the bundled dataset.json into the domain models.",
-    "depends_on": [
-      "feature_001_domain_models"
-    ],
-    "status": "accepted",
-    "verification": "Unit tests in :data verify that all 14 games are parsed correctly with their respective team and opponent stats.",
-    "evidence": "gradlew :data:test :data:assemble - 10 unit tests passed (5 in GameJsonParserTest, 5 in GameRepositoryImplTest), 0 failures. BUILD SUCCESSFUL.",
-    "notes": "Dataset location: docs/general/dataset.json."
-  },
-  {
-    "id": "feature_003_devexpert_client",
-    "area": "data",
-    "title": "DevExpert API Integration",
-    "user_visible_behavior": "None (Internal API). The app can send analysis requests and chat prompts to the DevExpert API.",
-    "depends_on": [
-      "feature_001_domain_models"
-    ],
-    "status": "accepted",
-    "verification": "API client is implemented and tested with mock responses.",
-    "evidence": "gradlew :domain:test :data:test :data:assemble - 52 unit tests passed (10 in :domain, 42 in :data), 0 failures. BUILD SUCCESSFUL.",
-    "notes": "Must handle both batch game analysis (Insights/Drills) and single chat messages.",
-    "require_review_after": [
-      "planner",
-      "validator"
-    ]
-  },
-  {
-    "id": "feature_004_usecases",
-    "area": "usecases",
-    "title": "Implement Core Use Cases",
-    "user_visible_behavior": "None (Internal API). The presentation layer can fetch games, request insights, and send chat messages via clean Use Case interfaces.",
-    "depends_on": [
-      "feature_002_data_parsing",
-      "feature_003_devexpert_client"
-    ],
-    "status": "accepted",
-    "verification": "GetPhase1GamesUseCase, GenerateInsightsUseCase, and SendChatMessageUseCase are implemented and tested.",
-    "evidence": "gradlew :domain:test :data:test :usecases:test :usecases:assemble - 71 unit tests passed (10 in :domain, 45 in :data, 16 in :usecases), 0 failures. BUILD SUCCESSFUL.",
-    "notes": "",
-    "require_review_after": [
-      "planner",
-      "validator"
-    ]
-  },
-  {
-    "id": "feature_005_dashboard_ui",
-    "area": "app",
-    "title": "Tablet Landscape Dashboard UI",
-    "user_visible_behavior": "The coach sees the tablet landscape application shell (fixed 80dp Navy Navigation Rail and 64dp White Top Bar with Coach Jordi avatar) and the Dashboard screen displaying the Phase 1 baseline hero card (3V-11D, 21.4%), 4 KPI cards, a 14-round scoring evolution bar chart, and the consolidated 14-match statistical table (16 columns).",
-    "depends_on": [
-      "feature_001_domain_models"
-    ],
-    "status": "accepted",
-    "verification": "Compose UI tests render the navigation shell (NavRail + TopBar) and the Dashboard screen components (Hero card, 4 KPI cards, 14-round bar chart, 14-match table) in a landscape tablet configuration using preview data.",
-    "evidence": "gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug - 8 unit/compose tests passed (4 in DashboardScreenTest, 3 in NavigationTest, 1 in ExampleUnitTest), assembleDebug SUCCESSFUL, lintDebug SUCCESSFUL with 0 errors. Full suite (:domain:test :data:test :usecases:test :app:testDebugUnitTest) - 79 tests passed, 0 failures. BUILD SUCCESSFUL.",
-    "notes": "Strictly scoped to :app (Shell + DashboardScreen). Follow DESIGN.md, docs/ui/screens/dashboard_vertical/, and avatar_coach.png. Omit the Match Detail modal dialog.",
-    "require_review_after": [
-      "planner",
-      "implementer"
-    ],
-    "design_refs": [
-      "docs/ui/screens/dashboard_vertical/screen.png",
-      "docs/ui/screens/dashboard_vertical/code.html",
-      "docs/features/feature_005_dashboard_ui/ui/resources/avatar_coach.png",
-      "docs/ui/basquet_pia_design_system.jpeg"
-    ]
-  },
-  {
-    "id": "feature_006_analysis_ui",
-    "area": "app",
-    "title": "Tablet Landscape Analysis UI",
-    "user_visible_behavior": "The coach navigates to the Anàlisi screen to view the Phase 1 baseline hero card, filter insights by Tots, Fortaleses, or Àrees de Millora, inspect a 3-column grid of rich tactical strength and improvement cards with empirical metric panels, and tap 'Explorar al Xat' on improvement areas.",
-    "depends_on": [
-      "feature_005_dashboard_ui"
-    ],
-    "status": "accepted",
-    "verification": "Domain/Data unit tests verify expanded Insight metric models and mapping; Compose UI tests verify Anàlisi screen rendering, segmented filtering, and 'Explorar al Xat' navigation.",
-    "evidence": "gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug - 92 unit and Compose UI tests passed (13 in :domain, 33 in :data, 15 in :usecases, 31 in :app), 0 failures. assembleDebug SUCCESSFUL, lintDebug SUCCESSFUL with 0 errors. Full project build successful.",
-    "notes": "Includes :domain and :data expansion for Insight (InsightType, InsightMetric, MetricSentiment, contextTag, priority, footerNote, exploreChatPrompt) and AnalysisScreen in :app based on docs/ui/screens/analisis_landscape/.",
-    "require_review_after": [
-      "planner",
-      "implementer"
-    ],
-    "design_refs": [
-      "docs/ui/screens/analisis_landscape/screen.png",
-      "docs/ui/screens/analisis_landscape/code.html",
-      "docs/ui/basquet_pia_design_system.jpeg"
-    ]
-  },
-  {
-    "id": "feature_007_chat_ui",
-    "area": "app",
-    "title": "Tablet Single-Thread Chat UI",
-    "user_visible_behavior": "The coach sees a single, continuous chat thread interface where they can type questions, select tactical reflection areas, and view AI responses and drill recommendations.",
-    "depends_on": [
-      "feature_005_dashboard_ui"
-    ],
-    "status": "accepted",
-    "verification": "Compose UI tests render the chat messages list and input field correctly.",
-    "evidence": "gradlew :app:assembleDebug lintDebug test - 93 unit and Compose UI tests passed (13 in :domain, 33 in :data, 15 in :usecases, 32 in :app across 6 ChatScreenTest and 3 NavigationTest), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors.",
-    "notes": "Must support text input and display both user and AI message bubbles.",
-    "require_review_after": [
-      "planner",
-      "implementer"
-    ],
-    "design_refs": [
-      "docs/ui/screens/chat_general/screen.png",
-      "docs/ui/screens/chat_detalle/screen.png",
-      "docs/ui/basquet_pia_design_system.jpeg"
-    ]
-  },
-  {
-    "id": "feature_008_dashboard_integration",
-    "area": "app",
-    "title": "Connect Dashboard to Real Data",
-    "user_visible_behavior": "The Dashboard screen populates with real Phase 1 game data and computed KPI/chart/table metrics loaded via GetPhase1GamesUseCase.",
-    "depends_on": [
-      "feature_004_usecases",
-      "feature_005_dashboard_ui"
-    ],
-    "status": "not_started",
-    "verification": "The Dashboard ViewModel successfully fetches Phase 1 games from Use Cases and updates its UI state following MVVM Passive Initialization.",
-    "evidence": "",
-    "notes": "Uses Hilt for DI.",
-    "require_review_after": [
-      "planner",
-      "implementer"
-    ]
-  },
-  {
-    "id": "feature_009_analysis_integration",
-    "area": "app",
-    "title": "Connect Analysis to Real Data",
-    "user_visible_behavior": "The Anàlisi screen populates with real AI tactical strengths and improvement areas loaded via GenerateInsightsUseCase.",
-    "depends_on": [
-      "feature_004_usecases",
-      "feature_006_analysis_ui"
-    ],
-    "status": "not_started",
-    "verification": "The Analysis ViewModel successfully fetches insights from Use Cases and updates its UI state following MVVM Passive Initialization.",
-    "evidence": "",
-    "notes": "Uses Hilt for DI.",
-    "require_review_after": [
-      "planner",
-      "implementer"
-    ]
-  },
-  {
-    "id": "feature_010_chat_integration",
-    "area": "app",
-    "title": "Connect Chat to DevExpert API",
-    "user_visible_behavior": "When the coach sends a message (or navigates via 'Explorar al Xat'), it uses the DevExpert API via Use Cases and appends the real response to the chat thread.",
-    "depends_on": [
-      "feature_004_usecases",
-      "feature_007_chat_ui"
-    ],
-    "status": "not_started",
-    "verification": "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
-    "evidence": "",
-    "notes": "Maintains a single continuous conversation history in memory.",
-    "require_review_after": [
-      "planner",
-      "implementer"
-    ]
-  }
-]
+    {
+        "id":  "feature_001_domain_models",
+        "area":  "domain",
+        "title":  "Define Core Basketball Domain Entities",
+        "user_visible_behavior":  "None (Internal API). The application will have standard models for Game, TeamStats, OpponentStats, Insight, and Drill based on the rulebook.",
+        "depends_on":  [
 
+                       ],
+        "status":  "accepted",
+        "verification":  "Domain objects exist in the :domain module without Android dependencies.",
+        "evidence":  "gradlew :domain:test :domain:assemble - 7 tests passed (round3HomeWinCalculation, round1HomeLossCalculation, round10AwayWinCalculation, teamStatsMetricIntegrity, insightAndDrillEntities, chatMessageSenderTests, resultFunctionalMappingTests), 0 failures. BUILD SUCCESSFUL.",
+        "notes":  "Consult docs/general/basket_rules.pdf."
+    },
+    {
+        "id":  "feature_002_data_parsing",
+        "area":  "data",
+        "title":  "Parse Phase 1 Dataset",
+        "user_visible_behavior":  "None (Internal API). The application can read and parse the bundled dataset.json into the domain models.",
+        "depends_on":  [
+                           "feature_001_domain_models"
+                       ],
+        "status":  "accepted",
+        "verification":  "Unit tests in :data verify that all 14 games are parsed correctly with their respective team and opponent stats.",
+        "evidence":  "gradlew :data:test :data:assemble - 10 unit tests passed (5 in GameJsonParserTest, 5 in GameRepositoryImplTest), 0 failures. BUILD SUCCESSFUL.",
+        "notes":  "Dataset location: docs/general/dataset.json."
+    },
+    {
+        "id":  "feature_003_devexpert_client",
+        "area":  "data",
+        "title":  "DevExpert API Integration",
+        "user_visible_behavior":  "None (Internal API). The app can send analysis requests and chat prompts to the DevExpert API.",
+        "depends_on":  [
+                           "feature_001_domain_models"
+                       ],
+        "status":  "accepted",
+        "verification":  "API client is implemented and tested with mock responses.",
+        "evidence":  "gradlew :domain:test :data:test :data:assemble - 52 unit tests passed (10 in :domain, 42 in :data), 0 failures. BUILD SUCCESSFUL.",
+        "notes":  "Must handle both batch game analysis (Insights/Drills) and single chat messages.",
+        "require_review_after":  [
+                                     "planner",
+                                     "validator"
+                                 ]
+    },
+    {
+        "id":  "feature_004_usecases",
+        "area":  "usecases",
+        "title":  "Implement Core Use Cases",
+        "user_visible_behavior":  "None (Internal API). The presentation layer can fetch games, request insights, and send chat messages via clean Use Case interfaces.",
+        "depends_on":  [
+                           "feature_002_data_parsing",
+                           "feature_003_devexpert_client"
+                       ],
+        "status":  "accepted",
+        "verification":  "GetPhase1GamesUseCase, GenerateInsightsUseCase, and SendChatMessageUseCase are implemented and tested.",
+        "evidence":  "gradlew :domain:test :data:test :usecases:test :usecases:assemble - 71 unit tests passed (10 in :domain, 45 in :data, 16 in :usecases), 0 failures. BUILD SUCCESSFUL.",
+        "notes":  "",
+        "require_review_after":  [
+                                     "planner",
+                                     "validator"
+                                 ]
+    },
+    {
+        "id":  "feature_005_dashboard_ui",
+        "area":  "app",
+        "title":  "Tablet Landscape Dashboard UI",
+        "user_visible_behavior":  "The coach sees the tablet landscape application shell (fixed 80dp Navy Navigation Rail and 64dp White Top Bar with Coach Jordi avatar) and the Dashboard screen displaying the Phase 1 baseline hero card (3V-11D, 21.4%), 4 KPI cards, a 14-round scoring evolution bar chart, and the consolidated 14-match statistical table (16 columns).",
+        "depends_on":  [
+                           "feature_001_domain_models"
+                       ],
+        "status":  "accepted",
+        "verification":  "Compose UI tests render the navigation shell (NavRail + TopBar) and the Dashboard screen components (Hero card, 4 KPI cards, 14-round bar chart, 14-match table) in a landscape tablet configuration using preview data.",
+        "evidence":  "gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug - 8 unit/compose tests passed (4 in DashboardScreenTest, 3 in NavigationTest, 1 in ExampleUnitTest), assembleDebug SUCCESSFUL, lintDebug SUCCESSFUL with 0 errors. Full suite (:domain:test :data:test :usecases:test :app:testDebugUnitTest) - 79 tests passed, 0 failures. BUILD SUCCESSFUL.",
+        "notes":  "Strictly scoped to :app (Shell + DashboardScreen). Follow DESIGN.md, docs/ui/screens/dashboard_vertical/, and avatar_coach.png. Omit the Match Detail modal dialog.",
+        "require_review_after":  [
+                                     "planner",
+                                     "implementer"
+                                 ],
+        "design_refs":  [
+                            "docs/ui/screens/dashboard_vertical/screen.png",
+                            "docs/ui/screens/dashboard_vertical/code.html",
+                            "docs/features/feature_005_dashboard_ui/ui/resources/avatar_coach.png",
+                            "docs/ui/basquet_pia_design_system.jpeg"
+                        ]
+    },
+    {
+        "id":  "feature_006_analysis_ui",
+        "area":  "app",
+        "title":  "Tablet Landscape Analysis UI",
+        "user_visible_behavior":  "The coach navigates to the Anàlisi screen to view the Phase 1 baseline hero card, filter insights by Tots, Fortaleses, or Àrees de Millora, inspect a 3-column grid of rich tactical strength and improvement cards with empirical metric panels, and tap \u0027Explorar al Xat\u0027 on improvement areas.",
+        "depends_on":  [
+                           "feature_005_dashboard_ui"
+                       ],
+        "status":  "accepted",
+        "verification":  "Domain/Data unit tests verify expanded Insight metric models and mapping; Compose UI tests verify Anàlisi screen rendering, segmented filtering, and \u0027Explorar al Xat\u0027 navigation.",
+        "evidence":  "gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug - 92 unit and Compose UI tests passed (13 in :domain, 33 in :data, 15 in :usecases, 31 in :app), 0 failures. assembleDebug SUCCESSFUL, lintDebug SUCCESSFUL with 0 errors. Full project build successful.",
+        "notes":  "Includes :domain and :data expansion for Insight (InsightType, InsightMetric, MetricSentiment, contextTag, priority, footerNote, exploreChatPrompt) and AnalysisScreen in :app based on docs/ui/screens/analisis_landscape/.",
+        "require_review_after":  [
+                                     "planner",
+                                     "implementer"
+                                 ],
+        "design_refs":  [
+                            "docs/ui/screens/analisis_landscape/screen.png",
+                            "docs/ui/screens/analisis_landscape/code.html",
+                            "docs/ui/basquet_pia_design_system.jpeg"
+                        ]
+    },
+    {
+        "id":  "feature_007_chat_ui",
+        "area":  "app",
+        "title":  "Tablet Single-Thread Chat UI",
+        "user_visible_behavior":  "The coach sees a single, continuous chat thread interface where they can type questions, select tactical reflection areas, and view AI responses and drill recommendations.",
+        "depends_on":  [
+                           "feature_005_dashboard_ui"
+                       ],
+        "status":  "accepted",
+        "verification":  "Compose UI tests render the chat messages list and input field correctly.",
+        "evidence":  "gradlew :app:assembleDebug lintDebug test - 93 unit and Compose UI tests passed (13 in :domain, 33 in :data, 15 in :usecases, 32 in :app across 6 ChatScreenTest and 3 NavigationTest), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors.",
+        "notes":  "Must support text input and display both user and AI message bubbles.",
+        "require_review_after":  [
+                                     "planner",
+                                     "implementer"
+                                 ],
+        "design_refs":  [
+                            "docs/ui/screens/chat_general/screen.png",
+                            "docs/ui/screens/chat_detalle/screen.png",
+                            "docs/ui/basquet_pia_design_system.jpeg"
+                        ]
+    },
+    {
+        "id":  "feature_008_dashboard_integration",
+        "area":  "app",
+        "title":  "Connect Dashboard to Real Data",
+        "user_visible_behavior":  "The Dashboard screen populates with real Phase 1 game data and computed KPI/chart/table metrics loaded via GetPhase1GamesUseCase.",
+        "depends_on":  [
+                           "feature_004_usecases",
+                           "feature_005_dashboard_ui"
+                       ],
+        "status":  "accepted",
+        "verification":  "The Dashboard ViewModel successfully fetches Phase 1 games from Use Cases and updates its UI state following MVVM Passive Initialization.",
+        "evidence":  "./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug - 4 unit tests passed (2 in DashboardUiMapperTest, 2 in DashboardViewModelTest), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors. Full suite (:domain:test :data:test :usecases:test :app:testDebugUnitTest) - 93 unit tests passed, 0 failures. BUILD SUCCESSFUL.",
+        "notes":  "Uses Hilt for DI.",
+        "require_review_after":  [
+                                     "planner",
+                                     "implementer"
+                                 ]
+    },
+    {
+        "id":  "feature_009_analysis_integration",
+        "area":  "app",
+        "title":  "Connect Analysis to Real Data",
+        "user_visible_behavior":  "The Anàlisi screen populates with real AI tactical strengths and improvement areas loaded via GenerateInsightsUseCase.",
+        "depends_on":  [
+                           "feature_004_usecases",
+                           "feature_006_analysis_ui"
+                       ],
+        "status":  "not_started",
+        "verification":  "The Analysis ViewModel successfully fetches insights from Use Cases and updates its UI state following MVVM Passive Initialization.",
+        "evidence":  "",
+        "notes":  "Uses Hilt for DI.",
+        "require_review_after":  [
+                                     "planner",
+                                     "implementer"
+                                 ]
+    },
+    {
+        "id":  "feature_010_chat_integration",
+        "area":  "app",
+        "title":  "Connect Chat to DevExpert API",
+        "user_visible_behavior":  "When the coach sends a message (or navigates via \u0027Explorar al Xat\u0027), it uses the DevExpert API via Use Cases and appends the real response to the chat thread.",
+        "depends_on":  [
+                           "feature_004_usecases",
+                           "feature_007_chat_ui"
+                       ],
+        "status":  "not_started",
+        "verification":  "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
+        "evidence":  "",
+        "notes":  "Maintains a single continuous conversation history in memory.",
+        "require_review_after":  [
+                                     "planner",
+                                     "implementer"
+                                 ]
+    }
+]

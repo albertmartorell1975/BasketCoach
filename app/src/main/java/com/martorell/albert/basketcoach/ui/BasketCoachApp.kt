@@ -53,7 +53,9 @@ fun BasketCoachApp(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Navigation(appState = appState)
+                Navigation(
+                    appState = appState
+                )
             }
         }
     }
