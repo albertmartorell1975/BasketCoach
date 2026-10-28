@@ -2,7 +2,7 @@ package com.martorell.albert.basketcoach.data.source.remote
 
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
-import com.martorell.albert.basketcoach.data.util.HttpException
+import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
 import okhttp3.OkHttpClient
