@@ -134,7 +134,7 @@
       "feature_004_usecases",
       "feature_005_dashboard_ui"
     ],
-    "status": "not_started",
+    "status": "in_progress",
     "verification": "The Dashboard ViewModel successfully fetches Phase 1 games from Use Cases and updates its UI state following MVVM Passive Initialization.",
     "evidence": "",
     "notes": "Uses Hilt for DI.",
