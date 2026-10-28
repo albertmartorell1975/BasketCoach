@@ -7,6 +7,7 @@ import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
+import javax.inject.Inject
 
 /**
  * Production implementation of [GameRepository] that sources Phase 1 match data from a
@@ -16,7 +17,7 @@ import com.martorell.albert.basketcoach.domain.repository.GameRepository
  *
  * @param localDataSource The data source providing the bundled Phase 1 fixtures (and their caching).
  */
-class GameRepositoryImpl(
+class GameRepositoryImpl @Inject constructor(
     private val localDataSource: GameLocalDataSource
 ) : GameRepository {
 
