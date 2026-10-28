@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
@@ -42,7 +43,7 @@ class DashboardScreenTest {
     fun dashboardScreen_rendersErrorStateAndTriggersRetry() {
         var retried = false
         val errorState = DashboardUiState(
-            content = DashboardUiContent.Error("Dades no disponibles"),
+            content = DashboardUiContent.Error(R.string.dashboard_error_empty),
             isRefreshing = false
         )
         composeTestRule.setContent {
@@ -55,7 +56,7 @@ class DashboardScreenTest {
         }
 
         composeTestRule.onNodeWithText("Error en carregar les dades").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Dades no disponibles").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No s'han trobat partits de la 1a Fase al conjunt de dades.").assertIsDisplayed()
         composeTestRule.onNodeWithText("Reintentar").assertIsDisplayed().performClick()
         assertTrue(retried)
     }

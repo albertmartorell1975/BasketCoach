@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.ui.dashboard.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,7 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
 @Composable
 fun DashboardErrorView(
-    errorMessage: String,
+    @StringRes messageRes: Int,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -63,7 +64,7 @@ fun DashboardErrorView(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = errorMessage,
+                    text = stringResource(messageRes),
                     fontSize = 13.sp,
                     color = PiaTextMuted,
                     textAlign = TextAlign.Center
@@ -91,7 +92,7 @@ fun DashboardErrorView(
 private fun DashboardErrorViewPreview() {
     BasketCoachTheme {
         DashboardErrorView(
-            errorMessage = "No s'han pogut carregar les dades de la 1a Fase.",
+            messageRes = R.string.dashboard_error_empty,
             onRetry = {}
         )
     }

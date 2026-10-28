@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardErrorView
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardLoadingView
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
@@ -71,7 +72,7 @@ fun DashboardScreen(
             }
             is DashboardUiContent.Error -> {
                 DashboardErrorView(
-                    errorMessage = content.message,
+                    messageRes = content.messageRes,
                     onRetry = onRetry
                 )
             }
@@ -113,7 +114,7 @@ private fun DashboardScreenErrorPreview() {
     BasketCoachTheme {
         DashboardScreen(
             uiState = DashboardUiState(
-                content = DashboardUiContent.Error("No s'han pogut carregar les dades de la 1a Fase."),
+                content = DashboardUiContent.Error(R.string.dashboard_error_empty),
                 isRefreshing = false
             )
         )

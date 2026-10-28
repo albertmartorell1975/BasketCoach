@@ -2,8 +2,9 @@ package com.martorell.albert.basketcoach.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.martorell.albert.basketcoach.domain.model.DomainError
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.ui.dashboard.mapper.DashboardErrorMapper
 import com.martorell.albert.basketcoach.ui.dashboard.mapper.DashboardUiMapper
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiContent
 import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val getPhase1GamesUseCase: GetPhase1GamesUseCase,
-    private val mapper: DashboardUiMapper
+    private val mapper: DashboardUiMapper,
+    private val errorMapper: DashboardErrorMapper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -44,7 +46,7 @@ class DashboardViewModel @Inject constructor(
                         _uiState.update {
                             DashboardUiState(
                                 content = DashboardUiContent.Error(
-                                    message = "No s'han trobat partits de la 1a Fase al conjunt de dades."
+                                    messageRes = R.string.dashboard_error_empty
                                 ),
                                 isRefreshing = false
                             )
@@ -60,13 +62,10 @@ class DashboardViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        is DomainError.Local.NotFound -> "No s'han trobat les dades dels partits de la 1a Fase."
-                        else -> "Error en carregar les dades de la competició."
-                    }
+                    val messageRes = errorMapper.toMessageRes(result.error)
                     _uiState.update {
                         DashboardUiState(
-                            content = DashboardUiContent.Error(errorMessage),
+                            content = DashboardUiContent.Error(messageRes = messageRes),
                             isRefreshing = false
                         )
                     }

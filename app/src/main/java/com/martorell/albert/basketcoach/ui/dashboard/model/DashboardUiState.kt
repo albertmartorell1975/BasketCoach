@@ -40,10 +40,10 @@ sealed interface DashboardUiContent {
     /**
      * Error state displaying feedback and enabling retry recovery.
      *
-     * @property message User-facing localized error description.
+     * @property messageRes String resource ID describing the error to the user.
      */
     data class Error(
-        val message: String
+        @param:StringRes val messageRes: Int
     ) : DashboardUiContent
 }
 
