@@ -85,3 +85,4 @@
 
 ## Next Steps
 - Stage 1: Spawn `workflow-planner` to diagnose repository architecture and generate unified specification at `docs/features/feature_008_dashboard_integration/spec.md`.
+* 🔵 **`[PLANNER · workflow-planner]`**: Generated unified feature specification at `docs/features/feature_008_dashboard_integration/spec.md`. Architected Hilt DI integration (KSP + Hilt Android in `:app`, JSR-330 `javax.inject` in pure JVM `:usecases`), MVVM Passive Initialization (`loadDashboard()`), Hybrid UI State (`DashboardUiState` + `DashboardUiContent`), `DashboardUiMapper` computing authentic 4 KPI pillars and table rows, resilient loading and retry views, and pragmatic test suite (6 tests total). Reached Human Checkpoint.
