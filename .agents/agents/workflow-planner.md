@@ -3,7 +3,7 @@ name: workflow-planner
 description: Feature Planner and Specification Architect subagent for the Android AI Workflow Foundation. Analyzes repository architecture and feature requirements in a clean context to produce the unified implementation specification at docs/features/<feature-id>/spec.md without modifying executable code.
 subagent: true
 mainAgent: false
-model: pro
+model: inherit
 skills:
   - skills/workflow-planner
   - skills/module-architecture-governance

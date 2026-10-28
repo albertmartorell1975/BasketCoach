@@ -215,19 +215,19 @@
                                                  "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                                  "sourceType":  "github",
                                                  "skillPath":  ".agents/skills/workflow-orchestrator/SKILL.md",
-                                                 "computedHash":  "0ffd3d94c22247b130524f16d73db0055d3e1bc701eca03f966094f1c35438cb"
+                                                 "computedHash":  "ae5e7f2b48396af9c9cd334050e5756e74531cd57f86091ed9bee65a9c2cc65f"
                                              },
                    "workflow-planner":  {
                                             "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                             "sourceType":  "github",
                                             "skillPath":  ".agents/skills/workflow-planner/SKILL.md",
-                                            "computedHash":  "2a29da1d898b4b43a0d95f430ff4351afbe77714847cc7171d1183bcae598a57"
+                                            "computedHash":  "5f9689e717afd3705d5df838dce4c0a9f45f008fbf19f88a75d498a14f456eb0"
                                         },
                    "workflow-validator":  {
                                               "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                               "sourceType":  "github",
                                               "skillPath":  ".agents/skills/workflow-validator/SKILL.md",
-                                              "computedHash":  "4915140af01af9eff848f2a25d854fa7a01b20cd7ef8ab239a773e38719a5d51"
+                                              "computedHash":  "3d8171ef0244ff58cc70f81d03062507692027214ba993bfd501758d2612ec12"
                                           }
                }
 }

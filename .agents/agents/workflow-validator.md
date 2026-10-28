@@ -3,7 +3,7 @@ name: workflow-validator
 description: Strictly read-only independent Validator subagent for the Android AI Workflow Foundation. Audits implemented features across 4 levels (Spec Contract, Clean Architecture & Security, Compiler/Test Evidence, Runtime) in an isolated git worktree without modifying any repository files and returns an accept/revise/block verdict with an Implementation Repair Brief to workflow-orchestrator.
 subagent: true
 mainAgent: false
-model: pro
+model: inherit
 skills:
   - skills/workflow-validator
   - skills/compiler
