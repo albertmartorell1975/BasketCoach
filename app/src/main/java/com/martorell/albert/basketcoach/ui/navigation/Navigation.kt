@@ -12,8 +12,7 @@ import com.martorell.albert.basketcoach.ui.dashboard.DashboardScreen
 @Composable
 fun Navigation(
     appState: BasketCoachAppState,
-    modifier: Modifier = Modifier,
-    dashboardScreen: @Composable () -> Unit = { DashboardScreen() }
+    modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = appState.navController,
@@ -21,7 +20,7 @@ fun Navigation(
         modifier = modifier
     ) {
         composable<DashboardRoute> {
-            dashboardScreen()
+            DashboardScreen()
         }
         composable<AnalysisRoute> {
             AnalysisScreen(
