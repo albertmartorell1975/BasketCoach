@@ -271,6 +271,58 @@ The Phase 1 Dashboard connects to authentic domain fixtures through a decoupled 
 
 The Analysis screen (`AnalysisScreen`) provides Coach Jordi with an actionable, high-density tactical diagnosis of Phase 1 competition findings, optimized for Tablet Landscape (`1280x800dp`).
 
+```text
++-----------------------------------------------------------------------------------------------+
+| BasketCoachNavRail (80dp Navy) | BasketCoachTopBar (64dp White)                               |
+|                                +--------------------------------------------------------------+
+| [Dashboard]                    | Dynamic Viewport: AnalysisScreen                             |
+| [Anàlisi]                      |   ├─ AnalysisHeroCard (3V-11D, 21.4%, 14/14 Jornades)        |
+| [Chat]                         |   ├─ AnalysisFilterTabs (Tots [5] | Fortaleses [2] | Millora [3])|
+|                                |   └─ InsightCardGrid (3-Column Tablet Landscape Grid)        |
+|                                |        ├─ InsightCard (Fortalesa: Eficiència a la Pintura)   |
+|                                |        ├─ InsightCard (Fortalesa: Transició Ràpida)          |
+|                                |        ├─ InsightCard (Àrea de Millora: Rebot Defensiu)      |
+|                                |        ├─ InsightCard (Àrea de Millora: Pèrdues Q3)          |
+|                                |        └─ InsightCard (Àrea de Millora: Tirs Lliures Finals) |
++-----------------------------------------------------------------------------------------------+
+```
+
+### 8.1 Tactical Analysis MVVM & Real Data Integration (`feature_009_analysis_integration`)
+
+The Analysis screen connects to authentic domain match data and AI-generated tactical insights through a decoupled, high-performance MVVM presentation pipeline:
+
+1. **Hilt Dependency Injection & Network Provisioning (`di`)**:
+   - `NetworkModule` (`@Module @InstallIn(SingletonComponent::class) object NetworkModule`) provisions application-wide singletons:
+     - `provideAiClientConfig()`: Resolves `AiClientConfig` with base URL, API keys (`DEVEXPERT_API_KEY` / `GEMINI_API_KEY` from `BuildConfig` / environment variables), and default models.
+     - `provideOkHttpClient()`: Supplies standard OkHttpClient preconfigured with suitable network timeouts (30s connect, 60s read).
+     - `provideJson()`: Provides lenient Kotlinx Serialization `Json` engine.
+   - `DataSourceModule`: Binds `AiAnalysisLocalDataSourceImpl` to `AiAnalysisLocalDataSource` and `AiRemoteDataSourceImpl` to `AiRemoteDataSource` via abstract `@Binds @Singleton`.
+   - `RepositoryModule`: Binds `AiAnalysisRepositoryImpl` to `AiAnalysisRepository` via abstract `@Binds @Singleton`.
+   - Pure Kotlin JVM boundaries in `:domain`, `:usecases`, and `:data` remain 100% untouched, using JSR-330 `@Inject` without Android framework dependencies.
+
+2. **Passive ViewModel Lifecycle & Hybrid UI State (`AnalysisViewModel`)**:
+   - Strictly enforces the **Passive Initialization Mandate**: zero coroutines, network calls, or repository queries execute in `init`. Initial state is passively initialized to `AnalysisUiState(content = AnalysisUiContent.Loading, isRefreshing = false)`.
+   - Initial data loading is explicitly invoked from Compose via `LaunchedEffect(Unit) { viewModel.loadAnalysis() }` in stateful `AnalysisScreen`.
+   - Incorporates an idempotent concurrency guard (`if (_uiState.value.isRefreshing) return`) to eliminate duplicate in-flight requests.
+   - Hybrid UI State: `AnalysisUiState(val content: AnalysisUiContent, val isRefreshing: Boolean)` models discrete states (`AnalysisUiContent.Loading`, `AnalysisUiContent.Success`, `AnalysisUiContent.Error(DomainError)`) coupled with the additive refresh indicator.
+   - State updates are performed atomically via `MutableStateFlow.update { ... }`.
+   - In-memory tab filtering (`onFilterSelected(filter: InsightFilterTab)`) dynamically filters `allInsights` into `displayedInsights` without re-querying remote or local data sources, preserving active tab selection across manual refreshes.
+
+3. **Authoritative Presentation Transformation (`AnalysisUiMapper`)**:
+   - Single source of truth for tactical UI transformations:
+     - Aggregates Phase 1 record baseline (`Phase1SummaryUiModel`: 3V-11D, 21.4% win rate). Returns `AnalysisUiContent.Error(DomainError.Local.NotFound)` if games list is empty.
+     - Maps domain `Insight` entities into presentation `InsightCardUiModel` instances. Replaces raw string badges with localized `@StringRes categoryBadgeRes` (`R.string.analysis_badge_strength` or `R.string.analysis_badge_improvement`).
+     - Computes tab counts (`totalCount`, `strengthsCount`, `improvementsCount`) and applies the active `InsightFilterTab`.
+     - Evaluates chat explore eligibility (`canExploreChat = insight.type == InsightType.IMPROVEMENT && insight.exploreChatPrompt.isNotBlank()`).
+
+4. **Zero-Resource-Leakage Error Handling (`toAnalysisUiText`)**:
+   - ViewModels and Mappers expose raw `DomainError` in `AnalysisUiContent.Error(error = result.error)` without importing Android `R.string`.
+   - Translation to user-visible strings occurs in the UI layer via `DomainError.toAnalysisUiText(): UiText`, translating `Local.NotFound`, `Network.NoInternet`, `Network.Timeout`, `Network.Unauthorized`, `Network.ServerError`, and generic failures into localized string resources or dynamic server messages.
+
+5. **Pragmatic Pure JVM Presentation Testing (Constraint #18)**:
+   - Presentation tests adhere strictly to the pure JVM testing budget without Robolectric UI test bloat:
+     - `AnalysisUiMapperTest` (2 tests): Valid data transformation to `Success` with in-memory tab filtering; empty games list error handling.
+     - `AnalysisViewModelTest` (2 tests): Passive initialization, state transitions to `Success` and tab filtering; domain error handling and retry recovery.
 
 ---
 

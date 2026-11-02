@@ -6,7 +6,7 @@
 * **`id`:** `feature_009_analysis_integration`
 * **`area`:** `app`
 * **`depends_on`:** `["feature_004_usecases", "feature_006_analysis_ui"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Connect the Tablet Landscape Analysis screen (`AnalysisScreen`, built in `feature_006_analysis_ui`) to authentic Phase 1 game data and AI-generated tactical insights loaded asynchronously via `GetPhase1GamesUseCase` and `GenerateInsightsUseCase`. Extend the Hilt Dependency Injection graph across `:usecases`, `:data`, and `:app` to provide `AiClientConfig`, `AiRemoteDataSource`, `AiAnalysisLocalDataSource`, and `AiAnalysisRepository`; introduce `AnalysisViewModel` adhering strictly to the MVVM Passive Initialization Mandate (`loadAnalysis()`) and the Hybrid UI State Pattern (`AnalysisUiState` wrapping `AnalysisUiContent.Loading`, `Success`, `Error(val error: DomainError)` with `isRefreshing` overlay); implement `AnalysisUiMapper` as the sole authoritative transformation engine mapping `List<Game>` and `List<Insight>` into `AnalysisUiContent.Success` (and handling client-side tab filtering); and provide resilient loading and localized error recovery (`UiText` + `toAnalysisUiText()`) with retry capability.
 * **Identified Ambiguities / Assumptions:**
@@ -166,59 +166,59 @@ No Room database changes required. Uses the existing thread-safe in-memory `AiAn
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, `hilt/SKILL.md`, and `viewmodel-architecture-governance/SKILL.md`. Verify pure Kotlin JVM isolation in `:domain`, `:usecases`, and `:data`.
-- [ ] **UseCase & Data Constructor Injection (`:usecases` & `:data`):**
-  - [ ] Annotate `GenerateInsightsUseCase` with `@Inject constructor(private val gameRepository: GameRepository, private val aiAnalysisRepository: AiAnalysisRepository)`.
-  - [ ] Annotate `AiAnalysisLocalDataSourceImpl` with `@Inject constructor()`.
-  - [ ] Add secondary `@Inject constructor(config: AiClientConfig) : this(config = config, okHttpClient = defaultOkHttpClient(), json = defaultJson())` to `AiRemoteDataSourceImpl` (retaining primary constructor defaults for existing unit tests).
-  - [ ] Annotate `AiAnalysisRepositoryImpl` with `@Inject constructor(private val remoteDataSource: AiRemoteDataSource, private val localDataSource: AiAnalysisLocalDataSource)`.
-- [ ] **Manifest, BuildConfig & Hilt DI Wiring (`:app`):**
-  - [ ] Add `<uses-permission android:name="android.permission.INTERNET" />` to `app/src/main/AndroidManifest.xml`.
-  - [ ] Update `app/build.gradle.kts` to enable `buildConfig = true` and expose `DEVEXPERT_API_KEY` and `GEMINI_API_KEY` from root `local.properties` / environment variables as `buildConfigField` strings.
-  - [ ] Create `app/src/main/java/com/martorell/albert/basketcoach/di/NetworkModule.kt` (`@Module @InstallIn(SingletonComponent::class) object NetworkModule`) providing `@Provides @Singleton fun provideAiClientConfig(): AiClientConfig` (checking `BuildConfig.DEVEXPERT_API_KEY`, then `BuildConfig.GEMINI_API_KEY`, then `AiClientConfig.fromEnvironment()`).
-  - [ ] Update `DataSourceModule.kt` adding `@Binds @Singleton abstract fun bindAiAnalysisLocalDataSource(impl: AiAnalysisLocalDataSourceImpl): AiAnalysisLocalDataSource` and `@Binds @Singleton abstract fun bindAiRemoteDataSource(impl: AiRemoteDataSourceImpl): AiRemoteDataSource`.
-  - [ ] Update `RepositoryModule.kt` adding `@Binds @Singleton abstract fun bindAiAnalysisRepository(impl: AiAnalysisRepositoryImpl): AiAnalysisRepository`.
-- [ ] **Presentation State Models & Mappers (`:app`):**
-  - [ ] Update `InsightCardUiModel.kt` to replace `val categoryBadgeText: String` with `@param:StringRes val categoryBadgeRes: Int` (0 defaults, 0 nullable fields per Constraint #17).
-  - [ ] Update `AnalysisUiState.kt` to model `AnalysisUiState(val content: AnalysisUiContent, val isRefreshing: Boolean)` and `sealed interface AnalysisUiContent` (`Loading`, `Success`, `Error(val error: DomainError)`).
-  - [ ] Implement `AnalysisUiMapper.kt` (`@Inject constructor()`):
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, `hilt/SKILL.md`, and `viewmodel-architecture-governance/SKILL.md`. Verify pure Kotlin JVM isolation in `:domain`, `:usecases`, and `:data`.
+- [x] **UseCase & Data Constructor Injection (`:usecases` & `:data`):**
+  - [x] Annotate `GenerateInsightsUseCase` with `@Inject constructor(private val gameRepository: GameRepository, private val aiAnalysisRepository: AiAnalysisRepository)`.
+  - [x] Annotate `AiAnalysisLocalDataSourceImpl` with `@Inject constructor()`.
+  - [x] Add secondary `@Inject constructor(config: AiClientConfig) : this(config = config, okHttpClient = defaultOkHttpClient(), json = defaultJson())` to `AiRemoteDataSourceImpl` (retaining primary constructor defaults for existing unit tests).
+  - [x] Annotate `AiAnalysisRepositoryImpl` with `@Inject constructor(private val remoteDataSource: AiRemoteDataSource, private val localDataSource: AiAnalysisLocalDataSource)`.
+- [x] **Manifest, BuildConfig & Hilt DI Wiring (`:app`):**
+  - [x] Add `<uses-permission android:name="android.permission.INTERNET" />` to `app/src/main/AndroidManifest.xml`.
+  - [x] Update `app/build.gradle.kts` to enable `buildConfig = true` and expose `DEVEXPERT_API_KEY` and `GEMINI_API_KEY` from root `local.properties` / environment variables as `buildConfigField` strings.
+  - [x] Create `app/src/main/java/com/martorell/albert/basketcoach/di/NetworkModule.kt` (`@Module @InstallIn(SingletonComponent::class) object NetworkModule`) providing `@Provides @Singleton fun provideAiClientConfig(): AiClientConfig` (checking `BuildConfig.DEVEXPERT_API_KEY`, then `BuildConfig.GEMINI_API_KEY`, then `AiClientConfig.fromEnvironment()`).
+  - [x] Update `DataSourceModule.kt` adding `@Binds @Singleton abstract fun bindAiAnalysisLocalDataSource(impl: AiAnalysisLocalDataSourceImpl): AiAnalysisLocalDataSource` and `@Binds @Singleton abstract fun bindAiRemoteDataSource(impl: AiRemoteDataSourceImpl): AiRemoteDataSource`.
+  - [x] Update `RepositoryModule.kt` adding `@Binds @Singleton abstract fun bindAiAnalysisRepository(impl: AiAnalysisRepositoryImpl): AiAnalysisRepository`.
+- [x] **Presentation State Models & Mappers (`:app`):**
+  - [x] Update `InsightCardUiModel.kt` to replace `val categoryBadgeText: String` with `@param:StringRes val categoryBadgeRes: Int` (0 defaults, 0 nullable fields per Constraint #17).
+  - [x] Update `AnalysisUiState.kt` to model `AnalysisUiState(val content: AnalysisUiContent, val isRefreshing: Boolean)` and `sealed interface AnalysisUiContent` (`Loading`, `Success`, `Error(val error: DomainError)`).
+  - [x] Implement `AnalysisUiMapper.kt` (`@Inject constructor()`):
     - Computes `Phase1SummaryUiModel` from non-empty `List<Game>` (`require(games.isNotEmpty())`).
     - Maps each `Insight` to `InsightCardUiModel` (`categoryBadgeRes = R.string.analysis_badge_strength` or `R.string.analysis_badge_improvement`, `canExploreChat = insight.type == InsightType.IMPROVEMENT && insight.exploreChatPrompt.isNotBlank()`).
     - Computes `totalCount`, `strengthsCount`, `improvementsCount`, and filters `displayedInsights` by `selectedFilter`.
-  - [ ] Implement `AnalysisErrorExt.kt` (`fun DomainError.toAnalysisUiText(): UiText`) mapping `Local.NotFound`, `Network.NoInternet`, `Network.Timeout`, `Network.Unauthorized`, `Network.ServerError`, and `Generic` to localized string resources or dynamic messages.
-- [ ] **ViewModel Implementation (`:app`):**
-  - [ ] Implement `AnalysisViewModel @Inject constructor(private val getPhase1GamesUseCase: GetPhase1GamesUseCase, private val generateInsightsUseCase: GenerateInsightsUseCase, private val mapper: AnalysisUiMapper) : ViewModel()`.
-  - [ ] Enforce Passive Initialization: initial `_uiState` is `AnalysisUiState(content = AnalysisUiContent.Loading, isRefreshing = false)` with zero work in `init`.
-  - [ ] Implement `fun loadAnalysis()` with concurrency guard (`if (_uiState.value.isRefreshing) return`), sequential `getPhase1GamesUseCase()` and `generateInsightsUseCase()` calls, preserving the active `selectedFilter` if already in `Success`, and atomic `_uiState.update`.
-  - [ ] Implement `fun onFilterSelected(filter: InsightFilterTab)` updating `selectedFilter` and `displayedInsights` atomically via `_uiState.update` when `content is AnalysisUiContent.Success`.
-- [ ] **UI Composables & Bilingual Resources (`:app`):**
-  - [ ] Add `analysis_loading`, `analysis_error_title`, `analysis_error_retry`, `analysis_error_empty`, `analysis_error_no_internet`, `analysis_error_timeout`, `analysis_error_unauthorized`, and `analysis_error_generic` to both `res/values/strings.xml` (Catalan) and `res/values-es/strings.xml` (Spanish).
-  - [ ] Implement `AnalysisLoadingView.kt` and `AnalysisErrorView.kt` with `@BcThemePreview` previews and minimum `12.sp` typography.
-  - [ ] Update `InsightCardHeader.kt` to use `stringResource(card.categoryBadgeRes)` and `AnalysisHeroCard.kt` to use `stringResource(R.string.hero_competitive_balance, ...)` and `stringResource(R.string.hero_win_pct, ...)`.
-  - [ ] Update `AnalysisPreviewData.kt`, `AnalysisContent.kt`, and `AnalysisScreen.kt` (adding stateful Hilt overload with `LaunchedEffect(Unit) { viewModel.loadAnalysis() }` and stateless overload handling `Loading`, `Error`, and `Success`).
-- [ ] **Pragmatic High-Value Testing (Strict Budget: 4 Pure JVM tests total, 0 Robolectric tests):**
-  - [ ] Create `app/src/test/java/com/martorell/albert/basketcoach/ui/analysis/AnalysisUiMapperTest.kt` (2 tests):
+  - [x] Implement `AnalysisErrorExt.kt` (`fun DomainError.toAnalysisUiText(): UiText`) mapping `Local.NotFound`, `Network.NoInternet`, `Network.Timeout`, `Network.Unauthorized`, `Network.ServerError`, and `Generic` to localized string resources or dynamic messages.
+- [x] **ViewModel Implementation (`:app`):**
+  - [x] Implement `AnalysisViewModel @Inject constructor(private val getPhase1GamesUseCase: GetPhase1GamesUseCase, private val generateInsightsUseCase: GenerateInsightsUseCase, private val mapper: AnalysisUiMapper) : ViewModel()`.
+  - [x] Enforce Passive Initialization: initial `_uiState` is `AnalysisUiState(content = AnalysisUiContent.Loading, isRefreshing = false)` with zero work in `init`.
+  - [x] Implement `fun loadAnalysis()` with concurrency guard (`if (_uiState.value.isRefreshing) return`), sequential `getPhase1GamesUseCase()` and `generateInsightsUseCase()` calls, preserving the active `selectedFilter` if already in `Success`, and atomic `_uiState.update`.
+  - [x] Implement `fun onFilterSelected(filter: InsightFilterTab)` updating `selectedFilter` and `displayedInsights` atomically via `_uiState.update` when `content is AnalysisUiContent.Success`.
+- [x] **UI Composables & Bilingual Resources (`:app`):**
+  - [x] Add `analysis_loading`, `analysis_error_title`, `analysis_error_retry`, `analysis_error_empty`, `analysis_error_no_internet`, `analysis_error_timeout`, `analysis_error_unauthorized`, and `analysis_error_generic` to both `res/values/strings.xml` (Catalan) and `res/values-es/strings.xml` (Spanish).
+  - [x] Implement `AnalysisLoadingView.kt` and `AnalysisErrorView.kt` with `@BcThemePreview` previews and minimum `12.sp` typography.
+  - [x] Update `InsightCardHeader.kt` to use `stringResource(card.categoryBadgeRes)` and `AnalysisHeroCard.kt` to use `stringResource(R.string.hero_competitive_balance, ...)` and `stringResource(R.string.hero_win_pct, ...)`.
+  - [x] Update `AnalysisPreviewData.kt`, `AnalysisContent.kt`, and `AnalysisScreen.kt` (adding stateful Hilt overload with `LaunchedEffect(Unit) { viewModel.loadAnalysis() }` and stateless overload handling `Loading`, `Error`, and `Success`).
+- [x] **Pragmatic High-Value Testing (Strict Budget: 4 Pure JVM tests total, 0 Robolectric tests):**
+  - [x] Create `app/src/test/java/com/martorell/albert/basketcoach/ui/analysis/AnalysisUiMapperTest.kt` (2 tests):
     1. `should_MapGamesAndInsightsToSuccess_and_FilterByTab_when_ValidDataProvided`
     2. `should_ThrowIllegalArgumentException_when_GamesListIsEmpty`
-  - [ ] Create `app/src/test/java/com/martorell/albert/basketcoach/ui/analysis/AnalysisViewModelTest.kt` (2 tests):
+  - [x] Create `app/src/test/java/com/martorell/albert/basketcoach/ui/analysis/AnalysisViewModelTest.kt` (2 tests):
     1. `should_RemainPassiveInitially_and_TransitionToSuccessAndFilter_when_LoadAnalysisInvoked`
     2. `should_TransitionToError_when_UseCaseFails_and_RecoverOnRetry`
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug` and full suite `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest`.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew :app:testDebugUnitTest :app:assembleDebug lintDebug` and full suite `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest`.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_009_analysis_integration` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
-- [ ] Pure Kotlin JVM boundaries in `:domain`, `:usecases`, and `:data` are preserved (zero `android.*` imports).
-- [ ] Hilt module isolation rules (`hilt/SKILL.md`) are respected (`@Binds` in abstract classes, `@Provides` in `object NetworkModule`, zero companion objects in abstract modules).
-- [ ] Passive Initialization Mandate (`viewmodel-architecture-governance`) is respected (zero work in `AnalysisViewModel` `init`).
-- [ ] Hybrid UI State Pattern (`AnalysisUiState` + `AnalysisUiContent`) and atomic `MutableStateFlow.update` are respected.
-- [ ] Presentation models obey Constraint #17 (zero defaults, zero nullable fields) and Constraint #18 (zero hardcoded strings in ViewModels/Mappers; `DomainError` translated via `toAnalysisUiText()`).
-- [ ] 100% string resource key parity between Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`), and all typography >= `12.sp` (Constraint #16).
-- [ ] Pragmatic test budget respected (Constraint #18): 2 tests in `AnalysisUiMapperTest`, 2 tests in `AnalysisViewModelTest` (4 pure JVM tests total, 0 Robolectric UI tests).
-- [ ] `@compiler` verification suite passes cleanly (`assembleDebug`, `lintDebug`, `test`).
-- [ ] Structured validation report written to `docs/features/feature_009_analysis_integration/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_009_analysis_integration` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] All 6 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
+- [x] Pure Kotlin JVM boundaries in `:domain`, `:usecases`, and `:data` are preserved (zero `android.*` imports).
+- [x] Hilt module isolation rules (`hilt/SKILL.md`) are respected (`@Binds` in abstract classes, `@Provides` in `object NetworkModule`, zero companion objects in abstract modules).
+- [x] Passive Initialization Mandate (`viewmodel-architecture-governance`) is respected (zero work in `AnalysisViewModel` `init`).
+- [x] Hybrid UI State Pattern (`AnalysisUiState` + `AnalysisUiContent`) and atomic `MutableStateFlow.update` are respected.
+- [x] Presentation models obey Constraint #17 (zero defaults, zero nullable fields) and Constraint #18 (zero hardcoded strings in ViewModels/Mappers; `DomainError` translated via `toAnalysisUiText()`).
+- [x] 100% string resource key parity between Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`), and all typography >= `12.sp` (Constraint #16).
+- [x] Pragmatic test budget respected (Constraint #18): 2 tests in `AnalysisUiMapperTest`, 2 tests in `AnalysisViewModelTest` (4 pure JVM tests total, 0 Robolectric UI tests).
+- [x] `@compiler` verification suite passes cleanly (`assembleDebug`, `lintDebug`, `test`).
+- [x] Structured validation report written to `docs/features/feature_009_analysis_integration/validator/validation-report.md`.
