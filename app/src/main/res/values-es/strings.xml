@@ -114,4 +114,12 @@
     <string name="dashboard_error_retry">Reintentar</string>
     <string name="dashboard_error_empty">No se han encontrado partidos de la 1ª Fase en el conjunto de datos.</string>
     <string name="dashboard_error_generic">Se ha producido un error inesperado al cargar los datos.</string>
+    <string name="analysis_loading">Cargando análisis táctico...</string>
+    <string name="analysis_error_title">Error al cargar el análisis</string>
+    <string name="analysis_error_retry">Reintentar</string>
+    <string name="analysis_error_empty">No se han encontrado datos de partidos para generar el análisis táctico.</string>
+    <string name="analysis_error_no_internet">Sin conexión a internet. Comprueba tu red e inténtalo de nuevo.</string>
+    <string name="analysis_error_timeout">Se ha agotado el tiempo de espera de la conexión con el servidor de análisis.</string>
+    <string name="analysis_error_unauthorized">Clave de acceso a la IA no válida o no configurada. Revisa la configuración.</string>
+    <string name="analysis_error_generic">Se ha producido un error inesperado al generar el análisis táctico.</string>
 </resources>
