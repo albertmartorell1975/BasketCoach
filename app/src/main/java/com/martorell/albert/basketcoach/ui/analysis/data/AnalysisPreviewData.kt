@@ -1,19 +1,15 @@
 package com.martorell.albert.basketcoach.ui.analysis.data
 
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MetricSentiment
+import com.martorell.albert.basketcoach.ui.analysis.model.AnalysisUiContent
 import com.martorell.albert.basketcoach.ui.analysis.model.AnalysisUiState
 import com.martorell.albert.basketcoach.ui.analysis.model.InsightCardUiModel
 import com.martorell.albert.basketcoach.ui.analysis.model.InsightFilterTab
 import com.martorell.albert.basketcoach.ui.dashboard.data.Phase1PreviewData
 import com.martorell.albert.basketcoach.ui.dashboard.model.Phase1SummaryUiModel
 
-/**
- * Authoritative preview data and state factory for the Tablet Landscape Analysis screen.
- *
- * Supplies 5 authentic tactical insight cards grounded in the 14-game Phase 1 competition dataset
- * (2 Strengths and 3 Areas of Improvement).
- */
 object AnalysisPreviewData {
 
     val summary: Phase1SummaryUiModel = Phase1PreviewData.summary
@@ -22,7 +18,7 @@ object AnalysisPreviewData {
         InsightCardUiModel(
             id = "insight_strength_1",
             type = InsightType.STRENGTH,
-            categoryBadgeText = "Fortalesa Tàctica",
+            categoryBadgeRes = R.string.analysis_badge_strength,
             contextTag = "Fase Ofensiva · Pintura",
             title = "Eficiència en Tir Interior",
             description = "Alta productivitat en finalitzacions sota cistella i talls ràpids per línia de fons. La generació d'avantatges interiors genera 34.6 pts de mitjana a la pintura amb excel·lents percentatges.",
@@ -40,7 +36,7 @@ object AnalysisPreviewData {
         InsightCardUiModel(
             id = "insight_strength_2",
             type = InsightType.STRENGTH,
-            categoryBadgeText = "Fortalesa Tàctica",
+            categoryBadgeRes = R.string.analysis_badge_strength,
             contextTag = "Fase Defensiva · Intimidació",
             title = "Protecció de Cistella",
             description = "Gran solidesa en la defensa de l'1c1 interior i ajudes manuals coordinades dels pivots. El bloqueig directe rival es veu contingut forçant tirs exteriors de baix percentatge.",
@@ -58,7 +54,7 @@ object AnalysisPreviewData {
         InsightCardUiModel(
             id = "insight_improvement_1",
             type = InsightType.IMPROVEMENT,
-            categoryBadgeText = "Àrea de Millora",
+            categoryBadgeRes = R.string.analysis_badge_improvement,
             contextTag = "Transició · Balanç Defensiu",
             title = "Balanç Defensiu en Transició",
             description = "Poca comunicació en el retrocés defensiu i mal repartiment de carril després de llançament fallat. L'equip concedeix cistelles fàcils en superioritat rival en primers 5 segons.",
@@ -76,7 +72,7 @@ object AnalysisPreviewData {
         InsightCardUiModel(
             id = "insight_improvement_2",
             type = InsightType.IMPROVEMENT,
-            categoryBadgeText = "Àrea de Millora",
+            categoryBadgeRes = R.string.analysis_badge_improvement,
             contextTag = "Rebot · Box Out",
             title = "Rebot Defensiu i Punts de 2a Oportunitat",
             description = "Irregularitat en el bloqueig del rebot defensiu per part de la línia exterior. Concedim segones opcions de tir que mantenen els rivals al partit fins als minuts decisius.",
@@ -94,7 +90,7 @@ object AnalysisPreviewData {
         InsightCardUiModel(
             id = "insight_improvement_3",
             type = InsightType.IMPROVEMENT,
-            categoryBadgeText = "Àrea de Millora",
+            categoryBadgeRes = R.string.analysis_badge_improvement,
             contextTag = "Concentració · Gestió Temporal",
             title = "Gestió de Pèrdues en el 3r Quart",
             description = "Desconnexió habitual a l'inici de la segona meitat. Els primers 4-6 minuts del tercer quart acumulen pèrdues no forçades i precipitació en la circulació de pilota.",
@@ -119,17 +115,27 @@ object AnalysisPreviewData {
         }
     }
 
-    fun createUiState(selectedFilter: InsightFilterTab = InsightFilterTab.ALL): AnalysisUiState {
+    fun createSuccess(selectedFilter: InsightFilterTab = InsightFilterTab.ALL): AnalysisUiContent.Success {
         val filtered = filterInsights(selectedFilter)
         val strengthsCount = allInsights.count { it.type == InsightType.STRENGTH }
         val improvementsCount = allInsights.count { it.type == InsightType.IMPROVEMENT }
-        return AnalysisUiState(
+        return AnalysisUiContent.Success(
             summary = summary,
             selectedFilter = selectedFilter,
             totalCount = allInsights.size,
             strengthsCount = strengthsCount,
             improvementsCount = improvementsCount,
+            allInsights = allInsights,
             displayedInsights = filtered
+        )
+    }
+
+    val success: AnalysisUiContent.Success = createSuccess(InsightFilterTab.ALL)
+
+    fun createUiState(selectedFilter: InsightFilterTab = InsightFilterTab.ALL): AnalysisUiState {
+        return AnalysisUiState(
+            content = createSuccess(selectedFilter),
+            isRefreshing = false
         )
     }
 

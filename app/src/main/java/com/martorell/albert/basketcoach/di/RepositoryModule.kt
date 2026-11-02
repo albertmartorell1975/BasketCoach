@@ -1,6 +1,8 @@
 package com.martorell.albert.basketcoach.di
 
+import com.martorell.albert.basketcoach.data.repository.AiAnalysisRepositoryImpl
 import com.martorell.albert.basketcoach.data.repository.GameRepositoryImpl
+import com.martorell.albert.basketcoach.domain.repository.AiAnalysisRepository
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
 import dagger.Binds
 import dagger.Module
@@ -29,4 +31,17 @@ abstract class RepositoryModule {
     abstract fun bindGameRepository(
         impl: GameRepositoryImpl
     ): GameRepository
+
+    /**
+     * Binds the AI analysis repository implementation [AiAnalysisRepositoryImpl]
+     * to the domain interface [AiAnalysisRepository] as an application-wide singleton.
+     *
+     * @param impl The concrete repository coordinating remote AI generation and in-memory caching.
+     * @return The [AiAnalysisRepository] domain contract.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindAiAnalysisRepository(
+        impl: AiAnalysisRepositoryImpl
+    ): AiAnalysisRepository
 }

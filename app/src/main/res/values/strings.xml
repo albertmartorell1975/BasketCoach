@@ -114,4 +114,12 @@
     <string name="dashboard_error_retry">Reintentar</string>
     <string name="dashboard_error_empty">No s\'han trobat partits de la 1a Fase al conjunt de dades.</string>
     <string name="dashboard_error_generic">S\'ha produït un error inesperat en carregar les dades.</string>
+    <string name="analysis_loading">Carregant anàlisi tàctica...</string>
+    <string name="analysis_error_title">Error en carregar l\'anàlisi</string>
+    <string name="analysis_error_retry">Reintentar</string>
+    <string name="analysis_error_empty">No s\'han trobat dades de partits per generar l\'anàlisi tàctica.</string>
+    <string name="analysis_error_no_internet">Sense connexió a internet. Comprova la teva xarxa i torna-ho a provar.</string>
+    <string name="analysis_error_timeout">S\'ha esgotat el temps d\'espera de la connexió amb el servidor d\'anàlisi.</string>
+    <string name="analysis_error_unauthorized">Clau d\'accés a la IA no vàlida o no configurada. Revisa la configuració.</string>
+    <string name="analysis_error_generic">S\'ha produït un error inesperat en generar l\'anàlisi tàctica.</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.ui.analysis.model
 
+import androidx.annotation.StringRes
 import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 
@@ -10,7 +11,7 @@ import com.martorell.albert.basketcoach.domain.model.MetricSentiment
  *
  * @property id Unique identifier for card item keys in Compose layouts.
  * @property type Insight classification ([InsightType]) driving card border styling and accent colors.
- * @property categoryBadgeText Localized badge label (e.g., "Fortalesa Tàctica" or "Àrea de Millora").
+ * @property categoryBadgeRes Localized badge string resource ID.
  * @property contextTag Contextual game phase tag displayed on the top right.
  * @property title Bold headline summarizing the tactical finding.
  * @property description Detailed tactical analysis text.
@@ -28,7 +29,7 @@ import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 data class InsightCardUiModel(
     val id: String,
     val type: InsightType,
-    val categoryBadgeText: String,
+    @param:StringRes val categoryBadgeRes: Int,
     val contextTag: String,
     val title: String,
     val description: String,

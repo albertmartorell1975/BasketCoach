@@ -114,7 +114,7 @@ fun AnalysisHeroCard(
                         )
                     }
                     Text(
-                        text = "Balanç Competitiu: ${summary.wins} Victòries - ${summary.losses} Derrotes (${summary.winPercentage}% de victòries)",
+                        text = stringResource(R.string.hero_competitive_balance, summary.wins, summary.losses),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = PiaTextPrimary
@@ -124,7 +124,7 @@ fun AnalysisHeroCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "${summary.winPercentage}% victòries",
+                            text = stringResource(R.string.hero_win_pct, summary.winPercentage),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = PiaSuccessGreen
