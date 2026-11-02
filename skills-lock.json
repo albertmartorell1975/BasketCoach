@@ -71,7 +71,7 @@
                                                   "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                                   "sourceType":  "github",
                                                   "skillPath":  ".agents/skills/compose-state-hoisting/SKILL.md",
-                                                  "computedHash":  "d637829166ff0b20193e7bb673fce796d9e7449634d71570dcaf88af50feac98"
+                                                  "computedHash":  "59839d74f672b1e87dab4b831eaf096b94da367817bc92bba911d6b1d17b71bd"
                                               },
                    "dependency-manager":  {
                                               "source":  "albertmartorell1975/android-ai-workflow-foundation",
@@ -179,7 +179,7 @@
                                          "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                          "sourceType":  "github",
                                          "skillPath":  ".agents/skills/testing-setup/SKILL.md",
-                                         "computedHash":  "38ff2dca3e10f8022225f001b30c96770b50450d69d65c2c31dc08bb679969cd"
+                                         "computedHash":  "d3208f26fc5ff3c9bb82e4903d6766f4809ac8c0a1736a41008f73c7fc02ba94"
                                      },
                    "viewmodel-architecture-governance":  {
                                                              "source":  "albertmartorell1975/android-ai-workflow-foundation",
@@ -221,7 +221,8 @@
                                               "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                               "sourceType":  "github",
                                               "skillPath":  ".agents/skills/workflow-validator/SKILL.md",
-                                              "computedHash":  "3d8171ef0244ff58cc70f81d03062507692027214ba993bfd501758d2612ec12"
+                                              "computedHash":  "355978a353806fa324143b3a56a1a6ab2050717524f1b58f057f0b6068949dc9"
                                           }
                }
 }
+

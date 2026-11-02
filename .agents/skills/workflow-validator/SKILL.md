@@ -75,7 +75,7 @@ You are the **Independent Validator / Evaluator subagent**, not the planner, not
 1. **Audit Test Source Code & Anti-Overengineering (`CONSTRAINTS.md`, `testing-setup`)**:
    - Read unit tests created/modified by `workflow-implementer`.
    - **CRITICAL (Mandatory REVISE Triggers)**: You MUST fail validation with verdict `REVISE` if the implementer:
-     * Introduced **Test-Induced Design Damage** (e.g. modified `BasketCoachApp`, `Navigation`, or production composable signatures with test-only lambdas/slots), OR
+     * Introduced **Test-Induced Design Damage** (e.g. modified App shell, `Navigation`, or production composable signatures with test-only lambdas/slots), OR
      * Created Robolectric/`composeTestRule`/Espresso/UI Automator/`androidTest` tests for screens or navigation (`*ScreenTest`, `NavigationTest`), OR
      * Added trivial "Watermelon tests" or violated the Single-Layer Assertion Rule, OR
      * Exceeded the Strict Test Budget (> 3 `@Test` per class or > 6 total per feature slice).
