@@ -19,7 +19,6 @@ skills:
   - skills/compose-state-hoisting
   - skills/compose-side-effects
   - skills/compose-modifier-and-layout-style
-  - skills/compose-ui-testing-patterns
   - skills/navigation-3
   - skills/adaptive
   - skills/edge-to-edge
