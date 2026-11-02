@@ -8,7 +8,6 @@ skills:
   - skills/workflow-validator
   - skills/compiler
   - skills/android-intent-security
-  - skills/compose-ui-testing-patterns
   - skills/android-cli
 ---
 

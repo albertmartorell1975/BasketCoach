@@ -73,12 +73,6 @@
                                                   "skillPath":  ".agents/skills/compose-state-hoisting/SKILL.md",
                                                   "computedHash":  "d637829166ff0b20193e7bb673fce796d9e7449634d71570dcaf88af50feac98"
                                               },
-                   "compose-ui-testing-patterns":  {
-                                                       "source":  "albertmartorell1975/android-ai-workflow-foundation",
-                                                       "sourceType":  "github",
-                                                       "skillPath":  ".agents/skills/compose-ui-testing-patterns/SKILL.md",
-                                                       "computedHash":  "70e3b78d17299cfc812e69d5eb8d6b439f3a43efb3c4f8a06fddf5dde2be2433"
-                                                   },
                    "dependency-manager":  {
                                               "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                               "sourceType":  "github",
