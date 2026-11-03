@@ -2,6 +2,7 @@ package com.martorell.albert.basketcoach.data.source.remote
 
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatRole
 import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
@@ -146,7 +147,7 @@ class AiRemoteDataSourceTest {
         assertEquals("/v1/chat/completions", recordedAnalysis.path)
 
         val chatResult = dataSource.generateChatResponse(
-            conversationHistory = listOf(ChatMessageDto(role = "user", content = "Hola")),
+            conversationHistory = listOf(ChatMessageDto(role = ChatRole.USER, content = "Hola")),
             newPrompt = "Què fem amb el rebot?"
         )
         assertEquals("Bona lectura Jordi.", chatResult)

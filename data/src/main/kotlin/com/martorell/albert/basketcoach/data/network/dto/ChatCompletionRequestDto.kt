@@ -24,23 +24,29 @@ data class ChatCompletionRequestDto(
 /**
  * Standard OpenAI chat roles used across completion payloads.
  */
-object ChatRole {
-    const val SYSTEM = "system"
-    const val USER = "user"
-    const val ASSISTANT = "assistant"
+@Serializable
+enum class ChatRole {
+    @SerialName("system")
+    SYSTEM,
+
+    @SerialName("user")
+    USER,
+
+    @SerialName("assistant")
+    ASSISTANT
 }
 
 /**
  * DTO representing an individual message in a chat completion conversation.
  * All fields are strictly mandatory.
  *
- * @property role Role of the author ("system", "user", "assistant").
+ * @property role Role of the author ([ChatRole.SYSTEM], [ChatRole.USER], or [ChatRole.ASSISTANT]).
  * @property content Content of the message.
  */
 @Serializable
 data class ChatMessageDto(
     @SerialName("role")
-    val role: String,
+    val role: ChatRole,
     @SerialName("content")
     val content: String
 )

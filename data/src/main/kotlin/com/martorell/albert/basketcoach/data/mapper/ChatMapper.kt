@@ -7,14 +7,30 @@ import com.martorell.albert.basketcoach.domain.model.MessageSender
 import java.util.UUID
 
 /**
- * Maps a domain [MessageSender] into the corresponding OpenAI-compatible role string constant.
+ * Maps a domain [MessageSender] into the corresponding OpenAI-compatible [ChatRole] enum.
  *
  * @receiver The domain [MessageSender] (`COACH` or `AI`).
  * @return [ChatRole.USER] for [MessageSender.COACH], or [ChatRole.ASSISTANT] for [MessageSender.AI].
  */
-fun MessageSender.toChatRole(): String = when (this) {
+fun MessageSender.toChatRole(): ChatRole = when (this) {
     MessageSender.COACH -> ChatRole.USER
     MessageSender.AI -> ChatRole.ASSISTANT
+}
+
+/**
+ * Maps a network [ChatRole] into its corresponding domain [MessageSender].
+ *
+ * Notice that [ChatRole.SYSTEM] messages are strictly network-level instructions for the LLM
+ * and cannot be mapped to user-facing domain chat messages.
+ *
+ * @receiver The [ChatRole] enum value.
+ * @return [MessageSender.COACH] for [ChatRole.USER], or [MessageSender.AI] for [ChatRole.ASSISTANT].
+ * @throws IllegalArgumentException if the role is [ChatRole.SYSTEM].
+ */
+fun ChatRole.toMessageSender(): MessageSender = when (this) {
+    ChatRole.USER -> MessageSender.COACH
+    ChatRole.ASSISTANT -> MessageSender.AI
+    ChatRole.SYSTEM -> throw IllegalArgumentException("System prompt messages cannot be mapped to user-facing domain chat messages")
 }
 
 /**
@@ -38,11 +54,7 @@ fun ChatMessage.toDto(): ChatMessageDto = ChatMessageDto(
  */
 fun ChatMessageDto.toDomain(): ChatMessage = ChatMessage(
     id = UUID.randomUUID().toString(),
-    sender = when (role) {
-        ChatRole.USER -> MessageSender.COACH
-        ChatRole.ASSISTANT -> MessageSender.AI
-        else -> MessageSender.AI
-    },
+    sender = role.toMessageSender(),
     text = content,
     timestamp = System.currentTimeMillis()
 )
