@@ -4,6 +4,8 @@ BasketCoach is a Tablet Landscape application for a Junior Men's Interterritoria
 
 ## Architecture
 
+See [ARCHITECTURE.md](ARCHITECTURE.md) for complete system topology, module governance, and design patterns.
+
 - **UI Pattern**: `MVVM (Hybrid UI State & Passive Initialization)` (Governed by `.agents/skills/viewmodel-architecture-governance/SKILL.md`)
 - **Module Topology**: `Layer-Based (:domain, :usecases, :data, :app)`
   - `:domain` -> `:usecases` <- `:data` -> `:app`
@@ -27,7 +29,7 @@ BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) 
 - **Deterministic Inference**: Queries are dispatched at `temperature = 0.2` for maximum schema reliability.
 - **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
 
-For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md#section-61-structured-outputs).
+For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md) (Section 6.1).
 
 ## Progress & Status
 - [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).

@@ -1,5 +1,7 @@
 # AI Tactical Analysis & Structured Outputs Pattern
 
+> Part of the core application architecture. See also: [ARCHITECTURE.md](../../ARCHITECTURE.md).
+
 ## 1. Executive Summary & Problem Definition
 
 Large Language Models (LLMs) are inherently probabilistic sequence predictors. When asked for tactical basketball analysis, an LLM typically responds with conversational natural language, Markdown headers, bullet points, or unstructured prose.
