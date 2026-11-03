@@ -89,7 +89,7 @@ fun AiMessageBubble(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = model.senderName,
+                    text = stringResource(model.senderNameRes),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaNavy
@@ -106,7 +106,7 @@ fun AiMessageBubble(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = model.senderRole,
+                        text = stringResource(model.senderRoleRes),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         color = PiaNavy

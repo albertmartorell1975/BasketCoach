@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.ui.chat.model
 
+import androidx.annotation.StringRes
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 
 /**
@@ -7,11 +8,12 @@ import com.martorell.albert.basketcoach.domain.model.MessageSender
  *
  * Supports both Coach Jordi reflections and AI assistant Socratic inquiries, interactive drill
  * recommendation cards, and synthesized training commitment summary cards.
+ * Strictly default-parameter-free and non-nullable (Constraint #17).
  *
  * @property id Unique message identifier.
  * @property sender Role of the sender ([MessageSender.COACH] or [MessageSender.AI]).
- * @property senderName Display name of the sender.
- * @property senderRole Badge title of the sender role.
+ * @property senderNameRes String resource ID of the sender's display name.
+ * @property senderRoleRes String resource ID of the sender role badge.
  * @property timestamp Time label when the message was sent or received.
  * @property text Body markdown/plain text of the message.
  * @property hasCalloutQuestion Whether this message contains an embedded tactical question callout.
@@ -25,8 +27,8 @@ import com.martorell.albert.basketcoach.domain.model.MessageSender
 data class ChatMessageUiModel(
     val id: String,
     val sender: MessageSender,
-    val senderName: String,
-    val senderRole: String,
+    @param:StringRes val senderNameRes: Int,
+    @param:StringRes val senderRoleRes: Int,
     val timestamp: String,
     val text: String,
     val hasCalloutQuestion: Boolean,

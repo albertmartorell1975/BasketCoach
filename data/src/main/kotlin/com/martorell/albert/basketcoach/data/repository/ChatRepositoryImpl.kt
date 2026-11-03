@@ -12,6 +12,7 @@ import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
 import java.util.UUID
+import javax.inject.Inject
 
 class ChatRepositoryImpl(
     private val remoteDataSource: AiRemoteDataSource,
@@ -19,6 +20,17 @@ class ChatRepositoryImpl(
     private val idGenerator: () -> String = { UUID.randomUUID().toString() },
     private val timestampProvider: () -> Long = { System.currentTimeMillis() }
 ) : ChatRepository {
+
+    @Inject
+    constructor(
+        remoteDataSource: AiRemoteDataSource,
+        localDataSource: ChatLocalDataSource
+    ) : this(
+        remoteDataSource = remoteDataSource,
+        localDataSource = localDataSource,
+        idGenerator = { UUID.randomUUID().toString() },
+        timestampProvider = { System.currentTimeMillis() }
+    )
 
     override suspend fun getMessages(): Result<List<ChatMessage>, DomainError> = safeCall {
         localDataSource.getMessages()
@@ -36,15 +48,27 @@ class ChatRepositoryImpl(
         )
         localDataSource.saveMessage(coachMessage)
 
-        val historyDtos = localDataSource.getMessages().dropLast(1).map { it.toDto() }
+        val lastAssistantMessage = localDataSource.getMessages()
+            .dropLast(1)
+            .lastOrNull { it.sender == MessageSender.AI }
+            ?.text
 
-        val gameContext = games?.let { PromptTemplates.formatGameSummary(it) }
-
-        val responseText = remoteDataSource.generateChatResponse(
-            conversationHistory = historyDtos,
-            newPrompt = messageText,
-            gameContext = gameContext
+        val isRelevant = remoteDataSource.isPromptBasketballRelevant(
+            prompt = messageText,
+            lastAssistantMessage = lastAssistantMessage
         )
+
+        val responseText = if (isRelevant) {
+            val historyDtos = localDataSource.getMessages().dropLast(1).map { it.toDto() }
+            val gameContext = games?.let { PromptTemplates.formatGameSummary(it) }
+            remoteDataSource.generateChatResponse(
+                conversationHistory = historyDtos,
+                newPrompt = messageText,
+                gameContext = gameContext
+            )
+        } else {
+            PromptTemplates.buildOffTopicRejectionMessage()
+        }
 
         val aiMessage = ChatMessage(
             id = idGenerator(),

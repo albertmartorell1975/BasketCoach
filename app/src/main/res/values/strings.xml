@@ -86,7 +86,7 @@
 
 <!-- Chat Screen Strings (Catalan) -->
     <string name="chat_meta_space_tag">Espai de Reflexió Tàctica · 1a Fase</string>
-    <string name="chat_meta_phase_subtitle">Interterritorial Grup %1$s · %2$d Jornades analitzades</string>
+    <string name="chat_meta_phase_subtitle">Interterritorial Grup 02 · 14 Jornades analitzades</string>
     <string name="chat_meta_balance_pill">Balanç: %1$dV - %2$dD</string>
     <string name="chat_meta_team_pill">Junior A Masculí</string>
     <string name="chat_topics_header_tag">Àrees d\'Intervenció · 1a Fase</string>
@@ -109,6 +109,18 @@
     <string name="chat_court_perimeter_legend">Rebot Exterior (%1$s Total)</string>
     <string name="chat_court_interior_legend">Rebot Interior (%1$s)</string>
     <string name="chat_assistant_avatar_initial">P</string>
+    <string name="chat_loading">Connectant amb l\'assistent tàctic&#8230;</string>
+    <string name="chat_error_title">Error al xat tàctic</string>
+    <string name="chat_error_retry">Reintentar</string>
+    <string name="chat_error_empty">No s\'ha pogut carregar la conversa tàctica.</string>
+    <string name="chat_error_no_internet">Sense connexió a internet. Comprova la xarxa i torna-ho a provar.</string>
+    <string name="chat_error_timeout">Temps d\'espera esgotat connectant amb l\'assistent.</string>
+    <string name="chat_error_unauthorized">Clau d\'accés a la IA no vàlida o no configurada.</string>
+    <string name="chat_error_generic">S\'ha produït un error inesperat a la conversa tàctica.</string>
+    <string name="chat_sender_coach_name">Coach Jordi</string>
+    <string name="chat_sender_coach_role">Primer Entrenador</string>
+    <string name="chat_sender_ai_name">Assistent Tàctic IA</string>
+    <string name="chat_sender_ai_role">Pia Sabadell AI</string>
     <string name="dashboard_loading">Carregant dades de la 1a Fase...</string>
     <string name="dashboard_error_title">Error en carregar les dades</string>
     <string name="dashboard_error_retry">Reintentar</string>

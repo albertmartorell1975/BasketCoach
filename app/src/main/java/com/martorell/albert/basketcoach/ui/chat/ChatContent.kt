@@ -16,7 +16,7 @@ import com.martorell.albert.basketcoach.ui.chat.components.ChatRightPane
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
+import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaBackground
@@ -27,7 +27,8 @@ import com.martorell.albert.basketcoach.ui.theme.PiaBackground
  * Assembles the context meta header, the 4-column left pane ([ChatLeftPane]), and the 8-column
  * right conversational pane ([ChatRightPane]) in a tablet-optimized landscape grid.
  *
- * @param state Current immutable UI state ([ChatUiState]).
+ * @param state Current successful UI content state ([ChatUiContent.Success]).
+ * @param isSending Flag indicating if a message is currently in flight.
  * @param onTopicClick Callback triggered when an intervention topic card is tapped.
  * @param onBackToTopics Callback triggered to return from diagnostic evidence to the topics list.
  * @param onInputChange Callback triggered when the input text changes.
@@ -37,7 +38,8 @@ import com.martorell.albert.basketcoach.ui.theme.PiaBackground
  */
 @Composable
 fun ChatContent(
-    state: ChatUiState,
+    state: ChatUiContent.Success,
+    isSending: Boolean,
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
     onBackToTopics: () -> Unit,
     onInputChange: (String) -> Unit,
@@ -76,7 +78,7 @@ fun ChatContent(
             ChatRightPane(
                 messages = state.messages,
                 inputText = state.inputText,
-                isSending = state.isSending,
+                isSending = isSending,
                 onInputChange = onInputChange,
                 onSend = onSend,
                 onDrillOptionSelect = onDrillOptionSelect,
@@ -91,7 +93,8 @@ fun ChatContent(
 @Composable
 private fun ChatContentPreview() {
     ChatContent(
-        state = ChatPreviewData.previewUiState,
+        state = ChatPreviewData.previewUiContent,
+        isSending = false,
         onTopicClick = {},
         onBackToTopics = {},
         onInputChange = {},

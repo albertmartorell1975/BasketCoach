@@ -18,7 +18,8 @@ class ChatRepositoryImplTest {
 
     private class FakeAiRemoteDataSource(
         var chatResponse: String = "AI response text",
-        var exceptionToThrow: Throwable? = null
+        var exceptionToThrow: Throwable? = null,
+        var isRelevantResponse: Boolean = true
     ) : AiRemoteDataSource {
         var capturedHistory: List<ChatMessageDto> = emptyList()
         var capturedPrompt: String = ""
@@ -40,6 +41,13 @@ class ChatRepositoryImplTest {
             capturedContext = gameContext
             exceptionToThrow?.let { throw it }
             return chatResponse
+        }
+
+        override suspend fun isPromptBasketballRelevant(
+            prompt: String,
+            lastAssistantMessage: String?
+        ): Boolean {
+            return isRelevantResponse
         }
     }
 
@@ -99,5 +107,24 @@ class ChatRepositoryImplTest {
         val messageList = (allMessages as Result.Success).data
         assertEquals(1, messageList.size)
         assertEquals(MessageSender.COACH, messageList[0].sender)
+    }
+
+    @Test
+    fun `sendMessage when prompt is off-topic short-circuits without calling chat completions`() = runTest {
+        fakeRemoteDataSource.isRelevantResponse = false
+
+        val sendResult = repository.sendMessage("Quin temps fa avui?")
+
+        assertTrue(sendResult is Result.Success)
+        val aiMessage = (sendResult as Result.Success).data
+        assertEquals(0, fakeRemoteDataSource.callCount)
+        assertTrue(aiMessage.text.contains("Bàsquet Pia Sabadell"))
+
+        val allMessages = repository.getMessages()
+        assertTrue(allMessages is Result.Success)
+        val messageList = (allMessages as Result.Success).data
+        assertEquals(2, messageList.size)
+        assertEquals(MessageSender.COACH, messageList[0].sender)
+        assertEquals(MessageSender.AI, messageList[1].sender)
     }
 }

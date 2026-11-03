@@ -6,6 +6,23 @@ import java.util.Locale
 
 object PromptTemplates {
 
+    const val JEV_QUESTION_DOMAIN_RELEVANCE = "domain_relevance"
+    const val JEV_CHOICE_BASKETBALL_RELEVANT = "basketball_relevant"
+    const val JEV_CHOICE_OFF_TOPIC = "off_topic"
+    const val JEV_QUESTION_TYPE_CHOICE = "choice"
+    const val JEV_STATE_APP_DOMAIN = "app_domain"
+    const val JEV_STATE_LAST_ASSISTANT_MESSAGE = "last_assistant_message"
+    const val JEV_STATE_COACH_MESSAGE = "coach_message"
+    const val JEV_APP_DOMAIN_VALUE = "Junior Men's Interterritorial basketball coaching, game analysis, tactical practice drills, and FIBA basketball strategy for $OUR_TEAM_NAME."
+    const val JEV_QUESTION_TEXT = "Determine whether 'coach_message' is relevant to basketball tactics, game analysis, drills, FIBA rules, team management, or is a valid follow-up to the conversation."
+
+    fun buildOffTopicRejectionMessage(locale: Locale = Locale.getDefault()): String {
+        return when (locale.language.lowercase(Locale.ROOT)) {
+            "es" -> "Como asistente táctico del Bàsquet Pia Sabadell, solo puedo responder a consultas sobre baloncesto, análisis de partidos, táctica y ejercicios de entrenamiento. ¿En qué puedo ayudar a tu equipo?"
+            else -> "Com a assistent tàctic del Bàsquet Pia Sabadell, només puc respondre a consultes sobre bàsquet, anàlisi de partits, tàctica i exercicis d'entrenament. En què puc ajudar el teu equip?"
+        }
+    }
+
     /**
      * Resolves the target natural language for AI generation based on the active [Locale].
      *
@@ -99,6 +116,8 @@ object PromptTemplates {
             You are the AI assistant coach for "$OUR_TEAM_NAME" in the Junior Men's Interterritorial basketball league under FIBA rules.
             You assist the head coach with tactical advice, game preparation, drill recommendations, and performance analysis.
             Be concise, professional, insightful, and basketball-grounded. Always reply in $targetLanguage (or match the coach's language if they explicitly write in another language).
+            
+            STRICT DOMAIN GUARDRAIL: You are exclusively an AI tactical basketball coaching assistant for $OUR_TEAM_NAME. If the coach asks about topics completely unrelated to basketball, match analysis, coaching, drills, or team management (such as weather, politics, international conflicts, general trivia), politely decline and redirect the focus back to basketball.
         """.trimIndent()
     }
 

@@ -170,13 +170,13 @@
       "feature_004_usecases",
       "feature_007_chat_ui"
     ],
-    "status": "not_started",
+    "status": "passing",
     "verification": "The Chat ViewModel successfully sends messages via the Use Case and updates the message list state.",
-    "evidence": "",
+    "evidence": "./gradlew --no-daemon :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug - All pure JVM test suites passed across :domain, :data, :usecases, :app (including ChatUiMapperTest, ChatViewModelTest, ChatRepositoryImplTest, AiRemoteDataSourceTest with Jev decisions and off-topic guardrail), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors. BUILD SUCCESSFUL.",
     "notes": "Maintains a single continuous conversation history in memory.",
     "require_review_after": [
       "planner",
       "implementer"
     ]
   }
-]
+]
