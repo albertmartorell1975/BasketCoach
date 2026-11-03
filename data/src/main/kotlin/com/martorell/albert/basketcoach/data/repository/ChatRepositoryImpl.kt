@@ -1,5 +1,7 @@
 package com.martorell.albert.basketcoach.data.repository
 
+import com.martorell.albert.basketcoach.data.mapper.toAiChatMessage
+import com.martorell.albert.basketcoach.data.mapper.toCoachChatMessage
 import com.martorell.albert.basketcoach.data.mapper.toDto
 import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSource
@@ -11,7 +13,6 @@ import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
-import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -25,6 +26,7 @@ import javax.inject.Inject
  * - Short-circuits off-topic queries immediately with a localized tactical refusal message
  *   ([PromptTemplates.buildOffTopicRejectionMessage]) without consuming generative AI tokens.
  * - Encapsulates all data operations within [safeCall] to map exceptions into typed [DomainError] results.
+ * - Delegates domain entity construction to [toCoachChatMessage] and [toAiChatMessage].
  *
  * @param remoteDataSource Remote client communicating with DevExpert or Gemini AI endpoints.
  * @param localDataSource Thread-safe in-memory cache holding the continuous chat thread messages.
@@ -60,12 +62,7 @@ class ChatRepositoryImpl @Inject constructor(
         messageText: String,
         games: List<Game>?
     ): Result<ChatMessage, DomainError> = safeCall {
-        val coachMessage = ChatMessage(
-            id = UUID.randomUUID().toString(),
-            sender = MessageSender.COACH,
-            text = messageText,
-            timestamp = System.currentTimeMillis()
-        )
+        val coachMessage = toCoachChatMessage(messageText)
         localDataSource.saveMessage(coachMessage)
 
         val lastAssistantMessage = localDataSource.getMessages()
@@ -90,12 +87,7 @@ class ChatRepositoryImpl @Inject constructor(
             PromptTemplates.buildOffTopicRejectionMessage()
         }
 
-        val aiMessage = ChatMessage(
-            id = UUID.randomUUID().toString(),
-            sender = MessageSender.AI,
-            text = responseText,
-            timestamp = System.currentTimeMillis()
-        )
+        val aiMessage = toAiChatMessage(responseText)
         localDataSource.saveMessage(aiMessage)
         aiMessage
     }
