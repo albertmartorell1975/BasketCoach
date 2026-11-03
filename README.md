@@ -41,4 +41,4 @@ For full architectural details, see the deep dive in [docs/architecture/ai-tacti
 - [x] **`feature_007_chat_ui`**: Tablet Single-Thread Chat UI (continuous message history, prompt reflections, AI responses) in `:app` (`accepted`).
 - [x] **`feature_008_dashboard_integration`**: Connect Dashboard to Real Data via `GetPhase1GamesUseCase`, `DashboardViewModel`, and Hilt DI in `:app` (`accepted`).
 - [x] **`feature_009_analysis_integration`**: Connect Analysis to Real Data via `GenerateInsightsUseCase` and ViewModel in `:app` (`accepted`).
-- [ ] **`feature_010_chat_integration`**: Connect Chat to DevExpert API via `SendChatMessageUseCase` and ViewModel in `:app` (`not_started`).
+- [x] **`feature_010_chat_integration`**: Connect Chat to DevExpert API via `SendChatMessageUseCase` and ViewModel in `:app` (`accepted`).

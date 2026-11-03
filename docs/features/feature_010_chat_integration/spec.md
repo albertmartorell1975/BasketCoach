@@ -6,7 +6,7 @@
 * **`id`:** `feature_010_chat_integration`
 * **`area`:** `app` (with `:data` and `:usecases` integration)
 * **`depends_on`:** `["feature_004_usecases", "feature_007_chat_ui"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Connect the Tablet Landscape Single-Thread Chat screen (`ChatScreen`, built in `feature_007_chat_ui`) to the live DevExpert AI inference pipeline and in-memory single-thread repository via `GetPhase1GamesUseCase`, `GetChatMessagesUseCase`, and `SendChatMessageUseCase`. Incorporate a **2-step AI Guardrail Pipeline** in `:data`:
   1. **DevExpert Mode**: Uses **DevExpert Jev Decisions (`POST /v1/decisions` with `model = "jev"`)** to pre-classify each coach prompt (`basketball_relevant` vs `off_topic`) before invoking the generative `chat` model with the 14-game Phase 1 dataset.
@@ -46,32 +46,32 @@
 
 ## 2. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, `hilt/SKILL.md`, and `viewmodel-architecture-governance/SKILL.md`. Verify pure Kotlin JVM isolation in `:domain`, `:usecases`, and `:data`.
-- [ ] **Jev Decisions Guardrail in `:data`:**
-  - [ ] Add `const val MODEL_JEV: String = "jev"` to `DevExpertConfig.kt`.
-  - [ ] Create `JevDecisionDto.kt` (`JevDecisionRequestDto`, `JevQuestionDto`, `JevDecisionResponseDto`, `JevAnswerDto`) with mandatory non-nullable fields and zero defaults (Constraint #14).
-  - [ ] Update `PromptTemplates.kt` with Jev guardrail constants, `buildOffTopicRejectionMessage(locale: Locale = Locale.getDefault()): String`, and `STRICT DOMAIN GUARDRAIL` in `buildChatSystemPromptBase`.
-  - [ ] Add `suspend fun isPromptBasketballRelevant(prompt: String, lastAssistantMessage: String?): Boolean` to `AiRemoteDataSource` and implement in `AiRemoteDataSourceImpl` (calling `POST /decisions` for DevExpert, or lightweight classification chat for Gemini fallback).
-  - [ ] Update `ChatRepositoryImpl.sendMessage` to check `if (!remoteDataSource.isPromptBasketballRelevant(messageText, lastAiMessageText))` and short-circuit with `PromptTemplates.buildOffTopicRejectionMessage()`.
-- [ ] **UseCase & Data Constructor Injection (`:usecases` & `:data`):**
-  - [ ] Annotate `GetChatMessagesUseCase`, `SendChatMessageUseCase`, and `GetPracticeDrillsUseCase` with `@Inject constructor`.
-  - [ ] Annotate `ChatLocalDataSourceImpl` with `@Inject constructor()`.
-  - [ ] Add secondary `@Inject constructor(remoteDataSource: AiRemoteDataSource, localDataSource: ChatLocalDataSource)` to `ChatRepositoryImpl`.
-- [ ] **Hilt DI Wiring (`:app`):**
-  - [ ] Update `DataSourceModule.kt` (`bindChatLocalDataSource`) and `RepositoryModule.kt` (`bindChatRepository`) with `@Binds @Singleton`.
-- [ ] **Presentation State Models, Mapper & ViewModel (`:app`):**
-  - [ ] Update `ChatMetaHeaderUiModel.kt`, `ChatMessageUiModel.kt`, and `ChatUiState.kt` (`ChatUiState` + `ChatUiContent.Loading`, `Success`, `Error(DomainError)`) with 0 defaults and 0 nullables (Constraint #17).
-  - [ ] Implement `ChatUiMapper.kt` and `ChatErrorExt.kt` (`toChatUiText()`).
-  - [ ] Implement `ChatViewModel.kt` adhering to Passive Initialization (`loadChat(initialPrompt)`), message sending, topic/evidence switching, and `onRetry()`.
-- [ ] **UI Composables & Bilingual Resources (`:app`):**
-  - [ ] Add bilingual keys to `res/values/strings.xml` (Catalan) and `res/values-es/strings.xml` (Spanish) with 100% key parity.
-  - [ ] Create `ChatLoadingView.kt` and `ChatErrorView.kt` (`>= 12.sp`).
-  - [ ] Update `ChatMetaHeader.kt`, `AiMessageBubble.kt`, `CoachMessageBubble.kt`, `ChatPreviewData.kt`, `ChatContent.kt`, and `ChatScreen.kt`.
-- [ ] **Pragmatic High-Value Testing (Strict Budget: 6 new Pure JVM tests total across all layers, 0 Robolectric tests):**
-  - [ ] `AiRemoteDataSourceTest.kt` (`:data` — 1 test): `isPromptBasketballRelevant_sendsJevDecisionRequestAndParsesChoice`.
-  - [ ] `ChatRepositoryImplTest.kt` (`:data` — 1 test): `sendMessage_whenPromptIsOffTopic_shortCircuitsWithoutCallingChatCompletions`.
-  - [ ] `ChatUiMapperTest.kt` (`:app` — 2 tests): mapping and empty-games guard.
-  - [ ] `ChatViewModelTest.kt` (`:app` — 2 tests): passive load/send and error/retry.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug`.
-  - [ ] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, `hilt/SKILL.md`, and `viewmodel-architecture-governance/SKILL.md`. Verify pure Kotlin JVM isolation in `:domain`, `:usecases`, and `:data`.
+- [x] **Jev Decisions Guardrail in `:data`:**
+  - [x] Add `const val MODEL_JEV: String = "jev"` to `DevExpertConfig.kt`.
+  - [x] Create `JevDecisionDto.kt` (`JevDecisionRequestDto`, `JevQuestionDto`, `JevDecisionResponseDto`, `JevAnswerDto`) with mandatory non-nullable fields and zero defaults (Constraint #14).
+  - [x] Update `PromptTemplates.kt` with Jev guardrail constants, `buildOffTopicRejectionMessage(locale: Locale = Locale.getDefault()): String`, and `STRICT DOMAIN GUARDRAIL` in `buildChatSystemPromptBase`.
+  - [x] Add `suspend fun isPromptBasketballRelevant(prompt: String, lastAssistantMessage: String?): Boolean` to `AiRemoteDataSource` and implement in `AiRemoteDataSourceImpl` (calling `POST /decisions` for DevExpert, or lightweight classification chat for Gemini fallback).
+  - [x] Update `ChatRepositoryImpl.sendMessage` to check `if (!remoteDataSource.isPromptBasketballRelevant(messageText, lastAiMessageText))` and short-circuit with `PromptTemplates.buildOffTopicRejectionMessage()`.
+- [x] **UseCase & Data Constructor Injection (`:usecases` & `:data`):**
+  - [x] Annotate `GetChatMessagesUseCase`, `SendChatMessageUseCase`, and `GetPracticeDrillsUseCase` with `@Inject constructor`.
+  - [x] Annotate `ChatLocalDataSourceImpl` with `@Inject constructor()`.
+  - [x] Add secondary `@Inject constructor(remoteDataSource: AiRemoteDataSource, localDataSource: ChatLocalDataSource)` to `ChatRepositoryImpl`.
+- [x] **Hilt DI Wiring (`:app`):**
+  - [x] Update `DataSourceModule.kt` (`bindChatLocalDataSource`) and `RepositoryModule.kt` (`bindChatRepository`) with `@Binds @Singleton`.
+- [x] **Presentation State Models, Mapper & ViewModel (`:app`):**
+  - [x] Update `ChatMetaHeaderUiModel.kt`, `ChatMessageUiModel.kt`, and `ChatUiState.kt` (`ChatUiState` + `ChatUiContent.Loading`, `Success`, `Error(DomainError)`) with 0 defaults and 0 nullables (Constraint #17).
+  - [x] Implement `ChatUiMapper.kt` and `ChatErrorExt.kt` (`toChatUiText()`).
+  - [x] Implement `ChatViewModel.kt` adhering to Passive Initialization (`loadChat(initialPrompt)`), message sending, topic/evidence switching, and `onRetry()`.
+- [x] **UI Composables & Bilingual Resources (`:app`):**
+  - [x] Add bilingual keys to `res/values/strings.xml` (Catalan) and `res/values-es/strings.xml` (Spanish) with 100% key parity.
+  - [x] Create `ChatLoadingView.kt` and `ChatErrorView.kt` (`>= 12.sp`).
+  - [x] Update `ChatMetaHeader.kt`, `AiMessageBubble.kt`, `CoachMessageBubble.kt`, `ChatPreviewData.kt`, `ChatContent.kt`, and `ChatScreen.kt`.
+- [x] **Pragmatic High-Value Testing (Strict Budget: 6 new Pure JVM tests total across all layers, 0 Robolectric tests):**
+  - [x] `AiRemoteDataSourceTest.kt` (`:data` — 1 test): `isPromptBasketballRelevant_sendsJevDecisionRequestAndParsesChoice`.
+  - [x] `ChatRepositoryImplTest.kt` (`:data` — 1 test): `sendMessage_whenPromptIsOffTopic_shortCircuitsWithoutCallingChatCompletions`.
+  - [x] `ChatUiMapperTest.kt` (`:app` — 2 tests): mapping and empty-games guard.
+  - [x] `ChatViewModelTest.kt` (`:app` — 2 tests): passive load/send and error/retry.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug`.
+  - [x] Record verification evidence in `feature_list.json` (`status: "passing"`) and `PROGRESS.md`.

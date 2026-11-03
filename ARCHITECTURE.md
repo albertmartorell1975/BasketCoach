@@ -378,3 +378,82 @@ The Chat screen (`ChatScreen`) provides Coach Jordi with a high-density, tablet-
    - All 8 UI presentation models in `ui.chat.model` (`ChatUiState`, `ChatMetaHeaderUiModel`, `ChatTopicCardUiModel`, `ChatDiagnosticEvidenceUiModel`, `ChatMessageUiModel`, `ChatDrillOptionUiModel`, `ChatSummaryCardUiModel`, `ChatLeftPaneMode`) enforce 0 defaults and 0 nullable properties. Absent card attachments use sentinel objects (`ChatSummaryCardUiModel.EMPTY`).
 6. **Minimum Typography Governance (Constraint #16)**:
    - All text rendered across topic cards, metric badges, half-court diagram labels, bubbles, and input fields enforces a minimum size of `12.sp` (never `10.sp` or `11.sp`).
+
+
+## 10. Conversational Assistant & Guardrail Architecture (`feature_010_chat_integration`)
+
+The conversational AI assistant connects the Tablet Landscape single-thread chat workbench (`ChatScreen`) to live inference via `SendChatMessageUseCase`, `GetChatMessagesUseCase`, and `GetPhase1GamesUseCase`, featuring a **2-Step AI Guardrail Pipeline**:
+
+```text
+               +-------------------------------------------------------------+
+               | ChatViewModel.sendMessage(messageText)                      |
+               +-------------------------------------------------------------+
+                                              |
+                                              v
+                              +-------------------------------+
+                              | SendChatMessageUseCase        |
+                              +-------------------------------+
+                                              | (games context)
+                                              v
+                              +-------------------------------+
+                              | ChatRepositoryImpl            |
+                              +-------------------------------+
+                                              |
+                     +------------------------+------------------------+
+                     | Step 1: Pre-Classification Guardrail            |
+                     v                                                 v
+         [ DevExpert Jev Decisions ]                     [ Gemini JSON Fallback ]
+         POST /v1/decisions (model="jev")                POST /chat/completions (temp=0.0)
+         {"domain_relevance": "choice"}                  {"choice": "basketball_relevant"}
+                     |                                                 |
+                     +------------------------+------------------------+
+                                              |
+                                    Is basketball relevant?
+                                     /                      \
+                             NO (Off-Topic)            YES (Tactical Query)
+                                   /                          \
+                                  v                            v
+               +------------------------------------+   +------------------------------------+
+               | Short-Circuit Refusal Bubble       |   | Step 2: Generative Inference       |
+               | (PromptTemplates.buildOffTopic...) |   | POST /chat/completions             |
+               | Zero /chat/completions tokens used |   | Grounded with 14 Phase 1 boxscores |
+               +------------------------------------+   +------------------------------------+
+                                  \                            /
+                                   v                          v
+                              +-------------------------------+
+                              | Save to ChatLocalDataSource   |
+                              | (Mutex, In-Memory SSOT)       |
+                              +-------------------------------+
+                                              |
+                                              v
+                              +-------------------------------+
+                              | ChatViewModel Reload Stream   |
+                              | (ChatUiContent.Success)       |
+                              +-------------------------------+
+```
+
+### Key Architectural Patterns for Chat Integration
+1. **2-Step AI Domain Guardrail Pipeline**:
+   - **DevExpert Jev Decisions Mode**: When `config.baseUrl` targets DevExpert Inference, pre-classifies user prompts via `POST /v1/decisions` with `model = "jev"`. The request passes the domain state (`app_domain`, `last_assistant_message`, `coach_message`) and the `"domain_relevance"` question with `"basketball_relevant"` vs `"off_topic"` criteria.
+   - **Google Gemini Fallback Mode**: When using Gemini Free Tier, executes a lightweight zero-shot classification JSON call (`temperature = 0.0`, zero match history tokens) to `/chat/completions` returning `{"choice": "basketball_relevant" | "off_topic"}`.
+   - **Off-Topic Short-Circuit**: When deemed off-topic, `ChatRepositoryImpl.sendMessage` short-circuits immediately without calling `remoteDataSource.generateChatResponse`, saving expensive generative tokens on the 14-game context. A localized tactical refusal message (`PromptTemplates.buildOffTopicRejectionMessage()`) is saved directly to `ChatLocalDataSource` and returned as `MessageSender.AI`.
+2. **In-Memory Single-Thread Session Governance (Constraint #6)**:
+   - `ChatLocalDataSourceImpl` manages the continuous conversation stream in memory using Kotlin coroutines `Mutex` synchronization.
+   - Both `ChatLocalDataSource` and `ChatRepository` are bound as `@Singleton` in `DataSourceModule` and `RepositoryModule`, guaranteeing thread continuity across screen navigation.
+3. **Passive ViewModel Lifecycle & Exploration Hand-off (`ChatViewModel`)**:
+   - Strictly satisfies the **Passive Initialization Mandate**: zero coroutines or repository queries run in `init`. Initial state is `ChatUiState(content = ChatUiContent.Loading, isSending = false)`.
+   - Data loading is triggered via `LaunchedEffect(initialPrompt) { viewModel.loadChat(initialPrompt) }` in `ChatScreen`.
+   - "Explorar al Xat" hand-off: when `initialPrompt` is passed from the Analysis screen, the ViewModel sets `leftPaneMode = ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE` and auto-dispatches the prompt once, using `initialPromptProcessed` to prevent duplicate dispatches during Compose recompositions.
+4. **Hybrid UI State Pattern**:
+   - `ChatUiState(val content: ChatUiContent, val isSending: Boolean)` models discrete states (`Loading`, `Success`, `Error(DomainError)`) while providing the additive `isSending` overlay flag.
+   - While `isSending` is true, user input is disabled and a subtle loading indicator is rendered over the message stream. Concurrent send requests are immediately dropped (`if (trimmed.isBlank() || _uiState.value.isSending) return`).
+5. **Decoupled Mathematical Transformation & Resource Parity**:
+   - `ChatUiMapper` calculates 3V-11D meta header stats and maps domain messages to localized sender roles (`@StringRes` parameters) without hardcoded strings.
+   - `toChatUiText(): UiText` translates `DomainError` into localized strings with zero `R.string` imports in `ChatViewModel`.
+   - 100% key parity is enforced between Catalan (`values/strings.xml`) and Spanish (`values-es/strings.xml`).
+6. **Pragmatic Pure JVM Testing Budget (Constraint #18)**:
+   - Presentation and integration logic are verified by 6 pure JVM tests without Robolectric:
+     - `AiRemoteDataSourceTest` (1 test): Jev decision request generation and choice parsing.
+     - `ChatRepositoryImplTest` (1 test): Off-topic prompt short-circuiting asserting 0 calls to chat completions.
+     - `ChatUiMapperTest` (2 tests): Authentic data mapping to `Success` and empty games error guard.
+     - `ChatViewModelTest` (2 tests): Passive initialization with explore prompt auto-dispatch, and error recovery with retry.
