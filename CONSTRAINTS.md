@@ -12,7 +12,12 @@
 * **DataSource vs. Repository Error Boundary**: DataSources MUST throw raw technical exceptions (`IOException`, `HttpException`, `SerializationException`, `FileNotFoundException`). Repositories MUST wrap all operations in `safeCall` to translate exceptions into typed `DomainError` results, never leaking framework exceptions to `:domain` or `:usecases`.
 * **Main-Safe DataSources**: DataSources performing blocking I/O (file streams, OkHttp calls) MUST manage their own dispatching via `withContext(Dispatchers.IO)`. Repositories and ViewModels must never be burdened with managing I/O dispatchers.
 * **Mandatory Network DTOs Without Defaults**: Network DTOs for AI responses MUST model all fields as mandatory, non-nullable types without default values. Corresponding system prompts MUST explicitly forbid omitting keys or returning null values.
-* **Configuration Decoupling**: API keys, base URLs, and model identifiers MUST NOT be hardcoded as inline string literals. They must be isolated into provider-specific constants (`DevExpertConfig`, `GeminiConfig`) and resolved through `AiClientConfig.fromEnvironment()` or `LocalPropertiesReader`.
+* **Configuration Decoupling & Declarative Secret Provisioning**:
+  - API keys, base URLs, and model identifiers MUST NOT be hardcoded as inline string literals.
+  - In pure Kotlin modules (`:data`), configuration is isolated in provider constants (`DevExpertConfig`, `GeminiConfig`) with fallback resolution (`AiClientConfig.fromEnvironment()`).
+  - In the Android application module (`:app`), API keys MUST be provisioned into `BuildConfig` declaratively using Google's official **`secrets-gradle-plugin`** paired with a versioned `local.defaults.properties` file containing non-empty placeholder defaults (`KEY=DEFAULT_KEY`) for CI and new checkouts.
+  - Imperative file reading (`java.util.Properties`, `File.inputStream()`) and manual `buildConfigField` string concatenation inside `build.gradle.kts` are strictly FORBIDDEN.
+  - DI modules (`NetworkModule`) must resolve runtime keys via `BuildConfig.*` (filtering out placeholder defaults) before falling back to environment variables.
 * **Minimum Font Size**: All UI elements (labels, pills, chart axis texts, table cells) MUST use a minimum font size of `12.sp` to ensure high-density legibility and accessibility on tablet displays (never `10.sp` or `11.sp`).
 * **Strict Default-Free & Non-Nullable UI Models**: Presentation state models (`*UiState`, `*UiModel`) MUST NOT declare default parameter values or nullable fields. UI Mappers, ViewModels, and preview data factories are the sole authoritative source of state, preventing accidental fallback bugs and enforcing fail-fast state modeling.
 * **Zero Hardcoded Strings & Resource Isolation**:
