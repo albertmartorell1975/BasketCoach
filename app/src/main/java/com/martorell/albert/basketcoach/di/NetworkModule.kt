@@ -23,10 +23,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    private const val PLACEHOLDER_DEVEXPERT = "DEFAULT_DEVEXPERT_API_KEY"
+    private const val PLACEHOLDER_GEMINI = "DEFAULT_GEMINI_API_KEY"
+
     /**
      * Provides the application-wide [AiClientConfig] singleton.
      *
-     * Resolves API keys from [BuildConfig] (populated at build time) with fallback to environment variables.
+     * Resolves API keys from [BuildConfig] (populated via secrets-gradle-plugin at build time)
+     * with fallback to environment variables.
      * Prioritizes DevExpert Inference, falling back to Google Gemini.
      *
      * @return Initialized [AiClientConfig] instance.
@@ -34,14 +38,16 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAiClientConfig(): AiClientConfig {
-        val devexpertKey = BuildConfig.DEVEXPERT_API_KEY.takeIf { it.isNotBlank() }
+        val devexpertKey = BuildConfig.DEVEXPERT_API_KEY
+            .takeIf { it.isNotBlank() && it != PLACEHOLDER_DEVEXPERT }
             ?: DevExpertConfig.resolveApiKey()
 
         if (!devexpertKey.isNullOrBlank()) {
             return DevExpertConfig.create(apiKey = devexpertKey)
         }
 
-        val geminiKey = BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() }
+        val geminiKey = BuildConfig.GEMINI_API_KEY
+            .takeIf { it.isNotBlank() && it != PLACEHOLDER_GEMINI }
             ?: GeminiConfig.resolveApiKey()
 
         if (!geminiKey.isNullOrBlank()) {
