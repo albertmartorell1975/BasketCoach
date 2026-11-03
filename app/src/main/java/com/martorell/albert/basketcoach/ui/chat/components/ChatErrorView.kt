@@ -31,6 +31,17 @@ import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.util.UiText
 
+/**
+ * Full-screen error presentation for the Chat workbench.
+ *
+ * Renders a localized failure description and an action button allowing Coach Jordi
+ * to retry loading conversation data or re-attempt message dispatch.
+ * Enforces minimum typography size of `13.sp` (Constraint #16).
+ *
+ * @param message Localized user-facing error representation ([UiText]).
+ * @param onRetry Callback triggered when the retry button is tapped.
+ * @param modifier Composable modifier for outer layout customization.
+ */
 @Composable
 fun ChatErrorView(
     message: UiText,

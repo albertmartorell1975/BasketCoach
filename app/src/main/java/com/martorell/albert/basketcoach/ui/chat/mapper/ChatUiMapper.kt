@@ -20,9 +20,28 @@ import javax.inject.Inject
 
 /**
  * Transforms domain models ([Game], [ChatMessage]) into presentation models for the Chat workbench.
+ *
+ * Authoritative mathematical and presentation mapper computing:
+ * - Phase 1 competitive balance (wins, losses) for the meta header.
+ * - Localized sender name and role string resource IDs ([R.string.chat_sender_coach_name],
+ *   [R.string.chat_sender_coach_role], [R.string.chat_sender_ai_name], [R.string.chat_sender_ai_role]).
+ * - Default tactical intervention topic cards and diagnostic evidence models.
+ * - Formatted message timestamps (`HH:mm`).
  */
 class ChatUiMapper @Inject constructor() {
 
+    /**
+     * Maps match fixtures and chat messages into a [ChatUiContent.Success] state.
+     *
+     * Returns [ChatUiContent.Error] with [DomainError.Local.NotFound] if the games collection is empty.
+     *
+     * @param games List of Phase 1 match fixtures.
+     * @param messages Chronological list of recorded conversation messages.
+     * @param leftPaneMode Active display mode for the left workbench pane.
+     * @param activeTopicId Active intervention topic card ID.
+     * @param inputText Current draft text in the message input field.
+     * @return [ChatUiContent] representing success or error.
+     */
     fun mapToContent(
         games: List<Game>,
         messages: List<ChatMessage>,
@@ -59,6 +78,12 @@ class ChatUiMapper @Inject constructor() {
         )
     }
 
+    /**
+     * Maps an individual domain [ChatMessage] entity into a presentation [ChatMessageUiModel].
+     *
+     * @param domainMessage The domain chat message entity.
+     * @return Presentation message model with localized sender metadata.
+     */
     fun mapMessage(domainMessage: ChatMessage): ChatMessageUiModel {
         val (nameRes, roleRes) = when (domainMessage.sender) {
             MessageSender.COACH -> Pair(R.string.chat_sender_coach_name, R.string.chat_sender_coach_role)
@@ -84,6 +109,11 @@ class ChatUiMapper @Inject constructor() {
         )
     }
 
+    /**
+     * Generates the default list of 4 tactical intervention topic cards.
+     *
+     * @return List of [ChatTopicCardUiModel] instances.
+     */
     fun buildDefaultTopicList(): List<ChatTopicCardUiModel> = listOf(
         ChatTopicCardUiModel(
             id = ChatTopicId.REBOUND_CONTROL,
@@ -139,6 +169,11 @@ class ChatUiMapper @Inject constructor() {
         )
     )
 
+    /**
+     * Generates the default empirical diagnostic evidence model for defensive rebounding.
+     *
+     * @return [ChatDiagnosticEvidenceUiModel] instance with authentic Phase 1 metrics.
+     */
     fun buildDefaultDiagnosticEvidence(): ChatDiagnosticEvidenceUiModel = ChatDiagnosticEvidenceUiModel(
         priorityBadgeRes = R.string.chat_evidence_priority_badge,
         titleRes = R.string.chat_evidence_title,

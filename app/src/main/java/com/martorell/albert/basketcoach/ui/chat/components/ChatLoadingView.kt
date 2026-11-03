@@ -21,6 +21,14 @@ import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 
+/**
+ * Full-screen loading indicator for the Chat workbench.
+ *
+ * Displayed while asynchronously loading Phase 1 game fixtures and historical
+ * chat messages during passive ViewModel initialization.
+ *
+ * @param modifier Composable modifier for outer layout customization.
+ */
 @Composable
 fun ChatLoadingView(
     modifier: Modifier = Modifier
