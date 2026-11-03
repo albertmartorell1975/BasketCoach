@@ -30,7 +30,7 @@ import javax.inject.Inject
  * with atomic state updates via [MutableStateFlow.update]. Handles in-memory tab filtering
  * via [onFilterSelected] without re-triggering remote AI inference or reloading games.
  *
- * @param getPhase1GamesUseCase Domain interactor retrieving Phase 1 match history.
+ * @param getPhase1GamesUseCase Domain interactor retrieving Phase1 match history.
  * @param generateInsightsUseCase Domain interactor generating AI tactical insights.
  * @param mapper Presentation mapper computing UI summaries and tab-filtered insight cards.
  */
@@ -56,15 +56,27 @@ class AnalysisViewModel @Inject constructor(
      * Triggers asynchronous loading of Phase 1 games and AI-generated tactical insights.
      *
      * Features a concurrency guard that prevents re-entry if a refresh operation is already in progress.
-     * Sequentially queries [getPhase1GamesUseCase] and [generateInsightsUseCase], mapping domain results
-     * into [AnalysisUiContent.Success] while preserving the active [InsightFilterTab], or transitioning
-     * into [AnalysisUiContent.Error] upon any domain failure.
+     * When [forceRefresh] is false and [AnalysisUiState.content] is already [AnalysisUiContent.Success],
+     * re-triggering is ignored to prevent redundant operations upon screen re-entry.
+     * When reloading from [AnalysisUiContent.Error], [AnalysisUiState.content] transitions immediately
+     * back to [AnalysisUiContent.Loading] to provide prompt visual feedback to the user.
+     *
+     * @param forceRefresh When true, bypasses the existing Success content guard to reload data.
      */
-    fun loadAnalysis() {
+    fun loadAnalysis(forceRefresh: Boolean = false) {
         if (_uiState.value.isRefreshing) return
+        if (!forceRefresh && _uiState.value.content is AnalysisUiContent.Success) return
 
         _uiState.update { currentState ->
-            currentState.copy(isRefreshing = true)
+            val nextContent = if (currentState.content is AnalysisUiContent.Success) {
+                currentState.content
+            } else {
+                AnalysisUiContent.Loading
+            }
+            currentState.copy(
+                content = nextContent,
+                isRefreshing = true
+            )
         }
 
         viewModelScope.launch {

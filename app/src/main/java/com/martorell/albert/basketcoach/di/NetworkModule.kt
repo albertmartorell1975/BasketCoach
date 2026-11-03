@@ -1,6 +1,9 @@
 package com.martorell.albert.basketcoach.di
 
+import com.martorell.albert.basketcoach.BuildConfig
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
+import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
+import com.martorell.albert.basketcoach.data.network.config.GeminiConfig
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
@@ -23,13 +26,30 @@ object NetworkModule {
     /**
      * Provides the application-wide [AiClientConfig] singleton.
      *
-     * Resolves API keys and endpoint settings from environment variables or build configuration.
+     * Resolves API keys from [BuildConfig] (populated at build time) with fallback to environment variables.
+     * Prioritizes DevExpert Inference, falling back to Google Gemini.
      *
      * @return Initialized [AiClientConfig] instance.
      */
     @Provides
     @Singleton
-    fun provideAiClientConfig(): AiClientConfig = AiClientConfig.fromEnvironment()
+    fun provideAiClientConfig(): AiClientConfig {
+        val devexpertKey = BuildConfig.DEVEXPERT_API_KEY.takeIf { it.isNotBlank() }
+            ?: DevExpertConfig.resolveApiKey()
+
+        if (!devexpertKey.isNullOrBlank()) {
+            return DevExpertConfig.create(apiKey = devexpertKey)
+        }
+
+        val geminiKey = BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() }
+            ?: GeminiConfig.resolveApiKey()
+
+        if (!geminiKey.isNullOrBlank()) {
+            return GeminiConfig.create(apiKey = geminiKey)
+        }
+
+        return DevExpertConfig.create(apiKey = "")
+    }
 
     /**
      * Provides the default [OkHttpClient] singleton configured with appropriate timeouts for AI inference.

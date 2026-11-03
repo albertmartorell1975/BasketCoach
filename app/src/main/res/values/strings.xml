@@ -114,7 +114,7 @@
     <string name="dashboard_error_retry">Reintentar</string>
     <string name="dashboard_error_empty">No s\'han trobat partits de la 1a Fase al conjunt de dades.</string>
     <string name="dashboard_error_generic">S\'ha produït un error inesperat en carregar les dades.</string>
-    <string name="analysis_loading">Carregant anàlisi tàctica...</string>
+    <string name="analysis_loading">Carregant anàlisi tàctica&#8230;</string>
     <string name="analysis_error_title">Error en carregar l\'anàlisi</string>
     <string name="analysis_error_retry">Reintentar</string>
     <string name="analysis_error_empty">No s\'han trobat dades de partits per generar l\'anàlisi tàctica.</string>

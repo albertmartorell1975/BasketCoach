@@ -1,9 +1,24 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+fun resolveApiKey(keyName: String): String {
+    return localProperties.getProperty(keyName)
+        ?: System.getenv(keyName)
+        ?: ""
 }
 
 android {
@@ -18,6 +33,12 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+
+        val devexpertKey = resolveApiKey("DEVEXPERT_API_KEY")
+        val geminiKey = resolveApiKey("GEMINI_API_KEY")
+
+        buildConfigField("String", "DEVEXPERT_API_KEY", "\"$devexpertKey\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
     }
 
     buildTypes {
@@ -33,6 +54,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

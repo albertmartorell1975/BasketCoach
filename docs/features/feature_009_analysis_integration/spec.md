@@ -182,7 +182,7 @@ No Room database changes required. Uses the existing thread-safe in-memory `AiAn
   - [x] Update `InsightCardUiModel.kt` to replace `val categoryBadgeText: String` with `@param:StringRes val categoryBadgeRes: Int` (0 defaults, 0 nullable fields per Constraint #17).
   - [x] Update `AnalysisUiState.kt` to model `AnalysisUiState(val content: AnalysisUiContent, val isRefreshing: Boolean)` and `sealed interface AnalysisUiContent` (`Loading`, `Success`, `Error(val error: DomainError)`).
   - [x] Implement `AnalysisUiMapper.kt` (`@Inject constructor()`):
-    - Computes `Phase1SummaryUiModel` from non-empty `List<Game>` (`require(games.isNotEmpty())`).
+    - Computes `Phase1SummaryUiModel` from non-empty `List<Game>` (`if empty returns AnalysisUiContent.Error(DomainError.Local.NotFound)`).
     - Maps each `Insight` to `InsightCardUiModel` (`categoryBadgeRes = R.string.analysis_badge_strength` or `R.string.analysis_badge_improvement`, `canExploreChat = insight.type == InsightType.IMPROVEMENT && insight.exploreChatPrompt.isNotBlank()`).
     - Computes `totalCount`, `strengthsCount`, `improvementsCount`, and filters `displayedInsights` by `selectedFilter`.
   - [x] Implement `AnalysisErrorExt.kt` (`fun DomainError.toAnalysisUiText(): UiText`) mapping `Local.NotFound`, `Network.NoInternet`, `Network.Timeout`, `Network.Unauthorized`, `Network.ServerError`, and `Generic` to localized string resources or dynamic messages.
@@ -199,7 +199,7 @@ No Room database changes required. Uses the existing thread-safe in-memory `AiAn
 - [x] **Pragmatic High-Value Testing (Strict Budget: 4 Pure JVM tests total, 0 Robolectric tests):**
   - [x] Create `app/src/test/java/com/martorell/albert/basketcoach/ui/analysis/AnalysisUiMapperTest.kt` (2 tests):
     1. `should_MapGamesAndInsightsToSuccess_and_FilterByTab_when_ValidDataProvided`
-    2. `should_ThrowIllegalArgumentException_when_GamesListIsEmpty`
+    2. `should_ReturnErrorNotFound_when_GamesListIsEmpty`
   - [x] Create `app/src/test/java/com/martorell/albert/basketcoach/ui/analysis/AnalysisViewModelTest.kt` (2 tests):
     1. `should_RemainPassiveInitially_and_TransitionToSuccessAndFilter_when_LoadAnalysisInvoked`
     2. `should_TransitionToError_when_UseCaseFails_and_RecoverOnRetry`

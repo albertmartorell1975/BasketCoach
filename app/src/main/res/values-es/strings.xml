@@ -114,7 +114,7 @@
     <string name="dashboard_error_retry">Reintentar</string>
     <string name="dashboard_error_empty">No se han encontrado partidos de la 1ª Fase en el conjunto de datos.</string>
     <string name="dashboard_error_generic">Se ha producido un error inesperado al cargar los datos.</string>
-    <string name="analysis_loading">Cargando análisis táctico...</string>
+    <string name="analysis_loading">Cargando análisis táctico&#8230;</string>
     <string name="analysis_error_title">Error al cargar el análisis</string>
     <string name="analysis_error_retry">Reintentar</string>
     <string name="analysis_error_empty">No se han encontrado datos de partidos para generar el análisis táctico.</string>
