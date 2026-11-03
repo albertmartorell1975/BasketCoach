@@ -19,6 +19,16 @@ BasketCoach is a Tablet Landscape application for a Junior Men's Interterritoria
 - `:usecases` — Domain interactors coordinating business logic and AI analysis.
 - `:app` — Jetpack Compose presentation layer strictly optimized for tablet landscape orientation.
 
+## AI Tactical Analysis & Structured Outputs
+
+BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) using the **Structured Outputs Pattern**:
+- **Empirical Grounding**: The AI is strictly anchored in the 14 Phase 1 box scores (`PromptTemplates.formatGameSummary`), preventing hallucinations.
+- **Strict Schema Contract**: System prompts mandate valid JSON matching `AiAnalysisResponseDto` without markdown wrapping or null fields.
+- **Deterministic Inference**: Queries are dispatched at `temperature = 0.2` for maximum schema reliability.
+- **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
+
+For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](file:///c:/Projectes/AI/BasketCoach/docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](file:///c:/Projectes/AI/BasketCoach/ARCHITECTURE.md#61-structured-outputs-pattern--ai-tactical-grounding-pipeline).
+
 ## Progress & Status
 - [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).
 - [x] **`feature_002_data_parsing`**: Phase 1 JSON dataset parsing and cached `GameRepositoryImpl` in `:data` (`accepted`).

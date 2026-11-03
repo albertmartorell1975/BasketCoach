@@ -192,6 +192,18 @@ BasketCoach integrates with the DevExpert Inference API and provides seamless fa
    - `Throwable.toDomainError()` maps timeouts to `DomainError.Network.Timeout`, 401 to `DomainError.Network.Unauthorized`, 500..599 to `DomainError.Network.ServerError`, and IO errors to `DomainError.Network.NoInternet`.
    - `safeCall` preserves structured concurrency by immediately rethrowing `CancellationException`.
 
+### 6.1 Structured Outputs Pattern & AI Tactical Grounding Pipeline
+
+BasketCoach utilizes the **Structured Outputs Pattern** to bridge non-deterministic LLM text generation with deterministic Jetpack Compose UI requirements:
+
+1. **Context Grounding (`PromptTemplates.formatGameSummary`)**: Before invoking the AI, all 14 Phase 1 games are aggregated into factual box score baselines (AST/TO ratios, rebounding differentials, personal fouls, round-by-round margins).
+2. **Schema Contract (`PromptTemplates.ANALYSIS_SYSTEM_PROMPT`)**: The system prompt enforces a strict JSON schema contract mirroring `AiAnalysisResponseDto`. It forbids markdown commentary, missing fields, or null values.
+3. **Low-Entropy Remote Inference**: Dispatched via `AiRemoteDataSourceImpl` (`/chat/completions`) with `temperature = 0.2` to eliminate stylistic deviation.
+4. **Sanitization & Kotlinx Deserialization**: Strips markdown fences (triple backticks) and parses raw payloads with `Json.decodeFromString<AiAnalysisResponseDto>()`.
+5. **Domain Transformation & Caching**: Mapped to pure domain entities (`List<Insight>`, `List<Drill>`) and cached in-memory with `AiAnalysisLocalDataSource` (`Mutex`).
+
+> For full architectural details, sequence diagrams, and schema specifications, see [docs/architecture/ai-tactical-analysis-structured-outputs.md](file:///c:/Projectes/AI/BasketCoach/docs/architecture/ai-tactical-analysis-structured-outputs.md).
+
 
 ---
 
