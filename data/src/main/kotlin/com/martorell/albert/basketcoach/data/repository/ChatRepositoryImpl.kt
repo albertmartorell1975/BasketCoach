@@ -1,8 +1,9 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.mapper.toAiChatMessage
-import com.martorell.albert.basketcoach.data.mapper.toCoachChatMessage
+import com.martorell.albert.basketcoach.data.mapper.toDomain
 import com.martorell.albert.basketcoach.data.mapper.toDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatRole
 import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSource
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
@@ -26,7 +27,7 @@ import javax.inject.Inject
  * - Short-circuits off-topic queries immediately with a localized tactical refusal message
  *   ([PromptTemplates.buildOffTopicRejectionMessage]) without consuming generative AI tokens.
  * - Encapsulates all data operations within [safeCall] to map exceptions into typed [DomainError] results.
- * - Delegates domain entity construction to [toCoachChatMessage] and [toAiChatMessage].
+ * - Delegates domain entity mapping strictly via [ChatMessageDto.toDomain].
  *
  * @param remoteDataSource Remote client communicating with DevExpert or Gemini AI endpoints.
  * @param localDataSource Thread-safe in-memory cache holding the continuous chat thread messages.
@@ -62,7 +63,10 @@ class ChatRepositoryImpl @Inject constructor(
         messageText: String,
         games: List<Game>?
     ): Result<ChatMessage, DomainError> = safeCall {
-        val coachMessage = toCoachChatMessage(messageText)
+        val coachMessage = ChatMessageDto(
+            role = ChatRole.USER,
+            content = messageText
+        ).toDomain()
         localDataSource.saveMessage(coachMessage)
 
         val lastAssistantMessage = localDataSource.getMessages()
@@ -87,7 +91,10 @@ class ChatRepositoryImpl @Inject constructor(
             PromptTemplates.buildOffTopicRejectionMessage()
         }
 
-        val aiMessage = toAiChatMessage(responseText)
+        val aiMessage = ChatMessageDto(
+            role = ChatRole.ASSISTANT,
+            content = responseText
+        ).toDomain()
         localDataSource.saveMessage(aiMessage)
         aiMessage
     }

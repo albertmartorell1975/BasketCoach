@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.data.mapper
 
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatRole
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.MessageSender
@@ -10,8 +11,9 @@ import org.junit.Test
 class ChatMapperTest {
 
     @Test
-    fun toCoachChatMessage_createsValidCoachDomainEntity() {
-        val message = toCoachChatMessage("Com defensem el blocatge directe?")
+    fun toDomain_mapsUserRoleToCoachDomainEntity() {
+        val dto = ChatMessageDto(role = ChatRole.USER, content = "Com defensem el blocatge directe?")
+        val message = dto.toDomain()
 
         assertEquals(MessageSender.COACH, message.sender)
         assertEquals("Com defensem el blocatge directe?", message.text)
@@ -20,8 +22,9 @@ class ChatMapperTest {
     }
 
     @Test
-    fun toAiChatMessage_createsValidAiDomainEntity() {
-        val message = toAiChatMessage("Recomano passar per darrere o fer show curt.")
+    fun toDomain_mapsAssistantRoleToAiDomainEntity() {
+        val dto = ChatMessageDto(role = ChatRole.ASSISTANT, content = "Recomano passar per darrere o fer show curt.")
+        val message = dto.toDomain()
 
         assertEquals(MessageSender.AI, message.sender)
         assertEquals("Recomano passar per darrere o fer show curt.", message.text)
@@ -30,7 +33,7 @@ class ChatMapperTest {
     }
 
     @Test
-    fun toDto_mapsSenderRolesCorrectly() {
+    fun toDto_mapsDomainMessagesToDtosCorrectly() {
         val coachMsg = ChatMessage("1", MessageSender.COACH, "Hola", 1000L)
         val aiMsg = ChatMessage("2", MessageSender.AI, "Hola Coach", 2000L)
 

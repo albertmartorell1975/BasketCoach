@@ -199,11 +199,12 @@ class ChatUiMapper @Inject constructor() {
     )
 
     private fun formatTimestamp(timestamp: Long): String {
+        if (timestamp <= 0L) return ""
         return try {
             val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
             sdf.format(Date(timestamp))
         } catch (_: Exception) {
-            "10:42"
+            ""
         }
     }
 }

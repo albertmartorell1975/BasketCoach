@@ -199,7 +199,7 @@ class ChatViewModel @Inject constructor(
      * Handles selection of a tactical intervention topic card.
      *
      * Switches left pane mode to [ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE] if the topic contains
-     * diagnostic evidence, and updates the active topic ID in state.
+     * diagnostic evidence, or back to [ChatLeftPaneMode.TOPIC_LIST] if it does not.
      *
      * @param topic Selected topic card model.
      */
@@ -208,7 +208,7 @@ class ChatViewModel @Inject constructor(
         val targetMode = if (topic.hasDiagnosticEvidence) {
             ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
         } else {
-            currentSuccess.leftPaneMode
+            ChatLeftPaneMode.TOPIC_LIST
         }
         _uiState.update {
             it.copy(

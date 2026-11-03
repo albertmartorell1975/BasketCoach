@@ -191,6 +191,12 @@ class ChatViewModelTest {
         updated = viewModel.uiState.value.content as ChatUiContent.Success
         assertEquals(evidenceTopic.id, updated.activeTopicId)
         assertEquals(ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE, updated.leftPaneMode)
+
+        // Switching back to non-evidence topic returns left pane to TOPIC_LIST
+        viewModel.onTopicSelected(nonEvidenceTopic)
+        updated = viewModel.uiState.value.content as ChatUiContent.Success
+        assertEquals(nonEvidenceTopic.id, updated.activeTopicId)
+        assertEquals(ChatLeftPaneMode.TOPIC_LIST, updated.leftPaneMode)
     }
 
     @Test
