@@ -6,69 +6,117 @@ import java.util.Locale
 
 object PromptTemplates {
 
-    val ANALYSIS_SYSTEM_PROMPT: String = """
-        You are an elite tactical assistant for the basketball head coach of "$OUR_TEAM_NAME", competing in the Junior Men's Interterritorial category under FIBA rules.
-        Your mission is to perform an in-depth diagnosis of Phase 1 games to prepare the squad for Phase 2.
-        
-        CRITICAL RULES:
-        1. Base your diagnosis strictly on the provided Phase 1 match box scores and metrics.
-        2. Analyze key patterns:
-           - Record: 3 wins, 11 losses.
-           - Assist-to-turnover ratio (AST/TO): High turnover rates and low AST/TO (< 0.70) in losses vs solid ball security (>= 1.0) in wins.
-           - Rebounding: Defensive rebounding vulnerability and deficit vs opponents.
-           - Personal fouls: Foul trouble (averaging > 20 fouls in losses) leading to opponent free throw runs.
-        3. Formulate actionable tactical insights and practice drills for Phase 2 to eliminate Phase 1 weaknesses and reinforce winning formulas.
-        4. OUTPUT FORMAT: Respond ONLY with a valid JSON object. Every field shown in the schema below is strictly mandatory (do NOT omit any field, do NOT use null values). Match this exact schema without any conversational preamble or markdown code blocks:
-        {
-          "insights": [
-            {
-              "id": "insight-1",
-              "title": "Concise headline",
-              "description": "Tactical explanation and data evidence",
-              "category": "OFFENSE" | "DEFENSE" | "SYNERGY" | "GENERAL",
-              "relatedGameRounds": [1, 5, 8],
-              "type": "STRENGTH" | "IMPROVEMENT",
-              "contextTag": "e.g. Fase Ofensiva · Pintura",
-              "metric": {
-                "primaryLabel": "Percentatge T2 Zona",
-                "primaryValue": "58.4%",
-                "primarySubValue": "+8.2% sobre mitjana lliga",
-                "secondaryLabel": "Punts / Pos.",
-                "secondaryValue": "1.24 pts/pos",
-                "secondaryTag": "dataset:paint_eff",
-                "sentiment": "POSITIVE" | "NEGATIVE" | "NEUTRAL"
-              },
-              "priority": "Alta",
-              "footerNote": "Factor diferencial en victòries.",
-              "exploreChatPrompt": "Quins exercicis d'entrenament podem aplicar per a la Fase 2?"
-            }
-          ],
-          "drills": [
-            {
-              "id": "drill-1",
-              "name": "Drill Title",
-              "objective": "Targeted tactical improvement goal",
-              "instructions": ["Step 1", "Step 2", "Step 3"],
-              "focusArea": "e.g. Ball Protection & Transition Defense"
-            }
-          ]
-        }
-    """.trimIndent()
-
-    val CHAT_SYSTEM_PROMPT: String = """
-        You are the AI assistant coach for "$OUR_TEAM_NAME" in the Junior Men's Interterritorial basketball league under FIBA rules.
-        You assist the head coach with tactical advice, game preparation, drill recommendations, and performance analysis.
-        Be concise, professional, insightful, and basketball-grounded. Always reply in the same language the coach speaks to you.
-    """.trimIndent()
-
-    fun buildChatSystemPrompt(gameContext: String?): String {
-        return if (!gameContext.isNullOrBlank()) {
-            "$CHAT_SYSTEM_PROMPT\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
-        } else {
-            CHAT_SYSTEM_PROMPT
+    /**
+     * Resolves the target natural language for AI generation based on the active [Locale].
+     *
+     * Defaults to Catalan (the primary language of Basquet Pia Sabadell in the FCBQ),
+     * and switches to Spanish when the system locale starts with "es".
+     */
+    fun resolveTargetLanguage(locale: Locale = Locale.getDefault()): String {
+        return when (locale.language.lowercase(Locale.ROOT)) {
+            "es" -> "Spanish (Español)"
+            "ca" -> "Catalan (Català)"
+            else -> "Catalan (Català)" // Base language of Basquet Pia Sabadell
         }
     }
 
+    /**
+     * System prompt establishing tactical persona, Phase 1 analytical rules, and strict JSON schema contract.
+     * Evaluates dynamically using [Locale.getDefault].
+     */
+    val ANALYSIS_SYSTEM_PROMPT: String
+        get() = buildAnalysisSystemPrompt()
+
+    /**
+     * Builds the tactical analysis system prompt parameterized by [locale].
+     */
+    fun buildAnalysisSystemPrompt(locale: Locale = Locale.getDefault()): String {
+        val targetLanguage = resolveTargetLanguage(locale)
+        return """
+            You are an elite tactical assistant for the basketball head coach of "$OUR_TEAM_NAME", competing in the Junior Men's Interterritorial category under FIBA rules.
+            Your mission is to perform an in-depth diagnosis of Phase 1 games to prepare the squad for Phase 2.
+            
+            CRITICAL RULES:
+            1. Base your diagnosis strictly on the provided Phase 1 match box scores and metrics.
+            2. Analyze key patterns:
+               - Record: 3 wins, 11 losses.
+               - Assist-to-turnover ratio (AST/TO): High turnover rates and low AST/TO (< 0.70) in losses vs solid ball security (>= 1.0) in wins.
+               - Rebounding: Defensive rebounding vulnerability and deficit vs opponents.
+               - Personal fouls: Foul trouble (averaging > 20 fouls in losses) leading to opponent free throw runs.
+            3. Formulate actionable tactical insights and practice drills for Phase 2 to eliminate Phase 1 weaknesses and reinforce winning formulas.
+            4. LANGUAGE MANDATE: All human-readable text fields in the output JSON (title, description, contextTag, metric primaryLabel, metric primarySubValue, metric secondaryLabel, priority, footerNote, exploreChatPrompt, drill name, objective, instructions, and focusArea) MUST be written in $targetLanguage. Keep standard basketball acronyms (AST, TO, REB, 2P, 3P, TL, eFG%) recognizable.
+            5. OUTPUT FORMAT: Respond ONLY with a valid JSON object. Every field shown in the schema below is strictly mandatory (do NOT omit any field, do NOT use null values). Match this exact schema without any conversational preamble or markdown code blocks:
+            {
+              "insights": [
+                {
+                  "id": "insight-1",
+                  "title": "Concise headline in $targetLanguage",
+                  "description": "Tactical explanation and data evidence in $targetLanguage",
+                  "category": "OFFENSE" | "DEFENSE" | "SYNERGY" | "GENERAL",
+                  "relatedGameRounds": [1, 5, 8],
+                  "type": "STRENGTH" | "IMPROVEMENT",
+                  "contextTag": "e.g. Fase Ofensiva · Pintura",
+                  "metric": {
+                    "primaryLabel": "Label in $targetLanguage",
+                    "primaryValue": "58.4%",
+                    "primarySubValue": "SubValue in $targetLanguage",
+                    "secondaryLabel": "Secondary label in $targetLanguage",
+                    "secondaryValue": "1.24 pts/pos",
+                    "secondaryTag": "dataset:paint_eff",
+                    "sentiment": "POSITIVE" | "NEGATIVE" | "NEUTRAL"
+                  },
+                  "priority": "Alta | Mitjana | Baixa",
+                  "footerNote": "Explanatory footer in $targetLanguage.",
+                  "exploreChatPrompt": "Prompt to explore in chat in $targetLanguage"
+                }
+              ],
+              "drills": [
+                {
+                  "id": "drill-1",
+                  "name": "Drill Title in $targetLanguage",
+                  "objective": "Targeted tactical improvement goal in $targetLanguage",
+                  "instructions": ["Step 1 in $targetLanguage", "Step 2 in $targetLanguage", "Step 3 in $targetLanguage"],
+                  "focusArea": "Focus area in $targetLanguage"
+                }
+              ]
+            }
+        """.trimIndent()
+    }
+
+    /**
+     * Base system prompt for conversational chat assistance.
+     * Evaluates dynamically using [Locale.getDefault].
+     */
+    val CHAT_SYSTEM_PROMPT: String
+        get() = buildChatSystemPromptBase()
+
+    /**
+     * Builds the base conversational chat system prompt parameterized by [locale].
+     */
+    fun buildChatSystemPromptBase(locale: Locale = Locale.getDefault()): String {
+        val targetLanguage = resolveTargetLanguage(locale)
+        return """
+            You are the AI assistant coach for "$OUR_TEAM_NAME" in the Junior Men's Interterritorial basketball league under FIBA rules.
+            You assist the head coach with tactical advice, game preparation, drill recommendations, and performance analysis.
+            Be concise, professional, insightful, and basketball-grounded. Always reply in $targetLanguage (or match the coach's language if they explicitly write in another language).
+        """.trimIndent()
+    }
+
+    /**
+     * Constructs the full chat system prompt incorporating optional match grounding context and [locale].
+     */
+    fun buildChatSystemPrompt(gameContext: String?, locale: Locale = Locale.getDefault()): String {
+        val basePrompt = buildChatSystemPromptBase(locale)
+        return if (!gameContext.isNullOrBlank()) {
+            "$basePrompt\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
+        } else {
+            basePrompt
+        }
+    }
+
+    /**
+     * Formats the list of [games] into a concise, factual summary for grounding AI inference.
+     */
     fun formatGameSummary(games: List<Game>): String {
         if (games.isEmpty()) return "No games recorded for Phase 1."
 
@@ -119,7 +167,11 @@ object PromptTemplates {
         return summaryBuilder.toString()
     }
 
-    fun buildAnalysisUserPrompt(gameSummary: String): String {
+    /**
+     * Builds the analysis user prompt containing grounded match data and [locale] instructions.
+     */
+    fun buildAnalysisUserPrompt(gameSummary: String, locale: Locale = Locale.getDefault()): String {
+        val targetLanguage = resolveTargetLanguage(locale)
         return """
             Here is the complete Phase 1 match data for $OUR_TEAM_NAME:
             
@@ -129,7 +181,7 @@ object PromptTemplates {
             1. Key tactical insights (strengths, vulnerabilities, and critical patterns).
             2. Tactical practice drills for Phase 2 to fix our turnover rates, rebounding, and defensive fouls.
             
-            Remember: Return ONLY valid JSON matching the requested schema.
+            Remember: Return ONLY valid JSON matching the requested schema. All text fields must be written in $targetLanguage.
         """.trimIndent()
     }
 }
