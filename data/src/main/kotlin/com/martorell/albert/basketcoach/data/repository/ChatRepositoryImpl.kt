@@ -34,9 +34,6 @@ class ChatRepositoryImpl @Inject constructor(
     private val localDataSource: ChatLocalDataSource
 ) : ChatRepository {
 
-    internal var idGenerator: () -> String = { UUID.randomUUID().toString() }
-    internal var timestampProvider: () -> Long = { System.currentTimeMillis() }
-
     /**
      * Retrieves all conversation messages recorded in the single-thread session.
      *
@@ -64,10 +61,10 @@ class ChatRepositoryImpl @Inject constructor(
         games: List<Game>?
     ): Result<ChatMessage, DomainError> = safeCall {
         val coachMessage = ChatMessage(
-            id = idGenerator(),
+            id = UUID.randomUUID().toString(),
             sender = MessageSender.COACH,
             text = messageText,
-            timestamp = timestampProvider()
+            timestamp = System.currentTimeMillis()
         )
         localDataSource.saveMessage(coachMessage)
 
@@ -94,10 +91,10 @@ class ChatRepositoryImpl @Inject constructor(
         }
 
         val aiMessage = ChatMessage(
-            id = idGenerator(),
+            id = UUID.randomUUID().toString(),
             sender = MessageSender.AI,
             text = responseText,
-            timestamp = timestampProvider()
+            timestamp = System.currentTimeMillis()
         )
         localDataSource.saveMessage(aiMessage)
         aiMessage

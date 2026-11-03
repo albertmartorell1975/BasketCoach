@@ -59,15 +59,10 @@ class ChatRepositoryImplTest {
     fun setUp() {
         fakeRemoteDataSource = FakeAiRemoteDataSource()
         localDataSource = ChatLocalDataSourceImpl()
-
-        var idCounter = 0
         repository = ChatRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
             localDataSource = localDataSource
-        ).apply {
-            idGenerator = { "msg-${++idCounter}" }
-            timestampProvider = { 1000L * idCounter }
-        }
+        )
     }
 
     @Test
@@ -76,7 +71,8 @@ class ChatRepositoryImplTest {
 
         assertTrue(sendResult is Result.Success)
         val aiMessage = (sendResult as Result.Success).data
-        assertEquals("msg-2", aiMessage.id)
+        assertTrue(aiMessage.id.isNotBlank())
+        assertTrue(aiMessage.timestamp > 0L)
         assertEquals(MessageSender.AI, aiMessage.sender)
         assertEquals("AI response text", aiMessage.text)
 
@@ -86,8 +82,10 @@ class ChatRepositoryImplTest {
         assertEquals(2, messageList.size)
         assertEquals(MessageSender.COACH, messageList[0].sender)
         assertEquals("How do we improve defense?", messageList[0].text)
+        assertTrue(messageList[0].id.isNotBlank())
         assertEquals(MessageSender.AI, messageList[1].sender)
         assertEquals("AI response text", messageList[1].text)
+        assertTrue(messageList[1].id.isNotBlank())
 
         assertEquals("How do we improve defense?", fakeRemoteDataSource.capturedPrompt)
         assertEquals("No games recorded for Phase 1.", fakeRemoteDataSource.capturedContext)
@@ -108,6 +106,7 @@ class ChatRepositoryImplTest {
         val messageList = (allMessages as Result.Success).data
         assertEquals(1, messageList.size)
         assertEquals(MessageSender.COACH, messageList[0].sender)
+        assertTrue(messageList[0].id.isNotBlank())
     }
 
     @Test
@@ -120,6 +119,8 @@ class ChatRepositoryImplTest {
         val aiMessage = (sendResult as Result.Success).data
         assertEquals(0, fakeRemoteDataSource.callCount)
         assertTrue(aiMessage.text.contains("Bàsquet Pia Sabadell"))
+        assertTrue(aiMessage.id.isNotBlank())
+        assertTrue(aiMessage.timestamp > 0L)
 
         val allMessages = repository.getMessages()
         assertTrue(allMessages is Result.Success)
