@@ -71,6 +71,24 @@ object ChatPreviewData {
             microcycleText = stringResource(R.string.chat_preview_summary_microcycle)
         )
 
+    val systemMessage: ChatMessageUiModel
+        @Composable
+        get() = ChatMessageUiModel(
+            id = "msg_sys",
+            sender = MessageSender.SYSTEM,
+            senderNameRes = R.string.chat_sender_system_name,
+            senderRoleRes = R.string.chat_sender_system_role,
+            timestamp = "10:12",
+            text = "Fil tàctic inicialitzat amb el context complet dels 14 partits de la Fase 1.",
+            hasCalloutQuestion = false,
+            calloutQuestionText = "",
+            calloutSubText = "",
+            hasDrillOptions = false,
+            drillOptions = emptyList(),
+            hasSummaryCard = false,
+            summaryCard = ChatSummaryCardUiModel.EMPTY
+        )
+
     val initialMessages: List<ChatMessageUiModel>
         @Composable
         get() = listOf(

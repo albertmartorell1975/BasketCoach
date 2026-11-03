@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
@@ -117,6 +118,7 @@ fun CoachMessageBubble(
 }
 
 @BcThemePreview
+@BcDevicePreview
 @Composable
 private fun CoachMessageBubblePreview() {
     CoachMessageBubble(model = ChatPreviewData.initialMessages[1])

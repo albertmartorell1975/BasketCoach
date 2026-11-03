@@ -19,7 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
+import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainerLow
 import com.martorell.albert.basketcoach.ui.theme.PiaTacticalOrange
 import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
@@ -67,4 +70,11 @@ fun SystemMessageBubble(
             }
         }
     }
+}
+
+@BcThemePreview
+@BcDevicePreview
+@Composable
+private fun SystemMessageBubblePreview() {
+    SystemMessageBubble(model = ChatPreviewData.systemMessage)
 }

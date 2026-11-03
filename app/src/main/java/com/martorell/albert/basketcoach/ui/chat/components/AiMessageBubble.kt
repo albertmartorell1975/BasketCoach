@@ -26,6 +26,7 @@ import com.martorell.albert.basketcoach.ui.chat.components.assistant.AssistantSu
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
+import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainer
@@ -162,6 +163,7 @@ fun AiMessageBubble(
 }
 
 @BcThemePreview
+@BcDevicePreview
 @Composable
 private fun AiMessageBubblePreview() {
     AiMessageBubble(
