@@ -27,7 +27,7 @@ BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) 
 - **Deterministic Inference**: Queries are dispatched at `temperature = 0.2` for maximum schema reliability.
 - **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
 
-For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](file:///c:/Projectes/AI/BasketCoach/docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](file:///c:/Projectes/AI/BasketCoach/ARCHITECTURE.md#61-structured-outputs-pattern--ai-tactical-grounding-pipeline).
+For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md#section-61-structured-outputs).
 
 ## Progress & Status
 - [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).

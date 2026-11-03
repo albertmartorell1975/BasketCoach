@@ -192,6 +192,7 @@ BasketCoach integrates with the DevExpert Inference API and provides seamless fa
    - `Throwable.toDomainError()` maps timeouts to `DomainError.Network.Timeout`, 401 to `DomainError.Network.Unauthorized`, 500..599 to `DomainError.Network.ServerError`, and IO errors to `DomainError.Network.NoInternet`.
    - `safeCall` preserves structured concurrency by immediately rethrowing `CancellationException`.
 
+<a id="section-61-structured-outputs"></a>
 ### 6.1 Structured Outputs Pattern & AI Tactical Grounding Pipeline
 
 BasketCoach utilizes the **Structured Outputs Pattern** to bridge non-deterministic LLM text generation with deterministic Jetpack Compose UI requirements:
@@ -202,7 +203,7 @@ BasketCoach utilizes the **Structured Outputs Pattern** to bridge non-determinis
 4. **Sanitization & Kotlinx Deserialization**: Strips markdown fences (triple backticks) and parses raw payloads with `Json.decodeFromString<AiAnalysisResponseDto>()`.
 5. **Domain Transformation & Caching**: Mapped to pure domain entities (`List<Insight>`, `List<Drill>`) and cached in-memory with `AiAnalysisLocalDataSource` (`Mutex`).
 
-> For full architectural details, sequence diagrams, and schema specifications, see [docs/architecture/ai-tactical-analysis-structured-outputs.md](file:///c:/Projectes/AI/BasketCoach/docs/architecture/ai-tactical-analysis-structured-outputs.md).
+> For full architectural details, sequence diagrams, and schema specifications, see [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md).
 
 
 ---
