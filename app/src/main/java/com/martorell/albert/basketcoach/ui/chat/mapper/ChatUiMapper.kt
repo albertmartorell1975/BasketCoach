@@ -24,7 +24,8 @@ import javax.inject.Inject
  * Authoritative mathematical and presentation mapper computing:
  * - Phase 1 competitive balance (wins, losses) for the meta header.
  * - Localized sender name and role string resource IDs ([R.string.chat_sender_coach_name],
- *   [R.string.chat_sender_coach_role], [R.string.chat_sender_ai_name], [R.string.chat_sender_ai_role]).
+ *   [R.string.chat_sender_coach_role], [R.string.chat_sender_ai_name], [R.string.chat_sender_ai_role],
+ *   [R.string.chat_sender_system_name], [R.string.chat_sender_system_role]).
  * - Default tactical intervention topic cards and diagnostic evidence models.
  * - Formatted message timestamps (`HH:mm`).
  */
@@ -88,6 +89,7 @@ class ChatUiMapper @Inject constructor() {
         val (nameRes, roleRes) = when (domainMessage.sender) {
             MessageSender.COACH -> Pair(R.string.chat_sender_coach_name, R.string.chat_sender_coach_role)
             MessageSender.AI -> Pair(R.string.chat_sender_ai_name, R.string.chat_sender_ai_role)
+            MessageSender.SYSTEM -> Pair(R.string.chat_sender_system_name, R.string.chat_sender_system_role)
         }
 
         val timeString = formatTimestamp(domainMessage.timestamp)

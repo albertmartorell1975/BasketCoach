@@ -8,5 +8,8 @@ enum class MessageSender {
     COACH,
 
     /** The AI basketball coaching assistant generating responses. */
-    AI
+    AI,
+
+    /** System prompt or automated contextual instructions. */
+    SYSTEM
 }

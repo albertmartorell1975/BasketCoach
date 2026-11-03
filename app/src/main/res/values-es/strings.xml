@@ -121,6 +121,8 @@
     <string name="chat_sender_coach_role">Primer Entrenador</string>
     <string name="chat_sender_ai_name">Asistente Táctico IA</string>
     <string name="chat_sender_ai_role">Pia Sabadell AI</string>
+    <string name="chat_sender_system_name">Sistema</string>
+    <string name="chat_sender_system_role">Contexto Táctico</string>
     <string name="chat_topic_1_badge">ÁREA #1 · PRIORITARIA</string>
     <string name="chat_topic_1_title">Control del Rebote Defensivo</string>
     <string name="chat_topic_1_desc">14.8 pts de 2ª oportunidad concedidos · 13.2 reb. def</string>

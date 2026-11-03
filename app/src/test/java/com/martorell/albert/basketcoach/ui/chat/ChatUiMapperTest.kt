@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.ui.chat
 
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
@@ -99,6 +100,26 @@ class ChatUiMapperTest {
         assertEquals(2, success.messages.size)
         assertEquals("Hola", success.messages[0].text)
         assertEquals("Hola Jordi", success.messages[1].text)
+    }
+
+    @Test
+    fun mapMessage_mapsAllSenderTypesWithCorrectStringResources() {
+        val coachMsg = ChatMessage("1", MessageSender.COACH, "Text Coach", 1000L)
+        val aiMsg = ChatMessage("2", MessageSender.AI, "Text AI", 2000L)
+        val sysMsg = ChatMessage("3", MessageSender.SYSTEM, "Text System", 3000L)
+
+        val coachUi = mapper.mapMessage(coachMsg)
+        val aiUi = mapper.mapMessage(aiMsg)
+        val sysUi = mapper.mapMessage(sysMsg)
+
+        assertEquals(R.string.chat_sender_coach_name, coachUi.senderNameRes)
+        assertEquals(R.string.chat_sender_coach_role, coachUi.senderRoleRes)
+
+        assertEquals(R.string.chat_sender_ai_name, aiUi.senderNameRes)
+        assertEquals(R.string.chat_sender_ai_role, aiUi.senderRoleRes)
+
+        assertEquals(R.string.chat_sender_system_name, sysUi.senderNameRes)
+        assertEquals(R.string.chat_sender_system_role, sysUi.senderRoleRes)
     }
 
     @Test

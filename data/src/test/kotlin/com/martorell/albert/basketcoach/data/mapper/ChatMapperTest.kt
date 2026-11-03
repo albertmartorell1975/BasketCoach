@@ -6,7 +6,6 @@ import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -35,44 +34,46 @@ class ChatMapperTest {
     }
 
     @Test
-    fun toDomain_throwsIllegalArgumentExceptionWhenRoleIsSystem() {
-        val dto = ChatMessageDto(role = ChatRole.SYSTEM, content = "You are a basketball assistant.")
-        assertThrows(IllegalArgumentException::class.java) {
-            dto.toDomain()
-        }
+    fun toDomain_mapsSystemRoleToSystemDomainEntity() {
+        val dto = ChatMessageDto(role = ChatRole.SYSTEM, content = "Ets un assistent tàctic.")
+        val message = dto.toDomain()
+
+        assertEquals(MessageSender.SYSTEM, message.sender)
+        assertEquals("Ets un assistent tàctic.", message.text)
+        assertTrue(message.id.isNotBlank())
+        assertTrue(message.timestamp > 0L)
     }
 
     @Test
     fun toDto_mapsDomainMessagesToDtosCorrectly() {
         val coachMsg = ChatMessage("1", MessageSender.COACH, "Hola", 1000L)
         val aiMsg = ChatMessage("2", MessageSender.AI, "Hola Coach", 2000L)
+        val systemMsg = ChatMessage("3", MessageSender.SYSTEM, "System Prompt", 3000L)
 
         val coachDto = coachMsg.toDto()
         val aiDto = aiMsg.toDto()
+        val systemDto = systemMsg.toDto()
 
         assertEquals(ChatRole.USER, coachDto.role)
         assertEquals("Hola", coachDto.content)
         assertEquals(ChatRole.ASSISTANT, aiDto.role)
         assertEquals("Hola Coach", aiDto.content)
+        assertEquals(ChatRole.SYSTEM, systemDto.role)
+        assertEquals("System Prompt", systemDto.content)
     }
 
     @Test
     fun toChatRole_mapsMessageSenderCorrectly() {
         assertEquals(ChatRole.USER, MessageSender.COACH.toChatRole())
         assertEquals(ChatRole.ASSISTANT, MessageSender.AI.toChatRole())
+        assertEquals(ChatRole.SYSTEM, MessageSender.SYSTEM.toChatRole())
     }
 
     @Test
     fun toMessageSender_mapsChatRoleCorrectly() {
         assertEquals(MessageSender.COACH, ChatRole.USER.toMessageSender())
         assertEquals(MessageSender.AI, ChatRole.ASSISTANT.toMessageSender())
-    }
-
-    @Test
-    fun toMessageSender_throwsIllegalArgumentExceptionForSystemRole() {
-        assertThrows(IllegalArgumentException::class.java) {
-            ChatRole.SYSTEM.toMessageSender()
-        }
+        assertEquals(MessageSender.SYSTEM, ChatRole.SYSTEM.toMessageSender())
     }
 
     @Test

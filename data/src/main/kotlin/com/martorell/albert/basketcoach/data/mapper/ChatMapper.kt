@@ -9,28 +9,25 @@ import java.util.UUID
 /**
  * Maps a domain [MessageSender] into the corresponding OpenAI-compatible [ChatRole] enum.
  *
- * @receiver The domain [MessageSender] (`COACH` or `AI`).
- * @return [ChatRole.USER] for [MessageSender.COACH], or [ChatRole.ASSISTANT] for [MessageSender.AI].
+ * @receiver The domain [MessageSender] (`COACH`, `AI`, or `SYSTEM`).
+ * @return The corresponding [ChatRole] enum value.
  */
 fun MessageSender.toChatRole(): ChatRole = when (this) {
     MessageSender.COACH -> ChatRole.USER
     MessageSender.AI -> ChatRole.ASSISTANT
+    MessageSender.SYSTEM -> ChatRole.SYSTEM
 }
 
 /**
  * Maps a network [ChatRole] into its corresponding domain [MessageSender].
  *
- * Notice that [ChatRole.SYSTEM] messages are strictly network-level instructions for the LLM
- * and cannot be mapped to user-facing domain chat messages.
- *
  * @receiver The [ChatRole] enum value.
- * @return [MessageSender.COACH] for [ChatRole.USER], or [MessageSender.AI] for [ChatRole.ASSISTANT].
- * @throws IllegalArgumentException if the role is [ChatRole.SYSTEM].
+ * @return The corresponding [MessageSender] enum value.
  */
 fun ChatRole.toMessageSender(): MessageSender = when (this) {
     ChatRole.USER -> MessageSender.COACH
     ChatRole.ASSISTANT -> MessageSender.AI
-    ChatRole.SYSTEM -> throw IllegalArgumentException("System prompt messages cannot be mapped to user-facing domain chat messages")
+    ChatRole.SYSTEM -> MessageSender.SYSTEM
 }
 
 /**
