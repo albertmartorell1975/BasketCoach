@@ -40,7 +40,7 @@ sealed interface ChatUiContent {
         val metaHeader: ChatMetaHeaderUiModel,
         val leftPaneMode: ChatLeftPaneMode,
         val topicList: List<ChatTopicCardUiModel>,
-        val activeTopicId: String,
+        val activeTopicId: ChatTopicId,
         val diagnosticEvidence: ChatDiagnosticEvidenceUiModel,
         val messages: List<ChatMessageUiModel>,
         val inputText: String

@@ -13,6 +13,7 @@ import com.martorell.albert.basketcoach.domain.repository.ChatRepository
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
 import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.usecases.chat.GetChatMessagesUseCase
 import com.martorell.albert.basketcoach.usecases.chat.SendChatMessageUseCase
@@ -168,5 +169,37 @@ class ChatViewModelTest {
 
         assertTrue(viewModel.uiState.value.content is ChatUiContent.Error)
         assertEquals(DomainError.Local.NotFound, (viewModel.uiState.value.content as ChatUiContent.Error).error)
+    }
+
+    @Test
+    fun onTopicSelected_updatesActiveTopicIdAndSwitchesPaneWhenEvidenceAvailable() = runTest {
+        viewModel.loadChat()
+        advanceUntilIdle()
+
+        val initialSuccess = viewModel.uiState.value.content as ChatUiContent.Success
+        assertEquals(ChatTopicId.REBOUND_CONTROL, initialSuccess.activeTopicId)
+        assertEquals(ChatLeftPaneMode.TOPIC_LIST, initialSuccess.leftPaneMode)
+
+        val nonEvidenceTopic = initialSuccess.topicList.first { !it.hasDiagnosticEvidence }
+        viewModel.onTopicSelected(nonEvidenceTopic)
+        var updated = viewModel.uiState.value.content as ChatUiContent.Success
+        assertEquals(nonEvidenceTopic.id, updated.activeTopicId)
+        assertEquals(ChatLeftPaneMode.TOPIC_LIST, updated.leftPaneMode)
+
+        val evidenceTopic = initialSuccess.topicList.first { it.hasDiagnosticEvidence }
+        viewModel.onTopicSelected(evidenceTopic)
+        updated = viewModel.uiState.value.content as ChatUiContent.Success
+        assertEquals(evidenceTopic.id, updated.activeTopicId)
+        assertEquals(ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE, updated.leftPaneMode)
+    }
+
+    @Test
+    fun onInputTextChanged_updatesInputDraft() = runTest {
+        viewModel.loadChat()
+        advanceUntilIdle()
+
+        viewModel.onInputTextChanged("Nova pregunta tàctica")
+        val success = viewModel.uiState.value.content as ChatUiContent.Success
+        assertEquals("Nova pregunta tàctica", success.inputText)
     }
 }

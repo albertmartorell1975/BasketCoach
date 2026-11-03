@@ -8,6 +8,7 @@ import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 import com.martorell.albert.basketcoach.usecases.chat.GetChatMessagesUseCase
@@ -75,6 +76,7 @@ class ChatViewModel @Inject constructor(
                         games = cachedGames,
                         messages = messagesResult.data,
                         leftPaneMode = targetLeftPane,
+                        activeTopicId = ChatTopicId.REBOUND_CONTROL,
                         inputText = ""
                     )
 
@@ -122,7 +124,7 @@ class ChatViewModel @Inject constructor(
                         }
                         is Result.Success -> {
                             val activeLeftPane = currentSuccess?.leftPaneMode ?: ChatLeftPaneMode.TOPIC_LIST
-                            val activeTopic = currentSuccess?.activeTopicId
+                            val activeTopic = currentSuccess?.activeTopicId ?: ChatTopicId.REBOUND_CONTROL
 
                             val updatedContent = chatUiMapper.mapToContent(
                                 games = cachedGames,

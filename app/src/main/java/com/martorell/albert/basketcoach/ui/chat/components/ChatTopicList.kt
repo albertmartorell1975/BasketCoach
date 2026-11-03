@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 import com.martorell.albert.basketcoach.ui.theme.PiaSurfaceContainerLow
@@ -42,7 +43,7 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 @Composable
 fun ChatTopicList(
     topics: List<ChatTopicCardUiModel>,
-    activeTopicId: String,
+    activeTopicId: ChatTopicId,
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -122,7 +123,7 @@ fun ChatTopicList(
 private fun ChatTopicListPreview() {
     ChatTopicList(
         topics = ChatPreviewData.defaultTopicList,
-        activeTopicId = "rebound_control",
+        activeTopicId = ChatTopicId.REBOUND_CONTROL,
         onTopicClick = {}
     )
 }

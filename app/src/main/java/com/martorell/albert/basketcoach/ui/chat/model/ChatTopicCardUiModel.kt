@@ -18,7 +18,7 @@ import androidx.annotation.StringRes
  * @property hasDiagnosticEvidence Whether this topic features an empirical half-court diagnostic breakdown view.
  */
 data class ChatTopicCardUiModel(
-    val id: String,
+    val id: ChatTopicId,
     @param:StringRes val priorityBadgeRes: Int,
     val isPriority: Boolean,
     val isOpenInquiry: Boolean,

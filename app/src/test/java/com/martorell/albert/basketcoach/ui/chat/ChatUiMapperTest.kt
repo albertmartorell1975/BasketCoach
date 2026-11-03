@@ -9,6 +9,8 @@ import com.martorell.albert.basketcoach.domain.model.Score
 import com.martorell.albert.basketcoach.domain.model.TeamStats
 import com.martorell.albert.basketcoach.domain.model.Venue
 import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
+import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -78,10 +80,18 @@ class ChatUiMapperTest {
             ChatMessage("2", MessageSender.AI, "Hola Jordi", 2000L)
         )
 
-        val content = mapper.mapToContent(games, messages)
+        val content = mapper.mapToContent(
+            games = games,
+            messages = messages,
+            leftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
+            activeTopicId = ChatTopicId.REBOUND_CONTROL,
+            inputText = ""
+        )
 
         assertTrue(content is ChatUiContent.Success)
         val success = content as ChatUiContent.Success
+        assertEquals(ChatTopicId.REBOUND_CONTROL, success.activeTopicId)
+        assertEquals(ChatLeftPaneMode.TOPIC_LIST, success.leftPaneMode)
         assertEquals(1, success.metaHeader.wins)
         assertEquals(1, success.metaHeader.losses)
         assertEquals(4, success.topicList.size)
@@ -93,7 +103,13 @@ class ChatUiMapperTest {
 
     @Test
     fun mapToContent_withEmptyGames_returnsErrorNotFound() {
-        val content = mapper.mapToContent(emptyList(), emptyList())
+        val content = mapper.mapToContent(
+            games = emptyList(),
+            messages = emptyList(),
+            leftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
+            activeTopicId = ChatTopicId.REBOUND_CONTROL,
+            inputText = ""
+        )
 
         assertTrue(content is ChatUiContent.Error)
         assertEquals(DomainError.Local.NotFound, (content as ChatUiContent.Error).error)

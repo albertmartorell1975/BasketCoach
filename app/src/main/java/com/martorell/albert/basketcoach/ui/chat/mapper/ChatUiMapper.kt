@@ -11,6 +11,7 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatSummaryCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -25,9 +26,9 @@ class ChatUiMapper @Inject constructor() {
     fun mapToContent(
         games: List<Game>,
         messages: List<ChatMessage>,
-        leftPaneMode: ChatLeftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
-        activeTopicId: String? = null,
-        inputText: String = ""
+        leftPaneMode: ChatLeftPaneMode,
+        activeTopicId: ChatTopicId,
+        inputText: String
     ): ChatUiContent {
         if (games.isEmpty()) {
             return ChatUiContent.Error(DomainError.Local.NotFound)
@@ -46,13 +47,12 @@ class ChatUiMapper @Inject constructor() {
 
         val mappedMessages = messages.map { mapMessage(it) }
         val topics = buildDefaultTopicList()
-        val resolvedActiveTopicId = activeTopicId ?: topics.first().id
 
         return ChatUiContent.Success(
             metaHeader = metaHeader,
             leftPaneMode = leftPaneMode,
             topicList = topics,
-            activeTopicId = resolvedActiveTopicId,
+            activeTopicId = activeTopicId,
             diagnosticEvidence = buildDefaultDiagnosticEvidence(),
             messages = mappedMessages,
             inputText = inputText
@@ -86,7 +86,7 @@ class ChatUiMapper @Inject constructor() {
 
     fun buildDefaultTopicList(): List<ChatTopicCardUiModel> = listOf(
         ChatTopicCardUiModel(
-            id = "rebound_control",
+            id = ChatTopicId.REBOUND_CONTROL,
             priorityBadgeRes = R.string.chat_topic_1_badge,
             isPriority = true,
             isOpenInquiry = false,
@@ -99,7 +99,7 @@ class ChatUiMapper @Inject constructor() {
             hasDiagnosticEvidence = true
         ),
         ChatTopicCardUiModel(
-            id = "ast_to_ratio",
+            id = ChatTopicId.AST_TO_RATIO,
             priorityBadgeRes = R.string.chat_topic_2_badge,
             isPriority = false,
             isOpenInquiry = false,
@@ -112,7 +112,7 @@ class ChatUiMapper @Inject constructor() {
             hasDiagnosticEvidence = false
         ),
         ChatTopicCardUiModel(
-            id = "q3_turnovers",
+            id = ChatTopicId.Q3_TURNOVERS,
             priorityBadgeRes = R.string.chat_topic_3_badge,
             isPriority = false,
             isOpenInquiry = false,
@@ -125,7 +125,7 @@ class ChatUiMapper @Inject constructor() {
             hasDiagnosticEvidence = false
         ),
         ChatTopicCardUiModel(
-            id = "open_inquiry",
+            id = ChatTopicId.OPEN_INQUIRY,
             priorityBadgeRes = R.string.chat_topic_open_badge,
             isPriority = false,
             isOpenInquiry = true,
