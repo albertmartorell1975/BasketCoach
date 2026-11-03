@@ -16,6 +16,7 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.usecases.chat.GetChatMessagesUseCase
 import com.martorell.albert.basketcoach.usecases.chat.SendChatMessageUseCase
+import com.martorell.albert.basketcoach.usecases.game.GetPhase1GamesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -118,12 +119,13 @@ class ChatViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeGameRepository = FakeGameRepository()
         fakeChatRepository = FakeChatRepository()
+        val getPhase1GamesUseCase = GetPhase1GamesUseCase(fakeGameRepository)
         val getMessagesUseCase = GetChatMessagesUseCase(fakeChatRepository)
         val sendChatMessageUseCase = SendChatMessageUseCase(fakeGameRepository, fakeChatRepository)
         val mapper = ChatUiMapper()
 
         viewModel = ChatViewModel(
-            gameRepository = fakeGameRepository,
+            getPhase1GamesUseCase = getPhase1GamesUseCase,
             getChatMessagesUseCase = getMessagesUseCase,
             sendChatMessageUseCase = sendChatMessageUseCase,
             chatUiMapper = mapper

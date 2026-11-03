@@ -84,9 +84,9 @@
     <string name="analysis_cd_warning_badge">Alerta táctica</string>
     <string name="analysis_empty_state">No hay elementos en esta categoría</string>
 
-<!-- Chat Screen Strings (Spanish) -->
+    <!-- Chat Screen Strings (Spanish) -->
     <string name="chat_meta_space_tag">Espacio de Reflexión Táctica · 1ª Fase</string>
-    <string name="chat_meta_phase_subtitle">Interterritorial Grupo %1$s · %2$d Jornadas analizadas</string>
+    <string name="chat_meta_phase_subtitle">Interterritorial Grupo 02 · 14 Jornadas analizadas</string>
     <string name="chat_meta_balance_pill">Balance: %1$dV - %2$dD</string>
     <string name="chat_meta_team_pill">Júnior A Masculino</string>
     <string name="chat_topics_header_tag">Áreas de Intervención · 1ª Fase</string>
@@ -121,6 +121,36 @@
     <string name="chat_sender_coach_role">Primer Entrenador</string>
     <string name="chat_sender_ai_name">Asistente Táctico IA</string>
     <string name="chat_sender_ai_role">Pia Sabadell AI</string>
+    <string name="chat_topic_1_badge">ÁREA #1 · PRIORITARIA</string>
+    <string name="chat_topic_1_title">Control del Rebote Defensivo</string>
+    <string name="chat_topic_1_desc">14.8 pts de 2ª oportunidad concedidos · 13.2 reb. def</string>
+    <string name="chat_topic_1_status">Hilo abierto · 1 acuerdo preliminar</string>
+    <string name="chat_topic_1_metric">-8.4 neto</string>
+    <string name="chat_topic_2_badge">ÁREA #2 · GESTIÓN</string>
+    <string name="chat_topic_2_title">Ratio Asistencias / Pérdidas</string>
+    <string name="chat_topic_2_desc">Ratio 0.58 AST/TO (18.1 pérdidas/partido)</string>
+    <string name="chat_topic_2_status">Pendiente de iniciar</string>
+    <string name="chat_topic_2_metric">10.5 ast</string>
+    <string name="chat_topic_3_badge">ÁREA #3 · RITMO Y CONCENTRACIÓN</string>
+    <string name="chat_topic_3_title">Gestión de Pérdidas en el 3º Cuarto</string>
+    <string name="chat_topic_3_desc">Concentración del 42% de pérdidas críticas</string>
+    <string name="chat_topic_3_status">Pendiente de iniciar</string>
+    <string name="chat_topic_3_metric">-12.2 Q3</string>
+    <string name="chat_topic_open_badge">CONSULTA LIBRE</string>
+    <string name="chat_topic_open_title">Línea Base de la 1ª Fase</string>
+    <string name="chat_topic_open_desc">Pregunta cualquier duda sobre los 14 partidos, rivales, anotación o tendencias generales.</string>
+    <string name="chat_topic_open_status">Chat Abierto</string>
+    <string name="chat_evidence_priority_badge">Área de Mejora #1 · Prioritaria</string>
+    <string name="chat_evidence_title">Control del Rebote Defensivo</string>
+    <string name="chat_evidence_subtitle">Área crítica de intervención · Fase 1</string>
+    <string name="chat_evidence_metric1_label">Puntos 2ª Oportunidad</string>
+    <string name="chat_evidence_metric1_unit">pts/partido</string>
+    <string name="chat_evidence_metric1_delta">▲ +5.1 vs Promedio Liga</string>
+    <string name="chat_evidence_metric2_label">Rebotes Ofensivos Concedidos</string>
+    <string name="chat_evidence_metric2_unit">reb/partido</string>
+    <string name="chat_evidence_metric2_ranking">Tercero peor de la competición</string>
+    <string name="chat_evidence_zero_assumption_title">Regla de Cero-Suposición (Zero-Assumption)</string>
+    <string name="chat_evidence_zero_assumption_desc">Corroboración empírica basada en 14 partidos consolidados. Sin hipótesis previas.</string>
     <string name="dashboard_loading">Cargando datos de la 1ª Fase...</string>
     <string name="dashboard_error_title">Error al cargar los datos</string>
     <string name="dashboard_error_retry">Reintentar</string>

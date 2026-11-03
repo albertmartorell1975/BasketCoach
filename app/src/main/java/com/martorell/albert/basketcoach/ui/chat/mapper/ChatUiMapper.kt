@@ -5,11 +5,12 @@ import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.MessageSender
-import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
+import com.martorell.albert.basketcoach.ui.chat.model.ChatDiagnosticEvidenceUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatSummaryCardUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -21,11 +22,15 @@ import javax.inject.Inject
  */
 class ChatUiMapper @Inject constructor() {
 
+    companion object {
+        const val DEFAULT_TOPIC_ID = "rebound_control"
+    }
+
     fun mapToContent(
         games: List<Game>,
         messages: List<ChatMessage>,
         leftPaneMode: ChatLeftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
-        activeTopicId: String = ChatPreviewData.DEFAULT_TOPIC_ID,
+        activeTopicId: String = DEFAULT_TOPIC_ID,
         inputText: String = ""
     ): ChatUiContent {
         if (games.isEmpty()) {
@@ -48,9 +53,9 @@ class ChatUiMapper @Inject constructor() {
         return ChatUiContent.Success(
             metaHeader = metaHeader,
             leftPaneMode = leftPaneMode,
-            topicList = ChatPreviewData.defaultTopicList,
+            topicList = buildDefaultTopicList(),
             activeTopicId = activeTopicId,
-            diagnosticEvidence = ChatPreviewData.defaultDiagnosticEvidence,
+            diagnosticEvidence = buildDefaultDiagnosticEvidence(),
             messages = mappedMessages,
             inputText = inputText
         )
@@ -80,6 +85,81 @@ class ChatUiMapper @Inject constructor() {
             summaryCard = ChatSummaryCardUiModel.EMPTY
         )
     }
+
+    fun buildDefaultTopicList(): List<ChatTopicCardUiModel> = listOf(
+        ChatTopicCardUiModel(
+            id = DEFAULT_TOPIC_ID,
+            priorityBadgeRes = R.string.chat_topic_1_badge,
+            isPriority = true,
+            isOpenInquiry = false,
+            titleRes = R.string.chat_topic_1_title,
+            descriptionRes = R.string.chat_topic_1_desc,
+            statusPillRes = R.string.chat_topic_1_status,
+            hasMetricPill = true,
+            metricPillRes = R.string.chat_topic_1_metric,
+            metricPillIsNegative = true
+        ),
+        ChatTopicCardUiModel(
+            id = "ast_to_ratio",
+            priorityBadgeRes = R.string.chat_topic_2_badge,
+            isPriority = false,
+            isOpenInquiry = false,
+            titleRes = R.string.chat_topic_2_title,
+            descriptionRes = R.string.chat_topic_2_desc,
+            statusPillRes = R.string.chat_topic_2_status,
+            hasMetricPill = true,
+            metricPillRes = R.string.chat_topic_2_metric,
+            metricPillIsNegative = false
+        ),
+        ChatTopicCardUiModel(
+            id = "q3_turnovers",
+            priorityBadgeRes = R.string.chat_topic_3_badge,
+            isPriority = false,
+            isOpenInquiry = false,
+            titleRes = R.string.chat_topic_3_title,
+            descriptionRes = R.string.chat_topic_3_desc,
+            statusPillRes = R.string.chat_topic_3_status,
+            hasMetricPill = true,
+            metricPillRes = R.string.chat_topic_3_metric,
+            metricPillIsNegative = true
+        ),
+        ChatTopicCardUiModel(
+            id = "open_inquiry",
+            priorityBadgeRes = R.string.chat_topic_open_badge,
+            isPriority = false,
+            isOpenInquiry = true,
+            titleRes = R.string.chat_topic_open_title,
+            descriptionRes = R.string.chat_topic_open_desc,
+            statusPillRes = R.string.chat_topic_open_status,
+            hasMetricPill = false,
+            metricPillRes = R.string.chat_topic_open_status,
+            metricPillIsNegative = false
+        )
+    )
+
+    fun buildDefaultDiagnosticEvidence(): ChatDiagnosticEvidenceUiModel = ChatDiagnosticEvidenceUiModel(
+        priorityBadgeRes = R.string.chat_evidence_priority_badge,
+        titleRes = R.string.chat_evidence_title,
+        subtitleRes = R.string.chat_evidence_subtitle,
+        metric1LabelRes = R.string.chat_evidence_metric1_label,
+        metric1Value = "14.8",
+        metric1UnitRes = R.string.chat_evidence_metric1_unit,
+        metric1DeltaRes = R.string.chat_evidence_metric1_delta,
+        metric2LabelRes = R.string.chat_evidence_metric2_label,
+        metric2Value = "13.2",
+        metric2UnitRes = R.string.chat_evidence_metric2_unit,
+        metric2RankingRes = R.string.chat_evidence_metric2_ranking,
+        zeroAssumptionTitleRes = R.string.chat_evidence_zero_assumption_title,
+        zeroAssumptionDescriptionRes = R.string.chat_evidence_zero_assumption_desc,
+        courtPerimeterPct = "61%",
+        courtInteriorPct = "39%",
+        courtLeftWingPct = "29%",
+        courtTopOfKeyPct = "32%",
+        courtRightWingPct = "23%",
+        courtPaintPct = "16%",
+        methodologyTitleRes = R.string.chat_methodology_title,
+        methodologyCycleRes = R.string.chat_methodology_cycle
+    )
 
     private fun formatTimestamp(timestamp: Long): String {
         return try {

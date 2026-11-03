@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Result
-import com.martorell.albert.basketcoach.domain.repository.GameRepository
-import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
@@ -14,6 +12,7 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 import com.martorell.albert.basketcoach.usecases.chat.GetChatMessagesUseCase
 import com.martorell.albert.basketcoach.usecases.chat.SendChatMessageUseCase
+import com.martorell.albert.basketcoach.usecases.game.GetPhase1GamesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +29,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val gameRepository: GameRepository,
+    private val getPhase1GamesUseCase: GetPhase1GamesUseCase,
     private val getChatMessagesUseCase: GetChatMessagesUseCase,
     private val sendChatMessageUseCase: SendChatMessageUseCase,
     private val chatUiMapper: ChatUiMapper
@@ -50,7 +49,7 @@ class ChatViewModel @Inject constructor(
     fun loadChat(initialPrompt: String = "") {
         viewModelScope.launch {
             if (cachedGames.isEmpty()) {
-                when (val gamesResult = gameRepository.getPhase1Games()) {
+                when (val gamesResult = getPhase1GamesUseCase()) {
                     is Result.Error -> {
                         _uiState.update { it.copy(content = ChatUiContent.Error(gamesResult.error)) }
                         return@launch
@@ -123,7 +122,7 @@ class ChatViewModel @Inject constructor(
                         }
                         is Result.Success -> {
                             val activeLeftPane = currentSuccess?.leftPaneMode ?: ChatLeftPaneMode.TOPIC_LIST
-                            val activeTopic = currentSuccess?.activeTopicId ?: ChatPreviewData.DEFAULT_TOPIC_ID
+                            val activeTopic = currentSuccess?.activeTopicId ?: ChatUiMapper.DEFAULT_TOPIC_ID
 
                             val updatedContent = chatUiMapper.mapToContent(
                                 games = cachedGames,
@@ -155,7 +154,7 @@ class ChatViewModel @Inject constructor(
 
     fun onTopicSelected(topic: ChatTopicCardUiModel) {
         val currentSuccess = _uiState.value.content as? ChatUiContent.Success ?: return
-        val targetMode = if (topic.id == ChatPreviewData.DEFAULT_TOPIC_ID) {
+        val targetMode = if (topic.id == ChatUiMapper.DEFAULT_TOPIC_ID) {
             ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
         } else {
             currentSuccess.leftPaneMode
@@ -178,7 +177,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun onDrillOptionSelected(drill: ChatDrillOptionUiModel) {
-        val prompt = "Comencem amb l'${drill.optionTag} (${drill.title}) els dimecres. Prioritzem crear l'hàbit de contacte abans d'anar a buscar la pilota."
+        val prompt = "${drill.optionTag}: ${drill.title}"
         sendMessage(prompt)
     }
 

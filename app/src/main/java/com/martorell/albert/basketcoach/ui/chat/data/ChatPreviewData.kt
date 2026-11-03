@@ -2,6 +2,7 @@ package com.martorell.albert.basketcoach.ui.chat.data
 
 import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.MessageSender
+import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDiagnosticEvidenceUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
@@ -13,14 +14,13 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 
 /**
- * Static preview and mock data factory for the Tablet Single-Thread Chat UI.
+ * Static preview data factory for Jetpack Compose `@Preview` annotations in the Chat UI.
  *
- * Supplies authentic Phase 1 intervention topics, empirical diagnostic evidence matching
- * the authoritative `chat_detalle` prototype, and a multi-turn Socratic dialogue.
+ * Strictly scoped to design-time previews and never imported by production ViewModels or Mappers.
  */
 object ChatPreviewData {
 
-    const val DEFAULT_TOPIC_ID = "rebound_control"
+    private val previewMapper = ChatUiMapper()
 
     val defaultMetaHeader = ChatMetaHeaderUiModel(
         spaceTagRes = R.string.chat_meta_space_tag,
@@ -30,76 +30,9 @@ object ChatPreviewData {
         teamPillRes = R.string.chat_meta_team_pill
     )
 
-    val defaultTopicList = listOf(
-        ChatTopicCardUiModel(
-            id = "rebound_control",
-            priorityBadge = "ÀREA #1 · PRIORITÀRIA",
-            isPriority = true,
-            isOpenInquiry = false,
-            title = "Control del Rebot Defensiu",
-            description = "14.8 pts de 2a oportunitat concedits · 13.2 reb. def",
-            statusPill = "Fil obert · 1 acord preliminar",
-            metricPill = "-8.4 net",
-            metricPillIsNegative = true
-        ),
-        ChatTopicCardUiModel(
-            id = "ast_to_ratio",
-            priorityBadge = "ÀREA #2 · GESTIÓ",
-            isPriority = false,
-            isOpenInquiry = false,
-            title = "Ràtio Assistències / Pèrdues",
-            description = "Ràtio 0.58 AST/TO (18.1 pèrdues/partit)",
-            statusPill = "Pendent d'iniciar",
-            metricPill = "10.5 ast",
-            metricPillIsNegative = false
-        ),
-        ChatTopicCardUiModel(
-            id = "q3_turnovers",
-            priorityBadge = "ÀREA #3 · RITME I CONCENTRACIÓ",
-            isPriority = false,
-            isOpenInquiry = false,
-            title = "Gestió de Pèrdues en el 3r Quart",
-            description = "Concentració del 42% de pèrdues crítiques",
-            statusPill = "Pendent d'iniciar",
-            metricPill = "-12.2 Q3",
-            metricPillIsNegative = true
-        ),
-        ChatTopicCardUiModel(
-            id = "open_inquiry",
-            priorityBadge = "CONSULTA LLIURE",
-            isPriority = false,
-            isOpenInquiry = true,
-            title = "Línia Base de la 1a Fase",
-            description = "Pregunta qualsevol dubte sobre els 14 partits, rivals, anotació o tendències generals.",
-            statusPill = "Xat Obert",
-            metricPill = "",
-            metricPillIsNegative = false
-        )
-    )
+    val defaultTopicList: List<ChatTopicCardUiModel> = previewMapper.buildDefaultTopicList()
 
-    val defaultDiagnosticEvidence = ChatDiagnosticEvidenceUiModel(
-        priorityBadge = "Àrea de Millora #1 · Prioritària",
-        title = "Control del Rebot Defensiu",
-        subtitle = "Àrea crítica d'intervenció · Fase 1",
-        metric1Label = "Punts 2a Oportunitat",
-        metric1Value = "14.8",
-        metric1Unit = "pts/partit",
-        metric1Delta = "▲ +5.1 vs Promig Lliga",
-        metric2Label = "Rebots Ofensius Concedits",
-        metric2Value = "13.2",
-        metric2Unit = "reb/partit",
-        metric2Ranking = "Tercer pitjor de la competició",
-        zeroAssumptionTitle = "Regla de Zero-Suposició (Zero-Assumption)",
-        zeroAssumptionDescription = "Corroboració empírica basada en 14 partits consolidats. Sense hipòtesis prèvies.",
-        courtPerimeterPct = "61%",
-        courtInteriorPct = "39%",
-        courtLeftWingPct = "29%",
-        courtTopOfKeyPct = "32%",
-        courtRightWingPct = "23%",
-        courtPaintPct = "16%",
-        methodologyTitle = "Mètode Socràtic Pia",
-        methodologyCycle = "Evidència → Reflexió → Exercicis → Compromís"
-    )
+    val defaultDiagnosticEvidence: ChatDiagnosticEvidenceUiModel = previewMapper.buildDefaultDiagnosticEvidence()
 
     val drillOptionA = ChatDrillOptionUiModel(
         id = "drill_option_a",
@@ -181,7 +114,7 @@ object ChatPreviewData {
         metaHeader = defaultMetaHeader,
         leftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
         topicList = defaultTopicList,
-        activeTopicId = "rebound_control",
+        activeTopicId = ChatUiMapper.DEFAULT_TOPIC_ID,
         diagnosticEvidence = defaultDiagnosticEvidence,
         messages = initialMessages,
         inputText = ""
@@ -190,68 +123,5 @@ object ChatPreviewData {
     val previewUiState = ChatUiState(
         content = previewUiContent,
         isSending = false
-    )
-
-    val emptyUiContent = ChatUiContent.Success(
-        metaHeader = defaultMetaHeader,
-        leftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
-        topicList = defaultTopicList,
-        activeTopicId = DEFAULT_TOPIC_ID,
-        diagnosticEvidence = defaultDiagnosticEvidence,
-        messages = emptyList(),
-        inputText = ""
-    )
-
-    val emptyUiState = ChatUiState(
-        content = emptyUiContent,
-        isSending = false
-    )
-
-    fun createCoachMessage(text: String): ChatMessageUiModel = ChatMessageUiModel(
-        id = "msg_${System.currentTimeMillis()}",
-        sender = MessageSender.COACH,
-        senderNameRes = R.string.chat_sender_coach_name,
-        senderRoleRes = R.string.chat_sender_coach_role,
-        timestamp = "10:25",
-        text = text.trim(),
-        hasCalloutQuestion = false,
-        calloutQuestionText = "",
-        calloutSubText = "",
-        hasDrillOptions = false,
-        drillOptions = emptyList(),
-        hasSummaryCard = false,
-        summaryCard = ChatSummaryCardUiModel.EMPTY
-    )
-
-    fun createDrillConfirmationMessage(drill: ChatDrillOptionUiModel): ChatMessageUiModel = ChatMessageUiModel(
-        id = "msg_${System.currentTimeMillis()}_coach",
-        sender = MessageSender.COACH,
-        senderNameRes = R.string.chat_sender_coach_name,
-        senderRoleRes = R.string.chat_sender_coach_role,
-        timestamp = "10:22",
-        text = "Comencem amb l'${drill.optionTag} (${drill.title}) els dimecres. Prioritzem crear l'hàbit de contacte abans d'anar a buscar la pilota.",
-        hasCalloutQuestion = false,
-        calloutQuestionText = "",
-        calloutSubText = "",
-        hasDrillOptions = false,
-        drillOptions = emptyList(),
-        hasSummaryCard = false,
-        summaryCard = ChatSummaryCardUiModel.EMPTY
-    )
-
-    fun createSummaryAiMessage(): ChatMessageUiModel = ChatMessageUiModel(
-        id = "msg_${System.currentTimeMillis()}_ai",
-        sender = MessageSender.AI,
-        senderNameRes = R.string.chat_sender_ai_name,
-        senderRoleRes = R.string.chat_sender_ai_role,
-        timestamp = "10:23",
-        text = "Molt d'acord, Jordi. Queda sintetitzat i incorporat a la planificació formativa de la Fase 2:",
-        hasCalloutQuestion = false,
-        calloutQuestionText = "",
-        calloutSubText = "",
-        hasDrillOptions = false,
-        drillOptions = emptyList(),
-        hasSummaryCard = true,
-        summaryCard = summaryCard
     )
 }

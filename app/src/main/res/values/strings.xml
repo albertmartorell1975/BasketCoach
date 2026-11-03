@@ -84,7 +84,7 @@
     <string name="analysis_cd_warning_badge">Alerta tàctica</string>
     <string name="analysis_empty_state">No hi ha elements en aquesta categoria</string>
 
-<!-- Chat Screen Strings (Catalan) -->
+    <!-- Chat Screen Strings (Catalan) -->
     <string name="chat_meta_space_tag">Espai de Reflexió Tàctica · 1a Fase</string>
     <string name="chat_meta_phase_subtitle">Interterritorial Grup 02 · 14 Jornades analitzades</string>
     <string name="chat_meta_balance_pill">Balanç: %1$dV - %2$dD</string>
@@ -121,6 +121,36 @@
     <string name="chat_sender_coach_role">Primer Entrenador</string>
     <string name="chat_sender_ai_name">Assistent Tàctic IA</string>
     <string name="chat_sender_ai_role">Pia Sabadell AI</string>
+    <string name="chat_topic_1_badge">ÀREA #1 · PRIORITÀRIA</string>
+    <string name="chat_topic_1_title">Control del Rebot Defensiu</string>
+    <string name="chat_topic_1_desc">14.8 pts de 2a oportunitat concedits · 13.2 reb. def</string>
+    <string name="chat_topic_1_status">Fil obert · 1 acord preliminar</string>
+    <string name="chat_topic_1_metric">-8.4 net</string>
+    <string name="chat_topic_2_badge">ÀREA #2 · GESTIÓ</string>
+    <string name="chat_topic_2_title">Ràtio Assistències / Pèrdues</string>
+    <string name="chat_topic_2_desc">Ràtio 0.58 AST/TO (18.1 pèrdues/partit)</string>
+    <string name="chat_topic_2_status">Pendent d\'iniciar</string>
+    <string name="chat_topic_2_metric">10.5 ast</string>
+    <string name="chat_topic_3_badge">ÀREA #3 · RITME I CONCENTRACIÓ</string>
+    <string name="chat_topic_3_title">Gestió de Pèrdues en el 3r Quart</string>
+    <string name="chat_topic_3_desc">Concentració del 42% de pèrdues crítiques</string>
+    <string name="chat_topic_3_status">Pendent d\'iniciar</string>
+    <string name="chat_topic_3_metric">-12.2 Q3</string>
+    <string name="chat_topic_open_badge">CONSULTA LLIURE</string>
+    <string name="chat_topic_open_title">Línia Base de la 1a Fase</string>
+    <string name="chat_topic_open_desc">Pregunta qualsevol dubte sobre els 14 partits, rivals, anotació o tendències generals.</string>
+    <string name="chat_topic_open_status">Xat Obert</string>
+    <string name="chat_evidence_priority_badge">Àrea de Millora #1 · Prioritària</string>
+    <string name="chat_evidence_title">Control del Rebot Defensiu</string>
+    <string name="chat_evidence_subtitle">Àrea crítica d\'intervenció · Fase 1</string>
+    <string name="chat_evidence_metric1_label">Punts 2a Oportunitat</string>
+    <string name="chat_evidence_metric1_unit">pts/partit</string>
+    <string name="chat_evidence_metric1_delta">▲ +5.1 vs Promig Lliga</string>
+    <string name="chat_evidence_metric2_label">Rebots Ofensius Concedits</string>
+    <string name="chat_evidence_metric2_unit">reb/partit</string>
+    <string name="chat_evidence_metric2_ranking">Tercer pitjor de la competició</string>
+    <string name="chat_evidence_zero_assumption_title">Regla de Zero-Suposició (Zero-Assumption)</string>
+    <string name="chat_evidence_zero_assumption_desc">Corroboració empírica basada en 14 partits consolidats. Sense hipòtesis prèvies.</string>
     <string name="dashboard_loading">Carregant dades de la 1a Fase...</string>
     <string name="dashboard_error_title">Error en carregar les dades</string>
     <string name="dashboard_error_retry">Reintentar</string>
