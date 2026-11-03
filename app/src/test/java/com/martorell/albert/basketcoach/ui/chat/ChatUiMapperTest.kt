@@ -84,6 +84,8 @@ class ChatUiMapperTest {
         val success = content as ChatUiContent.Success
         assertEquals(1, success.metaHeader.wins)
         assertEquals(1, success.metaHeader.losses)
+        assertEquals(4, success.topicList.size)
+        assertTrue(success.topicList.first().hasDiagnosticEvidence)
         assertEquals(2, success.messages.size)
         assertEquals("Hola", success.messages[0].text)
         assertEquals("Hola Jordi", success.messages[1].text)

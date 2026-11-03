@@ -15,6 +15,7 @@ import androidx.annotation.StringRes
  * @property hasMetricPill Whether this card displays an accompanying empirical metric pill.
  * @property metricPillRes Resource ID for the accompanying empirical metric label.
  * @property metricPillIsNegative Whether the metric value indicates a negative team performance delta.
+ * @property hasDiagnosticEvidence Whether this topic features an empirical half-court diagnostic breakdown view.
  */
 data class ChatTopicCardUiModel(
     val id: String,
@@ -26,5 +27,6 @@ data class ChatTopicCardUiModel(
     @param:StringRes val statusPillRes: Int,
     val hasMetricPill: Boolean,
     @param:StringRes val metricPillRes: Int,
-    val metricPillIsNegative: Boolean
+    val metricPillIsNegative: Boolean,
+    val hasDiagnosticEvidence: Boolean
 )

@@ -164,4 +164,26 @@
     <string name="analysis_error_timeout">S\'ha esgotat el temps d\'espera de la connexió amb el servidor d\'anàlisi.</string>
     <string name="analysis_error_unauthorized">Clau d\'accés a la IA no vàlida o no configurada. Revisa la configuració.</string>
     <string name="analysis_error_generic">S\'ha produït un error inesperat en generar l\'anàlisi tàctica.</string>
+
+    <!-- Chat Preview Mock Strings (Catalan) -->
+    <string name="chat_preview_drill_a_tag">Opció A</string>
+    <string name="chat_preview_drill_a_intensity">Intensitat Alta</string>
+    <string name="chat_preview_drill_a_title">3c3 Crash vs Box-Out</string>
+    <string name="chat_preview_drill_a_desc">Tir forçat des de l\'oposat. Obligació de bloqueig de 3 segons abans de l\'alliberament del rebot. Puntuació doble pel rebot net defensiu.</string>
+    <string name="chat_preview_drill_a_action">Seleccionar Opció A</string>
+    <string name="chat_preview_drill_b_tag">Opció B</string>
+    <string name="chat_preview_drill_b_intensity">Continuïtat</string>
+    <string name="chat_preview_drill_b_title">Regla Primer Contacte 4c4</string>
+    <string name="chat_preview_drill_b_desc">Joc continu 4c4. Si qualsevol defensor exterior gira el cap sense fixar contacte pectoral previ, es xiula falta tècnica interna d\'entrenament.</string>
+    <string name="chat_preview_drill_b_action">Seleccionar Opció B</string>
+    <string name="chat_preview_summary_title">Capacitat de Tancar el Rebot Defensiu (Línia Exterior)</string>
+    <string name="chat_preview_summary_badge">3c3 Crash</string>
+    <string name="chat_preview_summary_desc">Implantació del bloqueig de 3 segons abans de l\'alliberament del rebot en tirs des de l\'oposat.</string>
+    <string name="chat_preview_summary_objective">&lt; 9.5 pts 2a oportunitat</string>
+    <string name="chat_preview_summary_microcycle">4 setmanes (Dimecres)</string>
+    <string name="chat_preview_msg_1_text">Hola Jordi. El dataset dels últims 14 partits confirma que concedim 14.8 punts de segona oportunitat per duel. Això representa el 21.4% de la nostra anotació rival total.</string>
+    <string name="chat_preview_msg_1_callout_q">Com valores si aquesta sagnia ve d\'un bloqueig de rebot deficient dels exteriors o d\'interiors que surten massa a ajudar?</string>
+    <string name="chat_preview_msg_1_callout_sub">Comprova la tendència: no és un problema d\'alçada, sinó d\'orientació en el llançament oposat.</string>
+    <string name="chat_preview_msg_2_text">Crec que sobretot els exteriors no tanquen la línia de tir lliure quan salta el tir exterior. Es giren mirant la pilota sense contactar primer amb el seu atacant, i ens guanyen l\'esquena amb facilitat.</string>
+    <string name="chat_preview_msg_3_text">La teva lectura és exacta Jordi: el 61% dels rebots ofensius cedits provenen d\'entrades des de les ales o capçalera després de tir exterior.\n\nPer revertir-ho en la Fase 2, quina dinàmica formativa s\'adapta millor a l\'horari de dimecres?</string>
 </resources>

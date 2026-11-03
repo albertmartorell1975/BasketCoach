@@ -22,15 +22,11 @@ import javax.inject.Inject
  */
 class ChatUiMapper @Inject constructor() {
 
-    companion object {
-        const val DEFAULT_TOPIC_ID = "rebound_control"
-    }
-
     fun mapToContent(
         games: List<Game>,
         messages: List<ChatMessage>,
         leftPaneMode: ChatLeftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
-        activeTopicId: String = DEFAULT_TOPIC_ID,
+        activeTopicId: String? = null,
         inputText: String = ""
     ): ChatUiContent {
         if (games.isEmpty()) {
@@ -49,12 +45,14 @@ class ChatUiMapper @Inject constructor() {
         )
 
         val mappedMessages = messages.map { mapMessage(it) }
+        val topics = buildDefaultTopicList()
+        val resolvedActiveTopicId = activeTopicId ?: topics.first().id
 
         return ChatUiContent.Success(
             metaHeader = metaHeader,
             leftPaneMode = leftPaneMode,
-            topicList = buildDefaultTopicList(),
-            activeTopicId = activeTopicId,
+            topicList = topics,
+            activeTopicId = resolvedActiveTopicId,
             diagnosticEvidence = buildDefaultDiagnosticEvidence(),
             messages = mappedMessages,
             inputText = inputText
@@ -88,7 +86,7 @@ class ChatUiMapper @Inject constructor() {
 
     fun buildDefaultTopicList(): List<ChatTopicCardUiModel> = listOf(
         ChatTopicCardUiModel(
-            id = DEFAULT_TOPIC_ID,
+            id = "rebound_control",
             priorityBadgeRes = R.string.chat_topic_1_badge,
             isPriority = true,
             isOpenInquiry = false,
@@ -97,7 +95,8 @@ class ChatUiMapper @Inject constructor() {
             statusPillRes = R.string.chat_topic_1_status,
             hasMetricPill = true,
             metricPillRes = R.string.chat_topic_1_metric,
-            metricPillIsNegative = true
+            metricPillIsNegative = true,
+            hasDiagnosticEvidence = true
         ),
         ChatTopicCardUiModel(
             id = "ast_to_ratio",
@@ -109,7 +108,8 @@ class ChatUiMapper @Inject constructor() {
             statusPillRes = R.string.chat_topic_2_status,
             hasMetricPill = true,
             metricPillRes = R.string.chat_topic_2_metric,
-            metricPillIsNegative = false
+            metricPillIsNegative = false,
+            hasDiagnosticEvidence = false
         ),
         ChatTopicCardUiModel(
             id = "q3_turnovers",
@@ -121,7 +121,8 @@ class ChatUiMapper @Inject constructor() {
             statusPillRes = R.string.chat_topic_3_status,
             hasMetricPill = true,
             metricPillRes = R.string.chat_topic_3_metric,
-            metricPillIsNegative = true
+            metricPillIsNegative = true,
+            hasDiagnosticEvidence = false
         ),
         ChatTopicCardUiModel(
             id = "open_inquiry",
@@ -133,7 +134,8 @@ class ChatUiMapper @Inject constructor() {
             statusPillRes = R.string.chat_topic_open_status,
             hasMetricPill = false,
             metricPillRes = R.string.chat_topic_open_status,
-            metricPillIsNegative = false
+            metricPillIsNegative = false,
+            hasDiagnosticEvidence = false
         )
     )
 

@@ -122,7 +122,7 @@ class ChatViewModel @Inject constructor(
                         }
                         is Result.Success -> {
                             val activeLeftPane = currentSuccess?.leftPaneMode ?: ChatLeftPaneMode.TOPIC_LIST
-                            val activeTopic = currentSuccess?.activeTopicId ?: ChatUiMapper.DEFAULT_TOPIC_ID
+                            val activeTopic = currentSuccess?.activeTopicId
 
                             val updatedContent = chatUiMapper.mapToContent(
                                 games = cachedGames,
@@ -154,7 +154,7 @@ class ChatViewModel @Inject constructor(
 
     fun onTopicSelected(topic: ChatTopicCardUiModel) {
         val currentSuccess = _uiState.value.content as? ChatUiContent.Success ?: return
-        val targetMode = if (topic.id == ChatUiMapper.DEFAULT_TOPIC_ID) {
+        val targetMode = if (topic.hasDiagnosticEvidence) {
             ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
         } else {
             currentSuccess.leftPaneMode
