@@ -28,32 +28,14 @@ import javax.inject.Inject
  *
  * @param remoteDataSource Remote client communicating with DevExpert or Gemini AI endpoints.
  * @param localDataSource Thread-safe in-memory cache holding the continuous chat thread messages.
- * @param idGenerator Lambda producing unique message identifiers (defaults to random UUID).
- * @param timestampProvider Lambda producing epoch millisecond timestamps (defaults to system time).
  */
-class ChatRepositoryImpl(
+class ChatRepositoryImpl @Inject constructor(
     private val remoteDataSource: AiRemoteDataSource,
-    private val localDataSource: ChatLocalDataSource,
-    private val idGenerator: () -> String = { UUID.randomUUID().toString() },
-    private val timestampProvider: () -> Long = { System.currentTimeMillis() }
+    private val localDataSource: ChatLocalDataSource
 ) : ChatRepository {
 
-    /**
-     * Primary Hilt-injected constructor providing default UUID generation and system time.
-     *
-     * @param remoteDataSource Remote client communicating with DevExpert or Gemini AI endpoints.
-     * @param localDataSource Thread-safe in-memory cache holding the continuous chat thread messages.
-     */
-    @Inject
-    constructor(
-        remoteDataSource: AiRemoteDataSource,
-        localDataSource: ChatLocalDataSource
-    ) : this(
-        remoteDataSource = remoteDataSource,
-        localDataSource = localDataSource,
-        idGenerator = { UUID.randomUUID().toString() },
-        timestampProvider = { System.currentTimeMillis() }
-    )
+    internal var idGenerator: () -> String = { UUID.randomUUID().toString() }
+    internal var timestampProvider: () -> Long = { System.currentTimeMillis() }
 
     /**
      * Retrieves all conversation messages recorded in the single-thread session.

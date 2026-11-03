@@ -1,10 +1,10 @@
 package com.martorell.albert.basketcoach.data.repository
 
+import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
-import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
@@ -63,10 +63,11 @@ class ChatRepositoryImplTest {
         var idCounter = 0
         repository = ChatRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
-            localDataSource = localDataSource,
-            idGenerator = { "msg-${++idCounter}" },
+            localDataSource = localDataSource
+        ).apply {
+            idGenerator = { "msg-${++idCounter}" }
             timestampProvider = { 1000L * idCounter }
-        )
+        }
     }
 
     @Test
