@@ -96,10 +96,17 @@ class GameModelTest {
         val coachMessage = ChatMessage("msg_coach", MessageSender.COACH, "Question", 1000L)
         assertTrue(coachMessage.isFromCoach)
         assertFalse(coachMessage.isFromAi)
+        assertFalse(coachMessage.isFromSystem)
 
         val aiMessage = ChatMessage("msg_ai", MessageSender.AI, "Answer", 2000L)
         assertFalse(aiMessage.isFromCoach)
         assertTrue(aiMessage.isFromAi)
+        assertFalse(aiMessage.isFromSystem)
+
+        val systemMessage = ChatMessage("msg_sys", MessageSender.SYSTEM, "System Prompt", 3000L)
+        assertFalse(systemMessage.isFromCoach)
+        assertFalse(systemMessage.isFromAi)
+        assertTrue(systemMessage.isFromSystem)
     }
 
     @Test

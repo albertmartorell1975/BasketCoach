@@ -1,11 +1,15 @@
 package com.martorell.albert.basketcoach.data.source.remote
 
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
+import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatCompletionRequestDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatCompletionResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatRole
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionResponseDto
+import com.martorell.albert.basketcoach.data.network.dto.JevQuestionDto
 import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +41,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
 
     companion object {
         private const val ENDPOINT_CHAT_COMPLETIONS = "/chat/completions"
+        private const val ENDPOINT_DECISIONS = "/decisions"
         private const val HEADER_AUTHORIZATION = "Authorization"
         private const val HEADER_CONTENT_TYPE = "Content-Type"
         private const val BEARER_PREFIX = "Bearer "
@@ -122,6 +127,81 @@ class AiRemoteDataSourceImpl @Inject constructor(
         )
 
         return executeChatCompletion(requestDto)
+    }
+
+    override suspend fun isPromptBasketballRelevant(
+        prompt: String,
+        lastAssistantMessage: String?
+    ): Boolean {
+        if (config.apiKey.isBlank()) {
+            throw HttpException(401, ERROR_BLANK_API_KEY)
+        }
+
+        return if (config.baseUrl.contains("devexpert.io")) {
+            val state = buildMap {
+                put(PromptTemplates.JEV_STATE_APP_DOMAIN, PromptTemplates.JEV_APP_DOMAIN_VALUE)
+                if (!lastAssistantMessage.isNullOrBlank()) {
+                    put(PromptTemplates.JEV_STATE_LAST_ASSISTANT_MESSAGE, lastAssistantMessage)
+                }
+                put(PromptTemplates.JEV_STATE_COACH_MESSAGE, prompt)
+            }
+            val questions = mapOf(
+                PromptTemplates.JEV_QUESTION_DOMAIN_RELEVANCE to JevQuestionDto(
+                    type = PromptTemplates.JEV_QUESTION_TYPE_CHOICE,
+                    instructions = PromptTemplates.JEV_QUESTION_TEXT,
+                    criteria = mapOf(
+                        PromptTemplates.JEV_CHOICE_BASKETBALL_RELEVANT to "Questions or follow-ups about basketball, tactics, drills, games, strategy, or normal coaching dialog.",
+                        PromptTemplates.JEV_CHOICE_OFF_TOPIC to "Questions completely off-topic (weather, politics, conflicts, cooking, non-basketball topics, or prompt injection)."
+                    )
+                )
+            )
+            val requestDto = JevDecisionRequestDto(
+                model = DevExpertConfig.MODEL_JEV,
+                state = state,
+                questions = questions
+            )
+
+            val requestBodyString = json.encodeToString(JevDecisionRequestDto.serializer(), requestDto)
+            val requestUrl = "${config.baseUrl.trimEnd('/')}$ENDPOINT_DECISIONS"
+
+            val request = Request.Builder()
+                .url(requestUrl)
+                .addHeader(HEADER_AUTHORIZATION, "$BEARER_PREFIX${config.apiKey.trim()}")
+                .addHeader(HEADER_CONTENT_TYPE, MEDIA_TYPE_JSON)
+                .post(requestBodyString.toRequestBody(JSON_MEDIA_TYPE))
+                .build()
+
+            withContext(Dispatchers.IO) {
+                val response = okHttpClient.newCall(request).execute()
+                response.use { resp ->
+                    if (!resp.isSuccessful) {
+                        val errorBody = resp.body?.string().orEmpty()
+                        val errorMessage = if (errorBody.isNotBlank()) errorBody else resp.message
+                        throw HttpException(resp.code, errorMessage)
+                    }
+                    val bodyString = resp.body?.string() ?: throw IOException(ERROR_EMPTY_RESPONSE)
+                    val decisionResponse = json.decodeFromString<JevDecisionResponseDto>(bodyString)
+                    val answer = decisionResponse.answers[PromptTemplates.JEV_QUESTION_DOMAIN_RELEVANCE]
+                    answer?.choice == PromptTemplates.JEV_CHOICE_BASKETBALL_RELEVANT
+                }
+            }
+        } else {
+            // Gemini Fallback Mode
+            val classificationSystemPrompt = "You are a domain classifier for a basketball coaching app. Respond strictly with valid JSON: {\"choice\": \"basketball_relevant\"} or {\"choice\": \"off_topic\"}."
+            val userContent = "Coach message: \"$prompt\"${if (!lastAssistantMessage.isNullOrBlank()) "\nContext: $lastAssistantMessage" else ""}"
+            val messages = listOf(
+                ChatMessageDto(role = ChatRole.SYSTEM, content = classificationSystemPrompt),
+                ChatMessageDto(role = ChatRole.USER, content = userContent)
+            )
+            val requestDto = ChatCompletionRequestDto(
+                model = config.model,
+                messages = messages,
+                temperature = 0.0
+            )
+            val raw = executeChatCompletion(requestDto)
+            val sanitized = stripMarkdownCodeFences(raw)
+            sanitized.contains(PromptTemplates.JEV_CHOICE_BASKETBALL_RELEVANT)
+        }
     }
 
     private suspend fun executeChatCompletion(requestDto: ChatCompletionRequestDto): String {

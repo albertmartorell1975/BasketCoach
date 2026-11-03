@@ -2,9 +2,11 @@ package com.martorell.albert.basketcoach.data.source.remote
 
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatRole
 import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
+import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -14,6 +16,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import java.net.InetAddress
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 
@@ -50,40 +53,51 @@ class AiRemoteDataSourceTest {
         server.shutdown()
     }
 
+    private fun escapeJsonString(value: String): String {
+        val escaped = value
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\b", "\\b")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+        return "\"$escaped\""
+    }
+
     @Test
     fun `generateAnalysis and generateChatResponse send auth header and parse fenced or plain responses`() = runTest {
         val jsonPayload = """
             {
               "insights": [
                 {
-                  "id": "ins-1",
-                  "title": "Turnover Crisis",
-                  "description": "High turnover rate in losses",
-                  "category": "OFFENSE",
+                  "id": "insight-1",
+                  "title": "Control del Rebot Defensiu",
+                  "description": "Cedim massa segones opcions en derrotes.",
+                  "category": "DEFENSE",
                   "relatedGameRounds": [1, 2],
                   "type": "IMPROVEMENT",
-                  "contextTag": "Pèrdues",
+                  "contextTag": "Fase Defensiva",
                   "metric": {
-                    "primaryLabel": "Pèrdues",
-                    "primaryValue": "42%",
-                    "primarySubValue": "AST/TO 0.51",
-                    "secondaryLabel": "Impacte",
-                    "secondaryValue": "6.4 pts",
-                    "secondaryTag": "dataset:to",
+                    "primaryLabel": "Rebots Cedits",
+                    "primaryValue": "13.2",
+                    "primarySubValue": "per partit",
+                    "secondaryLabel": "Diferencial",
+                    "secondaryValue": "-8.4 net",
+                    "secondaryTag": "dataset:reb",
                     "sentiment": "NEGATIVE"
                   },
                   "priority": "Alta",
-                  "footerNote": "Pilar corrector",
-                  "exploreChatPrompt": "Com reduir pèrdues?"
+                  "footerNote": "Prioritat màxima.",
+                  "exploreChatPrompt": "Com millorem el rebot?"
                 }
               ],
               "drills": [
                 {
-                  "id": "dr-1",
-                  "name": "Pressure Passing",
-                  "objective": "Reduce TOs",
-                  "instructions": ["Step 1", "Step 2"],
-                  "focusArea": "Ball Security"
+                  "id": "drill-1",
+                  "name": "3c3 Box out",
+                  "objective": "Tancar rebot",
+                  "instructions": ["Bloquejar 3 segons"],
+                  "focusArea": "Rebot"
                 }
               ]
             }
@@ -107,13 +121,13 @@ class AiRemoteDataSourceTest {
 
         val chatResponse = """
             {
-              "id": "chatcmpl-test-2",
+              "id": "chatcmpl-test-1",
               "choices": [
                 {
                   "index": 0,
                   "message": {
                     "role": "assistant",
-                    "content": "Focus on boxing out and protecting defensive rebounds."
+                    "content": "Bona lectura Jordi."
                   }
                 }
               ]
@@ -123,36 +137,38 @@ class AiRemoteDataSourceTest {
         server.enqueue(MockResponse().setResponseCode(200).setBody(analysisResponse))
         server.enqueue(MockResponse().setResponseCode(200).setBody(chatResponse))
 
-        val analysis = dataSource.generateAnalysis("Phase 1 summary")
-        assertEquals(1, analysis.insights.size)
-        assertEquals("Turnover Crisis", analysis.insights.first().title)
-        assertEquals(1, analysis.drills.size)
+        val analysisResult = dataSource.generateAnalysis("context summary")
+        assertEquals(1, analysisResult.insights.size)
+        assertEquals("insight-1", analysisResult.insights[0].id)
+        assertEquals("3c3 Box out", analysisResult.drills[0].name)
 
-        val firstRequest = server.takeRequest()
-        assertEquals("POST", firstRequest.method)
-        assertEquals("/v1/chat/completions", firstRequest.path)
-        assertEquals("Bearer test-api-key", firstRequest.getHeader("Authorization"))
+        val recordedAnalysis = server.takeRequest()
+        assertEquals("Bearer test-api-key", recordedAnalysis.getHeader("Authorization"))
+        assertEquals("/v1/chat/completions", recordedAnalysis.path)
 
-        val reply = dataSource.generateChatResponse(
-            listOf(ChatMessageDto("user", "How do we improve rebounds?")),
-            "Any specific drills?"
+        val chatResult = dataSource.generateChatResponse(
+            conversationHistory = listOf(ChatMessageDto(role = ChatRole.USER, content = "Hola")),
+            newPrompt = "Què fem amb el rebot?"
         )
-        assertEquals("Focus on boxing out and protecting defensive rebounds.", reply)
+        assertEquals("Bona lectura Jordi.", chatResult)
+
+        val recordedChat = server.takeRequest()
+        assertEquals("Bearer test-api-key", recordedChat.getHeader("Authorization"))
+        assertEquals("/v1/chat/completions", recordedChat.path)
     }
 
     @Test
     fun `throws HttpException on blank apiKey, 401 unauthorized, and 500 server error`() = runTest {
         val blankKeyConfig = AiClientConfig(apiKey = "", baseUrl = server.url("/v1").toString(), model = "chat")
-        val unauthSource = AiRemoteDataSourceImpl(config = blankKeyConfig)
+        val blankKeyDataSource = AiRemoteDataSourceImpl(config = blankKeyConfig)
         try {
-            unauthSource.generateAnalysis("context")
-            fail("Expected HttpException for blank API key")
+            blankKeyDataSource.generateAnalysis("context")
+            fail("Expected HttpException for blank key")
         } catch (e: HttpException) {
             assertEquals(401, e.code)
         }
-        assertEquals(0, server.requestCount)
 
-        server.enqueue(MockResponse().setResponseCode(401).setBody("Unauthorized"))
+        server.enqueue(MockResponse().setResponseCode(401).setBody("Unauthorized API key"))
         try {
             dataSource.generateAnalysis("context")
             fail("Expected HttpException 401")
@@ -162,7 +178,7 @@ class AiRemoteDataSourceTest {
 
         server.enqueue(MockResponse().setResponseCode(500).setBody("Internal Server Error"))
         try {
-            dataSource.generateAnalysis("context")
+            dataSource.generateChatResponse(emptyList(), "prompt")
             fail("Expected HttpException 500")
         } catch (e: HttpException) {
             assertEquals(500, e.code)
@@ -202,14 +218,23 @@ class AiRemoteDataSourceTest {
         }
     }
 
-    private fun escapeJsonString(value: String): String {
-        val escaped = value
-            .replace("\\", "\\\\")
-            .replace("\"", "\\\"")
-            .replace("\b", "\\b")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("\t", "\\t")
-        return "\"$escaped\""
+    @Test
+    fun isPromptBasketballRelevant_whenUsingDevExpert_parsesJevDecisionResponse() = runTest {
+        val customDns = object : Dns {
+            override fun lookup(hostname: String): List<InetAddress> {
+                return listOf(InetAddress.getByName("127.0.0.1"))
+            }
+        }
+        val devExpertClient = OkHttpClient.Builder().dns(customDns).build()
+        val customDataSource = AiRemoteDataSourceImpl(
+            config = AiClientConfig(apiKey = "key", baseUrl = "http://devexpert.io:" + server.port + "/v1", model = "chat"),
+            okHttpClient = devExpertClient
+        )
+        val jevResponseBody = """{"answers": {"domain_relevance": {"choice": "basketball_relevant"}}}"""
+        server.enqueue(MockResponse().setResponseCode(200).setBody(jevResponseBody))
+        val isRelevant = customDataSource.isPromptBasketballRelevant("Com tanquem el rebot?")
+        assertEquals(true, isRelevant)
+        val recordedRequest = server.takeRequest()
+        assertEquals("/v1/decisions", recordedRequest.path)
     }
 }

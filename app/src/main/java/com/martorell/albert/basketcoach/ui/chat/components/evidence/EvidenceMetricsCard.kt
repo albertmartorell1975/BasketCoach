@@ -72,7 +72,7 @@ fun EvidenceMetricsCard(
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = model.priorityBadge,
+                        text = stringResource(model.priorityBadgeRes),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = PiaTacticalOrange
@@ -93,13 +93,13 @@ fun EvidenceMetricsCard(
 
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = model.title,
+                    text = stringResource(model.titleRes),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaNavy
                 )
                 Text(
-                    text = model.subtitle,
+                    text = stringResource(model.subtitleRes),
                     fontSize = 12.sp,
                     color = PiaTextMuted
                 )
@@ -118,7 +118,7 @@ fun EvidenceMetricsCard(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = model.metric1Label,
+                            text = stringResource(model.metric1LabelRes),
                             fontSize = 12.sp,
                             color = PiaTextMuted
                         )
@@ -133,13 +133,13 @@ fun EvidenceMetricsCard(
                                 color = PiaDangerRed
                             )
                             Text(
-                                text = model.metric1Unit,
+                                text = stringResource(model.metric1UnitRes),
                                 fontSize = 12.sp,
                                 color = PiaTextMuted
                             )
                         }
                         Text(
-                            text = model.metric1Delta,
+                            text = stringResource(model.metric1DeltaRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaTacticalOrange
@@ -156,7 +156,7 @@ fun EvidenceMetricsCard(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = model.metric2Label,
+                            text = stringResource(model.metric2LabelRes),
                             fontSize = 12.sp,
                             color = PiaTextMuted
                         )
@@ -171,13 +171,13 @@ fun EvidenceMetricsCard(
                                 color = PiaNavy
                             )
                             Text(
-                                text = model.metric2Unit,
+                                text = stringResource(model.metric2UnitRes),
                                 fontSize = 12.sp,
                                 color = PiaTextMuted
                             )
                         }
                         Text(
-                            text = model.metric2Ranking,
+                            text = stringResource(model.metric2RankingRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaDangerRed
@@ -205,13 +205,13 @@ fun EvidenceMetricsCard(
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = model.zeroAssumptionTitle,
+                            text = stringResource(model.zeroAssumptionTitleRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaNavy
                         )
                         Text(
-                            text = model.zeroAssumptionDescription,
+                            text = stringResource(model.zeroAssumptionDescriptionRes),
                             fontSize = 12.sp,
                             color = PiaTextMuted,
                             lineHeight = 16.sp

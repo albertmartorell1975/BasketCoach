@@ -2,6 +2,8 @@ package com.martorell.albert.basketcoach.di
 
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSource
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
+import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSource
+import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSource
 import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
@@ -60,4 +62,17 @@ abstract class DataSourceModule {
     abstract fun bindAiRemoteDataSource(
         impl: AiRemoteDataSourceImpl
     ): AiRemoteDataSource
+
+    /**
+     * Binds the in-memory chat local data source implementation [ChatLocalDataSourceImpl]
+     * to its contract [ChatLocalDataSource] as an application-wide singleton.
+     *
+     * @param impl The thread-safe in-memory message store implementation.
+     * @return The [ChatLocalDataSource] singleton contract.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindChatLocalDataSource(
+        impl: ChatLocalDataSourceImpl
+    ): ChatLocalDataSource
 }

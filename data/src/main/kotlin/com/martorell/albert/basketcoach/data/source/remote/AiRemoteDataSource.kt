@@ -32,4 +32,16 @@ interface AiRemoteDataSource {
         newPrompt: String,
         gameContext: String? = null
     ): String
+
+    /**
+     * Pre-classifies whether a prompt is relevant to basketball coaching or off-topic.
+     *
+     * @param prompt The coach's input query.
+     * @param lastAssistantMessage Optional text of the preceding assistant message.
+     * @return True if basketball relevant, false if off-topic.
+     */
+    suspend fun isPromptBasketballRelevant(
+        prompt: String,
+        lastAssistantMessage: String? = null
+    ): Boolean
 }

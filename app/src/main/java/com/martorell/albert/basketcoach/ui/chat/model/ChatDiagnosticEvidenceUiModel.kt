@@ -1,53 +1,55 @@
 package com.martorell.albert.basketcoach.ui.chat.model
 
+import androidx.annotation.StringRes
+
 /**
  * Presentation model representing deep empirical diagnostic evidence and court spatial distribution
  * for an active intervention area in [com.martorell.albert.basketcoach.ui.chat.components.ChatDiagnosticEvidenceView].
  *
  * Grounded strictly in Phase 1 match statistics and Zero-Assumption methodology.
  *
- * @property priorityBadge Header priority badge text.
- * @property title Name of the tactical intervention area.
- * @property subtitle Empirical phase descriptor.
- * @property metric1Label Primary box-score metric label (e.g., "Punts 2a Oportunitat").
+ * @property priorityBadgeRes Resource ID for the header priority badge text.
+ * @property titleRes Resource ID for the name of the tactical intervention area.
+ * @property subtitleRes Resource ID for the empirical phase descriptor.
+ * @property metric1LabelRes Resource ID for the primary box-score metric label.
  * @property metric1Value Formatted numerical value for metric 1.
- * @property metric1Unit Measurement unit for metric 1 (e.g., "pts/partit").
- * @property metric1Delta Performance delta compared to league baseline.
- * @property metric2Label Secondary box-score metric label (e.g., "Rebots Ofensius Concedits").
+ * @property metric1UnitRes Resource ID for the measurement unit for metric 1.
+ * @property metric1DeltaRes Resource ID for the performance delta compared to league baseline.
+ * @property metric2LabelRes Resource ID for the secondary box-score metric label.
  * @property metric2Value Formatted numerical value for metric 2.
- * @property metric2Unit Measurement unit for metric 2 (e.g., "reb/partit").
- * @property metric2Ranking League or competition ranking indicator.
- * @property zeroAssumptionTitle Zero-Assumption validation card title.
- * @property zeroAssumptionDescription Zero-Assumption empirical verification summary.
+ * @property metric2UnitRes Resource ID for the measurement unit for metric 2.
+ * @property metric2RankingRes Resource ID for the league or competition ranking indicator.
+ * @property zeroAssumptionTitleRes Resource ID for the Zero-Assumption validation card title.
+ * @property zeroAssumptionDescriptionRes Resource ID for the Zero-Assumption empirical verification summary.
  * @property courtPerimeterPct Percentage of conceded opportunities originating from perimeter.
  * @property courtInteriorPct Percentage of conceded opportunities originating from interior/paint.
  * @property courtLeftWingPct Left wing zone percentage.
  * @property courtTopOfKeyPct Top of the key zone percentage.
  * @property courtRightWingPct Right wing zone percentage.
  * @property courtPaintPct Paint zone percentage.
- * @property methodologyTitle Socratic coaching methodology title.
- * @property methodologyCycle Step-by-step coaching cycle description.
+ * @property methodologyTitleRes Resource ID for the Socratic coaching methodology title.
+ * @property methodologyCycleRes Resource ID for the step-by-step coaching cycle description.
  */
 data class ChatDiagnosticEvidenceUiModel(
-    val priorityBadge: String,
-    val title: String,
-    val subtitle: String,
-    val metric1Label: String,
+    @param:StringRes val priorityBadgeRes: Int,
+    @param:StringRes val titleRes: Int,
+    @param:StringRes val subtitleRes: Int,
+    @param:StringRes val metric1LabelRes: Int,
     val metric1Value: String,
-    val metric1Unit: String,
-    val metric1Delta: String,
-    val metric2Label: String,
+    @param:StringRes val metric1UnitRes: Int,
+    @param:StringRes val metric1DeltaRes: Int,
+    @param:StringRes val metric2LabelRes: Int,
     val metric2Value: String,
-    val metric2Unit: String,
-    val metric2Ranking: String,
-    val zeroAssumptionTitle: String,
-    val zeroAssumptionDescription: String,
+    @param:StringRes val metric2UnitRes: Int,
+    @param:StringRes val metric2RankingRes: Int,
+    @param:StringRes val zeroAssumptionTitleRes: Int,
+    @param:StringRes val zeroAssumptionDescriptionRes: Int,
     val courtPerimeterPct: String,
     val courtInteriorPct: String,
     val courtLeftWingPct: String,
     val courtTopOfKeyPct: String,
     val courtRightWingPct: String,
     val courtPaintPct: String,
-    val methodologyTitle: String,
-    val methodologyCycle: String
+    @param:StringRes val methodologyTitleRes: Int,
+    @param:StringRes val methodologyCycleRes: Int
 )

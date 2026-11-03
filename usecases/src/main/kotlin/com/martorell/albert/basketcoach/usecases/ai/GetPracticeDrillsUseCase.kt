@@ -5,6 +5,7 @@ import com.martorell.albert.basketcoach.domain.model.Drill
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.AiAnalysisRepository
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
+import javax.inject.Inject
 
 /**
  * Domain interactor that orchestrates the retrieval of recommended practice drills grounded in Phase 1 match history.
@@ -16,7 +17,7 @@ import com.martorell.albert.basketcoach.domain.repository.GameRepository
  * @property gameRepository Domain repository providing access to Phase 1 match data.
  * @property aiAnalysisRepository Domain repository managing AI drill recommendations and caching.
  */
-class GetPracticeDrillsUseCase(
+class GetPracticeDrillsUseCase @Inject constructor(
     private val gameRepository: GameRepository,
     private val aiAnalysisRepository: AiAnalysisRepository
 ) {

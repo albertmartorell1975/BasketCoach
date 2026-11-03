@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +93,7 @@ fun ChatTopicCard(
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
-                            text = model.priorityBadge,
+                            text = stringResource(model.priorityBadgeRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaWhite
@@ -110,7 +111,7 @@ fun ChatTopicCard(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = model.priorityBadge,
+                            text = stringResource(model.priorityBadgeRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaNavy
@@ -124,7 +125,7 @@ fun ChatTopicCard(
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = model.priorityBadge,
+                            text = stringResource(model.priorityBadgeRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = PiaNavyLight
@@ -141,14 +142,14 @@ fun ChatTopicCard(
             }
 
             Text(
-                text = model.title,
+                text = stringResource(model.titleRes),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = PiaNavy
             )
 
             Text(
-                text = model.description,
+                text = stringResource(model.descriptionRes),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
                 lineHeight = 16.sp
@@ -167,7 +168,7 @@ fun ChatTopicCard(
                             .padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = model.statusPill,
+                            text = stringResource(model.statusPillRes),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = PiaSuccessGreen
@@ -185,16 +186,16 @@ fun ChatTopicCard(
                                 .background(if (isActive) PiaTacticalOrange else PiaTextMuted)
                         )
                         Text(
-                            text = model.statusPill,
+                            text = stringResource(model.statusPillRes),
                             fontSize = 12.sp,
                             color = if (isActive) PiaNavy else PiaTextMuted
                         )
                     }
                 }
 
-                if (model.metricPill.isNotBlank()) {
+                if (model.hasMetricPill) {
                     Text(
-                        text = model.metricPill,
+                        text = stringResource(model.metricPillRes),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = if (model.metricPillIsNegative) PiaDangerRed else PiaNavy

@@ -9,6 +9,7 @@ object DevExpertConfig {
     const val DEFAULT_BASE_URL: String = "https://inference.devexpert.io/v1"
     const val DEFAULT_MODEL: String = "chat"
     const val MODEL_PRO: String = "chat-pro"
+    const val MODEL_JEV: String = "jev"
 
     /**
      * Creates an [AiClientConfig] pointing to the DevExpert Inference service.

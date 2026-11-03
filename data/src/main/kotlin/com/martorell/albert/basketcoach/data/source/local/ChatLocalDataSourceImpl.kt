@@ -3,11 +3,12 @@ package com.martorell.albert.basketcoach.data.source.local
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
 /**
  * Thread-safe in-memory implementation of [ChatLocalDataSource] protected by a [Mutex].
  */
-class ChatLocalDataSourceImpl : ChatLocalDataSource {
+class ChatLocalDataSourceImpl @Inject constructor() : ChatLocalDataSource {
 
     private val mutex = Mutex()
     private val messages = mutableListOf<ChatMessage>()

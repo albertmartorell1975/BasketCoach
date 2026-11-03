@@ -84,9 +84,9 @@
     <string name="analysis_cd_warning_badge">Alerta táctica</string>
     <string name="analysis_empty_state">No hay elementos en esta categoría</string>
 
-<!-- Chat Screen Strings (Spanish) -->
+    <!-- Chat Screen Strings (Spanish) -->
     <string name="chat_meta_space_tag">Espacio de Reflexión Táctica · 1ª Fase</string>
-    <string name="chat_meta_phase_subtitle">Interterritorial Grupo %1$s · %2$d Jornadas analizadas</string>
+    <string name="chat_meta_phase_subtitle">Interterritorial Grupo 02 · 14 Jornadas analizadas</string>
     <string name="chat_meta_balance_pill">Balance: %1$dV - %2$dD</string>
     <string name="chat_meta_team_pill">Júnior A Masculino</string>
     <string name="chat_topics_header_tag">Áreas de Intervención · 1ª Fase</string>
@@ -109,6 +109,50 @@
     <string name="chat_court_perimeter_legend">Rebote Exterior (%1$s Total)</string>
     <string name="chat_court_interior_legend">Rebote Interior (%1$s)</string>
     <string name="chat_assistant_avatar_initial">P</string>
+    <string name="chat_loading">Conectando con el asistente táctico&#8230;</string>
+    <string name="chat_error_title">Error en el chat táctico</string>
+    <string name="chat_error_retry">Reintentar</string>
+    <string name="chat_error_empty">No se ha podido cargar la conversación táctica.</string>
+    <string name="chat_error_no_internet">Sin conexión a internet. Comprueba tu red e inténtalo de nuevo.</string>
+    <string name="chat_error_timeout">Tiempo de espera agotado conectando con el asistente.</string>
+    <string name="chat_error_unauthorized">Clave de acceso a la IA no válida o no configurada.</string>
+    <string name="chat_error_generic">Se ha producido un error inesperado en la conversación táctica.</string>
+    <string name="chat_sender_coach_name">Coach Jordi</string>
+    <string name="chat_sender_coach_role">Primer Entrenador</string>
+    <string name="chat_sender_ai_name">Asistente Táctico IA</string>
+    <string name="chat_sender_ai_role">Pia Sabadell AI</string>
+    <string name="chat_sender_system_name">Sistema</string>
+    <string name="chat_sender_system_role">Contexto Táctico</string>
+    <string name="chat_topic_1_badge">ÁREA #1 · PRIORITARIA</string>
+    <string name="chat_topic_1_title">Control del Rebote Defensivo</string>
+    <string name="chat_topic_1_desc">14.8 pts de 2ª oportunidad concedidos · 13.2 reb. def</string>
+    <string name="chat_topic_1_status">Hilo abierto · 1 acuerdo preliminar</string>
+    <string name="chat_topic_1_metric">-8.4 neto</string>
+    <string name="chat_topic_2_badge">ÁREA #2 · GESTIÓN</string>
+    <string name="chat_topic_2_title">Ratio Asistencias / Pérdidas</string>
+    <string name="chat_topic_2_desc">Ratio 0.58 AST/TO (18.1 pérdidas/partido)</string>
+    <string name="chat_topic_2_status">Pendiente de iniciar</string>
+    <string name="chat_topic_2_metric">10.5 ast</string>
+    <string name="chat_topic_3_badge">ÁREA #3 · RITMO Y CONCENTRACIÓN</string>
+    <string name="chat_topic_3_title">Gestión de Pérdidas en el 3º Cuarto</string>
+    <string name="chat_topic_3_desc">Concentración del 42% de pérdidas críticas</string>
+    <string name="chat_topic_3_status">Pendiente de iniciar</string>
+    <string name="chat_topic_3_metric">-12.2 Q3</string>
+    <string name="chat_topic_open_badge">CONSULTA LIBRE</string>
+    <string name="chat_topic_open_title">Línea Base de la 1ª Fase</string>
+    <string name="chat_topic_open_desc">Pregunta cualquier duda sobre los 14 partidos, rivales, anotación o tendencias generales.</string>
+    <string name="chat_topic_open_status">Chat Abierto</string>
+    <string name="chat_evidence_priority_badge">Área de Mejora #1 · Prioritaria</string>
+    <string name="chat_evidence_title">Control del Rebote Defensivo</string>
+    <string name="chat_evidence_subtitle">Área crítica de intervención · Fase 1</string>
+    <string name="chat_evidence_metric1_label">Puntos 2ª Oportunidad</string>
+    <string name="chat_evidence_metric1_unit">pts/partido</string>
+    <string name="chat_evidence_metric1_delta">▲ +5.1 vs Promedio Liga</string>
+    <string name="chat_evidence_metric2_label">Rebotes Ofensivos Concedidos</string>
+    <string name="chat_evidence_metric2_unit">reb/partido</string>
+    <string name="chat_evidence_metric2_ranking">Tercero peor de la competición</string>
+    <string name="chat_evidence_zero_assumption_title">Regla de Cero-Suposición (Zero-Assumption)</string>
+    <string name="chat_evidence_zero_assumption_desc">Corroboración empírica basada en 14 partidos consolidados. Sin hipótesis previas.</string>
     <string name="dashboard_loading">Cargando datos de la 1ª Fase...</string>
     <string name="dashboard_error_title">Error al cargar los datos</string>
     <string name="dashboard_error_retry">Reintentar</string>
@@ -122,4 +166,26 @@
     <string name="analysis_error_timeout">Se ha agotado el tiempo de espera de la conexión con el servidor de análisis.</string>
     <string name="analysis_error_unauthorized">Clave de acceso a la IA no válida o no configurada. Revisa la configuración.</string>
     <string name="analysis_error_generic">Se ha producido un error inesperado al generar el análisis táctico.</string>
+
+    <!-- Chat Preview Mock Strings (Spanish) -->
+    <string name="chat_preview_drill_a_tag">Opción A</string>
+    <string name="chat_preview_drill_a_intensity">Intensidad Alta</string>
+    <string name="chat_preview_drill_a_title">3c3 Crash vs Box-Out</string>
+    <string name="chat_preview_drill_a_desc">Tiro forzado desde el lado opuesto. Obligación de bloqueo de 3 segundos antes de la liberación del rebote. Puntuación doble por rebote limpio defensivo.</string>
+    <string name="chat_preview_drill_a_action">Seleccionar Opción A</string>
+    <string name="chat_preview_drill_b_tag">Opción B</string>
+    <string name="chat_preview_drill_b_intensity">Continuidad</string>
+    <string name="chat_preview_drill_b_title">Regla Primer Contacto 4c4</string>
+    <string name="chat_preview_drill_b_desc">Juego continuo 4c4. Si cualquier defensor exterior gira la cabeza sin fijar contacto pectoral previo, se pita falta técnica interna de entrenamiento.</string>
+    <string name="chat_preview_drill_b_action">Seleccionar Opción B</string>
+    <string name="chat_preview_summary_title">Capacidad de Cerrar el Rebote Defensivo (Línea Exterior)</string>
+    <string name="chat_preview_summary_badge">3c3 Crash</string>
+    <string name="chat_preview_summary_desc">Implantación del bloqueo de 3 segundos antes de la liberación del rebote en tiros desde el lado opuesto.</string>
+    <string name="chat_preview_summary_objective">&lt; 9.5 pts 2ª oportunidad</string>
+    <string name="chat_preview_summary_microcycle">4 semanas (Miércoles)</string>
+    <string name="chat_preview_msg_1_text">Hola Jordi. El dataset de los últimos 14 partidos confirma que concedemos 14.8 puntos de segunda oportunidad por duelo. Esto representa el 21.4% de nuestra anotación rival total.</string>
+    <string name="chat_preview_msg_1_callout_q">¿Cómo valoras si esta sangría viene de un bloqueo de rebote deficiente de los exteriores o de interiores que salen demasiado a ayudar?</string>
+    <string name="chat_preview_msg_1_callout_sub">Comprueba la tendencia: no es un problema de altura, sino de orientación en el lanzamiento opuesto.</string>
+    <string name="chat_preview_msg_2_text">Creo que sobre todo los exteriores no cierran la línea de tiro libre cuando salta el tiro exterior. Se giran mirando el balón sin contactar primero con su atacante, y nos ganan la espalda con facilidad.</string>
+    <string name="chat_preview_msg_3_text">Tu lectura es exacta Jordi: el 61% de los rebotes ofensivos cedidos provienen de entradas desde los aleros o cabecera tras tiro exterior.\n\nPara revertirlo en la Fase 2, ¿qué dinámica formativa se adapta mejor al horario del miércoles?</string>
 </resources>

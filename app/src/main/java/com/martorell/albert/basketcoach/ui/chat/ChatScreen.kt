@@ -1,85 +1,119 @@
 package com.martorell.albert.basketcoach.ui.chat
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.martorell.albert.basketcoach.R
-import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
+import androidx.compose.ui.graphics.Color
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.martorell.albert.basketcoach.ui.chat.components.ChatErrorView
+import com.martorell.albert.basketcoach.ui.chat.components.ChatLoadingView
+import com.martorell.albert.basketcoach.ui.chat.mapper.toChatUiText
+import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
-import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
+import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
 /**
  * Stateful entry composable for the Tablet Landscape Single-Thread Chat workbench.
  *
- * Manages local interaction state (left pane mode, active topic, draft input text, and dynamic
- * appended messages from drill option selections) while hoisting rendering to stateless [ChatContent].
+ * Injects [ChatViewModel] and triggers passive initialization via [LaunchedEffect].
  *
  * @param initialPrompt Pre-grounded prompt passed when navigating from the Analysis screen, or empty string.
  * @param modifier Composable modifier for outer layout customization.
+ * @param viewModel Injected [ChatViewModel] instance.
  */
 @Composable
 fun ChatScreen(
     initialPrompt: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val isExploringFromAnalysis = initialPrompt.isNotBlank()
+    val uiState by viewModel.uiState.collectAsState()
 
-    var leftPaneMode by remember {
-        mutableStateOf(if (isExploringFromAnalysis) ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE else ChatLeftPaneMode.TOPIC_LIST)
+    LaunchedEffect(initialPrompt) {
+        viewModel.loadChat(initialPrompt)
     }
-    var activeTopicId by remember { mutableStateOf(ChatPreviewData.DEFAULT_TOPIC_ID) }
-    var inputText by remember { mutableStateOf(initialPrompt) }
-    var messages by remember { mutableStateOf(ChatPreviewData.initialMessages) }
-    var isSending by remember { mutableStateOf(false) }
 
-    val metaHeader = ChatMetaHeaderUiModel(
-        spaceTag = stringResource(R.string.chat_meta_space_tag),
-        phaseSubtitle = stringResource(R.string.chat_meta_phase_subtitle, "02", 14),
-        balancePill = stringResource(R.string.chat_meta_balance_pill, 3, 11),
-        teamPill = stringResource(R.string.chat_meta_team_pill)
-    )
-
-    val currentState = ChatUiState(
-        metaHeader = metaHeader,
-        leftPaneMode = leftPaneMode,
-        topicList = ChatPreviewData.defaultTopicList,
-        activeTopicId = activeTopicId,
-        diagnosticEvidence = ChatPreviewData.defaultDiagnosticEvidence,
-        messages = messages,
-        inputText = inputText,
-        isSending = isSending
-    )
-
-    ChatContent(
-        state = currentState,
-        onTopicClick = { topic ->
-            activeTopicId = topic.id
-            if (topic.id == ChatPreviewData.DEFAULT_TOPIC_ID) {
-                leftPaneMode = ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
-            }
-        },
-        onBackToTopics = {
-            leftPaneMode = ChatLeftPaneMode.TOPIC_LIST
-        },
-        onInputChange = { text ->
-            inputText = text
-        },
-        onSend = {
-            if (inputText.isNotBlank()) {
-                messages = messages + ChatPreviewData.createCoachMessage(inputText)
-                inputText = ""
-            }
-        },
-        onDrillOptionSelect = { drill ->
-            messages = messages +
-                ChatPreviewData.createDrillConfirmationMessage(drill) +
-                ChatPreviewData.createSummaryAiMessage()
-        },
+    ChatScreen(
+        uiState = uiState,
+        onTopicClick = viewModel::onTopicSelected,
+        onBackToTopics = { viewModel.onLeftPaneModeChanged(ChatLeftPaneMode.TOPIC_LIST) },
+        onInputChange = viewModel::onInputTextChanged,
+        onSend = { viewModel.sendMessage() },
+        onDrillOptionSelect = viewModel::onDrillOptionSelected,
+        onRetry = viewModel::onRetry,
         modifier = modifier
     )
+}
+
+/**
+ * Stateless presentation composable rendering discrete content states of the Chat workbench.
+ *
+ * @param uiState Current immutable UI state ([ChatUiState]).
+ * @param onTopicClick Callback triggered when an intervention topic card is tapped.
+ * @param onBackToTopics Callback triggered to return to topic list mode.
+ * @param onInputChange Callback triggered when draft message input changes.
+ * @param onSend Callback triggered to send the current message.
+ * @param onDrillOptionSelect Callback triggered when selecting an embedded drill option.
+ * @param onRetry Callback triggered to retry upon error.
+ * @param modifier Composable modifier.
+ */
+@Composable
+fun ChatScreen(
+    uiState: ChatUiState,
+    onTopicClick: (ChatTopicCardUiModel) -> Unit,
+    onBackToTopics: () -> Unit,
+    onInputChange: (String) -> Unit,
+    onSend: () -> Unit,
+    onDrillOptionSelect: (ChatDrillOptionUiModel) -> Unit,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when (val content = uiState.content) {
+            is ChatUiContent.Loading -> {
+                ChatLoadingView()
+            }
+            is ChatUiContent.Error -> {
+                ChatErrorView(
+                    message = content.error.toChatUiText(),
+                    onRetry = onRetry
+                )
+            }
+            is ChatUiContent.Success -> {
+                ChatContent(
+                    state = content,
+                    isSending = uiState.isSending,
+                    onTopicClick = onTopicClick,
+                    onBackToTopics = onBackToTopics,
+                    onInputChange = onInputChange,
+                    onSend = onSend,
+                    onDrillOptionSelect = onDrillOptionSelect,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (uiState.isSending) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = PiaNavy)
+                    }
+                }
+            }
+        }
+    }
 }

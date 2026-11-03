@@ -20,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
@@ -78,7 +80,7 @@ fun ChatMetaHeader(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = model.spaceTag,
+                    text = stringResource(model.spaceTagRes),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaNavy
@@ -89,7 +91,7 @@ fun ChatMetaHeader(
                     color = PiaTextMuted
                 )
                 Text(
-                    text = model.phaseSubtitle,
+                    text = stringResource(model.phaseSubtitleRes),
                     fontSize = 12.sp,
                     color = PiaTextMuted
                 )
@@ -107,7 +109,7 @@ fun ChatMetaHeader(
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = model.balancePill,
+                    text = stringResource(R.string.chat_meta_balance_pill, model.wins, model.losses),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = PiaNavy
@@ -121,7 +123,7 @@ fun ChatMetaHeader(
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = model.teamPill,
+                    text = stringResource(model.teamPillRes),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = PiaTacticalOrange

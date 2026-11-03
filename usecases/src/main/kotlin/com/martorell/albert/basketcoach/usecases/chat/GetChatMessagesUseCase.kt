@@ -4,6 +4,7 @@ import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
+import javax.inject.Inject
 
 /**
  * Domain interactor to retrieve all conversation messages in chronological order from the
@@ -11,7 +12,7 @@ import com.martorell.albert.basketcoach.domain.repository.ChatRepository
  *
  * @property chatRepository Domain repository managing in-memory chat messages.
  */
-class GetChatMessagesUseCase(
+class GetChatMessagesUseCase @Inject constructor(
     private val chatRepository: ChatRepository
 ) {
     /**

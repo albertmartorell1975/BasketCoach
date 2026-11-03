@@ -5,6 +5,7 @@ import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
+import javax.inject.Inject
 
 /**
  * Domain interactor that handles dispatching a coach message to the AI assistant with contextual game grounding.
@@ -16,7 +17,7 @@ import com.martorell.albert.basketcoach.domain.repository.GameRepository
  * @property gameRepository Domain repository providing access to Phase 1 match data.
  * @property chatRepository Domain repository managing the single-thread coaching conversation.
  */
-class SendChatMessageUseCase(
+class SendChatMessageUseCase @Inject constructor(
     private val gameRepository: GameRepository,
     private val chatRepository: ChatRepository
 ) {

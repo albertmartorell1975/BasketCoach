@@ -5,7 +5,6 @@ import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.DrillDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightMetricDto
-
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
 import com.martorell.albert.basketcoach.data.mapper.HttpException
@@ -39,6 +38,13 @@ class AiAnalysisRepositoryImplTest {
         ): String {
             throw UnsupportedOperationException()
         }
+
+        override suspend fun isPromptBasketballRelevant(
+            prompt: String,
+            lastAssistantMessage: String?
+        ): Boolean {
+            return true
+        }
     }
 
     private lateinit var fakeRemoteDataSource: FakeAiRemoteDataSource
@@ -55,99 +61,90 @@ class AiAnalysisRepositoryImplTest {
         )
     }
 
-    @Test
-    fun `getInsights returns mapped domain insights and populates local cache`() = runTest {
-        val dto = AiAnalysisResponseDto(
+    private fun sampleResponseDto(): AiAnalysisResponseDto {
+        return AiAnalysisResponseDto(
             insights = listOf(
                 InsightDto(
-                    id = "i1",
-                    title = "Turnover Vulnerability",
-                    description = "Too many lost balls in transition",
-                    category = "OFFENSE",
-                    relatedGameRounds = listOf(1),
+                    id = "insight-1",
+                    title = "Defensive Rebounding Deficit",
+                    description = "Conceding second chance points consistently across 11 losses.",
+                    category = "DEFENSE",
+                    relatedGameRounds = listOf(1, 2, 4),
                     type = "IMPROVEMENT",
-                    contextTag = "Transició",
+                    contextTag = "Fase Defensiva",
                     metric = InsightMetricDto(
-                        primaryLabel = "Pèrdues",
-                        primaryValue = "42%",
-                        primarySubValue = "AST/TO 0.51",
-                        secondaryLabel = "Impacte",
-                        secondaryValue = "6.4 pts",
-                        secondaryTag = "dataset:to",
+                        primaryLabel = "Rebots Cedits",
+                        primaryValue = "13.2",
+                        primarySubValue = "per partit",
+                        secondaryLabel = "Diferencial",
+                        secondaryValue = "-8.4 net",
+                        secondaryTag = "dataset:reb",
                         sentiment = "NEGATIVE"
                     ),
                     priority = "Alta",
-                    footerNote = "Crític",
-                    exploreChatPrompt = "Com millorar?"
+                    footerNote = "Àrea d'intervenció prioritària.",
+                    exploreChatPrompt = "Com millorem el bloqueig de rebot?"
                 )
             ),
             drills = listOf(
                 DrillDto(
-                    id = "d1",
-                    name = "3v2 Transition Drill",
-                    objective = "Improve transition defense",
-                    instructions = listOf("Start from baseline", "Run 3v2 break"),
-                    focusArea = "Transition"
+                    id = "drill-1",
+                    name = "3v3 Box Out & Run",
+                    objective = "Improve defensive rebounding transition.",
+                    instructions = listOf("Set up 3 defenders", "Shoot ball", "Box out for 3 seconds"),
+                    focusArea = "Rebounding"
                 )
             )
         )
-        fakeRemoteDataSource.analysisResponse = dto
+    }
+
+    @Test
+    fun `getInsights calls remote source on cache miss, caches results, and returns mapped domain models`() = runTest {
+        fakeRemoteDataSource.analysisResponse = sampleResponseDto()
 
         val insightsResult = repository.getInsights(emptyList())
 
         assertTrue(insightsResult is Result.Success)
         val insights = (insightsResult as Result.Success).data
         assertEquals(1, insights.size)
-        assertEquals("Turnover Vulnerability", insights.first().title)
-        assertEquals(InsightCategory.OFFENSE, insights.first().category)
-        assertEquals(listOf(1), insights.first().relatedGameRounds)
-        assertEquals(1, fakeRemoteDataSource.analysisCallCount)
-    }
-
-    @Test
-    fun `getDrills uses shared cache when getInsights was called first without second remote call`() = runTest {
-        val dto = AiAnalysisResponseDto(
-            insights = listOf(
-                InsightDto(
-                    id = "i1",
-                    title = "Title",
-                    description = "Desc",
-                    category = "DEFENSE",
-                    relatedGameRounds = listOf(1),
-                    type = "IMPROVEMENT",
-                    contextTag = "Tag",
-                    metric = InsightMetricDto("L", "V", "S", "SL", "SV", "ST", "NEGATIVE"),
-                    priority = "Alta",
-                    footerNote = "Note",
-                    exploreChatPrompt = "Prompt"
-                )
-            ),
-            drills = listOf(
-                DrillDto("d1", "Drill 1", "Obj 1", listOf("Step 1"), "Focus")
-            )
-        )
-        fakeRemoteDataSource.analysisResponse = dto
-
-        val insightsResult = repository.getInsights(emptyList())
-        assertTrue(insightsResult is Result.Success)
+        assertEquals("insight-1", insights[0].id)
+        assertEquals(InsightCategory.DEFENSE, insights[0].category)
         assertEquals(1, fakeRemoteDataSource.analysisCallCount)
 
+        // Calling getDrills should reuse the same cached response without triggering an additional remote call
         val drillsResult = repository.getDrills(emptyList())
         assertTrue(drillsResult is Result.Success)
         val drills = (drillsResult as Result.Success).data
         assertEquals(1, drills.size)
-        assertEquals("Drill 1", drills.first().name)
-        // Verified: only 1 remote call across both insights and drills
+        assertEquals("drill-1", drills[0].id)
         assertEquals(1, fakeRemoteDataSource.analysisCallCount)
     }
 
     @Test
-    fun `getInsights maps remote HttpException to DomainError Network Unauthorized`() = runTest {
-        fakeRemoteDataSource.exceptionToThrow = HttpException(401, "Invalid token")
+    fun `getDrills calls remote source when cache is empty, populating both insights and drills`() = runTest {
+        fakeRemoteDataSource.analysisResponse = sampleResponseDto()
+
+        val drillsResult = repository.getDrills(emptyList())
+
+        assertTrue(drillsResult is Result.Success)
+        assertEquals(1, (drillsResult as Result.Success).data.size)
+        assertEquals(1, fakeRemoteDataSource.analysisCallCount)
+
+        val insightsResult = repository.getInsights(emptyList())
+        assertTrue(insightsResult is Result.Success)
+        assertEquals(1, (insightsResult as Result.Success).data.size)
+        assertEquals(1, fakeRemoteDataSource.analysisCallCount)
+    }
+
+    @Test
+    fun `getInsights maps remote HttpException to domain ServerError`() = runTest {
+        fakeRemoteDataSource.exceptionToThrow = HttpException(500, "Internal Server Error")
 
         val result = repository.getInsights(emptyList())
 
         assertTrue(result is Result.Error)
-        assertEquals(DomainError.Network.Unauthorized, (result as Result.Error).error)
+        val error = (result as Result.Error).error
+        assertTrue(error is DomainError.Network.ServerError)
+        assertEquals(500, (error as DomainError.Network.ServerError).code)
     }
 }

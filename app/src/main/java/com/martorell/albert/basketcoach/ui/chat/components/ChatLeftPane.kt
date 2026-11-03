@@ -11,6 +11,7 @@ import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDiagnosticEvidenceUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
+import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 
 /**
@@ -29,7 +30,7 @@ import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 fun ChatLeftPane(
     mode: ChatLeftPaneMode,
     topics: List<ChatTopicCardUiModel>,
-    activeTopicId: String,
+    activeTopicId: ChatTopicId,
     diagnosticEvidence: ChatDiagnosticEvidenceUiModel,
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
     onBackToTopics: () -> Unit,
@@ -65,7 +66,7 @@ private fun ChatLeftPanePreview() {
     ChatLeftPane(
         mode = ChatLeftPaneMode.TOPIC_LIST,
         topics = ChatPreviewData.defaultTopicList,
-        activeTopicId = "rebound_control",
+        activeTopicId = ChatTopicId.REBOUND_CONTROL,
         diagnosticEvidence = ChatPreviewData.defaultDiagnosticEvidence,
         onTopicClick = {},
         onBackToTopics = {}
