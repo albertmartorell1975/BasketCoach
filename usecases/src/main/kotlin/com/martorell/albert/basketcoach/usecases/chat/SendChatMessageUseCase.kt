@@ -8,31 +8,36 @@ import com.martorell.albert.basketcoach.domain.repository.GameRepository
 import javax.inject.Inject
 
 /**
- * Domain interactor that handles dispatching a coach message to the AI assistant with contextual game grounding.
+ * Domain interactor that handles dispatching a coach message to the AI assistant within a topic-scoped thread
+ * with contextual game grounding.
  *
  * Attempts to enrich conversational context with historical matches from [GameRepository].
  * If match retrieval encounters an issue, it gracefully degrades by submitting the message without
  * match history (`null`), preserving chat availability.
  *
  * @property gameRepository Domain repository providing access to Phase 1 match data.
- * @property chatRepository Domain repository managing the single-thread coaching conversation.
+ * @property chatRepository Domain repository managing topic-scoped coaching conversation threads.
  */
 class SendChatMessageUseCase @Inject constructor(
     private val gameRepository: GameRepository,
     private val chatRepository: ChatRepository
 ) {
     /**
-     * Sends a coach message to the AI assistant.
+     * Dispatches [messageText] to the AI assistant within the thread identified by [topicId].
      *
-     * @param messageText The user prompt or question submitted by the coach.
-     * @return [Result.Success] containing the assistant's reply [ChatMessage], or [Result.Error] with [DomainError].
+     * @param messageText The message or question sent by the coach.
+     * @param topicId The unique identifier of the target topic thread or improvement area.
+     * @return [Result.Success] containing the assistant's [ChatMessage], or [Result.Error] with [DomainError].
      */
-    suspend operator fun invoke(messageText: String): Result<ChatMessage, DomainError> {
+    suspend operator fun invoke(
+        messageText: String,
+        topicId: String
+    ): Result<ChatMessage, DomainError> {
         val games = when (val gamesResult = gameRepository.getPhase1Games()) {
             is Result.Success -> gamesResult.data
             is Result.Error -> null
         }
 
-        return chatRepository.sendMessage(messageText, games)
+        return chatRepository.sendMessage(messageText, games, topicId)
     }
 }

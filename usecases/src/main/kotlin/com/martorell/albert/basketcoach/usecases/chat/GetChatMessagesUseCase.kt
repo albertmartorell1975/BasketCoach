@@ -7,8 +7,8 @@ import com.martorell.albert.basketcoach.domain.repository.ChatRepository
 import javax.inject.Inject
 
 /**
- * Domain interactor to retrieve all conversation messages in chronological order from the
- * single-thread AI coaching chat.
+ * Domain interactor to retrieve all conversation messages in chronological order for a specific
+ * topic thread from the AI coaching chat.
  *
  * @property chatRepository Domain repository managing in-memory chat messages.
  */
@@ -16,11 +16,12 @@ class GetChatMessagesUseCase @Inject constructor(
     private val chatRepository: ChatRepository
 ) {
     /**
-     * Retrieves all chat messages.
+     * Retrieves the chronological message history for the given [topicId].
      *
-     * @return [Result.Success] with the list of [ChatMessage] entities, or [Result.Error] with [DomainError].
+     * @param topicId The unique identifier of the topic or improvement area.
+     * @return [Result.Success] containing the list of [ChatMessage] items, or [Result.Error] with [DomainError].
      */
-    suspend operator fun invoke(): Result<List<ChatMessage>, DomainError> {
-        return chatRepository.getMessages()
+    suspend operator fun invoke(topicId: String): Result<List<ChatMessage>, DomainError> {
+        return chatRepository.getMessages(topicId)
     }
 }
