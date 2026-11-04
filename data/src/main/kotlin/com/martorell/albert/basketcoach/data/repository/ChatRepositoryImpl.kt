@@ -17,11 +17,11 @@ import com.martorell.albert.basketcoach.domain.repository.ChatRepository
 import javax.inject.Inject
 
 /**
- * Concrete implementation of [ChatRepository] coordinating the single-thread in-memory conversation
- * history and AI response generation with domain guardrail pre-classification.
+ * Concrete implementation of [ChatRepository] coordinating topic-scoped in-memory conversation
+ * threads and AI response generation with domain guardrail pre-classification.
  *
  * Adheres to Clean Architecture data layer governance:
- * - Maintains single-thread in-memory session SSOT via [ChatLocalDataSource].
+ * - Maintains topic-scoped in-memory session SSOT via [ChatLocalDataSource].
  * - Executes the 2-step AI guardrail pipeline: pre-evaluates user prompt domain relevance via
  *   [AiRemoteDataSource.isPromptBasketballRelevant] before invoking chat completions.
  * - Short-circuits off-topic queries immediately with a localized tactical refusal message
@@ -30,46 +30,29 @@ import javax.inject.Inject
  * - Delegates domain entity mapping strictly via [ChatMessageDto.toDomain].
  *
  * @param remoteDataSource Remote client communicating with DevExpert or Gemini AI endpoints.
- * @param localDataSource Thread-safe in-memory cache holding the continuous chat thread messages.
+ * @param localDataSource Thread-safe in-memory cache holding topic-partitioned conversation messages.
  */
 class ChatRepositoryImpl @Inject constructor(
     private val remoteDataSource: AiRemoteDataSource,
     private val localDataSource: ChatLocalDataSource
 ) : ChatRepository {
 
-    /**
-     * Retrieves all conversation messages recorded in the single-thread session.
-     *
-     * @return [Result.Success] containing the chronological list of [ChatMessage] entities,
-     * or [Result.Error] with [DomainError] if an unexpected local failure occurs.
-     */
-    override suspend fun getMessages(): Result<List<ChatMessage>, DomainError> = safeCall {
-        localDataSource.getMessages()
+    override suspend fun getMessages(topicId: String): Result<List<ChatMessage>, DomainError> = safeCall {
+        localDataSource.getMessages(topicId)
     }
 
-    /**
-     * Appends a coach message to the conversation and generates an AI response.
-     *
-     * Pre-evaluates domain relevance via [AiRemoteDataSource.isPromptBasketballRelevant]. If the
-     * prompt is off-topic, short-circuits by persisting and returning a localized refusal message
-     * without calling remote chat completion inference.
-     *
-     * @param messageText The user input text submitted by the coach.
-     * @param games Optional list of Phase 1 match fixtures used for contextual grounding.
-     * @return [Result.Success] containing the newly generated assistant [ChatMessage],
-     * or [Result.Error] with [DomainError] if a network, authorization, or technical failure occurs.
-     */
     override suspend fun sendMessage(
         messageText: String,
-        games: List<Game>?
+        games: List<Game>?,
+        topicId: String
     ): Result<ChatMessage, DomainError> = safeCall {
         val coachMessage = ChatMessageDto(
             role = ChatRole.USER,
             content = messageText
         ).toDomain()
-        localDataSource.saveMessage(coachMessage)
+        localDataSource.saveMessage(coachMessage, topicId)
 
-        val lastAssistantMessage = localDataSource.getMessages()
+        val lastAssistantMessage = localDataSource.getMessages(topicId)
             .dropLast(1)
             .lastOrNull { it.sender == MessageSender.AI }
             ?.text
@@ -80,7 +63,7 @@ class ChatRepositoryImpl @Inject constructor(
         )
 
         val responseText = if (isRelevant) {
-            val historyDtos = localDataSource.getMessages().dropLast(1).map { it.toDto() }
+            val historyDtos = localDataSource.getMessages(topicId).dropLast(1).map { it.toDto() }
             val gameContext = games?.let { PromptTemplates.formatGameSummary(it) }
             remoteDataSource.generateChatResponse(
                 conversationHistory = historyDtos,
@@ -95,7 +78,7 @@ class ChatRepositoryImpl @Inject constructor(
             role = ChatRole.ASSISTANT,
             content = responseText
         ).toDomain()
-        localDataSource.saveMessage(aiMessage)
+        localDataSource.saveMessage(aiMessage, topicId)
         aiMessage
     }
 }

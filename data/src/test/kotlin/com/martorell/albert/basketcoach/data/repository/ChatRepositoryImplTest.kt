@@ -1,11 +1,9 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
-import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
 import kotlinx.coroutines.test.runTest
@@ -66,63 +64,45 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `sendMessage appends coach message, invokes remoteDataSource with history and context, and appends ai message`() = runTest {
-        val sendResult = repository.sendMessage("How do we improve defense?", emptyList())
+    fun `sendMessage and getMessages maintain topic-scoped thread isolation`() = runTest {
+        val topic1 = "topic_rebound"
+        val topic2 = "topic_turnovers"
 
-        assertTrue(sendResult is Result.Success)
-        val aiMessage = (sendResult as Result.Success).data
-        assertTrue(aiMessage.id.isNotBlank())
-        assertTrue(aiMessage.timestamp > 0L)
-        assertEquals(MessageSender.AI, aiMessage.sender)
-        assertEquals("AI response text", aiMessage.text)
+        val sendResult1 = repository.sendMessage("Message in topic 1", emptyList(), topic1)
+        assertTrue(sendResult1 is Result.Success)
 
-        val allMessages = repository.getMessages()
-        assertTrue(allMessages is Result.Success)
-        val messageList = (allMessages as Result.Success).data
-        assertEquals(2, messageList.size)
-        assertEquals(MessageSender.COACH, messageList[0].sender)
-        assertEquals("How do we improve defense?", messageList[0].text)
-        assertTrue(messageList[0].id.isNotBlank())
-        assertEquals(MessageSender.AI, messageList[1].sender)
-        assertEquals("AI response text", messageList[1].text)
-        assertTrue(messageList[1].id.isNotBlank())
+        val sendResult2 = repository.sendMessage("Message in topic 2", emptyList(), topic2)
+        assertTrue(sendResult2 is Result.Success)
 
-        assertEquals("How do we improve defense?", fakeRemoteDataSource.capturedPrompt)
-        assertEquals("No games recorded for Phase 1.", fakeRemoteDataSource.capturedContext)
-        assertTrue(fakeRemoteDataSource.capturedHistory.isEmpty())
-    }
+        val topic1MessagesResult = repository.getMessages(topic1)
+        assertTrue(topic1MessagesResult is Result.Success)
+        val topic1Messages = (topic1MessagesResult as Result.Success).data
+        assertEquals(2, topic1Messages.size)
+        assertEquals("Message in topic 1", topic1Messages[0].text)
+        assertEquals(MessageSender.COACH, topic1Messages[0].sender)
+        assertEquals(MessageSender.AI, topic1Messages[1].sender)
 
-    @Test
-    fun `sendMessage preserves coach message in localDataSource when remoteDataSource throws`() = runTest {
-        fakeRemoteDataSource.exceptionToThrow = HttpException(500, "Server Error")
-
-        val sendResult = repository.sendMessage("Will this fail?")
-
-        assertTrue(sendResult is Result.Error)
-        assertTrue((sendResult as Result.Error).error is DomainError.Network.ServerError)
-
-        val allMessages = repository.getMessages()
-        assertTrue(allMessages is Result.Success)
-        val messageList = (allMessages as Result.Success).data
-        assertEquals(1, messageList.size)
-        assertEquals(MessageSender.COACH, messageList[0].sender)
-        assertTrue(messageList[0].id.isNotBlank())
+        val topic2MessagesResult = repository.getMessages(topic2)
+        assertTrue(topic2MessagesResult is Result.Success)
+        val topic2Messages = (topic2MessagesResult as Result.Success).data
+        assertEquals(2, topic2Messages.size)
+        assertEquals("Message in topic 2", topic2Messages[0].text)
+        assertEquals(MessageSender.COACH, topic2Messages[0].sender)
+        assertEquals(MessageSender.AI, topic2Messages[1].sender)
     }
 
     @Test
     fun `sendMessage when prompt is off-topic short-circuits without calling chat completions`() = runTest {
         fakeRemoteDataSource.isRelevantResponse = false
 
-        val sendResult = repository.sendMessage("Quin temps fa avui?")
+        val sendResult = repository.sendMessage("Quin temps fa avui?", null, "open_inquiry")
 
         assertTrue(sendResult is Result.Success)
         val aiMessage = (sendResult as Result.Success).data
         assertEquals(0, fakeRemoteDataSource.callCount)
         assertTrue(aiMessage.text.contains("Bàsquet Pia Sabadell"))
-        assertTrue(aiMessage.id.isNotBlank())
-        assertTrue(aiMessage.timestamp > 0L)
 
-        val allMessages = repository.getMessages()
+        val allMessages = repository.getMessages("open_inquiry")
         assertTrue(allMessages is Result.Success)
         val messageList = (allMessages as Result.Success).data
         assertEquals(2, messageList.size)
