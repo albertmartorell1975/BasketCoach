@@ -5,16 +5,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.domain.model.InsightType
@@ -49,6 +51,7 @@ fun EmpiricalMetricPanel(
         MetricSentiment.NEUTRAL -> PiaTextMuted
     }
     val primaryValueColor = if (card.type == InsightType.IMPROVEMENT) PiaTacticalOrange else PiaTextPrimary
+    val secondaryValueColor = if (card.type == InsightType.IMPROVEMENT) PiaTacticalOrange else PiaNavy
 
     Box(
         modifier = modifier
@@ -57,18 +60,38 @@ fun EmpiricalMetricPanel(
             .background(PiaSurfaceContainerLow)
             .padding(12.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
                 Text(
                     text = card.primaryMetricLabel,
                     color = PiaTextMuted,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f)
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = card.secondaryMetricLabel,
+                    color = PiaTextMuted,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = card.primaryMetricValue,
                     color = primaryValueColor,
@@ -76,34 +99,20 @@ fun EmpiricalMetricPanel(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
+                    text = card.secondaryMetricValue,
+                    color = secondaryValueColor,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End
+                )
+            }
+
+            if (card.primaryMetricSubValue.isNotBlank()) {
+                Text(
                     text = card.primaryMetricSubValue,
                     color = subValueColor,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
-                )
-            }
-
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                Text(
-                    text = card.secondaryMetricLabel,
-                    color = PiaTextMuted,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = card.secondaryMetricValue,
-                    color = if (card.type == InsightType.IMPROVEMENT) PiaTacticalOrange else PiaNavy,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = card.secondaryMetricTag,
-                    color = PiaTextMuted,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace
                 )
             }
         }
