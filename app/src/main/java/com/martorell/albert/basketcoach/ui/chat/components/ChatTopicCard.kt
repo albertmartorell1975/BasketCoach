@@ -24,8 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
@@ -43,12 +43,15 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 import com.martorell.albert.basketcoach.ui.theme.PiaWhite
 
 /**
- * Interactive card component representing a single tactical intervention area or open inquiry thread.
+ * Interactive topic card component representing an improvement area or open inquiry thread.
  *
- * @param model Presentation data for this topic ([ChatTopicCardUiModel]).
- * @param isActive Whether this topic card is currently selected.
- * @param onClick Callback triggered on click.
- * @param modifier Composable modifier for layout customization.
+ * Renders priority badges, tactical title, 2-line description with ellipsis, active status indicators,
+ * and empirical metric pills. Displays an active tactical orange border when [isActive] is true.
+ *
+ * @param model The presentation model [ChatTopicCardUiModel] detailing the topic.
+ * @param isActive Flag indicating whether this card corresponds to the currently active conversation thread.
+ * @param onClick Callback triggered when the card is tapped by the coach.
+ * @param modifier Optional [Modifier] for container customization.
  */
 @Composable
 fun ChatTopicCard(
@@ -93,7 +96,7 @@ fun ChatTopicCard(
                             modifier = Modifier.size(12.dp)
                         )
                         Text(
-                            text = stringResource(model.priorityBadgeRes),
+                            text = model.badgeText.asString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaWhite
@@ -111,7 +114,7 @@ fun ChatTopicCard(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = stringResource(model.priorityBadgeRes),
+                            text = model.badgeText.asString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = PiaNavy
@@ -125,7 +128,7 @@ fun ChatTopicCard(
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = stringResource(model.priorityBadgeRes),
+                            text = model.badgeText.asString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = PiaNavyLight
@@ -142,17 +145,19 @@ fun ChatTopicCard(
             }
 
             Text(
-                text = stringResource(model.titleRes),
+                text = model.title.asString(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = PiaNavy
             )
 
             Text(
-                text = stringResource(model.descriptionRes),
+                text = model.description.asString(),
                 fontSize = 12.sp,
                 color = PiaTextMuted,
-                lineHeight = 16.sp
+                lineHeight = 16.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Row(
@@ -168,7 +173,7 @@ fun ChatTopicCard(
                             .padding(horizontal = 8.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = stringResource(model.statusPillRes),
+                            text = model.statusPill.asString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             color = PiaSuccessGreen
@@ -186,7 +191,7 @@ fun ChatTopicCard(
                                 .background(if (isActive) PiaTacticalOrange else PiaTextMuted)
                         )
                         Text(
-                            text = stringResource(model.statusPillRes),
+                            text = model.statusPill.asString(),
                             fontSize = 12.sp,
                             color = if (isActive) PiaNavy else PiaTextMuted
                         )
@@ -195,7 +200,7 @@ fun ChatTopicCard(
 
                 if (model.hasMetricPill) {
                     Text(
-                        text = stringResource(model.metricPillRes),
+                        text = model.metricPill.asString(),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = if (model.metricPillIsNegative) PiaDangerRed else PiaNavy

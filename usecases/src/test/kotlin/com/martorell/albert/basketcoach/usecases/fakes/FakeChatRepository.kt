@@ -12,18 +12,25 @@ class FakeChatRepository : ChatRepository {
     var sendMessageResult: Result<ChatMessage, DomainError>? = null
     var lastMessageText: String? = null
     var lastGames: List<Game>? = null
+    var lastTopicId: String? = null
     var getMessagesCallCount: Int = 0
     var sendMessageCallCount: Int = 0
 
-    override suspend fun getMessages(): Result<List<ChatMessage>, DomainError> {
+    override suspend fun getMessages(topicId: String): Result<List<ChatMessage>, DomainError> {
         getMessagesCallCount++
+        lastTopicId = topicId
         return messagesToReturn
     }
 
-    override suspend fun sendMessage(messageText: String, games: List<Game>?): Result<ChatMessage, DomainError> {
+    override suspend fun sendMessage(
+        messageText: String,
+        games: List<Game>?,
+        topicId: String
+    ): Result<ChatMessage, DomainError> {
         sendMessageCallCount++
         lastMessageText = messageText
         lastGames = games
+        lastTopicId = topicId
 
         return sendMessageResult ?: Result.Success(
             ChatMessage(

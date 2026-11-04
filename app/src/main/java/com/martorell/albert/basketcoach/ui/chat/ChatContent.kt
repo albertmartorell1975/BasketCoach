@@ -21,27 +21,11 @@ import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
-/**
- * Stateless main workbench layout for the Tablet Landscape Single-Thread Chat screen.
- *
- * Assembles the context meta header, the 4-column left pane ([ChatLeftPane]), and the 8-column
- * right conversational pane ([ChatRightPane]) in a tablet-optimized landscape grid.
- *
- * @param state Current successful UI content state ([ChatUiContent.Success]).
- * @param isSending Flag indicating if a message is currently in flight.
- * @param onTopicClick Callback triggered when an intervention topic card is tapped.
- * @param onBackToTopics Callback triggered to return from diagnostic evidence to the topics list.
- * @param onInputChange Callback triggered when the input text changes.
- * @param onSend Callback triggered to dispatch a new coach message.
- * @param onDrillOptionSelect Callback triggered when a formative drill option is selected.
- * @param modifier Composable modifier for outer layout customization.
- */
 @Composable
 fun ChatContent(
     state: ChatUiContent.Success,
     isSending: Boolean,
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
-    onBackToTopics: () -> Unit,
     onInputChange: (String) -> Unit,
     onSend: () -> Unit,
     onDrillOptionSelect: (ChatDrillOptionUiModel) -> Unit,
@@ -66,12 +50,9 @@ fun ChatContent(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ChatLeftPane(
-                mode = state.leftPaneMode,
                 topics = state.topicList,
                 activeTopicId = state.activeTopicId,
-                diagnosticEvidence = state.diagnosticEvidence,
                 onTopicClick = onTopicClick,
-                onBackToTopics = onBackToTopics,
                 modifier = Modifier.weight(0.38f)
             )
 
@@ -96,7 +77,6 @@ private fun ChatContentPreview() {
         state = ChatPreviewData.previewUiContent,
         isSending = false,
         onTopicClick = {},
-        onBackToTopics = {},
         onInputChange = {},
         onSend = {},
         onDrillOptionSelect = {}

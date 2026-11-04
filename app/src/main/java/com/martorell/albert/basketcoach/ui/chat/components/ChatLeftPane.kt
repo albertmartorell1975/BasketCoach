@@ -1,74 +1,44 @@
 package com.martorell.albert.basketcoach.ui.chat.components
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.martorell.albert.basketcoach.ui.chat.data.ChatPreviewData
-import com.martorell.albert.basketcoach.ui.chat.model.ChatDiagnosticEvidenceUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 
 /**
- * Left workbench pane coordinator supporting animated mode switching between the intervention
- * topic list ([ChatTopicList]) and deep diagnostic evidence ([ChatDiagnosticEvidenceView]).
+ * Left workbench pane for the Tablet Landscape Chat screen.
  *
- * @param mode Active display mode ([ChatLeftPaneMode]).
- * @param topics List of available intervention topic cards.
- * @param activeTopicId Identifier of the currently active topic.
- * @param diagnosticEvidence Deep empirical diagnostic evidence model.
- * @param onTopicClick Callback fired when a topic card is selected.
- * @param onBackToTopics Callback fired to switch back to the topic list.
- * @param modifier Composable modifier for layout customization.
+ * Permanently displays the list of tactical improvement areas alongside the unconstrained
+ * "Consulta Lliure" card ([ChatTopicList]), keeping intervention areas visible at all times.
+ *
+ * @param topics The list of [ChatTopicCardUiModel] items to render.
+ * @param activeTopicId Unique identifier of the currently active topic card.
+ * @param onTopicClick Callback triggered when the coach selects a topic card.
+ * @param modifier Optional [Modifier] for container customization.
  */
 @Composable
 fun ChatLeftPane(
-    mode: ChatLeftPaneMode,
     topics: List<ChatTopicCardUiModel>,
-    activeTopicId: ChatTopicId,
-    diagnosticEvidence: ChatDiagnosticEvidenceUiModel,
+    activeTopicId: String,
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
-    onBackToTopics: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AnimatedContent(
-        targetState = mode,
-        transitionSpec = { fadeIn() togetherWith fadeOut() },
-        label = "left_pane_mode_transition",
+    ChatTopicList(
+        topics = topics,
+        activeTopicId = activeTopicId,
+        onTopicClick = onTopicClick,
         modifier = modifier.fillMaxWidth()
-    ) { currentMode ->
-        when (currentMode) {
-            ChatLeftPaneMode.TOPIC_LIST -> {
-                ChatTopicList(
-                    topics = topics,
-                    activeTopicId = activeTopicId,
-                    onTopicClick = onTopicClick
-                )
-            }
-            ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE -> {
-                ChatDiagnosticEvidenceView(
-                    model = diagnosticEvidence,
-                    onBackToTopics = onBackToTopics
-                )
-            }
-        }
-    }
+    )
 }
 
 @BcThemePreview
 @Composable
 private fun ChatLeftPanePreview() {
     ChatLeftPane(
-        mode = ChatLeftPaneMode.TOPIC_LIST,
         topics = ChatPreviewData.defaultTopicList,
-        activeTopicId = ChatTopicId.REBOUND_CONTROL,
-        diagnosticEvidence = ChatPreviewData.defaultDiagnosticEvidence,
-        onTopicClick = {},
-        onBackToTopics = {}
+        activeTopicId = ChatPreviewData.defaultTopicList.first().id,
+        onTopicClick = {}
     )
 }

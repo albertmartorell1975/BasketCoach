@@ -3,7 +3,7 @@
 * **Strict Tablet Landscape**: The UI must be optimized exclusively for Android Tablet in Landscape mode. No smartphone or portrait-optimized layouts should be considered.
 * **Static MVP Dataset**: The MVP relies on a static, bundled dataset (`docs/general/dataset.json`) representing 14 Phase 1 games. No dynamic data entry or remote DB syncing should be built.
 * **No Individual Player Stats**: The MVP only models and analyzes team-level and opponent-level statistics.
-* **Single Thread Chat**: The chat interface must be a single, continuous thread. No chat history list or multiple sessions.
+* **Topic-Contextualized Chat Threads**: The chat workbench left panel permanently displays the real Improvement Areas (`InsightType.IMPROVEMENT`) loaded via `GenerateInsightsUseCase` alongside an Open Inquiry option (`CONSULTA LLIURE`). Selecting an area in the left panel keeps the list visible (never replacing it with a static detail view) and switches the right panel to the conversation thread scoped to that selected area.
 * **DevExpert API Integration**: All AI insights and chat responses must be routed through the DevExpert API as defined in the discovery.
 * **Architecture Constraints**: Follow the `Layer-Based` Clean Architecture topology (`:domain` -> `:usecases` <- `:data` -> `:app`) and `MVVM` with `Hybrid UI State`.
 * **Pure Kotlin Domain Mandate**: The `:domain` module must strictly forbid any `android.*` framework dependencies, remaining a 100% pure Kotlin JVM library to preserve testability and architectural boundary separation.

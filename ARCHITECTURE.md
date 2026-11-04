@@ -62,8 +62,8 @@ The `:usecases` module encapsulates focused, single-responsibility domain intera
   - `GetGameByRoundUseCase`: Queries a specific fixture by competition round (1..14), returning `DomainError.Local.NotFound` if missing.
   - `GenerateInsightsUseCase`: Retrieves matches from `GameRepository` and supplies them as grounding context to `AiAnalysisRepository.getInsights(games)`. Propagates errors immediately without calling AI services if game loading fails.
   - `GetPracticeDrillsUseCase`: Retrieves matches from `GameRepository` and supplies them to `AiAnalysisRepository.getDrills(games)`. Propagates errors immediately without calling AI services if game loading fails.
-  - `GetChatMessagesUseCase`: Retrieves historical chat messages from `ChatRepository.getMessages()`.
-  - `SendChatMessageUseCase`: Enriches chat interactions by fetching match history from `GameRepository` and passing it to `ChatRepository.sendMessage(messageText, games)`. Validates against blank inputs (`DomainError.Generic`), and gracefully falls back to passing `games = null` if game retrieval fails so that conversational chat remains operational.
+  - `GetChatMessagesUseCase`: Retrieves historical chat messages from `ChatRepository.getMessages(topicId)`.
+  - `SendChatMessageUseCase`: Enriches chat interactions by fetching match history from `GameRepository` and passing it to `ChatRepository.sendMessage(messageText, games, topicId)`. Validates against blank inputs (`DomainError.Generic`), and gracefully falls back to passing `games = null` if game retrieval fails so that conversational chat remains operational.
 
 ---
 
@@ -109,7 +109,7 @@ The `:usecases` module encapsulates focused, single-responsibility domain intera
 ### Domain Repositories (Contracts in `:domain`)
 - **`GameRepository`**: Access to historical Phase 1 game fixtures and team box scores (`getPhase1Games()`, `getGameByRound(round)`).
 - **`AiAnalysisRepository`**: Querying tactical AI insights and recommended practice drills grounded in match context (`getInsights(games)`, `getDrills(games)`).
-- **`ChatRepository`**: Single-thread conversational assistant interaction with the AI service (`getMessages()`, `sendMessage(messageText, games)`).
+- **`ChatRepository`**: Topic-scoped conversational assistant interaction with the AI service (`getMessages(topicId)`, `sendMessage(messageText, games, topicId)`).
 
 ---
 
@@ -184,7 +184,7 @@ BasketCoach integrates with the DevExpert Inference API and provides seamless fa
 3. **Data Source Separation (`data.source`)**:
    - `AiRemoteDataSource`: Executes OkHttp requests, strips markdown code fences (` ```json `), and deserializes strict DTOs. Blocking I/O is dispatched on `Dispatchers.IO`.
    - `AiAnalysisLocalDataSource`: Thread-safe in-memory cache protected by a `Mutex` so that a single AI analysis call populates both `Insight` and `Drill` caches simultaneously.
-   - `ChatLocalDataSource`: Thread-safe single-thread message history storage protected by a `Mutex`.
+   - `ChatLocalDataSource`: Thread-safe topic-partitioned message history storage protected by a `Mutex`.
 4. **Mandatory DTO Schema & Context Grounding**:
    - `PromptTemplates.kt` grounds the AI in the 14 Phase 1 box scores (AST/TO, rebounding margins, personal foul averages, individual round scores) and FIBA rules.
    - All network DTO properties (`InsightDto`, `DrillDto`, `AiAnalysisResponseDto`, `ChatCompletionRequestDto`, `ChatCompletionResponseDto`) are strictly mandatory without defaults, and the system prompt explicitly forbids omitting keys or setting them to null.
@@ -246,37 +246,37 @@ The `:app` module delivers a specialized high-density user experience strictly o
    - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate themes (Light, Dark, RTL, Large Font) and form factors (Tablet Landscape, Phone Landscape) across all composables.
 
 
-### 7.1 Dashboard Integration Architecture (eature_008_dashboard_integration)
+### 7.1 Dashboard Integration Architecture (`feature_008_dashboard_integration`)
 
 The Phase 1 Dashboard connects to authentic domain fixtures through a decoupled MVVM integration adhering strictly to clean architectural boundaries:
 
-1. **Hilt Dependency Injection Setup (di)**:
-   - BasketCoachApplication triggers Hilt root generation via @HiltAndroidApp.
-   - DataSourceModule and RepositoryModule install into SingletonComponent using abstract @Binds methods (indGameLocalDataSource and indGameRepository) for zero-cost static delegates rather than runtime factory allocations.
-   - Core domain :domain remains 100% pure Kotlin JVM (zero DI dependencies). :usecases uses JSR-330 javax.inject.Inject on GetPhase1GamesUseCase without any Android SDK or Hilt Gradle plugins.
+1. **Hilt Dependency Injection Setup (`di`)**:
+   - `BasketCoachApplication` triggers Hilt root generation via `@HiltAndroidApp`.
+   - `DataSourceModule` and `RepositoryModule` install into `SingletonComponent` using abstract `@Binds` methods (`bindGameLocalDataSource` and `bindGameRepository`) for zero-cost static delegates rather than runtime factory allocations.
+   - Core domain `:domain` remains 100% pure Kotlin JVM (zero DI dependencies). `:usecases` uses JSR-330 `javax.inject.Inject` on `GetPhase1GamesUseCase` without any Android SDK or Hilt Gradle plugins.
 
-2. **Passive ViewModel Lifecycle & Hybrid UI State (DashboardViewModel)**:
-   - Adheres strictly to the **Passive Initialization Mandate**: zero coroutines or repository queries are launched in constructor or init blocks. Initial state defaults passively to DashboardUiContent.Loading.
-   - Data loading is explicitly triggered from Compose via LaunchedEffect(Unit) { viewModel.loadDashboard() }.
-   - DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean) models mutually exclusive states (Loading, Success, Error(DomainError)) while retaining the additive isRefreshing overlay flag.
-   - Idempotent concurrency guarding prevents duplicate in-flight requests (if (_uiState.value.isRefreshing) return).
-   - All state mutations are performed atomically via MutableStateFlow.update { ... }.
+2. **Passive ViewModel Lifecycle & Hybrid UI State (`DashboardViewModel`)**:
+   - Adheres strictly to the **Passive Initialization Mandate**: zero coroutines or repository queries are launched in constructor or `init` blocks. Initial state defaults passively to `DashboardUiContent.Loading`.
+   - Data loading is explicitly triggered from Compose via `LaunchedEffect(Unit) { viewModel.loadDashboard() }`.
+   - `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` models mutually exclusive states (`Loading`, `Success`, `Error(DomainError)`) while retaining the additive `isRefreshing` overlay flag.
+   - Idempotent concurrency guarding prevents duplicate in-flight requests (`if (_uiState.value.isRefreshing) return`).
+   - All state mutations are performed atomically via `MutableStateFlow.update { ... }`.
 
-3. **Authoritative Mathematical Transformation (DashboardUiMapper)**:
-   - DashboardUiMapper is the single source of truth for presentation calculations. It transforms raw domain Game entities into DashboardUiContent.Success:
+3. **Authoritative Mathematical Transformation (`DashboardUiMapper`)**:
+   - `DashboardUiMapper` is the single source of truth for presentation calculations. It transforms raw domain `Game` entities into `DashboardUiContent.Success`:
      - Summary record: 3V-11D, 21.4% win rate over 14 games.
      - 4 KPI pillars: Scoring (64.6 vs 73.7, net -9.1), Rebounds (22.8 vs 30.4, net -7.6, off 6.3, def 16.5), Shooting (eFG% 40.5%, 2P 43.4%, 3P 25.4%, FT 56.4%), and Game Control (AST/TO 0.65, assists 10.3, turnovers 17.6).
      - 14-round scoring progression bars with win flags for J3, J9, and J10.
      - 14-row statistical table across 16 statistical columns with normalized team names.
 
-4. **Zero-Resource-Leakage Error Handling (UiText)**:
-   - DashboardViewModel exposes raw DomainError in DashboardUiContent.Error(error = result.error). It contains zero imports of Android R.string.
-   - Error string translation occurs strictly in the UI layer via DomainError.toDashboardUiText(): UiText, mapping DomainError.Local.NotFound to R.string.dashboard_error_empty and unexpected failures to R.string.dashboard_error_generic.
+4. **Zero-Resource-Leakage Error Handling (`UiText`)**:
+   - `DashboardViewModel` exposes raw `DomainError` in `DashboardUiContent.Error(error = result.error)`. It contains zero imports of Android `R.string`.
+   - Error string translation occurs strictly in the UI layer via `DomainError.toDashboardUiText(): UiText`, mapping `DomainError.Local.NotFound` to `R.string.dashboard_error_empty` and unexpected failures to `R.string.dashboard_error_generic`.
 
 5. **Pragmatic Pure JVM Presentation Testing (Constraint #18)**:
    - Presentation tests are 100% pure JVM unit tests without Robolectric:
-     - DashboardUiMapperTest (2 tests): Mathematical calculation integrity and empty list exception boundary.
-     - DashboardViewModelTest (2 tests): Passive initialization, successful data loading, error handling, and retry recovery.
+     - `DashboardUiMapperTest` (2 tests): Mathematical calculation integrity and empty list exception boundary.
+     - `DashboardViewModelTest` (2 tests): Passive initialization, successful data loading, error handling, and retry recovery.
 
 ---
 
@@ -348,52 +348,55 @@ The Chat screen (`ChatScreen`) provides Coach Jordi with a high-density, tablet-
 | BasketCoachNavRail | ChatMetaHeader: Espai de Reflexió Tàctica · 1a Fase | 3V-11D | Junior A  |
 | (80dp Pia Navy)    +--------------------------------------------------------------------------+
 |                    | LEFT WORKBENCH PANE (4 Cols)       | RIGHT CONVERSATION PANE (8 Cols)     |
-|                    | Mode A: ChatTopicList              | ChatRightPane:                       |
-|                    |   ├─ Topic 1: Rebot Defensiu       |   ├─ Header: BasketCoach Socràtic    |
-|                    |   ├─ Topic 2: Ràtio AST/TO         |   ├─ ChatMessageStream:              |
-|                    |   ├─ Topic 3: Pèrdues Q3           |   │    ├─ AiMessageBubble            |
-|                    |   └─ Topic 4: Xat Obert            |   │    │    ├─ Callout Question      |
+|                    | ChatTopicList (Persistent, Scroll) | ChatRightPane:                       |
+|                    |   ├─ Priority Area: Rebot Defensiu |   ├─ Header: BasketCoach Socràtic    |
+|                    |   ├─ Area 2: Pèrdues en Transició  |   ├─ ChatMessageStream:              |
+|                    |   ├─ Area N: AI Improvement Area   |   │    ├─ AiMessageBubble            |
+|                    |   └─ Open Inquiry (Consulta Lliure)|   │    │    ├─ Callout Question      |
 |                    |                                    |   │    │    └─ Drill Options (A / B) |
-|                    | Mode B: ChatDiagnosticEvidenceView |   │    ├─ CoachMessageBubble         |
-|                    |   ├─ 2-Metric Box Score Bar        |   │    └─ AssistantSummaryCard       |
-|                    |   ├─ Zero-Assumption Rule Card     |   │         (Phase 2 Commitment)     |
-|                    |   ├─ ChatHalfCourtCanvas (Compose) |   └─ ChatInputBar:                   |
-|                    |   └─ "← Tots els fils" Toggle      |        [Text Field] [Send (48dp)]    |
+|                    |                                    |   │    ├─ CoachMessageBubble         |
+|                    |                                    |   │    └─ AssistantSummaryCard       |
+|                    |                                    |   │         (Phase 2 Commitment)     |
+|                    |                                    |   └─ ChatInputBar:                   |
+|                    |                                    |        [Text Field] [Send (48dp)]    |
 +-----------------------------------------------------------------------------------------------+
 ```
 
 ### Key Architectural Patterns for Chat UI
-1. **Two-Pane Tablet Workbench with Seamless Mode Switching**:
-   - The left pane operates as a stateful coordinator (`ChatLeftPane`) alternating between `ChatLeftPaneMode.TOPIC_LIST` (the 4 tactical intervention threads) and `ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE` (in-depth box score metrics, Zero-Assumption rule validation, and custom Compose `ChatHalfCourtCanvas` court visualizer).
-   - A prominent "← Tots els fils" navigation toggle allows Coach Jordi to seamlessly return to the overview without losing dialogue context.
-2. **Single Continuous Thread Mandate (Constraint #6)**:
-   - Selecting an intervention topic card pre-grounds or filters ongoing analytical context within a single continuous conversation stream rather than creating fragmented multi-session tabs or database session splits.
-3. **Diagnostic Evidence Hand-off from Analysis Screen**:
+1. **Persistent Workbench Left Pane with Real Tactical Improvement Areas (`feature_011_chat_improvement_areas`)**:
+   - The left workbench pane (`ChatLeftPane`) permanently renders `ChatTopicList` without mode switching or modal transitions.
+   - Powered by `GenerateInsightsUseCase` (sharing the `@Singleton AiAnalysisLocalDataSource` cache with `AnalysisScreen`), the topic list dynamically populates all AI-detected `InsightType.IMPROVEMENT` areas plus the final `CONSULTA LLIURE` ("Open Inquiry") card (`OPEN_INQUIRY_TOPIC_ID = "open_inquiry"`).
+   - The topic card column uses `verticalScroll(rememberScrollState())` to adaptively accommodate any number of improvement findings on the tablet landscape display (`1280x800dp`).
+2. **Topic-Scoped Conversation Threads (`topicId: String`) (Constraint #4 & #6)**:
+   - Selecting any improvement area or open inquiry card (`onTopicSelected(topic)`) sets `activeTopicId = topic.id` with high-contrast active styling (`PiaTacticalOrange`, 1.5dp border) and updates the right pane (`ChatRightPane`) to load and continue that specific topic's thread.
+   - Message histories are cleanly partitioned in memory across all architectural layers by `topicId`, preventing conversation cross-talk between different tactical intervention areas.
+3. **Seamless Exploration Hand-off from Analysis Screen**:
    - `ChatRoute` declares `@Serializable data class ChatRoute(val initialPrompt: String = "")`.
-   - When Coach Jordi taps "Explorar al Xat" on an Analysis card, `navigateToChat(prompt)` passes the intent. `ChatScreen` pre-fills the prompt, automatically switches the left pane to `ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE`, and activates the corresponding intervention focus.
+   - When Coach Jordi taps "Explorar al Xat" on an improvement card in `AnalysisScreen`, `ChatViewModel.loadChat(initialPrompt)` matches `initialPrompt` against loaded improvement insights (`exploreChatPrompt == initialPrompt || id == initialPrompt`), automatically selects that topic as active, and dispatches the inquiry into its thread once via an `initialPromptProcessed` concurrency latch.
 4. **Interactive Socratic Drill Choices & Agreement Cards**:
    - `AiMessageBubble` embeds interactive `AssistantDrillOptionCard` choices (Option A vs Option B) with merged accessibility semantics (`mergeDescendants = true`).
    - Tapping an option appends Coach Jordi's confirmation message and triggers an AI response containing the `AssistantSummaryCard` synthesizing the weekly practice commitment (e.g., "Capacitat de Tancar el Rebot Defensiu", < 9.5 pts 2a oportunitat, 4 setmanes).
 5. **Strict Default-Free & Non-Nullable UI Models (Constraint #17)**:
-   - All 8 UI presentation models in `ui.chat.model` (`ChatUiState`, `ChatMetaHeaderUiModel`, `ChatTopicCardUiModel`, `ChatDiagnosticEvidenceUiModel`, `ChatMessageUiModel`, `ChatDrillOptionUiModel`, `ChatSummaryCardUiModel`, `ChatLeftPaneMode`) enforce 0 defaults and 0 nullable properties. Absent card attachments use sentinel objects (`ChatSummaryCardUiModel.EMPTY`).
+   - All presentation models in `ui.chat.model` (`ChatUiState`, `ChatMetaHeaderUiModel`, `ChatTopicCardUiModel`, `ChatMessageUiModel`, `ChatDrillOptionUiModel`, `ChatSummaryCardUiModel`) enforce 0 defaults and 0 nullable properties. Absent card attachments use sentinel objects (`ChatSummaryCardUiModel.EMPTY`).
 6. **Minimum Typography Governance (Constraint #16)**:
-   - All text rendered across topic cards, metric badges, half-court diagram labels, bubbles, and input fields enforces a minimum size of `12.sp` (never `10.sp` or `11.sp`).
+   - All text rendered across topic cards, metric badges, bubbles, and input fields enforces a minimum size of `12.sp` (never `10.sp` or `11.sp`).
 
 
-## 10. Conversational Assistant & Guardrail Architecture (`feature_010_chat_integration`)
+## 10. Conversational Assistant & Guardrail Architecture (`feature_010_chat_integration`, `feature_011_chat_improvement_areas`)
 
-The conversational AI assistant connects the Tablet Landscape single-thread chat workbench (`ChatScreen`) to live inference via `SendChatMessageUseCase`, `GetChatMessagesUseCase`, and `GetPhase1GamesUseCase`, featuring a **2-Step AI Guardrail Pipeline**:
+The conversational AI assistant connects the Tablet Landscape Chat workbench (`ChatScreen`) to live inference via `SendChatMessageUseCase`, `GetChatMessagesUseCase`, `GenerateInsightsUseCase`, and `GetPhase1GamesUseCase`, featuring a **2-Step AI Guardrail Pipeline** and **Topic-Partitioned In-Memory SSOT**:
 
 ```text
                +-------------------------------------------------------------+
-               | ChatViewModel.sendMessage(messageText)                      |
+               | ChatViewModel.sendMessage(messageText, activeTopicId)       |
                +-------------------------------------------------------------+
                                               |
                                               v
                               +-------------------------------+
                               | SendChatMessageUseCase        |
+                              | (topicId: String)             |
                               +-------------------------------+
-                                              | (games context)
+                                              | (games context, topicId)
                                               v
                               +-------------------------------+
                               | ChatRepositoryImpl            |
@@ -422,13 +425,13 @@ The conversational AI assistant connects the Tablet Landscape single-thread chat
                                    v                          v
                               +-------------------------------+
                               | Save to ChatLocalDataSource   |
-                              | (Mutex, In-Memory SSOT)       |
+                              | (Mutex, Map<topicId, List>)   |
                               +-------------------------------+
                                               |
                                               v
                               +-------------------------------+
                               | ChatViewModel Reload Stream   |
-                              | (ChatUiContent.Success)       |
+                              | (activeTopicId thread)        |
                               +-------------------------------+
 ```
 
@@ -436,24 +439,27 @@ The conversational AI assistant connects the Tablet Landscape single-thread chat
 1. **2-Step AI Domain Guardrail Pipeline**:
    - **DevExpert Jev Decisions Mode**: When `config.baseUrl` targets DevExpert Inference, pre-classifies user prompts via `POST /v1/decisions` with `model = "jev"`. The request passes the domain state (`app_domain`, `last_assistant_message`, `coach_message`) and the `"domain_relevance"` question with `"basketball_relevant"` vs `"off_topic"` criteria.
    - **Google Gemini Fallback Mode**: When using Gemini Free Tier, executes a lightweight zero-shot classification JSON call (`temperature = 0.0`, zero match history tokens) to `/chat/completions` returning `{"choice": "basketball_relevant" | "off_topic"}`.
-   - **Off-Topic Short-Circuit**: When deemed off-topic, `ChatRepositoryImpl.sendMessage` short-circuits immediately without calling `remoteDataSource.generateChatResponse`, saving expensive generative tokens on the 14-game context. A localized tactical refusal message (`PromptTemplates.buildOffTopicRejectionMessage()`) is saved directly to `ChatLocalDataSource` and returned as `MessageSender.AI`.
-2. **In-Memory Single-Thread Session Governance (Constraint #6)**:
-   - `ChatLocalDataSourceImpl` manages the continuous conversation stream in memory using Kotlin coroutines `Mutex` synchronization.
-   - Both `ChatLocalDataSource` and `ChatRepository` are bound as `@Singleton` in `DataSourceModule` and `RepositoryModule`, guaranteeing thread continuity across screen navigation.
-3. **Passive ViewModel Lifecycle & Exploration Hand-off (`ChatViewModel`)**:
+   - **Off-Topic Short-Circuit**: When deemed off-topic, `ChatRepositoryImpl.sendMessage` short-circuits immediately without calling `remoteDataSource.generateChatResponse`, saving expensive generative tokens on the 14-game context. A localized tactical refusal message (`PromptTemplates.buildOffTopicRejectionMessage()`) is saved directly to `ChatLocalDataSource` under `topicId` and returned as `MessageSender.AI`.
+2. **Topic-Scoped In-Memory Session Governance (Constraint #4 & #6)**:
+   - `ChatLocalDataSourceImpl` manages isolated conversation threads using a `Mutex`-guarded `mutableMapOf<String, MutableList<ChatMessage>>()`.
+   - Both `ChatLocalDataSource` and `ChatRepository` are bound as `@Singleton` in `DataSourceModule` and `RepositoryModule`, preserving thread state across screen navigation.
+3. **Shared AI Insights Cache & Direct Chat Navigation**:
+   - `ChatViewModel` injects `GenerateInsightsUseCase`.
+   - Because `AiAnalysisLocalDataSource` is bound as `@Singleton`, if Coach Jordi visits `Anàlisi` first, `generateInsightsUseCase()` resolves synchronously from the in-memory cache with 0 duplicate network calls. If Coach Jordi navigates directly to `Chat` first, `generateInsightsUseCase()` fetches insights from the AI service and populates the shared cache for later use in `Anàlisi`.
+4. **Passive ViewModel Lifecycle & Exploration Hand-off (`ChatViewModel`)**:
    - Strictly satisfies the **Passive Initialization Mandate**: zero coroutines or repository queries run in `init`. Initial state is `ChatUiState(content = ChatUiContent.Loading, isSending = false)`.
    - Data loading is triggered via `LaunchedEffect(initialPrompt) { viewModel.loadChat(initialPrompt) }` in `ChatScreen`.
-   - "Explorar al Xat" hand-off: when `initialPrompt` is passed from the Analysis screen, the ViewModel sets `leftPaneMode = ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE` and auto-dispatches the prompt once, using `initialPromptProcessed` to prevent duplicate dispatches during Compose recompositions.
-4. **Hybrid UI State Pattern**:
+   - "Explorar al Xat" hand-off: matches `initialPrompt` to an `InsightType.IMPROVEMENT` topic, highlights it, and auto-dispatches the prompt once into that topic's thread.
+5. **Hybrid UI State Pattern**:
    - `ChatUiState(val content: ChatUiContent, val isSending: Boolean)` models discrete states (`Loading`, `Success`, `Error(DomainError)`) while providing the additive `isSending` overlay flag.
-   - While `isSending` is true, user input is disabled and a subtle loading indicator is rendered over the message stream. Concurrent send requests are immediately dropped (`if (trimmed.isBlank() || _uiState.value.isSending) return`).
-5. **Decoupled Mathematical Transformation & Resource Parity**:
-   - `ChatUiMapper` calculates 3V-11D meta header stats and maps domain messages to localized sender roles (`@StringRes` parameters) without hardcoded strings.
+   - While `isSending` is true, user input is disabled and a loading indicator is rendered over the message stream. Concurrent send requests are dropped (`if (trimmed.isBlank() || _uiState.value.isSending) return`).
+6. **Decoupled Mathematical Transformation & Resource Parity**:
+   - `ChatUiMapper` calculates 3V-11D meta header stats, maps `InsightType.IMPROVEMENT` to dynamic topic cards with deterministic priority (`isPriority = index == 0`), appends `OPEN_INQUIRY_TOPIC_ID`, and maps domain messages to localized sender roles without hardcoded strings.
    - `toChatUiText(): UiText` translates `DomainError` into localized strings with zero `R.string` imports in `ChatViewModel`.
    - 100% key parity is enforced between Catalan (`values/strings.xml`) and Spanish (`values-es/strings.xml`).
-6. **Pragmatic Pure JVM Testing Budget (Constraint #18)**:
-   - Presentation and integration logic are verified by 6 pure JVM tests without Robolectric:
-     - `AiRemoteDataSourceTest` (1 test): Jev decision request generation and choice parsing.
-     - `ChatRepositoryImplTest` (1 test): Off-topic prompt short-circuiting asserting 0 calls to chat completions.
-     - `ChatUiMapperTest` (2 tests): Authentic data mapping to `Success` and empty games error guard.
-     - `ChatViewModelTest` (2 tests): Passive initialization with explore prompt auto-dispatch, and error recovery with retry.
+7. **Pragmatic Pure JVM Testing Budget (Constraint #18)**:
+   - Presentation, repository, and usecase logic are verified by pure JVM tests without Robolectric:
+     - `ChatRepositoryImplTest` (2 tests): Off-topic prompt short-circuiting asserting 0 calls to chat completions; topic-scoped thread isolation asserting independent message history across distinct `topicId` keys.
+     - `SendChatMessageUseCaseTest` (3 tests): Contextual game grounding orchestration, graceful fallback when game repository fails, and error propagation.
+     - `ChatUiMapperTest` (2 tests): Dynamic `InsightType.IMPROVEMENT` mapping + Open Inquiry card with deterministic priority; empty games error guard.
+     - `ChatViewModelTest` (3 tests): Passive initialization with `GenerateInsightsUseCase` and `initialPrompt` topic matching/dispatch; topic thread switching; error handling and retry recovery.
