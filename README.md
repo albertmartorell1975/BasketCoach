@@ -42,3 +42,4 @@ For full architectural details, see the deep dive in [docs/architecture/ai-tacti
 - [x] **`feature_008_dashboard_integration`**: Connect Dashboard to Real Data via `GetPhase1GamesUseCase`, `DashboardViewModel`, and Hilt DI in `:app` (`accepted`).
 - [x] **`feature_009_analysis_integration`**: Connect Analysis to Real Data via `GenerateInsightsUseCase` and ViewModel in `:app` (`accepted`).
 - [x] **`feature_010_chat_integration`**: Connect Chat to DevExpert API via `SendChatMessageUseCase` and ViewModel in `:app` (`accepted`).
+- [x] **`feature_011_chat_improvement_areas`**: Synchronize Chat Left Pane with Real Analysis Improvement Areas & Topic-Scoped Threads in `:app`, `:usecases`, `:data`, `:domain` (`accepted`).

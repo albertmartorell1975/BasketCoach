@@ -6,7 +6,7 @@
 * **`id`:** `feature_011_chat_improvement_areas`
 * **`area`:** `app` (with `:domain`, `:data`, and `:usecases` topic-scoped thread support)
 * **`depends_on`:** `["feature_009_analysis_integration", "feature_010_chat_integration"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Synchronize the Tablet Landscape Chat left workbench pane (`ChatLeftPane` / `ChatTopicList`) with the real AI-generated tactical Improvement Areas (`InsightType.IMPROVEMENT`) loaded via `GenerateInsightsUseCase` (sharing the `@Singleton` `AiAnalysisLocalDataSource` cache with `AnalysisScreen`, or fetching from the AI API if the user opens Chat directly). Remove the `ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE` transition so the left pane permanently displays the list of Improvement Areas plus the final `CONSULTA LLIURE` ("Open Inquiry") card. Scope conversation threads by `topicId: String` across `:domain`, `:data`, `:usecases`, and `:app` so clicking any Improvement Area (or Open Inquiry) in the left pane highlights it as active and switches the right pane (`ChatRightPane`) to display and continue that specific topic's conversation thread.
 * **Identified Ambiguities / Assumptions:**
@@ -146,38 +146,38 @@ No Room database schema changes required. `ChatLocalDataSourceImpl` (`@Singleton
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, and `viewmodel-architecture-governance/SKILL.md`. Verify pure Kotlin JVM isolation in `:domain`, `:usecases`, and `:data`.
-- [ ] **Domain Layer (`:domain`):**
-  - [ ] In `ChatRepository.kt`, define `const val OPEN_INQUIRY_TOPIC_ID = "open_inquiry"` and update `getMessages(topicId: String = OPEN_INQUIRY_TOPIC_ID)` and `sendMessage(messageText: String, games: List<Game>? = null, topicId: String = OPEN_INQUIRY_TOPIC_ID)`.
-- [ ] **Data Layer (`:data`):**
-  - [ ] Update `ChatLocalDataSource.kt` and `ChatLocalDataSourceImpl.kt` to partition messages by `topicId: String` using `mutableMapOf<String, MutableList<ChatMessage>>()` inside `mutex.withLock`.
-  - [ ] Update `ChatRepositoryImpl.kt` to pass `topicId` when saving and reading messages so each topic thread maintains isolated conversation history.
-- [ ] **UseCase Layer (`:usecases`):**
-  - [ ] Update `GetChatMessagesUseCase.kt` (`invoke(topicId: String = OPEN_INQUIRY_TOPIC_ID)`) and `SendChatMessageUseCase.kt` (`invoke(messageText: String, topicId: String = OPEN_INQUIRY_TOPIC_ID)`).
-- [ ] **UI / Presentation Layer (`:app`):**
-  - [ ] Update `ChatTopicCardUiModel.kt` to use `id: String`, `UiText` properties (`badgeText`, `title`, `description`, `statusPill`, `metricPill`), and `exploreChatPrompt: String` with 0 defaults and 0 nullable fields (Constraint #17).
-  - [ ] Update `ChatUiState.kt` (`ChatUiContent.Success`) to remove `leftPaneMode` and `diagnosticEvidence`, and use `activeTopicId: String`.
-  - [ ] Delete obsolete detail view and models: `ChatDiagnosticEvidenceView.kt`, `ChatHalfCourtCanvas.kt`, `ChatDiagnosticEvidenceUiModel.kt`, `ChatTopicId.kt`, `ChatLeftPaneMode.kt`, and the `components/evidence/` folder (`EvidenceCourtCard.kt`, `EvidenceMetricsCard.kt`, `EvidenceMethodologyBanner.kt`).
-  - [ ] Clean up obsolete string resources in both Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`) for evidence (`chat_evidence_*`), court diagram (`chat_court_*`), methodology banner (`chat_methodology_*`), back toggle (`chat_topics_back_toggle`), and static topics (`chat_topic_1_*`, `chat_topic_2_*`, `chat_topic_3_*`), maintaining 100% key parity.
-  - [ ] Update `ChatUiMapper.kt` to accept `insights: List<Insight>` and `activeTopicId: String`, filter `insights.filter { it.type == InsightType.IMPROVEMENT }`, map each to `ChatTopicCardUiModel` (using `UiText.DynamicString` for insight text and `UiText.StringResource` for localized status/badges), and append the `OPEN_INQUIRY_TOPIC_ID` card.
-  - [ ] Update `ChatViewModel.kt` to inject `GenerateInsightsUseCase`, fetch and cache insights in `loadChat`, select the matching improvement topic when `initialPrompt` is provided (or default to the first improvement topic / `OPEN_INQUIRY_TOPIC_ID`), scope `getChatMessagesUseCase` and `sendChatMessageUseCase` calls by `activeTopicId`, and switch threads in `onTopicSelected(topic)` without leaving the topic list.
-  - [ ] Update `ChatTopicCard.kt`, `ChatTopicList.kt`, `ChatLeftPane.kt`, `ChatContent.kt`, `ChatScreen.kt`, and `ChatPreviewData.kt`.
-- [ ] **Testing & Integration (Pragmatic High-Value Testing & Budget Rule — Max 1-3 `@Test` per class, 6 `@Test` total across feature):**
-  - [ ] Update `FakeChatRepository.kt` in `:usecases` to match the updated `ChatRepository` interface.
-  - [ ] Update `ChatRepositoryImplTest.kt` (`:data` — 3 tests total in class, including topic-scoped thread isolation test).
-  - [ ] Update `ChatUiMapperTest.kt` (`:app` — 2 tests total in class: dynamic `InsightType.IMPROVEMENT` + Open Inquiry mapping, and empty-games error guard).
-  - [ ] Update `ChatViewModelTest.kt` (`:app` — 3 tests total in class: passive load + `GenerateInsightsUseCase` + `initialPrompt` topic matching/dispatch, `onTopicSelected` thread switching, and error/retry recovery).
-- [ ] **Compiler Self-Verification (MANDATORY):** Execute `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug` and record evidence in `PROGRESS.md` and `feature_list.json` (`status: "passing"`).
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, and `viewmodel-architecture-governance/SKILL.md`. Verify pure Kotlin JVM isolation in `:domain`, `:usecases`, and `:data`.
+- [x] **Domain Layer (`:domain`):**
+  - [x] In `ChatRepository.kt`, define `const val OPEN_INQUIRY_TOPIC_ID = "open_inquiry"` and update `getMessages(topicId: String = OPEN_INQUIRY_TOPIC_ID)` and `sendMessage(messageText: String, games: List<Game>? = null, topicId: String = OPEN_INQUIRY_TOPIC_ID)`.
+- [x] **Data Layer (`:data`):**
+  - [x] Update `ChatLocalDataSource.kt` and `ChatLocalDataSourceImpl.kt` to partition messages by `topicId: String` using `mutableMapOf<String, MutableList<ChatMessage>>()` inside `mutex.withLock`.
+  - [x] Update `ChatRepositoryImpl.kt` to pass `topicId` when saving and reading messages so each topic thread maintains isolated conversation history.
+- [x] **UseCase Layer (`:usecases`):**
+  - [x] Update `GetChatMessagesUseCase.kt` (`invoke(topicId: String = OPEN_INQUIRY_TOPIC_ID)`) and `SendChatMessageUseCase.kt` (`invoke(messageText: String, topicId: String = OPEN_INQUIRY_TOPIC_ID)`).
+- [x] **UI / Presentation Layer (`:app`):**
+  - [x] Update `ChatTopicCardUiModel.kt` to use `id: String`, `UiText` properties (`badgeText`, `title`, `description`, `statusPill`, `metricPill`), and `exploreChatPrompt: String` with 0 defaults and 0 nullable fields (Constraint #17).
+  - [x] Update `ChatUiState.kt` (`ChatUiContent.Success`) to remove `leftPaneMode` and `diagnosticEvidence`, and use `activeTopicId: String`.
+  - [x] Delete obsolete detail view and models: `ChatDiagnosticEvidenceView.kt`, `ChatHalfCourtCanvas.kt`, `ChatDiagnosticEvidenceUiModel.kt`, `ChatTopicId.kt`, `ChatLeftPaneMode.kt`, and the `components/evidence/` folder (`EvidenceCourtCard.kt`, `EvidenceMetricsCard.kt`, `EvidenceMethodologyBanner.kt`).
+  - [x] Clean up obsolete string resources in both Catalan (`res/values/strings.xml`) and Spanish (`res/values-es/strings.xml`) for evidence (`chat_evidence_*`), court diagram (`chat_court_*`), methodology banner (`chat_methodology_*`), back toggle (`chat_topics_back_toggle`), and static topics (`chat_topic_1_*`, `chat_topic_2_*`, `chat_topic_3_*`), maintaining 100% key parity.
+  - [x] Update `ChatUiMapper.kt` to accept `insights: List<Insight>` and `activeTopicId: String`, filter `insights.filter { it.type == InsightType.IMPROVEMENT }`, map each to `ChatTopicCardUiModel` (using `UiText.DynamicString` for insight text and `UiText.StringResource` for localized status/badges), and append the `OPEN_INQUIRY_TOPIC_ID` card.
+  - [x] Update `ChatViewModel.kt` to inject `GenerateInsightsUseCase`, fetch and cache insights in `loadChat`, select the matching improvement topic when `initialPrompt` is provided (or default to the first improvement topic / `OPEN_INQUIRY_TOPIC_ID`), scope `getChatMessagesUseCase` and `sendChatMessageUseCase` calls by `activeTopicId`, and switch threads in `onTopicSelected(topic)` without leaving the topic list.
+  - [x] Update `ChatTopicCard.kt`, `ChatTopicList.kt`, `ChatLeftPane.kt`, `ChatContent.kt`, `ChatScreen.kt`, and `ChatPreviewData.kt`.
+- [x] **Testing & Integration (Pragmatic High-Value Testing & Budget Rule — Max 1-3 `@Test` per class, 6 `@Test` total across feature):**
+  - [x] Update `FakeChatRepository.kt` in `:usecases` to match the updated `ChatRepository` interface.
+  - [x] Update `ChatRepositoryImplTest.kt` (`:data` — 3 tests total in class, including topic-scoped thread isolation test).
+  - [x] Update `ChatUiMapperTest.kt` (`:app` — 2 tests total in class: dynamic `InsightType.IMPROVEMENT` + Open Inquiry mapping, and empty-games error guard).
+  - [x] Update `ChatViewModelTest.kt` (`:app` — 3 tests total in class: passive load + `GenerateInsightsUseCase` + `initialPrompt` topic matching/dispatch, `onTopicSelected` thread switching, and error/retry recovery).
+- [x] **Compiler Self-Verification (MANDATORY):** Execute `./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug` and record evidence in `PROGRESS.md` and `feature_list.json` (`status: "passing"`).
 
 ---
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_011_chat_improvement_areas` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] All 4 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
-- [ ] Pure Kotlin JVM boundaries in `:domain`, `:usecases`, and `:data` are strictly preserved (zero `android.*` imports).
-- [ ] Left pane permanently renders `ChatTopicList` with real `InsightType.IMPROVEMENT` items + `CONSULTA LLIURE` (never switching to `ChatDiagnosticEvidenceView`).
-- [ ] Right pane displays and sends messages scoped to the active `topicId`.
-- [ ] Presentation models obey Constraint #17 (0 defaults, 0 nullables) and Constraint #18 (0 hardcoded strings in ViewModels/Mappers).
-- [ ] `@compiler` verification evidence is present and valid; pure JVM unit tests verify real behavior within the strict Test Budget (1–3 tests/class, 6 tests across the feature, 0 Robolectric UI tests).
-- [ ] Structured validation report written to `docs/features/feature_011_chat_improvement_areas/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_011_chat_improvement_areas` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] All 4 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior.
+- [x] Pure Kotlin JVM boundaries in `:domain`, `:usecases`, and `:data` are strictly preserved (zero `android.*` imports).
+- [x] Left pane permanently renders `ChatTopicList` with real `InsightType.IMPROVEMENT` items + `CONSULTA LLIURE` (never switching to `ChatDiagnosticEvidenceView`).
+- [x] Right pane displays and sends messages scoped to the active `topicId`.
+- [x] Presentation models obey Constraint #17 (0 defaults, 0 nullables) and Constraint #18 (0 hardcoded strings in ViewModels/Mappers).
+- [x] `@compiler` verification evidence is present and valid; pure JVM unit tests verify real behavior within the strict Test Budget (1–3 tests/class, 6 tests across the feature, 0 Robolectric UI tests).
+- [x] Structured validation report written to `docs/features/feature_011_chat_improvement_areas/validator/validation-report.md`.

@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "id":  "feature_001_domain_models",
         "area":  "domain",
@@ -87,12 +87,12 @@
         "id":  "feature_006_analysis_ui",
         "area":  "app",
         "title":  "Tablet Landscape Analysis UI",
-        "user_visible_behavior":  "The coach navigates to the AnÃƒÆ’Ã‚Â lisi screen to view the Phase 1 baseline hero card, filter insights by Tots, Fortaleses, or ÃƒÆ’Ã¢â€šÂ¬rees de Millora, inspect a 3-column grid of rich tactical strength and improvement cards with empirical metric panels, and tap \u0027Explorar al Xat\u0027 on improvement areas.",
+        "user_visible_behavior":  "The coach navigates to the AnÃƒÂ lisi screen to view the Phase 1 baseline hero card, filter insights by Tots, Fortaleses, or Ãƒâ‚¬rees de Millora, inspect a 3-column grid of rich tactical strength and improvement cards with empirical metric panels, and tap \u0027Explorar al Xat\u0027 on improvement areas.",
         "depends_on":  [
                            "feature_005_dashboard_ui"
                        ],
         "status":  "accepted",
-        "verification":  "Domain/Data unit tests verify expanded Insight metric models and mapping; Compose UI tests verify AnÃƒÆ’Ã‚Â lisi screen rendering, segmented filtering, and \u0027Explorar al Xat\u0027 navigation.",
+        "verification":  "Domain/Data unit tests verify expanded Insight metric models and mapping; Compose UI tests verify AnÃƒÂ lisi screen rendering, segmented filtering, and \u0027Explorar al Xat\u0027 navigation.",
         "evidence":  "gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug - 92 unit and Compose UI tests passed (13 in :domain, 33 in :data, 15 in :usecases, 31 in :app), 0 failures. assembleDebug SUCCESSFUL, lintDebug SUCCESSFUL with 0 errors. Full project build successful.",
         "notes":  "Includes :domain and :data expansion for Insight (InsightType, InsightMetric, MetricSentiment, contextTag, priority, footerNote, exploreChatPrompt) and AnalysisScreen in :app based on docs/ui/screens/analisis_landscape/.",
         "require_review_after":  [
@@ -149,7 +149,7 @@
         "id":  "feature_009_analysis_integration",
         "area":  "app",
         "title":  "Connect Analysis to Real Data",
-        "user_visible_behavior":  "The AnÃƒÆ’Ã‚Â lisi screen populates with real AI tactical strengths and improvement areas loaded via GenerateInsightsUseCase.",
+        "user_visible_behavior":  "The AnÃƒÂ lisi screen populates with real AI tactical strengths and improvement areas loaded via GenerateInsightsUseCase.",
         "depends_on":  [
                            "feature_004_usecases",
                            "feature_006_analysis_ui"
@@ -190,9 +190,9 @@
                            "feature_009_analysis_integration",
                            "feature_010_chat_integration"
                        ],
-        "status":  "in_progress",
+        "status":  "accepted",
         "verification":  "Unit tests across :data, :usecases, and :app verify topic-scoped message storage, GenerateInsightsUseCase integration in ChatViewModel, dynamic Improvement Area mapping in ChatUiMapper, and topic switching.",
-        "evidence":  "",
+        "evidence":  "./gradlew :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug - All unit tests passed across all modules (including ChatRepositoryImplTest topic isolation, ChatUiMapperTest dynamic improvement mapping, and ChatViewModelTest topic matching/switching/recovery), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors. Full suite passed in 15s. BUILD SUCCESSFUL.",
         "notes":  "Remove ChatDiagnosticEvidenceView mode switching so the left panel always shows the list of Improvement Areas + Open Inquiry. Store/filter chat messages per topicId so each Improvement Area maintains its own contextualized chat on the right pane. Support \u0027Explorar al Xat\u0027 handoff from Analysis by selecting the matching improvement area topic.",
         "require_review_after":  [
                                      "planner",
