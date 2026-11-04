@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
  * to prevent horizontal layout misalignment during table scrolling.
  */
 internal object TableColumnWidths {
-    val round: Dp = 55.dp
+    val round: Dp = 72.dp
     val match: Dp = 160.dp
     val score: Dp = 90.dp
     val efg: Dp = 65.dp

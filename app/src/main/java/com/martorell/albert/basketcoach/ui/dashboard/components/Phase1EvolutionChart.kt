@@ -198,18 +198,18 @@ private fun RoundBarColumn(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
                     .background(PiaSuccessGreen)
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-                    .offset(y = (-4).dp)
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = stringResource(R.string.chart_win_badge, round.piaScore, round.rivalScore),
                     color = Color.White,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    lineHeight = 13.sp,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
             }
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
         Row(

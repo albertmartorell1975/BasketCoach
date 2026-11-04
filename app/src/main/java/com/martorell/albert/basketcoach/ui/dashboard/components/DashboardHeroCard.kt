@@ -197,9 +197,9 @@ fun DashboardHeroCard(
 
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(PiaNavy.copy(alpha = 0.1f)),
+                        .background(PiaNavy.copy(alpha = 0.1f))
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -211,14 +211,15 @@ fun DashboardHeroCard(
                             color = PiaNavy,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 16.sp
+                            lineHeight = 18.sp
                         )
                         Text(
                             text = stringResource(R.string.hero_summary_games_label),
                             color = PiaNavy,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            lineHeight = 12.sp
+                            lineHeight = 14.sp,
+                            maxLines = 1
                         )
                     }
                 }
