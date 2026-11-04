@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.martorell.albert.basketcoach.ui.components.BasketCoachTopBar
@@ -34,6 +36,8 @@ fun BasketCoachApp(
         modifier = modifier
             .fillMaxSize()
             .background(PiaBackground)
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         BasketCoachNavRail(
             navOptions = BasketCoachAppState.NAV_OPTIONS,

@@ -8,6 +8,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.background
+import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardErrorView
@@ -64,7 +66,9 @@ fun DashboardScreen(
     onRetry: () -> Unit = {}
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PiaBackground),
         contentAlignment = Alignment.Center
     ) {
         when (val content = uiState.content) {

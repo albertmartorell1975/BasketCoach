@@ -3,7 +3,7 @@
     <string name="app_name">BasketCoach</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_analysis">Anàlisi</string>
-    <string name="nav_chat">Chat</string>
+    <string name="nav_chat">Xat</string>
     <string name="topbar_category">Junior Masculí Interterritorial</string>
     <string name="topbar_verified_dataset">Dades consolidades · 14 partits 1a Fase</string>
     <string name="topbar_coach_role">Head Coach</string>
