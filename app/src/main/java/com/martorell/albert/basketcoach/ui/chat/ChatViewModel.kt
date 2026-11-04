@@ -3,14 +3,16 @@ package com.martorell.albert.basketcoach.ui.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.domain.model.Insight
+import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
+import com.martorell.albert.basketcoach.usecases.ai.GenerateInsightsUseCase
 import com.martorell.albert.basketcoach.usecases.chat.GetChatMessagesUseCase
 import com.martorell.albert.basketcoach.usecases.chat.SendChatMessageUseCase
 import com.martorell.albert.basketcoach.usecases.game.GetPhase1GamesUseCase
@@ -23,29 +25,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * ViewModel orchestrating state and user interactions for the single-thread tactical Chat screen.
+ * ViewModel orchestrating state and user interactions for the topic-scoped tactical Chat workbench.
  *
  * Adheres strictly to the **Passive Initialization Mandate** (`viewmodel-architecture-governance`):
  * performs zero work in `init`. Initial UI state starts with [ChatUiContent.Loading] and
  * data loading is deferred until [loadChat] is explicitly triggered by Compose
  * (e.g., via `LaunchedEffect(initialPrompt)` in `ChatScreen`).
  *
- * Manages the **Hybrid UI State Pattern** ([ChatUiState] wrapping [ChatUiContent] alongside
- * the additive [ChatUiState.isSending] in-flight overlay flag) with atomic state updates via
- * [MutableStateFlow.update].
- *
- * Implements the "Explorar al Xat" navigation hand-off: when an [initialPrompt] is passed,
- * sets the left workbench pane to [ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE] and automatically
- * dispatches the prompt once, guarding against duplicate dispatches on recomposition.
- *
- * @param getPhase1GamesUseCase Domain interactor retrieving Phase 1 match history for context grounding.
- * @param getChatMessagesUseCase Domain interactor retrieving recorded conversation messages.
- * @param sendChatMessageUseCase Domain interactor dispatching coach queries and receiving AI responses.
- * @param chatUiMapper Presentation mapper transforming domain data to immutable UI models.
+ * Coordinates:
+ * - Dynamic loading of AI-detected improvement areas ([InsightType.IMPROVEMENT]) via [GenerateInsightsUseCase]
+ *   sharing the in-memory cache populated by `AnalysisScreen`.
+ * - Topic-scoped conversation threads isolated by `topicId: String`.
+ * - "Explorar al Xat" hand-off from `AnalysisScreen`, matching `initialPrompt` against improvement topics and auto-dispatching.
+ * - The **Hybrid UI State Pattern** ([ChatUiState] wrapping [ChatUiContent] alongside the additive [ChatUiState.isSending]
+ *   in-flight overlay flag) with atomic state updates via [MutableStateFlow.update].
  */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getPhase1GamesUseCase: GetPhase1GamesUseCase,
+    private val generateInsightsUseCase: GenerateInsightsUseCase,
     private val getChatMessagesUseCase: GetChatMessagesUseCase,
     private val sendChatMessageUseCase: SendChatMessageUseCase,
     private val chatUiMapper: ChatUiMapper
@@ -57,22 +55,20 @@ class ChatViewModel @Inject constructor(
             isSending = false
         )
     )
-    /**
-     * Observable [StateFlow] exposing the immutable [ChatUiState] to the presentation layer.
-     */
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
     private var cachedGames: List<Game> = emptyList()
+    private var cachedInsights: List<Insight> = emptyList()
     private var initialPromptProcessed: Boolean = false
 
     /**
      * Passively initializes or refreshes the chat workbench.
      *
-     * Fetches Phase 1 match context (caching in-memory) and conversation history.
-     * When [initialPrompt] is non-blank (via "Explorar al Xat"), automatically configures
-     * the left pane to [ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE] and dispatches the prompt once.
+     * Loads Phase 1 games and AI tactical insights, resolves the active topic (matching [initialPrompt]
+     * if provided via "Explorar al Xat"), loads that topic's message thread, and automatically dispatches
+     * [initialPrompt] if the thread has not yet processed it.
      *
-     * @param initialPrompt Pre-grounded tactical question or empty string for standard entry.
+     * @param initialPrompt Optional pre-grounded prompt or topic identifier passed from navigation.
      */
     fun loadChat(initialPrompt: String = "") {
         viewModelScope.launch {
@@ -88,22 +84,42 @@ class ChatViewModel @Inject constructor(
                 }
             }
 
-            when (val messagesResult = getChatMessagesUseCase()) {
+            if (cachedInsights.isEmpty()) {
+                when (val insightsResult = generateInsightsUseCase()) {
+                    is Result.Error -> {
+                        _uiState.update { it.copy(content = ChatUiContent.Error(insightsResult.error)) }
+                        return@launch
+                    }
+                    is Result.Success -> {
+                        cachedInsights = insightsResult.data
+                    }
+                }
+            }
+
+            val targetTopicId = if (initialPrompt.isNotBlank()) {
+                val matchingInsight = cachedInsights
+                    .filter { it.type == InsightType.IMPROVEMENT }
+                    .find { it.exploreChatPrompt == initialPrompt || it.id == initialPrompt }
+                matchingInsight?.id
+                    ?: cachedInsights.firstOrNull { it.type == InsightType.IMPROVEMENT }?.id
+                    ?: OPEN_INQUIRY_TOPIC_ID
+            } else {
+                val currentSuccess = _uiState.value.content as? ChatUiContent.Success
+                currentSuccess?.activeTopicId
+                    ?: cachedInsights.firstOrNull { it.type == InsightType.IMPROVEMENT }?.id
+                    ?: OPEN_INQUIRY_TOPIC_ID
+            }
+
+            when (val messagesResult = getChatMessagesUseCase(targetTopicId)) {
                 is Result.Error -> {
                     _uiState.update { it.copy(content = ChatUiContent.Error(messagesResult.error)) }
                 }
                 is Result.Success -> {
-                    val targetLeftPane = if (initialPrompt.isNotBlank()) {
-                        ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
-                    } else {
-                        ChatLeftPaneMode.TOPIC_LIST
-                    }
-
                     val content = chatUiMapper.mapToContent(
                         games = cachedGames,
+                        insights = cachedInsights,
                         messages = messagesResult.data,
-                        leftPaneMode = targetLeftPane,
-                        activeTopicId = ChatTopicId.REBOUND_CONTROL,
+                        activeTopicId = targetTopicId,
                         inputText = ""
                     )
 
@@ -113,7 +129,9 @@ class ChatViewModel @Inject constructor(
 
                     if (initialPrompt.isNotBlank() && !initialPromptProcessed) {
                         initialPromptProcessed = true
-                        sendMessage(initialPrompt)
+                        if (messagesResult.data.isEmpty()) {
+                            sendMessage(initialPrompt)
+                        }
                     }
                 }
             }
@@ -121,16 +139,15 @@ class ChatViewModel @Inject constructor(
     }
 
     /**
-     * Dispatches a message to the conversational AI assistant.
+     * Submits a message to the AI coaching assistant within the currently active topic thread.
      *
-     * Incorporates an idempotent concurrency guard (`if (trimmed.isBlank() || _uiState.value.isSending) return`).
-     * Sets [ChatUiState.isSending] to true while in flight, reloads conversation messages upon
-     * successful dispatch, and updates UI state atomically.
+     * Short-circuits if the message is blank or if another message is already in flight ([ChatUiState.isSending]).
      *
-     * @param messageText Explicit text to send, or empty string to use current [ChatUiContent.Success.inputText].
+     * @param messageText Optional explicit message text; defaults to the current [ChatUiContent.Success.inputText].
      */
     fun sendMessage(messageText: String = "") {
         val currentSuccess = _uiState.value.content as? ChatUiContent.Success
+        val activeTopicId = currentSuccess?.activeTopicId ?: OPEN_INQUIRY_TOPIC_ID
         val textToSend = if (messageText.isNotBlank()) messageText else currentSuccess?.inputText.orEmpty()
         val trimmed = textToSend.trim()
 
@@ -139,7 +156,7 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isSending = true) }
 
-            when (val sendResult = sendChatMessageUseCase(trimmed)) {
+            when (val sendResult = sendChatMessageUseCase(trimmed, activeTopicId)) {
                 is Result.Error -> {
                     _uiState.update {
                         it.copy(
@@ -149,7 +166,7 @@ class ChatViewModel @Inject constructor(
                     }
                 }
                 is Result.Success -> {
-                    when (val reloadResult = getChatMessagesUseCase()) {
+                    when (val reloadResult = getChatMessagesUseCase(activeTopicId)) {
                         is Result.Error -> {
                             _uiState.update {
                                 it.copy(
@@ -159,14 +176,11 @@ class ChatViewModel @Inject constructor(
                             }
                         }
                         is Result.Success -> {
-                            val activeLeftPane = currentSuccess?.leftPaneMode ?: ChatLeftPaneMode.TOPIC_LIST
-                            val activeTopic = currentSuccess?.activeTopicId ?: ChatTopicId.REBOUND_CONTROL
-
                             val updatedContent = chatUiMapper.mapToContent(
                                 games = cachedGames,
+                                insights = cachedInsights,
                                 messages = reloadResult.data,
-                                leftPaneMode = activeLeftPane,
-                                activeTopicId = activeTopic,
+                                activeTopicId = activeTopicId,
                                 inputText = ""
                             )
 
@@ -184,9 +198,9 @@ class ChatViewModel @Inject constructor(
     }
 
     /**
-     * Updates draft input text in the message input field.
+     * Updates the draft text in the message input field.
      *
-     * @param newText Newly typed text value.
+     * @param newText Updated draft string entered by the coach.
      */
     fun onInputTextChanged(newText: String) {
         val currentSuccess = _uiState.value.content as? ChatUiContent.Success ?: return
@@ -196,49 +210,41 @@ class ChatViewModel @Inject constructor(
     }
 
     /**
-     * Handles selection of a tactical intervention topic card.
+     * Switches the active conversation thread to the selected [topic] without leaving the workbench view.
      *
-     * Switches left pane mode to [ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE] if the topic contains
-     * diagnostic evidence, or back to [ChatLeftPaneMode.TOPIC_LIST] if it does not.
+     * Loads the persisted in-memory message history for [topic.id] and preserves the coach's current input draft.
      *
-     * @param topic Selected topic card model.
+     * @param topic The selected [ChatTopicCardUiModel].
      */
     fun onTopicSelected(topic: ChatTopicCardUiModel) {
         val currentSuccess = _uiState.value.content as? ChatUiContent.Success ?: return
-        val targetMode = if (topic.hasDiagnosticEvidence) {
-            ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE
-        } else {
-            ChatLeftPaneMode.TOPIC_LIST
-        }
-        _uiState.update {
-            it.copy(
-                content = currentSuccess.copy(
-                    activeTopicId = topic.id,
-                    leftPaneMode = targetMode
-                )
-            )
+        if (currentSuccess.activeTopicId == topic.id) return
+
+        viewModelScope.launch {
+            when (val messagesResult = getChatMessagesUseCase(topic.id)) {
+                is Result.Error -> {
+                    _uiState.update { it.copy(content = ChatUiContent.Error(messagesResult.error)) }
+                }
+                is Result.Success -> {
+                    val updatedContent = chatUiMapper.mapToContent(
+                        games = cachedGames,
+                        insights = cachedInsights,
+                        messages = messagesResult.data,
+                        activeTopicId = topic.id,
+                        inputText = currentSuccess.inputText
+                    )
+                    _uiState.update {
+                        it.copy(content = updatedContent)
+                    }
+                }
+            }
         }
     }
 
     /**
-     * Switches the display mode of the left workbench pane.
+     * Submits a predefined drill option selected by the coach from a Socratic assistant callout card.
      *
-     * @param mode Target display mode ([ChatLeftPaneMode.TOPIC_LIST] or [ChatLeftPaneMode.DIAGNOSTIC_EVIDENCE]).
-     */
-    fun onLeftPaneModeChanged(mode: ChatLeftPaneMode) {
-        val currentSuccess = _uiState.value.content as? ChatUiContent.Success ?: return
-        _uiState.update {
-            it.copy(content = currentSuccess.copy(leftPaneMode = mode))
-        }
-    }
-
-    /**
-     * Handles coach selection of an interactive formative drill option embedded in an AI bubble.
-     *
-     * Formats the selection prompt (e.g. "Opció A: Tancar el Rebot Defensiu") and dispatches it
-     * via [sendMessage].
-     *
-     * @param drill Selected formative drill option model.
+     * @param drill The selected [ChatDrillOptionUiModel].
      */
     fun onDrillOptionSelected(drill: ChatDrillOptionUiModel) {
         val prompt = "${drill.optionTag}: ${drill.title}"
@@ -246,7 +252,7 @@ class ChatViewModel @Inject constructor(
     }
 
     /**
-     * Retries loading chat data following an error state.
+     * Retries loading the chat workbench following an error state.
      */
     fun onRetry() {
         loadChat()

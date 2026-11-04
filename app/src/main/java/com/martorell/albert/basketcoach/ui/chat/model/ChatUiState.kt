@@ -29,19 +29,15 @@ sealed interface ChatUiContent {
      * Successfully initialized chat workbench state with active conversation stream and contextual panels.
      *
      * @property metaHeader Context metadata displayed in the top header bar.
-     * @property leftPaneMode Active display mode for the left workbench pane ([ChatLeftPaneMode]).
      * @property topicList List of intervention areas and exploration threads.
      * @property activeTopicId Unique identifier of the currently active or selected topic card.
-     * @property diagnosticEvidence Empirical diagnostic evidence and court spatial data for the selected topic.
      * @property messages Chronological stream of conversation messages in the right pane.
      * @property inputText Current draft text in the message input field.
      */
     data class Success(
         val metaHeader: ChatMetaHeaderUiModel,
-        val leftPaneMode: ChatLeftPaneMode,
         val topicList: List<ChatTopicCardUiModel>,
-        val activeTopicId: ChatTopicId,
-        val diagnosticEvidence: ChatDiagnosticEvidenceUiModel,
+        val activeTopicId: String,
         val messages: List<ChatMessageUiModel>,
         val inputText: String
     ) : ChatUiContent

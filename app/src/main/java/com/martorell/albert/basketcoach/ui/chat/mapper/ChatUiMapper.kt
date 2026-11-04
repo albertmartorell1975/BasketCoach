@@ -4,50 +4,48 @@ import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.ChatMessage
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.domain.model.Insight
+import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MessageSender
-import com.martorell.albert.basketcoach.ui.chat.model.ChatDiagnosticEvidenceUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
+import com.martorell.albert.basketcoach.domain.model.MetricSentiment
+import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatSummaryCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicId
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
+import com.martorell.albert.basketcoach.ui.util.UiText
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 /**
- * Transforms domain models ([Game], [ChatMessage]) into presentation models for the Chat workbench.
+ * Transforms domain models ([Game], [ChatMessage], [Insight]) into presentation models for the Chat workbench.
  *
- * Authoritative mathematical and presentation mapper computing:
- * - Phase 1 competitive balance (wins, losses) for the meta header.
- * - Localized sender name and role string resource IDs ([R.string.chat_sender_coach_name],
- *   [R.string.chat_sender_coach_role], [R.string.chat_sender_ai_name], [R.string.chat_sender_ai_role],
- *   [R.string.chat_sender_system_name], [R.string.chat_sender_system_role]).
- * - Default tactical intervention topic cards and diagnostic evidence models.
- * - Formatted message timestamps (`HH:mm`).
+ * Responsibilities include:
+ * - Aggregating Phase 1 game statistics into [ChatMetaHeaderUiModel].
+ * - Dynamically mapping [InsightType.IMPROVEMENT] insights into [ChatTopicCardUiModel] entries with deterministic priority.
+ * - Appending the unconstrained [OPEN_INQUIRY_TOPIC_ID] card ("Consulta Lliure") to the topic list.
+ * - Mapping domain [ChatMessage] items into presentation [ChatMessageUiModel] representations with localized role labels.
  */
 class ChatUiMapper @Inject constructor() {
 
     /**
-     * Maps match fixtures and chat messages into a [ChatUiContent.Success] state.
+     * Transforms domain data into the active [ChatUiContent] presentation state.
      *
-     * Returns [ChatUiContent.Error] with [DomainError.Local.NotFound] if the games collection is empty.
-     *
-     * @param games List of Phase 1 match fixtures.
-     * @param messages Chronological list of recorded conversation messages.
-     * @param leftPaneMode Active display mode for the left workbench pane.
-     * @param activeTopicId Active intervention topic card ID.
-     * @param inputText Current draft text in the message input field.
-     * @return [ChatUiContent] representing success or error.
+     * @param games Complete list of Phase 1 [Game] fixtures used to calculate record and context metadata.
+     * @param insights Full list of AI-generated [Insight] entities to extract improvement areas from.
+     * @param messages Chronological message stream for the active topic thread.
+     * @param activeTopicId Unique identifier of the currently selected topic or improvement area.
+     * @param inputText Current text draft in the message input field.
+     * @return [ChatUiContent.Success] with mapped presentation models, or [ChatUiContent.Error] if games list is empty.
      */
     fun mapToContent(
         games: List<Game>,
+        insights: List<Insight>,
         messages: List<ChatMessage>,
-        leftPaneMode: ChatLeftPaneMode,
-        activeTopicId: ChatTopicId,
+        activeTopicId: String,
         inputText: String
     ): ChatUiContent {
         if (games.isEmpty()) {
@@ -65,25 +63,63 @@ class ChatUiMapper @Inject constructor() {
             teamPillRes = R.string.chat_meta_team_pill
         )
 
+        val improvementCards = insights
+            .filter { it.type == InsightType.IMPROVEMENT }
+            .mapIndexed { index, insight ->
+                ChatTopicCardUiModel(
+                    id = insight.id,
+                    badgeText = if (insight.priority.isNotBlank()) {
+                        UiText.DynamicString(insight.priority)
+                    } else {
+                        UiText.StringResource(R.string.chat_topic_badge_improvement)
+                    },
+                    isPriority = index == 0,
+                    isOpenInquiry = false,
+                    title = UiText.DynamicString(insight.title),
+                    description = UiText.DynamicString(insight.description),
+                    statusPill = if (insight.id == activeTopicId) {
+                        UiText.StringResource(R.string.chat_topic_status_active)
+                    } else {
+                        UiText.StringResource(R.string.chat_topic_status_pending)
+                    },
+                    hasMetricPill = insight.metric.primaryValue.isNotBlank(),
+                    metricPill = UiText.DynamicString(insight.metric.primaryValue),
+                    metricPillIsNegative = insight.metric.sentiment == MetricSentiment.NEGATIVE,
+                    exploreChatPrompt = insight.exploreChatPrompt
+                )
+            }
+
+        val openInquiryCard = ChatTopicCardUiModel(
+            id = OPEN_INQUIRY_TOPIC_ID,
+            badgeText = UiText.StringResource(R.string.chat_topic_open_badge),
+            isPriority = false,
+            isOpenInquiry = true,
+            title = UiText.StringResource(R.string.chat_topic_open_title),
+            description = UiText.StringResource(R.string.chat_topic_open_desc),
+            statusPill = UiText.StringResource(R.string.chat_topic_open_status),
+            hasMetricPill = false,
+            metricPill = UiText.DynamicString(""),
+            metricPillIsNegative = false,
+            exploreChatPrompt = ""
+        )
+
+        val allTopics = improvementCards + openInquiryCard
         val mappedMessages = messages.map { mapMessage(it) }
-        val topics = buildDefaultTopicList()
 
         return ChatUiContent.Success(
             metaHeader = metaHeader,
-            leftPaneMode = leftPaneMode,
-            topicList = topics,
+            topicList = allTopics,
             activeTopicId = activeTopicId,
-            diagnosticEvidence = buildDefaultDiagnosticEvidence(),
             messages = mappedMessages,
             inputText = inputText
         )
     }
 
     /**
-     * Maps an individual domain [ChatMessage] entity into a presentation [ChatMessageUiModel].
+     * Maps an individual domain [ChatMessage] into its presentation [ChatMessageUiModel] representation.
      *
-     * @param domainMessage The domain chat message entity.
-     * @return Presentation message model with localized sender metadata.
+     * @param domainMessage The domain [ChatMessage] to transform.
+     * @return Transformed [ChatMessageUiModel] with localized sender name and role resources.
      */
     fun mapMessage(domainMessage: ChatMessage): ChatMessageUiModel {
         val (nameRes, roleRes) = when (domainMessage.sender) {
@@ -110,95 +146,6 @@ class ChatUiMapper @Inject constructor() {
             summaryCard = ChatSummaryCardUiModel.EMPTY
         )
     }
-
-    /**
-     * Generates the default list of 4 tactical intervention topic cards.
-     *
-     * @return List of [ChatTopicCardUiModel] instances.
-     */
-    fun buildDefaultTopicList(): List<ChatTopicCardUiModel> = listOf(
-        ChatTopicCardUiModel(
-            id = ChatTopicId.REBOUND_CONTROL,
-            priorityBadgeRes = R.string.chat_topic_1_badge,
-            isPriority = true,
-            isOpenInquiry = false,
-            titleRes = R.string.chat_topic_1_title,
-            descriptionRes = R.string.chat_topic_1_desc,
-            statusPillRes = R.string.chat_topic_1_status,
-            hasMetricPill = true,
-            metricPillRes = R.string.chat_topic_1_metric,
-            metricPillIsNegative = true,
-            hasDiagnosticEvidence = true
-        ),
-        ChatTopicCardUiModel(
-            id = ChatTopicId.AST_TO_RATIO,
-            priorityBadgeRes = R.string.chat_topic_2_badge,
-            isPriority = false,
-            isOpenInquiry = false,
-            titleRes = R.string.chat_topic_2_title,
-            descriptionRes = R.string.chat_topic_2_desc,
-            statusPillRes = R.string.chat_topic_2_status,
-            hasMetricPill = true,
-            metricPillRes = R.string.chat_topic_2_metric,
-            metricPillIsNegative = false,
-            hasDiagnosticEvidence = false
-        ),
-        ChatTopicCardUiModel(
-            id = ChatTopicId.Q3_TURNOVERS,
-            priorityBadgeRes = R.string.chat_topic_3_badge,
-            isPriority = false,
-            isOpenInquiry = false,
-            titleRes = R.string.chat_topic_3_title,
-            descriptionRes = R.string.chat_topic_3_desc,
-            statusPillRes = R.string.chat_topic_3_status,
-            hasMetricPill = true,
-            metricPillRes = R.string.chat_topic_3_metric,
-            metricPillIsNegative = true,
-            hasDiagnosticEvidence = false
-        ),
-        ChatTopicCardUiModel(
-            id = ChatTopicId.OPEN_INQUIRY,
-            priorityBadgeRes = R.string.chat_topic_open_badge,
-            isPriority = false,
-            isOpenInquiry = true,
-            titleRes = R.string.chat_topic_open_title,
-            descriptionRes = R.string.chat_topic_open_desc,
-            statusPillRes = R.string.chat_topic_open_status,
-            hasMetricPill = false,
-            metricPillRes = R.string.chat_topic_open_status,
-            metricPillIsNegative = false,
-            hasDiagnosticEvidence = false
-        )
-    )
-
-    /**
-     * Generates the default empirical diagnostic evidence model for defensive rebounding.
-     *
-     * @return [ChatDiagnosticEvidenceUiModel] instance with authentic Phase 1 metrics.
-     */
-    fun buildDefaultDiagnosticEvidence(): ChatDiagnosticEvidenceUiModel = ChatDiagnosticEvidenceUiModel(
-        priorityBadgeRes = R.string.chat_evidence_priority_badge,
-        titleRes = R.string.chat_evidence_title,
-        subtitleRes = R.string.chat_evidence_subtitle,
-        metric1LabelRes = R.string.chat_evidence_metric1_label,
-        metric1Value = "14.8",
-        metric1UnitRes = R.string.chat_evidence_metric1_unit,
-        metric1DeltaRes = R.string.chat_evidence_metric1_delta,
-        metric2LabelRes = R.string.chat_evidence_metric2_label,
-        metric2Value = "13.2",
-        metric2UnitRes = R.string.chat_evidence_metric2_unit,
-        metric2RankingRes = R.string.chat_evidence_metric2_ranking,
-        zeroAssumptionTitleRes = R.string.chat_evidence_zero_assumption_title,
-        zeroAssumptionDescriptionRes = R.string.chat_evidence_zero_assumption_desc,
-        courtPerimeterPct = "61%",
-        courtInteriorPct = "39%",
-        courtLeftWingPct = "29%",
-        courtTopOfKeyPct = "32%",
-        courtRightWingPct = "23%",
-        courtPaintPct = "16%",
-        methodologyTitleRes = R.string.chat_methodology_title,
-        methodologyCycleRes = R.string.chat_methodology_cycle
-    )
 
     private fun formatTimestamp(timestamp: Long): String {
         if (timestamp <= 0L) return ""

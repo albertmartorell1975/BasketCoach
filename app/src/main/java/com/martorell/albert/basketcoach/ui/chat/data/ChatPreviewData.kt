@@ -4,26 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.martorell.albert.basketcoach.R
 import com.martorell.albert.basketcoach.domain.model.MessageSender
-import com.martorell.albert.basketcoach.ui.chat.mapper.ChatUiMapper
-import com.martorell.albert.basketcoach.ui.chat.model.ChatDiagnosticEvidenceUiModel
+import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMessageUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatMetaHeaderUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatSummaryCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
+import com.martorell.albert.basketcoach.ui.util.UiText
 
 /**
  * Static preview data factory for Jetpack Compose `@Preview` annotations in the Chat UI.
  *
  * Strictly scoped to design-time previews and never imported by production ViewModels or Mappers.
- * All preview texts are backed by string resources for full bilingual parity.
  */
 object ChatPreviewData {
-
-    private val previewMapper = ChatUiMapper()
 
     val defaultMetaHeader = ChatMetaHeaderUiModel(
         spaceTagRes = R.string.chat_meta_space_tag,
@@ -33,9 +29,47 @@ object ChatPreviewData {
         teamPillRes = R.string.chat_meta_team_pill
     )
 
-    val defaultTopicList: List<ChatTopicCardUiModel> = previewMapper.buildDefaultTopicList()
-
-    val defaultDiagnosticEvidence: ChatDiagnosticEvidenceUiModel = previewMapper.buildDefaultDiagnosticEvidence()
+    val defaultTopicList: List<ChatTopicCardUiModel> = listOf(
+        ChatTopicCardUiModel(
+            id = "preview_topic_1",
+            badgeText = UiText.StringResource(R.string.chat_topic_badge_improvement),
+            isPriority = true,
+            isOpenInquiry = false,
+            title = UiText.StringResource(R.string.chat_preview_topic_1_title),
+            description = UiText.StringResource(R.string.chat_preview_topic_1_desc),
+            statusPill = UiText.StringResource(R.string.chat_topic_status_active),
+            hasMetricPill = true,
+            metricPill = UiText.StringResource(R.string.chat_preview_topic_1_metric),
+            metricPillIsNegative = true,
+            exploreChatPrompt = "Com podem millorar el control del rebot defensiu a la 2a fase?"
+        ),
+        ChatTopicCardUiModel(
+            id = "preview_topic_2",
+            badgeText = UiText.StringResource(R.string.chat_topic_badge_improvement),
+            isPriority = false,
+            isOpenInquiry = false,
+            title = UiText.StringResource(R.string.chat_preview_topic_2_title),
+            description = UiText.StringResource(R.string.chat_preview_topic_2_desc),
+            statusPill = UiText.StringResource(R.string.chat_topic_status_pending),
+            hasMetricPill = true,
+            metricPill = UiText.StringResource(R.string.chat_preview_topic_2_metric),
+            metricPillIsNegative = false,
+            exploreChatPrompt = "Quines estratègies recomanes per reduir les pèrdues?"
+        ),
+        ChatTopicCardUiModel(
+            id = OPEN_INQUIRY_TOPIC_ID,
+            badgeText = UiText.StringResource(R.string.chat_topic_open_badge),
+            isPriority = false,
+            isOpenInquiry = true,
+            title = UiText.StringResource(R.string.chat_topic_open_title),
+            description = UiText.StringResource(R.string.chat_topic_open_desc),
+            statusPill = UiText.StringResource(R.string.chat_topic_open_status),
+            hasMetricPill = false,
+            metricPill = UiText.DynamicString(""),
+            metricPillIsNegative = false,
+            exploreChatPrompt = ""
+        )
+    )
 
     val drillOptionA: ChatDrillOptionUiModel
         @Composable
@@ -143,10 +177,8 @@ object ChatPreviewData {
         @Composable
         get() = ChatUiContent.Success(
             metaHeader = defaultMetaHeader,
-            leftPaneMode = ChatLeftPaneMode.TOPIC_LIST,
             topicList = defaultTopicList,
             activeTopicId = defaultTopicList.first().id,
-            diagnosticEvidence = defaultDiagnosticEvidence,
             messages = initialMessages,
             inputText = ""
         )

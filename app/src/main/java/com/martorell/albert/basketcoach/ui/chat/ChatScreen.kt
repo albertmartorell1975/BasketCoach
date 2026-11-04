@@ -16,21 +16,11 @@ import com.martorell.albert.basketcoach.ui.chat.components.ChatErrorView
 import com.martorell.albert.basketcoach.ui.chat.components.ChatLoadingView
 import com.martorell.albert.basketcoach.ui.chat.mapper.toChatUiText
 import com.martorell.albert.basketcoach.ui.chat.model.ChatDrillOptionUiModel
-import com.martorell.albert.basketcoach.ui.chat.model.ChatLeftPaneMode
 import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
-/**
- * Stateful entry composable for the Tablet Landscape Single-Thread Chat workbench.
- *
- * Injects [ChatViewModel] and triggers passive initialization via [LaunchedEffect].
- *
- * @param initialPrompt Pre-grounded prompt passed when navigating from the Analysis screen, or empty string.
- * @param modifier Composable modifier for outer layout customization.
- * @param viewModel Injected [ChatViewModel] instance.
- */
 @Composable
 fun ChatScreen(
     initialPrompt: String,
@@ -46,7 +36,6 @@ fun ChatScreen(
     ChatScreen(
         uiState = uiState,
         onTopicClick = viewModel::onTopicSelected,
-        onBackToTopics = { viewModel.onLeftPaneModeChanged(ChatLeftPaneMode.TOPIC_LIST) },
         onInputChange = viewModel::onInputTextChanged,
         onSend = { viewModel.sendMessage() },
         onDrillOptionSelect = viewModel::onDrillOptionSelected,
@@ -55,23 +44,10 @@ fun ChatScreen(
     )
 }
 
-/**
- * Stateless presentation composable rendering discrete content states of the Chat workbench.
- *
- * @param uiState Current immutable UI state ([ChatUiState]).
- * @param onTopicClick Callback triggered when an intervention topic card is tapped.
- * @param onBackToTopics Callback triggered to return to topic list mode.
- * @param onInputChange Callback triggered when draft message input changes.
- * @param onSend Callback triggered to send the current message.
- * @param onDrillOptionSelect Callback triggered when selecting an embedded drill option.
- * @param onRetry Callback triggered to retry upon error.
- * @param modifier Composable modifier.
- */
 @Composable
 fun ChatScreen(
     uiState: ChatUiState,
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
-    onBackToTopics: () -> Unit,
     onInputChange: (String) -> Unit,
     onSend: () -> Unit,
     onDrillOptionSelect: (ChatDrillOptionUiModel) -> Unit,
@@ -97,7 +73,6 @@ fun ChatScreen(
                     state = content,
                     isSending = uiState.isSending,
                     onTopicClick = onTopicClick,
-                    onBackToTopics = onBackToTopics,
                     onInputChange = onInputChange,
                     onSend = onSend,
                     onDrillOptionSelect = onDrillOptionSelect,
