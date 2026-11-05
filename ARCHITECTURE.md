@@ -243,7 +243,7 @@ The `:app` module delivers a specialized high-density user experience strictly o
    - UI mappers and static data providers (`Phase1PreviewData`) serve as the sole authoritative source of UI state, preventing accidental fallback bugs or silent omissions.
 5. **Design System & Typographic Governance (`ui.theme`)**:
    - Strictly enforces a minimum typography size of `12.sp` across all labels, pills, chart axis texts, and table cells to guarantee readability on physical tablet displays.
-   - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate themes (Light, Dark, RTL, Large Font) and tablet form factors (Tablet 10" Landscape baseline, Tablet 12" Large Landscape) across all composables.
+   - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate the Pia Sabadell brand theme across target tablet landscape form factors (Tablet 10" Landscape baseline and Tablet 12" Large Landscape) for all composables without redundant or broken configurations.
 
 
 ### 7.1 Dashboard Integration Architecture (`feature_008_dashboard_integration`)
