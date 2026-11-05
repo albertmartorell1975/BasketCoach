@@ -172,23 +172,31 @@ object PromptTemplates {
         locale: Locale = Locale.getDefault()
     ): String {
         val basePrompt = buildChatSystemPromptBase(locale)
+        val isSpanish = locale.language.lowercase(Locale.ROOT) == "es"
+        val openInquiryLabel = if (isSpanish) "Consulta Libre" else "Consulta Lliure"
+        val redirectPattern = if (isSpanish) {
+            "\"Gracias por la pregunta, pero tengo que ser transparente contigo: este hilo está dedicado exclusivamente a '<Active Topic Title>'. <Aspect asked about> es un aspecto diferente y, por tanto, no puedo entrar a analizarlo ni proponerte ejercicios aquí. Te invito a llevar esta cuestión al hilo 'Consulta Libre' o a su hilo de conversación si existe.\""
+        } else {
+            "\"Gràcies per la pregunta, però he de ser transparent amb tu: aquest fil està dedicat exclusivament a '<Active Topic Title>'. <Aspect asked about> és un aspecte diferent i, per tant, no puc entrar a analitzar-lo ni proposar-te exercicis aquí. Et convido a portar aquesta qüestió al fil 'Consulta Lliure' o al seu fil de conversa si existeix.\""
+        }
+
         val threadMandate = if (!topicContext.isNullOrBlank()) {
             """
                 $topicContext
                 
                 STRICT THREAD FOCUS MANDATE:
                 You are strictly confined to the active intervention area specified above.
-                - This thread is NOT a general chat. General questions or other basketball topics belong exclusively in the "Consulta Lliure" thread (or their dedicated thread if one exists).
+                - This thread is NOT a general chat. General questions or other basketball topics belong exclusively in the "$openInquiryLabel" thread (or their dedicated thread if one exists).
                 - When the coach asks about this active intervention area (its tactics, drills, metrics, root causes, practice progression): provide deep, tactical, data-grounded analysis and actionable drills.
                 - CRITICAL RULE FOR OFF-TOPIC OR DIFFERENT TOPIC QUERIES:
                   If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
                   Respond ONLY with a short, polite redirect following this exact pattern:
-                  "Gràcies per la pregunta, però he de ser transparent amb tu: aquest fil està dedicat exclusivament a '<Active Topic Title>'. <Aspect asked about> és un aspecte diferent i, per tant, no puc entrar a analitzar-lo ni proposar-te exercicis aquí. Et convido a portar aquesta qüestió al fil 'Consulta Lliure' o al seu fil de conversa si existeix."
+                  $redirectPattern
                   AND NOTHING ELSE. Do NOT add extra questions, do NOT analyze unasked aspects, and do NOT elaborate further. Keep the response strictly to this brief redirection.
             """.trimIndent()
         } else {
             """
-                THREAD BEHAVIOR MANDATE (OPEN INQUIRY / CONSULTA LLIURE):
+                THREAD BEHAVIOR MANDATE (OPEN INQUIRY / $openInquiryLabel):
                 The coach is in the general consultation thread. You may freely address any basketball question, match analysis, player role, or practice drill across all 14 Phase 1 matches.
             """.trimIndent()
         }

@@ -97,7 +97,7 @@ class PromptTemplatesTest {
     }
 
     @Test
-    fun `buildChatSystemPrompt injects focused mandate when topicContext is provided`() {
+    fun `buildChatSystemPrompt in Catalan injects Catalan redirection pattern and Consulta Lliure`() {
         val topicContext = "ACTIVE INTERVENTION AREA: Rebounding Deficit"
         val prompt = PromptTemplates.buildChatSystemPrompt(
             gameContext = "Summary of 14 games",
@@ -107,8 +107,24 @@ class PromptTemplatesTest {
 
         assertTrue(prompt.contains(topicContext))
         assertTrue(prompt.contains("STRICT THREAD FOCUS MANDATE"))
-        assertTrue(prompt.contains("You are strictly confined to the active intervention area"))
+        assertTrue(prompt.contains("Gràcies per la pregunta, però he de ser transparent amb tu"))
         assertTrue(prompt.contains("Consulta Lliure"))
+        assertTrue(prompt.contains("GROUNDING CONTEXT (PHASE 1 MATCH DATA)"))
+    }
+
+    @Test
+    fun `buildChatSystemPrompt in Spanish injects Spanish redirection pattern and Consulta Libre`() {
+        val topicContext = "ACTIVE INTERVENTION AREA: Rebounding Deficit"
+        val prompt = PromptTemplates.buildChatSystemPrompt(
+            gameContext = "Summary of 14 games",
+            topicContext = topicContext,
+            locale = Locale.forLanguageTag("es")
+        )
+
+        assertTrue(prompt.contains(topicContext))
+        assertTrue(prompt.contains("STRICT THREAD FOCUS MANDATE"))
+        assertTrue(prompt.contains("Gracias por la pregunta, pero tengo que ser transparente contigo"))
+        assertTrue(prompt.contains("Consulta Libre"))
         assertTrue(prompt.contains("GROUNDING CONTEXT (PHASE 1 MATCH DATA)"))
     }
 
@@ -120,7 +136,7 @@ class PromptTemplatesTest {
             locale = Locale.forLanguageTag("ca")
         )
 
-        assertTrue(prompt.contains("THREAD BEHAVIOR MANDATE (OPEN INQUIRY / CONSULTA LLIURE)"))
+        assertTrue(prompt.contains("THREAD BEHAVIOR MANDATE (OPEN INQUIRY / Consulta Lliure)"))
         assertTrue(prompt.contains("The coach is in the general consultation thread."))
     }
 }
