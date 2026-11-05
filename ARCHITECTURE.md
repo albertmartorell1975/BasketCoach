@@ -436,10 +436,12 @@ The conversational AI assistant connects the Tablet Landscape Chat workbench (`C
 ```
 
 ### Key Architectural Patterns for Chat Integration
+
+> Detailed specification: See [docs/architecture/ai-chat-architecture.md](docs/architecture/ai-chat-architecture.md).
 1. **2-Step AI Domain Guardrail Pipeline**:
    - **DevExpert Jev Decisions Mode**: When `config.baseUrl` targets DevExpert Inference, pre-classifies user prompts via `POST /v1/decisions` with `model = "jev"`. The request passes the domain state (`app_domain`, `last_assistant_message`, `coach_message`) and the `"domain_relevance"` question with `"basketball_relevant"` vs `"off_topic"` criteria.
    - **Google Gemini Fallback Mode**: When using Gemini Free Tier, executes a lightweight zero-shot classification JSON call (`temperature = 0.0`, zero match history tokens) to `/chat/completions` returning `{"choice": "basketball_relevant" | "off_topic"}`.
-   - **Off-Topic Short-Circuit**: When deemed off-topic, `ChatRepositoryImpl.sendMessage` short-circuits immediately without calling `remoteDataSource.generateChatResponse`, saving expensive generative tokens on the 14-game context. A localized tactical refusal message (`PromptTemplates.buildOffTopicRejectionMessage()`) is saved directly to `ChatLocalDataSource` under `topicId` and returned as `MessageSender.AI`.
+   - **Off-Topic Short-Circuit**: When deemed off-topic, `ChatRepositoryImpl.sendMessage` short-circuits immediately without calling `remoteDataSource.generateChatResponse`, saving expensive generative tokens on the 14-game context. A localized tactical refusal message (`ChatResourceProvider.getOffTopicRejectionMessage()`) is saved directly to `ChatLocalDataSource` under `topicId` and returned as `MessageSender.AI`.
 2. **Topic-Scoped In-Memory Session Governance (Constraint #4 & #6)**:
    - `ChatLocalDataSourceImpl` manages isolated conversation threads using a `Mutex`-guarded `mutableMapOf<String, MutableList<ChatMessage>>()`.
    - Both `ChatLocalDataSource` and `ChatRepository` are bound as `@Singleton` in `DataSourceModule` and `RepositoryModule`, preserving thread state across screen navigation.
