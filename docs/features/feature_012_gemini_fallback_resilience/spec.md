@@ -6,7 +6,7 @@
 * **`id`:** `feature_012_gemini_fallback_resilience`
 * **`area`:** `data`
 * **`depends_on`:** `["feature_010_chat_integration", "feature_011_chat_improvement_areas"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement seamless resilience and automatic fallback to Google Gemini when DevExpert subscription expires, returns authorization/quota errors (HTTP 401 Unauthorized, HTTP 402 Payment Required, HTTP 403 Forbidden, HTTP 429 Too Many Requests), suffers server outages (HTTP 5xx: 500, 502, 503, 504), or encounters network timeouts (`SocketTimeoutException` / `IOException`), covering BOTH AI inferences:
   1. Tactical relevance guardrail: DevExpert Decisions ('jev' model) -> Gemini JSON domain classifier fallback.
@@ -124,37 +124,37 @@ so I can continue preparing training sessions without interruption; and if both 
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, and `module-architecture-governance`.
-- [ ] **Data (`:data`):**
-  - [ ] Update `AiClientConfig` to declare `val fallbackConfig: AiClientConfig? = null`.
-  - [ ] Update `DevExpertConfig.create` to accept `fallbackConfig: AiClientConfig? = null`.
-  - [ ] Update `AiClientConfig.fromEnvironment()` to resolve both DevExpert and Gemini keys and nest Gemini as `fallbackConfig` when DevExpert key is present.
-  - [ ] In `AiRemoteDataSourceImpl`:
-    - [ ] Maintain an active provider state (`@Volatile private var activeConfig: AiClientConfig`).
-    - [ ] Initialize `activeConfig` directly with `fallbackConfig` if primary `apiKey.isBlank()` and fallback key is present.
-    - [ ] Define helper `fun isFailoverEligible(throwable: Throwable): Boolean`: returns true for `HttpException` with code in `[401, 402, 403, 429]` or `code >= 500`, and for `IOException` / `SocketTimeoutException`.
-    - [ ] In `isPromptBasketballRelevant`: if DevExpert `/decisions` fails with an eligible error and fallback is available, switch `activeConfig` to `fallbackConfig` and execute the Gemini JSON domain classifier with `model = activeConfig.model` (`"gemini-2.5-flash"`).
-    - [ ] In `executeChatCompletion`: if primary request fails with an eligible error and `activeConfig.fallbackConfig != null`, switch `activeConfig` to `activeConfig.fallbackConfig` and retry the chat completion request targeting `activeConfig.baseUrl` with `model = activeConfig.model` and `activeConfig.apiKey`.
-- [ ] **UI / Application Root (`:app`):**
-  - [ ] In `NetworkModule.kt`: Update `provideAiClientConfig()` to construct `DevExpertConfig.create(apiKey = devexpertKey, fallbackConfig = geminiConfig)` when Gemini key is available.
-- [ ] **Testing & Integration (Pragmatic High-Value Testing & Budget Rule):**
-  - [ ] Add 3 pure JVM unit tests in `:data` (`AiRemoteDataSourceFallbackTest`):
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, and `module-architecture-governance`.
+- [x] **Data (`:data`):**
+  - [x] Update `AiClientConfig` to declare `val fallbackConfig: AiClientConfig? = null`.
+  - [x] Update `DevExpertConfig.create` to accept `fallbackConfig: AiClientConfig? = null`.
+  - [x] Update `AiClientConfig.fromEnvironment()` to resolve both DevExpert and Gemini keys and nest Gemini as `fallbackConfig` when DevExpert key is present.
+  - [x] In `AiRemoteDataSourceImpl`:
+    - [x] Maintain an active provider state (`@Volatile private var activeConfig: AiClientConfig`).
+    - [x] Initialize `activeConfig` directly with `fallbackConfig` if primary `apiKey.isBlank()` and fallback key is present.
+    - [x] Define helper `fun isFailoverEligible(throwable: Throwable): Boolean`: returns true for `HttpException` with code in `[401, 402, 403, 429]` or `code >= 500`, and for `IOException` / `SocketTimeoutException`.
+    - [x] In `isPromptBasketballRelevant`: if DevExpert `/decisions` fails with an eligible error and fallback is available, switch `activeConfig` to `fallbackConfig` and execute the Gemini JSON domain classifier with `model = activeConfig.model` (`"gemini-2.5-flash"`).
+    - [x] In `executeChatCompletion`: if primary request fails with an eligible error and `activeConfig.fallbackConfig != null`, switch `activeConfig` to `activeConfig.fallbackConfig` and retry the chat completion request targeting `activeConfig.baseUrl` with `model = activeConfig.model` and `activeConfig.apiKey`.
+- [x] **UI / Application Root (`:app`):**
+  - [x] In `NetworkModule.kt`: Update `provideAiClientConfig()` to construct `DevExpertConfig.create(apiKey = devexpertKey, fallbackConfig = geminiConfig)` when Gemini key is available.
+- [x] **Testing & Integration (Pragmatic High-Value Testing & Budget Rule):**
+  - [x] Add 3 pure JVM unit tests in `:data` (`AiRemoteDataSourceFallbackTest`):
     1. `isPromptBasketballRelevant_whenDevExpertReturns402OrTimeout_fallsBackToGeminiClassifier`: Verifies DevExpert `/decisions` 402 / timeout fails over to Gemini `/chat/completions` JSON classifier and returns true.
     2. `executeChatCompletion_whenDevExpertFailsWith5xxOr401_retriesWithGeminiAndLatchesProvider`: Verifies DevExpert `/chat/completions` 503 / 401 retries with Gemini `/chat/completions` using `gemini-2.5-flash` and subsequent requests route directly to Gemini without calling DevExpert.
     3. `directStartupWithGemini_whenDevExpertKeyMissing_routesDirectlyToGemini`: Verifies requests execute against Gemini directly with zero DevExpert calls.
-  - [ ] Budget check: 3 tests in 1 test class (within 1-3 per class limit, and 3 total tests within 2-6 feature budget). Zero Robolectric tests.
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew --no-daemon :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug`.
-  - [ ] Record passing evidence in `PROGRESS.md` and `feature_list.json` (`status: "passing"`).
+  - [x] Budget check: 3 tests in 1 test class (within 1-3 per class limit, and 3 total tests within 2-6 feature budget). Zero Robolectric tests.
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew --no-daemon :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug`.
+  - [x] Record passing evidence in `PROGRESS.md` and `feature_list.json` (`status: "passing"`).
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_012_gemini_fallback_resilience` scope (`WIP=1`) and `CONSTRAINTS.md`.
-- [ ] All 5 Acceptance Scenarios satisfied with real resilient network execution (no stubs).
-- [ ] Pure Kotlin JVM purity in `:domain`, `:usecases`, and `:data` preserved.
-- [ ] Comprehensive failover triggers verified: 401, 402, 403, 429, 5xx, and `IOException`/timeout.
-- [ ] Dual failure propagates to typed `DomainError.Network.*` and renders `AnalysisErrorView` / `ChatErrorView` with retry.
-- [ ] Active provider correctly latches to avoid duplicate failing round-trips to DevExpert.
-- [ ] Model parameter correctly adapts to `"gemini-2.5-flash"` when falling back to Gemini.
-- [ ] Strict test budget (Constraint #18) verified: 3 pure JVM unit tests, zero Robolectric bloat.
-- [ ] Validation report written to `docs/features/feature_012_gemini_fallback_resilience/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_012_gemini_fallback_resilience` scope (`WIP=1`) and `CONSTRAINTS.md`.
+- [x] All 5 Acceptance Scenarios satisfied with real resilient network execution (no stubs).
+- [x] Pure Kotlin JVM purity in `:domain`, `:usecases`, and `:data` preserved.
+- [x] Comprehensive failover triggers verified: 401, 402, 403, 429, 5xx, and `IOException`/timeout.
+- [x] Dual failure propagates to typed `DomainError.Network.*` and renders `AnalysisErrorView` / `ChatErrorView` with retry.
+- [x] Active provider correctly latches to avoid duplicate failing round-trips to DevExpert.
+- [x] Model parameter correctly adapts to `"gemini-2.5-flash"` when falling back to Gemini.
+- [x] Strict test budget (Constraint #18) verified: 3 pure JVM unit tests, zero Robolectric bloat.
+- [x] Validation report written to `docs/features/feature_012_gemini_fallback_resilience/validator/validation-report.md`.

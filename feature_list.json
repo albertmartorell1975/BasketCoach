@@ -213,9 +213,9 @@
             "feature_010_chat_integration",
             "feature_011_chat_improvement_areas"
         ],
-        "status": "in_progress",
+        "status": "accepted",
         "verification": "Unit tests in :data verify that HTTP 401/402/403 errors from DevExpert automatically trigger the Gemini alternative for both Jev classification and chat completion, and that standalone Gemini configuration operates correctly.",
-        "evidence": "",
+        "evidence": "./gradlew --no-daemon :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug lintDebug - All unit tests passed across all modules (including AiRemoteDataSourceFallbackTest 3 tests for 402/timeout guardrail fallback, 5xx/401 generative inference failover with latching, and direct Gemini startup), assembleDebug SUCCESSFUL with 0 errors, lintDebug SUCCESSFUL with 0 errors. Full suite passed in 1m 9s. BUILD SUCCESSFUL.",
         "notes": "Covers both inferences: (1) Jev replacement via Gemini JSON domain classifier, (2) chat/analysis completions via Gemini 2.5 Flash. Adhere to Constraint #18 (strict test budget).",
         "require_review_after": [
             "planner",
