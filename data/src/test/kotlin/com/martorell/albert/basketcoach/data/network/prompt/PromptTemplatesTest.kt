@@ -13,24 +13,24 @@ import java.util.Locale
 class PromptTemplatesTest {
 
     @Test
-    fun `resolveTargetLanguage returns Spanish when locale is es`() {
-        val target = PromptTemplates.resolveTargetLanguage(Locale.forLanguageTag("es-ES"))
-        assertEquals("Spanish (Español)", target)
+    fun `PromptLanguage fromLocale returns SPANISH when locale is es`() {
+        val target = PromptTemplates.PromptLanguage.fromLocale(Locale.forLanguageTag("es-ES"))
+        assertEquals("Spanish (Español)", target.displayName)
     }
 
     @Test
-    fun `resolveTargetLanguage returns Catalan when locale is ca`() {
-        val target = PromptTemplates.resolveTargetLanguage(Locale.forLanguageTag("ca-ES"))
-        assertEquals("Catalan (Català)", target)
+    fun `PromptLanguage fromLocale returns CATALAN when locale is ca`() {
+        val target = PromptTemplates.PromptLanguage.fromLocale(Locale.forLanguageTag("ca-ES"))
+        assertEquals("Catalan (Català)", target.displayName)
     }
 
     @Test
-    fun `resolveTargetLanguage defaults to Catalan when locale is English or other`() {
-        val targetEnglish = PromptTemplates.resolveTargetLanguage(Locale.ENGLISH)
-        assertEquals("Catalan (Català)", targetEnglish)
+    fun `PromptLanguage fromLocale defaults to CATALAN when locale is English or other`() {
+        val targetEnglish = PromptTemplates.PromptLanguage.fromLocale(Locale.ENGLISH)
+        assertEquals("Catalan (Català)", targetEnglish.displayName)
 
-        val targetGerman = PromptTemplates.resolveTargetLanguage(Locale.GERMAN)
-        assertEquals("Catalan (Català)", targetGerman)
+        val targetGerman = PromptTemplates.PromptLanguage.fromLocale(Locale.GERMAN)
+        assertEquals("Catalan (Català)", targetGerman.displayName)
     }
 
     @Test

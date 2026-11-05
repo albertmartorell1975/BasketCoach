@@ -17,17 +17,23 @@ object PromptTemplates {
     const val JEV_APP_DOMAIN_VALUE = "Junior Men's Interterritorial basketball coaching, game analysis, tactical practice drills, and FIBA basketball strategy for $OUR_TEAM_NAME."
     const val JEV_QUESTION_TEXT = "Determine whether 'coach_message' is relevant to basketball tactics, game analysis, drills, FIBA rules, team management, or is a valid follow-up to the conversation."
 
-    /**
-     * Resolves the target natural language for AI generation based on the active [Locale].
-     *
-     * Defaults to Catalan (the primary language of Basquet Pia Sabadell in the FCBQ),
-     * and switches to Spanish when the system locale starts with "es".
-     */
-    fun resolveTargetLanguage(locale: Locale = Locale.getDefault()): String {
-        return when (locale.language.lowercase(Locale.ROOT)) {
-            "es" -> "Spanish (Español)"
-            "ca" -> "Catalan (Català)"
-            else -> "Catalan (Català)" // Base language of Basquet Pia Sabadell
+    enum class PromptLanguage(val displayName: String) {
+        SPANISH("Spanish (Español)"),
+        CATALAN("Catalan (Català)");
+        
+        companion object {
+            /**
+             * Resolves the target natural language for AI generation based on the active [Locale].
+             *
+             * Defaults to Catalan (the primary language of Basquet Pia Sabadell in the FCBQ),
+             * and switches to Spanish when the system locale starts with "es".
+             */
+            fun fromLocale(locale: Locale = Locale.getDefault()): PromptLanguage {
+                return when (locale.language.lowercase(Locale.ROOT)) {
+                    "es" -> SPANISH
+                    else -> CATALAN
+                }
+            }
         }
     }
 
@@ -42,7 +48,7 @@ object PromptTemplates {
      * Builds the tactical analysis system prompt parameterized by [locale].
      */
     fun buildAnalysisSystemPrompt(locale: Locale = Locale.getDefault()): String {
-        val targetLanguage = resolveTargetLanguage(locale)
+        val targetLanguage = PromptLanguage.fromLocale(locale).displayName
         return """
             You are an elite tactical assistant for the basketball head coach of "$OUR_TEAM_NAME", competing in the Junior Men's Interterritorial category under FIBA rules.
             Your mission is to perform an in-depth diagnosis of Phase 1 games to prepare the squad for Phase 2.
@@ -98,7 +104,7 @@ object PromptTemplates {
      * Builds the base conversational chat system prompt parameterized by [locale].
      */
     fun buildChatSystemPromptBase(locale: Locale = Locale.getDefault()): String {
-        val targetLanguage = resolveTargetLanguage(locale)
+        val targetLanguage = PromptLanguage.fromLocale(locale).displayName
         return """
             You are the AI assistant coach for "$OUR_TEAM_NAME" in the Junior Men's Interterritorial basketball league under FIBA rules.
             You assist the head coach with tactical advice, game preparation, drill recommendations, and performance analysis.
@@ -169,7 +175,10 @@ object PromptTemplates {
                 - When the coach asks about this active intervention area (its tactics, drills, metrics, root causes, practice progression): provide deep, tactical, data-grounded analysis and actionable drills.
                 - CRITICAL RULE FOR OFF-TOPIC OR DIFFERENT TOPIC QUERIES:
                   If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
-                  Respond ONLY with a short, polite redirect in the coach's language explaining that this thread is exclusively dedicated to the active intervention area, that the queried aspect is different and cannot be analyzed or drilled here, and inviting them to take that question to the "$openInquiryLabel" thread (or its dedicated thread if one exists).
+                  Respond ONLY with a short, polite redirect in the coach's language:
+                  1. State that this thread is exclusively dedicated to the active intervention area.
+                  2. State that the queried aspect is different and cannot be analyzed or drilled here.
+                  3. Invite them to take that question to the "$openInquiryLabel" thread or to its dedicated thread if one exists (you MUST explicitly include the closing clause: "o al seu fil de conversa si existeix" in Catalan, or "o a su hilo de conversación si existe" in Spanish).
                   AND NOTHING ELSE. Do NOT add extra questions, do NOT analyze unasked aspects, and do NOT elaborate further. Keep the response strictly to this brief redirection.
             """.trimIndent()
         } else {
@@ -245,7 +254,7 @@ object PromptTemplates {
      * Builds the analysis user prompt containing grounded match data and [locale] instructions.
      */
     fun buildAnalysisUserPrompt(gameSummary: String, locale: Locale = Locale.getDefault()): String {
-        val targetLanguage = resolveTargetLanguage(locale)
+        val targetLanguage = PromptLanguage.fromLocale(locale).displayName
         return """
             Here is the complete Phase 1 match data for $OUR_TEAM_NAME:
             
