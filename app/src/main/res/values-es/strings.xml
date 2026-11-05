@@ -122,6 +122,7 @@
     <string name="chat_topic_open_title">Línea Base de la 1ª Fase</string>
     <string name="chat_topic_open_desc">Pregunta cualquier duda sobre los 14 partidos, rivales, anotación o tendencias generales.</string>
     <string name="chat_topic_open_status">Chat Abierto</string>
+    <string name="chat_rejection_off_topic">Como asistente táctico del Bàsquet Pia Sabadell, solo puedo responder a consultas sobre baloncesto, análisis de partidos, táctica y ejercicios de entrenamiento. ¿En qué puedo ayudar a tu equipo?</string>
     <string name="dashboard_loading">Cargando datos de la 1ª Fase...</string>
     <string name="dashboard_error_title">Error al cargar los datos</string>
     <string name="dashboard_error_retry">Reintentar</string>

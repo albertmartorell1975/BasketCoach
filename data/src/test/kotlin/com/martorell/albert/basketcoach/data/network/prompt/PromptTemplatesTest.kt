@@ -97,33 +97,18 @@ class PromptTemplatesTest {
     }
 
     @Test
-    fun `buildChatSystemPrompt in Catalan injects Catalan redirection pattern and Consulta Lliure`() {
+    fun `buildChatSystemPrompt with topicContext and localized label injects mandate and thread name`() {
         val topicContext = "ACTIVE INTERVENTION AREA: Rebounding Deficit"
         val prompt = PromptTemplates.buildChatSystemPrompt(
             gameContext = "Summary of 14 games",
             topicContext = topicContext,
-            locale = Locale.forLanguageTag("ca")
-        )
-
-        assertTrue(prompt.contains(topicContext))
-        assertTrue(prompt.contains("STRICT THREAD FOCUS MANDATE"))
-        assertTrue(prompt.contains("Gràcies per la pregunta, però he de ser transparent amb tu"))
-        assertTrue(prompt.contains("Consulta Lliure"))
-        assertTrue(prompt.contains("GROUNDING CONTEXT (PHASE 1 MATCH DATA)"))
-    }
-
-    @Test
-    fun `buildChatSystemPrompt in Spanish injects Spanish redirection pattern and Consulta Libre`() {
-        val topicContext = "ACTIVE INTERVENTION AREA: Rebounding Deficit"
-        val prompt = PromptTemplates.buildChatSystemPrompt(
-            gameContext = "Summary of 14 games",
-            topicContext = topicContext,
+            openInquiryLabel = "Consulta Libre",
             locale = Locale.forLanguageTag("es")
         )
 
         assertTrue(prompt.contains(topicContext))
         assertTrue(prompt.contains("STRICT THREAD FOCUS MANDATE"))
-        assertTrue(prompt.contains("Gracias por la pregunta, pero tengo que ser transparente contigo"))
+        assertTrue(prompt.contains("Respond ONLY with a short, polite redirect in the coach's language"))
         assertTrue(prompt.contains("Consulta Libre"))
         assertTrue(prompt.contains("GROUNDING CONTEXT (PHASE 1 MATCH DATA)"))
     }
@@ -133,6 +118,7 @@ class PromptTemplatesTest {
         val prompt = PromptTemplates.buildChatSystemPrompt(
             gameContext = "Summary of 14 games",
             topicContext = null,
+            openInquiryLabel = "Consulta Lliure",
             locale = Locale.forLanguageTag("ca")
         )
 

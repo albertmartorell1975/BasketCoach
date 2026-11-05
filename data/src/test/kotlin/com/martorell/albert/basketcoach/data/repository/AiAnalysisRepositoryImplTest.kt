@@ -35,7 +35,8 @@ class AiAnalysisRepositoryImplTest {
             conversationHistory: List<ChatMessageDto>,
             newPrompt: String,
             gameContext: String?,
-            topicContext: String?
+            topicContext: String?,
+            openInquiryLabel: String
         ): String {
             throw UnsupportedOperationException()
         }

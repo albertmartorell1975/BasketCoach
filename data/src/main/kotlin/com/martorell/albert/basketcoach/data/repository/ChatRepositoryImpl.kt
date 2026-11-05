@@ -15,6 +15,7 @@ import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
+import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import javax.inject.Inject
 
@@ -25,21 +26,24 @@ import javax.inject.Inject
  * Adheres to Clean Architecture data layer governance:
  * - Maintains topic-scoped in-memory session SSOT via [ChatLocalDataSource].
  * - Retrieves active [Insight] from [AiAnalysisLocalDataSource] to ground improvement area threads.
+ * - Delegates user-facing rejection and UI thread labels to [ChatResourceProvider] backed by Android strings.
  * - Executes the 2-step AI guardrail pipeline: pre-evaluates user prompt domain relevance via
  *   [AiRemoteDataSource.isPromptBasketballRelevant] before invoking chat completions.
  * - Short-circuits off-topic queries immediately with a localized tactical refusal message
- *   ([PromptTemplates.buildOffTopicRejectionMessage]) without consuming generative AI tokens.
+ *   without consuming generative AI tokens.
  * - Encapsulates all data operations within [safeCall] to map exceptions into typed [DomainError] results.
  * - Delegates domain entity mapping strictly via [ChatMessageDto.toDomain].
  *
  * @param remoteDataSource Remote client communicating with DevExpert or Gemini AI endpoints.
  * @param localDataSource Thread-safe in-memory cache holding topic-partitioned conversation messages.
  * @param aiAnalysisLocalDataSource Single Source of Truth for cached tactical insights.
+ * @param chatResourceProvider Provider delivering localized user-facing chat strings.
  */
 class ChatRepositoryImpl @Inject constructor(
     private val remoteDataSource: AiRemoteDataSource,
     private val localDataSource: ChatLocalDataSource,
-    private val aiAnalysisLocalDataSource: AiAnalysisLocalDataSource
+    private val aiAnalysisLocalDataSource: AiAnalysisLocalDataSource,
+    private val chatResourceProvider: ChatResourceProvider
 ) : ChatRepository {
 
     override suspend fun getMessages(topicId: String): Result<List<ChatMessage>, DomainError> = safeCall {
@@ -82,10 +86,11 @@ class ChatRepositoryImpl @Inject constructor(
                 conversationHistory = historyDtos,
                 newPrompt = messageText,
                 gameContext = gameContext,
-                topicContext = topicContext
+                topicContext = topicContext,
+                openInquiryLabel = chatResourceProvider.getOpenInquiryLabel()
             )
         } else {
-            PromptTemplates.buildOffTopicRejectionMessage()
+            chatResourceProvider.getOffTopicRejectionMessage()
         }
 
         val aiMessage = ChatMessageDto(

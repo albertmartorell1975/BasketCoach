@@ -12,6 +12,7 @@ import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -32,6 +33,7 @@ class ChatRepositoryImplTest {
         var capturedPrompt: String = ""
         var capturedContext: String? = null
         var capturedTopicContext: String? = null
+        var capturedOpenInquiryLabel: String = ""
         var callCount: Int = 0
 
         override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
@@ -42,13 +44,15 @@ class ChatRepositoryImplTest {
             conversationHistory: List<ChatMessageDto>,
             newPrompt: String,
             gameContext: String?,
-            topicContext: String?
+            topicContext: String?,
+            openInquiryLabel: String
         ): String {
             callCount++
             capturedHistory = conversationHistory
             capturedPrompt = newPrompt
             capturedContext = gameContext
             capturedTopicContext = topicContext
+            capturedOpenInquiryLabel = openInquiryLabel
             exceptionToThrow?.let { throw it }
             return chatResponse
         }
@@ -61,9 +65,18 @@ class ChatRepositoryImplTest {
         }
     }
 
+    private class FakeChatResourceProvider(
+        var rejectionText: String = "Com a assistent tàctic del Bàsquet Pia Sabadell, només puc respondre a consultes sobre bàsquet.",
+        var inquiryLabel: String = "Consulta Lliure"
+    ) : ChatResourceProvider {
+        override fun getOffTopicRejectionMessage(): String = rejectionText
+        override fun getOpenInquiryLabel(): String = inquiryLabel
+    }
+
     private lateinit var fakeRemoteDataSource: FakeAiRemoteDataSource
     private lateinit var localDataSource: ChatLocalDataSourceImpl
     private lateinit var fakeAnalysisLocalDataSource: AiAnalysisLocalDataSourceImpl
+    private lateinit var fakeChatResourceProvider: FakeChatResourceProvider
     private lateinit var repository: ChatRepositoryImpl
 
     @Before
@@ -71,10 +84,12 @@ class ChatRepositoryImplTest {
         fakeRemoteDataSource = FakeAiRemoteDataSource()
         localDataSource = ChatLocalDataSourceImpl()
         fakeAnalysisLocalDataSource = AiAnalysisLocalDataSourceImpl()
+        fakeChatResourceProvider = FakeChatResourceProvider()
         repository = ChatRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
             localDataSource = localDataSource,
-            aiAnalysisLocalDataSource = fakeAnalysisLocalDataSource
+            aiAnalysisLocalDataSource = fakeAnalysisLocalDataSource,
+            chatResourceProvider = fakeChatResourceProvider
         )
     }
 
@@ -107,7 +122,7 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `sendMessage when prompt is off-topic short-circuits without calling chat completions`() = runTest {
+    fun `sendMessage when prompt is off-topic short-circuits with localized rejection without calling completions`() = runTest {
         fakeRemoteDataSource.isRelevantResponse = false
 
         val sendResult = repository.sendMessage("Quin temps fa avui?", null, OPEN_INQUIRY_TOPIC_ID)
@@ -115,7 +130,7 @@ class ChatRepositoryImplTest {
         assertTrue(sendResult is Result.Success)
         val aiMessage = (sendResult as Result.Success).data
         assertEquals(0, fakeRemoteDataSource.callCount)
-        assertTrue(aiMessage.text.contains("Bàsquet Pia Sabadell"))
+        assertEquals(fakeChatResourceProvider.rejectionText, aiMessage.text)
 
         val allMessages = repository.getMessages(OPEN_INQUIRY_TOPIC_ID)
         assertTrue(allMessages is Result.Success)
@@ -126,7 +141,7 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `sendMessage for focused improvement area retrieves cached insight and injects topicContext`() = runTest {
+    fun `sendMessage for focused improvement area retrieves cached insight, injects topicContext and localized label`() = runTest {
         val sampleInsight = Insight(
             id = "insight-rebots",
             title = "Desavantatge estructural en el rebot defensiu",
@@ -164,10 +179,11 @@ class ChatRepositoryImplTest {
         assertTrue(topicContext.contains("Cedim 14 rebots ofensius"))
         assertTrue(topicContext.contains("Rebots defensius: 62.4%"))
         assertTrue(topicContext.contains("ACTIVE INTERVENTION AREA (THREAD FOCUS)"))
+        assertEquals("Consulta Lliure", fakeRemoteDataSource.capturedOpenInquiryLabel)
     }
 
     @Test
-    fun `sendMessage for open inquiry passes null topicContext`() = runTest {
+    fun `sendMessage for open inquiry passes null topicContext and localized open inquiry label`() = runTest {
         val sendResult = repository.sendMessage(
             messageText = "Quina és la valoració global de la fase 1?",
             games = emptyList(),
@@ -177,5 +193,6 @@ class ChatRepositoryImplTest {
         assertTrue(sendResult is Result.Success)
         assertEquals(1, fakeRemoteDataSource.callCount)
         assertNull(fakeRemoteDataSource.capturedTopicContext)
+        assertEquals("Consulta Lliure", fakeRemoteDataSource.capturedOpenInquiryLabel)
     }
 }

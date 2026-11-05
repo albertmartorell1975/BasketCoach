@@ -3,8 +3,10 @@ package com.martorell.albert.basketcoach.di
 import com.martorell.albert.basketcoach.data.repository.AiAnalysisRepositoryImpl
 import com.martorell.albert.basketcoach.data.repository.ChatRepositoryImpl
 import com.martorell.albert.basketcoach.data.repository.GameRepositoryImpl
+import com.martorell.albert.basketcoach.data.resource.AndroidChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.AiAnalysisRepository
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
+import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.GameRepository
 import dagger.Binds
 import dagger.Module
@@ -59,4 +61,17 @@ abstract class RepositoryModule {
     abstract fun bindChatRepository(
         impl: ChatRepositoryImpl
     ): ChatRepository
+
+    /**
+     * Binds the Android localized chat resource provider [AndroidChatResourceProvider]
+     * to the domain interface [ChatResourceProvider] as an application-wide singleton.
+     *
+     * @param impl The concrete provider reading strings from Android application resources.
+     * @return The [ChatResourceProvider] domain contract.
+     */
+    @Binds
+    @Singleton
+    abstract fun bindChatResourceProvider(
+        impl: AndroidChatResourceProvider
+    ): ChatResourceProvider
 }

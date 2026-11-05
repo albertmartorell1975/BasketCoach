@@ -164,22 +164,15 @@ object PromptTemplates {
 
     /**
      * Constructs the full chat system prompt incorporating optional match grounding context,
-     * focused improvement area context, and [locale].
+     * focused improvement area context, localized open inquiry label, and [locale].
      */
     fun buildChatSystemPrompt(
         gameContext: String?,
         topicContext: String?,
+        openInquiryLabel: String = "Consulta Lliure",
         locale: Locale = Locale.getDefault()
     ): String {
         val basePrompt = buildChatSystemPromptBase(locale)
-        val isSpanish = locale.language.lowercase(Locale.ROOT) == "es"
-        val openInquiryLabel = if (isSpanish) "Consulta Libre" else "Consulta Lliure"
-        val redirectPattern = if (isSpanish) {
-            "\"Gracias por la pregunta, pero tengo que ser transparente contigo: este hilo está dedicado exclusivamente a '<Active Topic Title>'. <Aspect asked about> es un aspecto diferente y, por tanto, no puedo entrar a analizarlo ni proponerte ejercicios aquí. Te invito a llevar esta cuestión al hilo 'Consulta Libre' o a su hilo de conversación si existe.\""
-        } else {
-            "\"Gràcies per la pregunta, però he de ser transparent amb tu: aquest fil està dedicat exclusivament a '<Active Topic Title>'. <Aspect asked about> és un aspecte diferent i, per tant, no puc entrar a analitzar-lo ni proposar-te exercicis aquí. Et convido a portar aquesta qüestió al fil 'Consulta Lliure' o al seu fil de conversa si existeix.\""
-        }
-
         val threadMandate = if (!topicContext.isNullOrBlank()) {
             """
                 $topicContext
@@ -190,8 +183,7 @@ object PromptTemplates {
                 - When the coach asks about this active intervention area (its tactics, drills, metrics, root causes, practice progression): provide deep, tactical, data-grounded analysis and actionable drills.
                 - CRITICAL RULE FOR OFF-TOPIC OR DIFFERENT TOPIC QUERIES:
                   If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
-                  Respond ONLY with a short, polite redirect following this exact pattern:
-                  $redirectPattern
+                  Respond ONLY with a short, polite redirect in the coach's language explaining that this thread is exclusively dedicated to the active intervention area, that the queried aspect is different and cannot be analyzed or drilled here, and inviting them to take that question to the "$openInquiryLabel" thread (or its dedicated thread if one exists).
                   AND NOTHING ELSE. Do NOT add extra questions, do NOT analyze unasked aspects, and do NOT elaborate further. Keep the response strictly to this brief redirection.
             """.trimIndent()
         } else {
