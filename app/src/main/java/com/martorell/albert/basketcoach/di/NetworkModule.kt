@@ -30,10 +30,16 @@ object NetworkModule {
      * Provides the application-wide [AiClientConfig] singleton.
      *
      * Resolves API keys from [BuildConfig] (populated via secrets-gradle-plugin at build time)
-     * with fallback to environment variables.
-     * Prioritizes DevExpert Inference, falling back to Google Gemini.
+     * with fallback to environment variables. Filters out placeholder defaults ([PLACEHOLDER_DEVEXPERT],
+     * [PLACEHOLDER_GEMINI]).
      *
-     * @return Initialized [AiClientConfig] instance.
+     * Dual-provider resolution order:
+     * 1. If DevExpert key is present: configures [DevExpertConfig] as primary, nesting [GeminiConfig]
+     *    as [AiClientConfig.fallbackConfig] if a Gemini key is also available.
+     * 2. If DevExpert key is absent/placeholder and Gemini key is present: boots directly using [GeminiConfig].
+     * 3. Fallback to an empty API key using [DevExpertConfig] defaults.
+     *
+     * @return Initialized [AiClientConfig] instance with fallback chaining.
      */
     @Provides
     @Singleton
@@ -42,16 +48,25 @@ object NetworkModule {
             .takeIf { it.isNotBlank() && it != PLACEHOLDER_DEVEXPERT }
             ?: DevExpertConfig.resolveApiKey()
 
-        if (!devexpertKey.isNullOrBlank()) {
-            return DevExpertConfig.create(apiKey = devexpertKey)
-        }
-
         val geminiKey = BuildConfig.GEMINI_API_KEY
             .takeIf { it.isNotBlank() && it != PLACEHOLDER_GEMINI }
             ?: GeminiConfig.resolveApiKey()
 
-        if (!geminiKey.isNullOrBlank()) {
-            return GeminiConfig.create(apiKey = geminiKey)
+        val geminiConfig = if (!geminiKey.isNullOrBlank()) {
+            GeminiConfig.create(apiKey = geminiKey)
+        } else {
+            null
+        }
+
+        if (!devexpertKey.isNullOrBlank()) {
+            return DevExpertConfig.create(
+                apiKey = devexpertKey,
+                fallbackConfig = geminiConfig
+            )
+        }
+
+        if (geminiConfig != null) {
+            return geminiConfig
         }
 
         return DevExpertConfig.create(apiKey = "")
