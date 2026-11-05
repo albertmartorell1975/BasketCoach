@@ -97,7 +97,7 @@
     <string name="chat_baseline_pill">Línea Base: %1$d Partidos Consolidados</string>
     <string name="chat_welcome_title">Hola %1$s, ¿cómo enfocamos la planificación de esta semana?</string>
     <string name="chat_welcome_subtitle">El análisis de la 1ª Fase (%1$s) muestra patrones claros donde podemos intervenir en los entrenamientos de martes y jueves. Selecciona un hilo de trabajo a la izquierda o escribe directamente cualquier reflexión o consulta táctica en la barra inferior.</string>
-    <string name="chat_input_placeholder">Escribe una pregunta o reflexión libre sobre la 1ª fase...</string>
+    <string name="chat_input_placeholder">Escribe una pregunta o reflexión libre sobre la 1ª fase&#8230;</string>
     <string name="chat_btn_send">Enviar mensaje</string>
     <string name="chat_footer_engine">BasketCoach Pia Sabadell · Motor de Análisis Interterritorial</string>
     <string name="chat_assistant_avatar_initial">P</string>
@@ -122,6 +122,7 @@
     <string name="chat_topic_open_title">Línea Base de la 1ª Fase</string>
     <string name="chat_topic_open_desc">Pregunta cualquier duda sobre los 14 partidos, rivales, anotación o tendencias generales.</string>
     <string name="chat_topic_open_status">Chat Abierto</string>
+    <string name="chat_rejection_off_topic">Como asistente táctico del Bàsquet Pia Sabadell, solo puedo responder a consultas sobre baloncesto, análisis de partidos, táctica y ejercicios de entrenamiento. ¿En qué puedo ayudar a tu equipo?</string>
     <string name="dashboard_loading">Cargando datos de la 1ª Fase...</string>
     <string name="dashboard_error_title">Error al cargar los datos</string>
     <string name="dashboard_error_retry">Reintentar</string>

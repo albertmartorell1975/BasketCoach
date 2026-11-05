@@ -20,6 +20,7 @@ import com.martorell.albert.basketcoach.ui.chat.model.ChatTopicCardUiModel
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiContent
 import com.martorell.albert.basketcoach.ui.chat.model.ChatUiState
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
+import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
 @Composable
 fun ChatScreen(
@@ -55,7 +56,9 @@ fun ChatScreen(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PiaBackground),
         contentAlignment = Alignment.Center
     ) {
         when (val content = uiState.content) {

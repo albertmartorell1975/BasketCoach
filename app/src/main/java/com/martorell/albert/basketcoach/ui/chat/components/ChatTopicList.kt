@@ -3,10 +3,12 @@ package com.martorell.albert.basketcoach.ui.chat.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,8 +25,8 @@ import com.martorell.albert.basketcoach.ui.theme.PiaTextMuted
 /**
  * Vertically scrollable list of tactical improvement topics and the unconstrained inquiry card.
  *
- * Renders the section header ("ÀREES DE MILLORA") and a scrollable column of [ChatTopicCard] items,
- * allowing Coach Jordi to seamlessly navigate between focused tactical conversation threads.
+ * Renders the section header ("ÀREES DE MILLORA") and a scrollable [LazyColumn] of [ChatTopicCard] items,
+ * automatically centering the [activeTopicId] card upon selection or navigation hand-off.
  *
  * @param topics The list of [ChatTopicCardUiModel] entries representing AI improvement areas and open inquiry.
  * @param activeTopicId Unique identifier of the currently highlighted or active topic.
@@ -38,6 +40,24 @@ fun ChatTopicList(
     onTopicClick: (ChatTopicCardUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(activeTopicId, topics) {
+        val index = topics.indexOfFirst { it.id == activeTopicId }
+        if (index >= 0) {
+            val layoutInfo = listState.layoutInfo
+            val viewportHeight = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
+            if (viewportHeight > 0) {
+                val visibleItem = layoutInfo.visibleItemsInfo.find { it.index == index }
+                val itemSize = visibleItem?.size ?: (viewportHeight / 3)
+                val offset = -((viewportHeight - itemSize) / 2).coerceAtLeast(0)
+                listState.animateScrollToItem(index, offset)
+            } else {
+                listState.animateScrollToItem(index)
+            }
+        }
+    }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -63,14 +83,17 @@ fun ChatTopicList(
             )
         }
 
-        Column(
+        LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f, fill = false)
-                .verticalScroll(rememberScrollState()),
+                .weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            topics.forEach { topic ->
+            items(
+                items = topics,
+                key = { it.id }
+            ) { topic ->
                 ChatTopicCard(
                     model = topic,
                     isActive = topic.id == activeTopicId,

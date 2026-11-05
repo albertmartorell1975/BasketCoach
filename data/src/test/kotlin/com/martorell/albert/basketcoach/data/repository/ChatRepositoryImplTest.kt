@@ -2,12 +2,22 @@ package com.martorell.albert.basketcoach.data.repository
 
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
+import com.martorell.albert.basketcoach.domain.model.Insight
+import com.martorell.albert.basketcoach.domain.model.InsightCategory
+import com.martorell.albert.basketcoach.domain.model.InsightMetric
+import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MessageSender
+import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
+import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -22,6 +32,8 @@ class ChatRepositoryImplTest {
         var capturedHistory: List<ChatMessageDto> = emptyList()
         var capturedPrompt: String = ""
         var capturedContext: String? = null
+        var capturedTopicContext: String? = null
+        var capturedOpenInquiryLabel: String = ""
         var callCount: Int = 0
 
         override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
@@ -31,12 +43,16 @@ class ChatRepositoryImplTest {
         override suspend fun generateChatResponse(
             conversationHistory: List<ChatMessageDto>,
             newPrompt: String,
-            gameContext: String?
+            gameContext: String?,
+            topicContext: String?,
+            openInquiryLabel: String
         ): String {
             callCount++
             capturedHistory = conversationHistory
             capturedPrompt = newPrompt
             capturedContext = gameContext
+            capturedTopicContext = topicContext
+            capturedOpenInquiryLabel = openInquiryLabel
             exceptionToThrow?.let { throw it }
             return chatResponse
         }
@@ -49,17 +65,31 @@ class ChatRepositoryImplTest {
         }
     }
 
+    private class FakeChatResourceProvider(
+        var rejectionText: String = "Com a assistent tàctic del Bàsquet Pia Sabadell, només puc respondre a consultes sobre bàsquet.",
+        var inquiryLabel: String = "Consulta Lliure"
+    ) : ChatResourceProvider {
+        override fun getOffTopicRejectionMessage(): String = rejectionText
+        override fun getOpenInquiryLabel(): String = inquiryLabel
+    }
+
     private lateinit var fakeRemoteDataSource: FakeAiRemoteDataSource
     private lateinit var localDataSource: ChatLocalDataSourceImpl
+    private lateinit var fakeAnalysisLocalDataSource: AiAnalysisLocalDataSourceImpl
+    private lateinit var fakeChatResourceProvider: FakeChatResourceProvider
     private lateinit var repository: ChatRepositoryImpl
 
     @Before
     fun setUp() {
         fakeRemoteDataSource = FakeAiRemoteDataSource()
         localDataSource = ChatLocalDataSourceImpl()
+        fakeAnalysisLocalDataSource = AiAnalysisLocalDataSourceImpl()
+        fakeChatResourceProvider = FakeChatResourceProvider()
         repository = ChatRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
-            localDataSource = localDataSource
+            localDataSource = localDataSource,
+            aiAnalysisLocalDataSource = fakeAnalysisLocalDataSource,
+            chatResourceProvider = fakeChatResourceProvider
         )
     }
 
@@ -92,21 +122,77 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `sendMessage when prompt is off-topic short-circuits without calling chat completions`() = runTest {
+    fun `sendMessage when prompt is off-topic short-circuits with localized rejection without calling completions`() = runTest {
         fakeRemoteDataSource.isRelevantResponse = false
 
-        val sendResult = repository.sendMessage("Quin temps fa avui?", null, "open_inquiry")
+        val sendResult = repository.sendMessage("Quin temps fa avui?", null, OPEN_INQUIRY_TOPIC_ID)
 
         assertTrue(sendResult is Result.Success)
         val aiMessage = (sendResult as Result.Success).data
         assertEquals(0, fakeRemoteDataSource.callCount)
-        assertTrue(aiMessage.text.contains("Bàsquet Pia Sabadell"))
+        assertEquals(fakeChatResourceProvider.rejectionText, aiMessage.text)
 
-        val allMessages = repository.getMessages("open_inquiry")
+        val allMessages = repository.getMessages(OPEN_INQUIRY_TOPIC_ID)
         assertTrue(allMessages is Result.Success)
         val messageList = (allMessages as Result.Success).data
         assertEquals(2, messageList.size)
         assertEquals(MessageSender.COACH, messageList[0].sender)
         assertEquals(MessageSender.AI, messageList[1].sender)
+    }
+
+    @Test
+    fun `sendMessage for focused improvement area retrieves cached insight, injects topicContext and localized label`() = runTest {
+        val sampleInsight = Insight(
+            id = "insight-rebots",
+            title = "Desavantatge estructural en el rebot defensiu",
+            description = "Cedim 14 rebots ofensius per partit generant 18 punts de segona oportunitat.",
+            category = InsightCategory.DEFENSE,
+            relatedGameRounds = listOf(1, 3, 5),
+            type = InsightType.IMPROVEMENT,
+            contextTag = "Fase Defensiva · Rebot",
+            metric = InsightMetric(
+                primaryLabel = "Rebots defensius",
+                primaryValue = "62.4%",
+                primarySubValue = "-10% vs rivals",
+                secondaryLabel = "Segones oportunitats",
+                secondaryValue = "18.2 pts/partit",
+                secondaryTag = "dataset:def_reb",
+                sentiment = MetricSentiment.NEGATIVE
+            ),
+            priority = "Alta",
+            footerNote = "Prioritat màxima de treball tàctic.",
+            exploreChatPrompt = "Com millorem el blocatge de rebot defensiu?"
+        )
+        fakeAnalysisLocalDataSource.saveAnalysis(listOf(sampleInsight), emptyList())
+
+        val sendResult = repository.sendMessage(
+            messageText = "Com podem reduir les pèrdues de pilota?",
+            games = emptyList(),
+            topicId = "insight-rebots"
+        )
+
+        assertTrue(sendResult is Result.Success)
+        assertEquals(1, fakeRemoteDataSource.callCount)
+        assertNotNull(fakeRemoteDataSource.capturedTopicContext)
+        val topicContext = fakeRemoteDataSource.capturedTopicContext!!
+        assertTrue(topicContext.contains("Desavantatge estructural en el rebot defensiu"))
+        assertTrue(topicContext.contains("Cedim 14 rebots ofensius"))
+        assertTrue(topicContext.contains("Rebots defensius: 62.4%"))
+        assertTrue(topicContext.contains("ACTIVE INTERVENTION AREA (THREAD FOCUS)"))
+        assertEquals("Consulta Lliure", fakeRemoteDataSource.capturedOpenInquiryLabel)
+    }
+
+    @Test
+    fun `sendMessage for open inquiry passes null topicContext and localized open inquiry label`() = runTest {
+        val sendResult = repository.sendMessage(
+            messageText = "Quina és la valoració global de la fase 1?",
+            games = emptyList(),
+            topicId = OPEN_INQUIRY_TOPIC_ID
+        )
+
+        assertTrue(sendResult is Result.Success)
+        assertEquals(1, fakeRemoteDataSource.callCount)
+        assertNull(fakeRemoteDataSource.capturedTopicContext)
+        assertEquals("Consulta Lliure", fakeRemoteDataSource.capturedOpenInquiryLabel)
     }
 }

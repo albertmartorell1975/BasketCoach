@@ -23,16 +23,4 @@ interface ChatLocalDataSource {
      * @param topicId The unique identifier of the target topic thread.
      */
     suspend fun saveMessage(message: ChatMessage, topicId: String)
-
-    /**
-     * Clears all cached conversation messages for the specified [topicId].
-     *
-     * @param topicId The unique identifier of the topic thread to clear.
-     */
-    suspend fun clearMessages(topicId: String)
-
-    /**
-     * Clears all cached conversation messages across all topic threads.
-     */
-    suspend fun clearAllMessages()
 }

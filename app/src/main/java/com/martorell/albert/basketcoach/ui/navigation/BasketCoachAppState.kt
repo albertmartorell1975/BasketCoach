@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -64,7 +65,17 @@ class BasketCoachAppState(
     }
 
     fun navigateToChat(prompt: String = "") {
-        navController.navigatePoppingUpToStartDestination(ChatRoute(initialPrompt = prompt))
+        if (prompt.isNotBlank()) {
+            navController.navigate(ChatRoute(initialPrompt = prompt)) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = false
+            }
+        } else {
+            navController.navigatePoppingUpToStartDestination(ChatRoute(initialPrompt = ""))
+        }
     }
 }
 

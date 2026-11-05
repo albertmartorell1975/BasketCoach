@@ -1,6 +1,7 @@
 package com.martorell.albert.basketcoach.data.network.prompt
 
 import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.OUR_TEAM_NAME
 import java.util.Locale
 
@@ -16,24 +17,23 @@ object PromptTemplates {
     const val JEV_APP_DOMAIN_VALUE = "Junior Men's Interterritorial basketball coaching, game analysis, tactical practice drills, and FIBA basketball strategy for $OUR_TEAM_NAME."
     const val JEV_QUESTION_TEXT = "Determine whether 'coach_message' is relevant to basketball tactics, game analysis, drills, FIBA rules, team management, or is a valid follow-up to the conversation."
 
-    fun buildOffTopicRejectionMessage(locale: Locale = Locale.getDefault()): String {
-        return when (locale.language.lowercase(Locale.ROOT)) {
-            "es" -> "Como asistente táctico del Bàsquet Pia Sabadell, solo puedo responder a consultas sobre baloncesto, análisis de partidos, táctica y ejercicios de entrenamiento. ¿En qué puedo ayudar a tu equipo?"
-            else -> "Com a assistent tàctic del Bàsquet Pia Sabadell, només puc respondre a consultes sobre bàsquet, anàlisi de partits, tàctica i exercicis d'entrenament. En què puc ajudar el teu equip?"
-        }
-    }
-
-    /**
-     * Resolves the target natural language for AI generation based on the active [Locale].
-     *
-     * Defaults to Catalan (the primary language of Basquet Pia Sabadell in the FCBQ),
-     * and switches to Spanish when the system locale starts with "es".
-     */
-    fun resolveTargetLanguage(locale: Locale = Locale.getDefault()): String {
-        return when (locale.language.lowercase(Locale.ROOT)) {
-            "es" -> "Spanish (Español)"
-            "ca" -> "Catalan (Català)"
-            else -> "Catalan (Català)" // Base language of Basquet Pia Sabadell
+    enum class PromptLanguage(val displayName: String) {
+        SPANISH("Spanish (Español)"),
+        CATALAN("Catalan (Català)");
+        
+        companion object {
+            /**
+             * Resolves the target natural language for AI generation based on the active [Locale].
+             *
+             * Defaults to Catalan (the primary language of Basquet Pia Sabadell in the FCBQ),
+             * and switches to Spanish when the system locale starts with "es".
+             */
+            fun fromLocale(locale: Locale = Locale.getDefault()): PromptLanguage {
+                return when (locale.language.lowercase(Locale.ROOT)) {
+                    "es" -> SPANISH
+                    else -> CATALAN
+                }
+            }
         }
     }
 
@@ -48,7 +48,7 @@ object PromptTemplates {
      * Builds the tactical analysis system prompt parameterized by [locale].
      */
     fun buildAnalysisSystemPrompt(locale: Locale = Locale.getDefault()): String {
-        val targetLanguage = resolveTargetLanguage(locale)
+        val targetLanguage = PromptLanguage.fromLocale(locale).displayName
         return """
             You are an elite tactical assistant for the basketball head coach of "$OUR_TEAM_NAME", competing in the Junior Men's Interterritorial category under FIBA rules.
             Your mission is to perform an in-depth diagnosis of Phase 1 games to prepare the squad for Phase 2.
@@ -101,17 +101,10 @@ object PromptTemplates {
     }
 
     /**
-     * Base system prompt for conversational chat assistance.
-     * Evaluates dynamically using [Locale.getDefault].
-     */
-    val CHAT_SYSTEM_PROMPT: String
-        get() = buildChatSystemPromptBase()
-
-    /**
      * Builds the base conversational chat system prompt parameterized by [locale].
      */
     fun buildChatSystemPromptBase(locale: Locale = Locale.getDefault()): String {
-        val targetLanguage = resolveTargetLanguage(locale)
+        val targetLanguage = PromptLanguage.fromLocale(locale).displayName
         return """
             You are the AI assistant coach for "$OUR_TEAM_NAME" in the Junior Men's Interterritorial basketball league under FIBA rules.
             You assist the head coach with tactical advice, game preparation, drill recommendations, and performance analysis.
@@ -122,15 +115,86 @@ object PromptTemplates {
     }
 
     /**
+     * Formats an active tactical [insight] into structured thread grounding context.
+     */
+    fun formatTopicContext(insight: Insight): String {
+        val metricDetails = listOfNotNull(
+            "${insight.metric.primaryLabel}: ${insight.metric.primaryValue}${if (insight.metric.primarySubValue.isNotBlank()) " (${insight.metric.primarySubValue})" else ""}"
+                .takeIf { insight.metric.primaryLabel.isNotBlank() || insight.metric.primaryValue.isNotBlank() },
+            "${insight.metric.secondaryLabel}: ${insight.metric.secondaryValue}"
+                .takeIf { insight.metric.secondaryLabel.isNotBlank() || insight.metric.secondaryValue.isNotBlank() }
+        ).joinToString(" | ")
+
+        val roundsStr = if (insight.relatedGameRounds.isNotEmpty()) {
+            "Rounds: ${insight.relatedGameRounds.joinToString(", ")}"
+        } else ""
+
+        return buildString {
+            appendLine("ACTIVE INTERVENTION AREA (THREAD FOCUS):")
+            appendLine("- Title: ${insight.title}")
+            appendLine("- Priority / Type: ${insight.priority} | ${insight.type.name} (${insight.contextTag})")
+            appendLine("- Diagnosis: ${insight.description}")
+            if (metricDetails.isNotBlank()) {
+                appendLine("- Empirical Metrics: $metricDetails")
+            }
+            if (roundsStr.isNotBlank()) {
+                appendLine("- Evidence: $roundsStr")
+            }
+            if (insight.footerNote.isNotBlank()) {
+                appendLine("- Note: ${insight.footerNote}")
+            }
+        }.trimEnd()
+    }
+
+    /**
      * Constructs the full chat system prompt incorporating optional match grounding context and [locale].
      */
-    fun buildChatSystemPrompt(gameContext: String?, locale: Locale = Locale.getDefault()): String {
+    fun buildChatSystemPrompt(
+        gameContext: String?,
+        locale: Locale = Locale.getDefault()
+    ): String = buildChatSystemPrompt(gameContext = gameContext, topicContext = null, locale = locale)
+
+    /**
+     * Constructs the full chat system prompt incorporating optional match grounding context,
+     * focused improvement area context, localized open inquiry label, and [locale].
+     */
+    fun buildChatSystemPrompt(
+        gameContext: String?,
+        topicContext: String?,
+        openInquiryLabel: String = "Consulta Lliure",
+        locale: Locale = Locale.getDefault()
+    ): String {
         val basePrompt = buildChatSystemPromptBase(locale)
-        return if (!gameContext.isNullOrBlank()) {
-            "$basePrompt\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
+        val threadMandate = if (!topicContext.isNullOrBlank()) {
+            """
+                $topicContext
+                
+                STRICT THREAD FOCUS MANDATE:
+                You are strictly confined to the active intervention area specified above.
+                - This thread is NOT a general chat. General questions or other basketball topics belong exclusively in the "$openInquiryLabel" thread (or their dedicated thread if one exists).
+                - When the coach asks about this active intervention area (its tactics, drills, metrics, root causes, practice progression): provide deep, tactical, data-grounded analysis and actionable drills.
+                - CRITICAL RULE FOR OFF-TOPIC OR DIFFERENT TOPIC QUERIES:
+                  If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
+                  Respond ONLY with a short, polite redirect in the coach's language:
+                  1. State that this thread is exclusively dedicated to the active intervention area.
+                  2. State that the queried aspect is different and cannot be analyzed or drilled here.
+                  3. Invite them to take that question to the "$openInquiryLabel" thread or to its dedicated thread if one exists (you MUST explicitly include the closing clause: "o al seu fil de conversa si existeix" in Catalan, or "o a su hilo de conversación si existe" in Spanish).
+                  AND NOTHING ELSE. Do NOT add extra questions, do NOT analyze unasked aspects, and do NOT elaborate further. Keep the response strictly to this brief redirection.
+            """.trimIndent()
         } else {
-            basePrompt
+            """
+                THREAD BEHAVIOR MANDATE (OPEN INQUIRY / $openInquiryLabel):
+                The coach is in the general consultation thread. You may freely address any basketball question, match analysis, player role, or practice drill across all 14 Phase 1 matches.
+            """.trimIndent()
         }
+
+        val grounding = if (!gameContext.isNullOrBlank()) {
+            "\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
+        } else {
+            ""
+        }
+
+        return "$basePrompt\n\n$threadMandate$grounding"
     }
 
     /**
@@ -190,7 +254,7 @@ object PromptTemplates {
      * Builds the analysis user prompt containing grounded match data and [locale] instructions.
      */
     fun buildAnalysisUserPrompt(gameSummary: String, locale: Locale = Locale.getDefault()): String {
-        val targetLanguage = resolveTargetLanguage(locale)
+        val targetLanguage = PromptLanguage.fromLocale(locale).displayName
         return """
             Here is the complete Phase 1 match data for $OUR_TEAM_NAME:
             

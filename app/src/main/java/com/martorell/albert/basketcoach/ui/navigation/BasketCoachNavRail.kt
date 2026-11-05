@@ -51,14 +51,14 @@ fun BasketCoachNavRail(
 ) {
     Box(
         modifier = modifier
-            .width(80.dp)
+            .width(88.dp)
             .fillMaxHeight()
             .background(PiaNavy)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 8.dp),
+                .padding(vertical = 16.dp, horizontal = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -70,11 +70,12 @@ fun BasketCoachNavRail(
 
                 Column(
                     modifier = Modifier
-                        .size(width = 64.dp, height = 56.dp)
+                        .fillMaxWidth()
+                        .height(58.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(backgroundColor)
                         .clickable { onRouteSelected(navOption.route) }
-                        .padding(horizontal = 4.dp, vertical = 6.dp),
+                        .padding(horizontal = 2.dp, vertical = 6.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -93,6 +94,7 @@ fun BasketCoachNavRail(
                         fontWeight = fontWeight,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
+                        softWrap = false,
                         overflow = TextOverflow.Ellipsis
                     )
                 }

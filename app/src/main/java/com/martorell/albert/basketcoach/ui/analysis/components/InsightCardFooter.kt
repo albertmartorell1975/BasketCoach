@@ -1,15 +1,14 @@
 package com.martorell.albert.basketcoach.ui.analysis.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -48,71 +47,53 @@ fun InsightCardFooter(
     modifier: Modifier = Modifier
 ) {
     val isImprovement = card.type == InsightType.IMPROVEMENT
+    val footerColor = if (isImprovement) PiaTacticalOrange else PiaSuccessGreen
 
-    Row(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
-        ) {
-            if (isImprovement) {
-                Icon(
-                    imageVector = Icons.Filled.PriorityHigh,
-                    contentDescription = stringResource(R.string.analysis_cd_warning_badge),
-                    tint = PiaTacticalOrange,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = card.footerNote,
-                    color = PiaTacticalOrange,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.Verified,
-                    contentDescription = stringResource(R.string.analysis_cd_verified_badge),
-                    tint = PiaSuccessGreen,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = card.footerNote,
-                    color = PiaTextMuted,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+        if (card.footerNote.isNotBlank()) {
+            Text(
+                text = card.footerNote,
+                color = footerColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 16.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         if (card.canExploreChat) {
-            Button(
-                onClick = { onExploreChat(card.exploreChatPrompt) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PiaNavy,
-                    contentColor = PiaWhite
-                ),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                Button(
+                    onClick = { onExploreChat(card.exploreChatPrompt.ifBlank { card.id }) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PiaNavy,
+                        contentColor = PiaWhite
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Psychology,
-                        contentDescription = null,
-                        tint = PiaWhite,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.analysis_btn_explore_chat),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Psychology,
+                            contentDescription = null,
+                            tint = PiaWhite,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.analysis_btn_explore_chat),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
         }

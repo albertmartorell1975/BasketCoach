@@ -24,6 +24,7 @@ import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
 import com.martorell.albert.basketcoach.ui.theme.PiaNavy
+import com.martorell.albert.basketcoach.ui.theme.PiaBackground
 
 /**
  * Stateful entry point for the tactical analysis screen.
@@ -78,7 +79,9 @@ fun AnalysisScreen(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PiaBackground),
         contentAlignment = Alignment.Center
     ) {
         when (val content = uiState.content) {

@@ -80,6 +80,7 @@ internal fun HeaderCell(
         letterSpacing = 0.5.sp,
         color = if (isPrimary) PiaNavy else PiaTextMuted,
         textAlign = textAlign,
+        maxLines = 1,
         modifier = modifier.width(width)
     )
 }

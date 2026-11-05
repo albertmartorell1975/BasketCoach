@@ -3,7 +3,7 @@
     <string name="app_name">BasketCoach</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_analysis">Anàlisi</string>
-    <string name="nav_chat">Chat</string>
+    <string name="nav_chat">Xat</string>
     <string name="topbar_category">Junior Masculí Interterritorial</string>
     <string name="topbar_verified_dataset">Dades consolidades · 14 partits 1a Fase</string>
     <string name="topbar_coach_role">Head Coach</string>
@@ -97,7 +97,7 @@
     <string name="chat_baseline_pill">Línia Base: %1$d Partits Consolidats</string>
     <string name="chat_welcome_title">Hola %1$s, com enfoquem la planificació d\'aquesta setmana?</string>
     <string name="chat_welcome_subtitle">L\'anàlisi de la 1a Fase (%1$s) mostra patrons clars on podem intervenir en els entrenaments de dimarts i dijous. Selecciona un fil de treball a l\'esquerra o escriu directament qualsevol reflexió o consulta tàctica a la barra inferior.</string>
-    <string name="chat_input_placeholder">Escriu una pregunta o reflexió lliure sobre la 1a fase...</string>
+    <string name="chat_input_placeholder">Escriu una pregunta o reflexió lliure sobre la 1a fase&#8230;</string>
     <string name="chat_btn_send">Enviar missatge</string>
     <string name="chat_footer_engine">BasketCoach Pia Sabadell · Motor d\'Anàlisi Interterritorial</string>
     <string name="chat_assistant_avatar_initial">P</string>
@@ -122,6 +122,7 @@
     <string name="chat_topic_open_title">Línia Base de la 1a Fase</string>
     <string name="chat_topic_open_desc">Pregunta qualsevol dubte sobre els 14 partits, rivals, anotació o tendències generals.</string>
     <string name="chat_topic_open_status">Xat Obert</string>
+    <string name="chat_rejection_off_topic">Com a assistent tàctic del Bàsquet Pia Sabadell, només puc respondre a consultes sobre bàsquet, anàlisi de partits, tàctica i exercicis d\'entrenament. En què puc ajudar el teu equip?</string>
     <string name="dashboard_loading">Carregant dades de la 1a Fase...</string>
     <string name="dashboard_error_title">Error en carregar les dades</string>
     <string name="dashboard_error_retry">Reintentar</string>

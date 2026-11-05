@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.data.repository
 
+import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.DrillDto
@@ -7,7 +8,6 @@ import com.martorell.albert.basketcoach.data.network.dto.InsightDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightMetricDto
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
-import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
 import com.martorell.albert.basketcoach.domain.model.Result
@@ -34,7 +34,9 @@ class AiAnalysisRepositoryImplTest {
         override suspend fun generateChatResponse(
             conversationHistory: List<ChatMessageDto>,
             newPrompt: String,
-            gameContext: String?
+            gameContext: String?,
+            topicContext: String?,
+            openInquiryLabel: String
         ): String {
             throw UnsupportedOperationException()
         }
