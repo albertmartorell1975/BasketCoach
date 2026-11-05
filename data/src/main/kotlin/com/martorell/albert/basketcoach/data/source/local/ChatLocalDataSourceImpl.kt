@@ -27,16 +27,4 @@ class ChatLocalDataSourceImpl @Inject constructor() : ChatLocalDataSource {
             messagesByTopic.getOrPut(topicId) { mutableListOf() }.add(message)
         }
     }
-
-    override suspend fun clearMessages(topicId: String) {
-        mutex.withLock {
-            messagesByTopic.remove(topicId)
-        }
-    }
-
-    override suspend fun clearAllMessages() {
-        mutex.withLock {
-            messagesByTopic.clear()
-        }
-    }
 }

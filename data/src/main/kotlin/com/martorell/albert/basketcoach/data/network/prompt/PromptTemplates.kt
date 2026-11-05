@@ -17,13 +17,6 @@ object PromptTemplates {
     const val JEV_APP_DOMAIN_VALUE = "Junior Men's Interterritorial basketball coaching, game analysis, tactical practice drills, and FIBA basketball strategy for $OUR_TEAM_NAME."
     const val JEV_QUESTION_TEXT = "Determine whether 'coach_message' is relevant to basketball tactics, game analysis, drills, FIBA rules, team management, or is a valid follow-up to the conversation."
 
-    fun buildOffTopicRejectionMessage(locale: Locale = Locale.getDefault()): String {
-        return when (locale.language.lowercase(Locale.ROOT)) {
-            "es" -> "Como asistente táctico del Bàsquet Pia Sabadell, solo puedo responder a consultas sobre baloncesto, análisis de partidos, táctica y ejercicios de entrenamiento. ¿En qué puedo ayudar a tu equipo?"
-            else -> "Com a assistent tàctic del Bàsquet Pia Sabadell, només puc respondre a consultes sobre bàsquet, anàlisi de partits, tàctica i exercicis d'entrenament. En què puc ajudar el teu equip?"
-        }
-    }
-
     /**
      * Resolves the target natural language for AI generation based on the active [Locale].
      *
@@ -100,13 +93,6 @@ object PromptTemplates {
             }
         """.trimIndent()
     }
-
-    /**
-     * Base system prompt for conversational chat assistance.
-     * Evaluates dynamically using [Locale.getDefault].
-     */
-    val CHAT_SYSTEM_PROMPT: String
-        get() = buildChatSystemPromptBase()
 
     /**
      * Builds the base conversational chat system prompt parameterized by [locale].
