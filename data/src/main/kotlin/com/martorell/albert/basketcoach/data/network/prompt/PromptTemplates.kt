@@ -1,6 +1,7 @@
 package com.martorell.albert.basketcoach.data.network.prompt
 
 import com.martorell.albert.basketcoach.domain.model.Game
+import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.OUR_TEAM_NAME
 import java.util.Locale
 
@@ -122,15 +123,82 @@ object PromptTemplates {
     }
 
     /**
+     * Formats an active tactical [insight] into structured thread grounding context.
+     */
+    fun formatTopicContext(insight: Insight): String {
+        val metricDetails = listOfNotNull(
+            "${insight.metric.primaryLabel}: ${insight.metric.primaryValue}${if (insight.metric.primarySubValue.isNotBlank()) " (${insight.metric.primarySubValue})" else ""}"
+                .takeIf { insight.metric.primaryLabel.isNotBlank() || insight.metric.primaryValue.isNotBlank() },
+            "${insight.metric.secondaryLabel}: ${insight.metric.secondaryValue}"
+                .takeIf { insight.metric.secondaryLabel.isNotBlank() || insight.metric.secondaryValue.isNotBlank() }
+        ).joinToString(" | ")
+
+        val roundsStr = if (insight.relatedGameRounds.isNotEmpty()) {
+            "Rounds: ${insight.relatedGameRounds.joinToString(", ")}"
+        } else ""
+
+        return buildString {
+            appendLine("ACTIVE INTERVENTION AREA (THREAD FOCUS):")
+            appendLine("- Title: ${insight.title}")
+            appendLine("- Priority / Type: ${insight.priority} | ${insight.type.name} (${insight.contextTag})")
+            appendLine("- Diagnosis: ${insight.description}")
+            if (metricDetails.isNotBlank()) {
+                appendLine("- Empirical Metrics: $metricDetails")
+            }
+            if (roundsStr.isNotBlank()) {
+                appendLine("- Evidence: $roundsStr")
+            }
+            if (insight.footerNote.isNotBlank()) {
+                appendLine("- Note: ${insight.footerNote}")
+            }
+        }.trimEnd()
+    }
+
+    /**
      * Constructs the full chat system prompt incorporating optional match grounding context and [locale].
      */
-    fun buildChatSystemPrompt(gameContext: String?, locale: Locale = Locale.getDefault()): String {
+    fun buildChatSystemPrompt(
+        gameContext: String?,
+        locale: Locale = Locale.getDefault()
+    ): String = buildChatSystemPrompt(gameContext = gameContext, topicContext = null, locale = locale)
+
+    /**
+     * Constructs the full chat system prompt incorporating optional match grounding context,
+     * focused improvement area context, and [locale].
+     */
+    fun buildChatSystemPrompt(
+        gameContext: String?,
+        topicContext: String?,
+        locale: Locale = Locale.getDefault()
+    ): String {
         val basePrompt = buildChatSystemPromptBase(locale)
-        return if (!gameContext.isNullOrBlank()) {
-            "$basePrompt\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
+        val threadMandate = if (!topicContext.isNullOrBlank()) {
+            """
+                $topicContext
+                
+                STRICT THREAD FOCUS MANDATE:
+                You are strictly confined to the active intervention area specified above.
+                - This thread is NOT a general chat. General questions or other basketball topics belong exclusively in the "Consulta Lliure" thread.
+                - When the coach asks about this active intervention area (its tactics, drills, metrics, root causes, practice progression): provide deep, tactical, data-grounded analysis and actionable drills.
+                - If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
+                  1. DO NOT provide analysis, statistical breakdowns, drills, or advice on that other topic.
+                  2. Clearly and politely inform the coach that this thread is exclusively dedicated to this active intervention area, and invite them to explore that other topic in the "Consulta Lliure" thread.
+                  3. Redirect the conversation immediately back to the active intervention area with a concise, actionable question about resolving this specific weakness.
+            """.trimIndent()
         } else {
-            basePrompt
+            """
+                THREAD BEHAVIOR MANDATE (OPEN INQUIRY / CONSULTA LLIURE):
+                The coach is in the general consultation thread. You may freely address any basketball question, match analysis, player role, or practice drill across all 14 Phase 1 matches.
+            """.trimIndent()
         }
+
+        val grounding = if (!gameContext.isNullOrBlank()) {
+            "\n\nGROUNDING CONTEXT (PHASE 1 MATCH DATA):\n$gameContext"
+        } else {
+            ""
+        }
+
+        return "$basePrompt\n\n$threadMandate$grounding"
     }
 
     /**

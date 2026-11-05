@@ -1,5 +1,10 @@
 package com.martorell.albert.basketcoach.data.network.prompt
 
+import com.martorell.albert.basketcoach.domain.model.Insight
+import com.martorell.albert.basketcoach.domain.model.InsightCategory
+import com.martorell.albert.basketcoach.domain.model.InsightMetric
+import com.martorell.albert.basketcoach.domain.model.InsightType
+import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -54,5 +59,68 @@ class PromptTemplatesTest {
 
         val esChatPrompt = PromptTemplates.buildChatSystemPrompt(null, Locale.forLanguageTag("es"))
         assertTrue(esChatPrompt.contains("Always reply in Spanish (Español)"))
+    }
+
+    @Test
+    fun `formatTopicContext formats insight into structured context block`() {
+        val insight = Insight(
+            id = "insight-turnovers",
+            title = "Vulnerabilitat en pèrdues en primera línia",
+            description = "18.4 pèrdues de pilota per partit han provocat 21.2 punts en contra.",
+            category = InsightCategory.OFFENSE,
+            relatedGameRounds = listOf(2, 4, 6),
+            type = InsightType.IMPROVEMENT,
+            contextTag = "Fase Ofensiva · Control de joc",
+            metric = InsightMetric(
+                primaryLabel = "Pèrdues per partit",
+                primaryValue = "18.4",
+                primarySubValue = "-4.2 vs mitjana",
+                secondaryLabel = "Punts rebuts de pèrdua",
+                secondaryValue = "21.2 pts/partit",
+                secondaryTag = "dataset:to_pts",
+                sentiment = MetricSentiment.NEGATIVE
+            ),
+            priority = "Alta",
+            footerNote = "Afecta el balanç defensiu.",
+            exploreChatPrompt = "Com reduir pèrdues en primera línia?"
+        )
+
+        val formatted = PromptTemplates.formatTopicContext(insight)
+
+        assertTrue(formatted.contains("ACTIVE INTERVENTION AREA (THREAD FOCUS):"))
+        assertTrue(formatted.contains("Title: Vulnerabilitat en pèrdues en primera línia"))
+        assertTrue(formatted.contains("Priority / Type: Alta | IMPROVEMENT (Fase Ofensiva · Control de joc)"))
+        assertTrue(formatted.contains("Pèrdues per partit: 18.4 (-4.2 vs mitjana)"))
+        assertTrue(formatted.contains("Punts rebuts de pèrdua: 21.2 pts/partit"))
+        assertTrue(formatted.contains("Rounds: 2, 4, 6"))
+        assertTrue(formatted.contains("Note: Afecta el balanç defensiu."))
+    }
+
+    @Test
+    fun `buildChatSystemPrompt injects focused mandate when topicContext is provided`() {
+        val topicContext = "ACTIVE INTERVENTION AREA: Rebounding Deficit"
+        val prompt = PromptTemplates.buildChatSystemPrompt(
+            gameContext = "Summary of 14 games",
+            topicContext = topicContext,
+            locale = Locale.forLanguageTag("ca")
+        )
+
+        assertTrue(prompt.contains(topicContext))
+        assertTrue(prompt.contains("STRICT THREAD FOCUS MANDATE"))
+        assertTrue(prompt.contains("You are strictly confined to the active intervention area"))
+        assertTrue(prompt.contains("Consulta Lliure"))
+        assertTrue(prompt.contains("GROUNDING CONTEXT (PHASE 1 MATCH DATA)"))
+    }
+
+    @Test
+    fun `buildChatSystemPrompt injects open inquiry mandate when topicContext is null`() {
+        val prompt = PromptTemplates.buildChatSystemPrompt(
+            gameContext = "Summary of 14 games",
+            topicContext = null,
+            locale = Locale.forLanguageTag("ca")
+        )
+
+        assertTrue(prompt.contains("THREAD BEHAVIOR MANDATE (OPEN INQUIRY / CONSULTA LLIURE)"))
+        assertTrue(prompt.contains("The coach is in the general consultation thread."))
     }
 }
