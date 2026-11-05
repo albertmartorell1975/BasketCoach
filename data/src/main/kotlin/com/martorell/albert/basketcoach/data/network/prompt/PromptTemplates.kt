@@ -178,12 +178,13 @@ object PromptTemplates {
                 
                 STRICT THREAD FOCUS MANDATE:
                 You are strictly confined to the active intervention area specified above.
-                - This thread is NOT a general chat. General questions or other basketball topics belong exclusively in the "Consulta Lliure" thread.
+                - This thread is NOT a general chat. General questions or other basketball topics belong exclusively in the "Consulta Lliure" thread (or their dedicated thread if one exists).
                 - When the coach asks about this active intervention area (its tactics, drills, metrics, root causes, practice progression): provide deep, tactical, data-grounded analysis and actionable drills.
-                - If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
-                  1. DO NOT provide analysis, statistical breakdowns, drills, or advice on that other topic.
-                  2. Clearly and politely inform the coach that this thread is exclusively dedicated to this active intervention area, and invite them to explore that other topic in the "Consulta Lliure" thread.
-                  3. Redirect the conversation immediately back to the active intervention area with a concise, actionable question about resolving this specific weakness.
+                - CRITICAL RULE FOR OFF-TOPIC OR DIFFERENT TOPIC QUERIES:
+                  If the coach asks about an aspect, skill, or tactical factor different from this active intervention area (such as outside shooting, 3-point percentages, defensive rebounding, zone defense, physical training, etc.):
+                  Respond ONLY with a short, polite redirect following this exact pattern:
+                  "Gràcies per la pregunta, però he de ser transparent amb tu: aquest fil està dedicat exclusivament a '<Active Topic Title>'. <Aspect asked about> és un aspecte diferent i, per tant, no puc entrar a analitzar-lo ni proposar-te exercicis aquí. Et convido a portar aquesta qüestió al fil 'Consulta Lliure' o al seu fil de conversa si existeix."
+                  AND NOTHING ELSE. Do NOT add extra questions, do NOT analyze unasked aspects, and do NOT elaborate further. Keep the response strictly to this brief redirection.
             """.trimIndent()
         } else {
             """
