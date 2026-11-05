@@ -9,25 +9,23 @@ private const val ACCESSIBILITY_GROUP = "Accessibility"
 private const val RTL_LOCALE = "ar"
 private const val MAX_FONT_SCALE = 2.0f
 
-private const val TABLET_DEVICE = "spec:width=1280dp,height=800dp,dpi=240"
-private const val TABLET_LANDSCAPE_DEVICE = "spec:width=1280dp,height=800dp,dpi=240,orientation=landscape" // Default for BasketCoach
-private const val PHONE_DEVICE = "spec:width=411dp,height=891dp"
-private const val PHONE_LANDSCAPE_DEVICE = "spec:width=891dp,height=411dp,orientation=landscape"
+private const val TABLET_LANDSCAPE_DEVICE = "spec:width=1280dp,height=800dp,dpi=240,orientation=landscape" // Baseline for BasketCoach MVP
+private const val LARGE_TABLET_LANDSCAPE_DEVICE = "spec:width=1920dp,height=1200dp,dpi=240,orientation=landscape"
 
 /**
  * Multi-preview annotation that represents various theme configurations (Light, Dark),
- * Layout direction (RTL), and Accessibility modes (Large Font).
+ * Layout direction (RTL), and Accessibility modes (Large Font) in Tablet Landscape.
  */
-@Preview(name = "Light Mode", group = THEME_GROUP, showBackground = true)
-@Preview(name = "Dark Mode", group = THEME_GROUP, showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(name = "RTL", group = LAYOUT_GROUP, locale = RTL_LOCALE)
-@Preview(name = "Large Font", group = ACCESSIBILITY_GROUP, fontScale = MAX_FONT_SCALE)
+@Preview(name = "Light Mode", group = THEME_GROUP, device = TABLET_LANDSCAPE_DEVICE, showBackground = true)
+@Preview(name = "Dark Mode", group = THEME_GROUP, device = TABLET_LANDSCAPE_DEVICE, showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "RTL", group = LAYOUT_GROUP, device = TABLET_LANDSCAPE_DEVICE, locale = RTL_LOCALE)
+@Preview(name = "Large Font", group = ACCESSIBILITY_GROUP, device = TABLET_LANDSCAPE_DEVICE, fontScale = MAX_FONT_SCALE)
 annotation class BcThemePreview
 
 /**
- * Multi-preview annotation that represents various device form factors.
- * Since BasketCoach is a Tablet Landscape application, we prioritize tablet layouts.
+ * Multi-preview annotation that represents tablet landscape device form factors.
+ * BasketCoach is strictly constrained to Tablet Landscape mode (1280x800dp baseline).
  */
-@Preview(name = "Tablet Landscape", device = TABLET_LANDSCAPE_DEVICE)
-@Preview(name = "Phone Landscape", device = PHONE_LANDSCAPE_DEVICE)
+@Preview(name = "Tablet 10\" Landscape (Baseline)", device = TABLET_LANDSCAPE_DEVICE)
+@Preview(name = "Tablet 12\" Landscape (Large)", device = LARGE_TABLET_LANDSCAPE_DEVICE)
 annotation class BcDevicePreview
