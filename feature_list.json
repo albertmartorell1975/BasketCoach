@@ -203,5 +203,24 @@
                             "docs/ui/screens/chat_general/code.html",
                             "docs/ui/basquet_pia_design_system.jpeg"
                         ]
+    },
+    {
+        "id": "feature_012_gemini_fallback_resilience",
+        "area": "data",
+        "title": "Gemini Fallback & DevExpert Subscription Expiration Resilience",
+        "user_visible_behavior": "When the DevExpert subscription expires or returns authorization/quota errors (401/402/403), the app seamlessly falls back to Google Gemini for both tactical relevance classification (replacing Jev) and generative chat/analysis inferences without interrupting the coach's workflow.",
+        "depends_on": [
+            "feature_010_chat_integration",
+            "feature_011_chat_improvement_areas"
+        ],
+        "status": "in_progress",
+        "verification": "Unit tests in :data verify that HTTP 401/402/403 errors from DevExpert automatically trigger the Gemini alternative for both Jev classification and chat completion, and that standalone Gemini configuration operates correctly.",
+        "evidence": "",
+        "notes": "Covers both inferences: (1) Jev replacement via Gemini JSON domain classifier, (2) chat/analysis completions via Gemini 2.5 Flash. Adhere to Constraint #18 (strict test budget).",
+        "require_review_after": [
+            "planner",
+            "validator"
+        ]
     }
 ]
+
