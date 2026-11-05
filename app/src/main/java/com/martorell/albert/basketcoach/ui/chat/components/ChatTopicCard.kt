@@ -80,7 +80,7 @@ fun ChatTopicCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (model.isPriority) {
+                if (isActive && !model.isOpenInquiry) {
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(4.dp))
@@ -104,34 +104,48 @@ fun ChatTopicCard(
                     }
                 } else if (model.isOpenInquiry) {
                     Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .then(
+                                if (isActive) {
+                                    Modifier
+                                        .background(PiaNavy)
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                } else {
+                                    Modifier
+                                }
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.PsychologyAlt,
                             contentDescription = null,
-                            tint = PiaNavy,
+                            tint = if (isActive) PiaWhite else PiaNavy,
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
                             text = model.badgeText.asString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = PiaNavy
+                            color = if (isActive) PiaWhite else PiaNavy
                         )
                     }
                 } else {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(4.dp))
-                            .background(PiaSurfaceContainer)
+                            .background(
+                                if (model.isPriority) PiaTacticalOrange.copy(alpha = 0.12f)
+                                else PiaSurfaceContainer
+                            )
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = model.badgeText.asString(),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = PiaNavyLight
+                            color = if (model.isPriority) PiaTacticalOrange else PiaNavyLight
                         )
                     }
                 }
