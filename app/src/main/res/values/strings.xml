@@ -97,7 +97,7 @@
     <string name="chat_baseline_pill">Línia Base: %1$d Partits Consolidats</string>
     <string name="chat_welcome_title">Hola %1$s, com enfoquem la planificació d\'aquesta setmana?</string>
     <string name="chat_welcome_subtitle">L\'anàlisi de la 1a Fase (%1$s) mostra patrons clars on podem intervenir en els entrenaments de dimarts i dijous. Selecciona un fil de treball a l\'esquerra o escriu directament qualsevol reflexió o consulta tàctica a la barra inferior.</string>
-    <string name="chat_input_placeholder">Escriu una pregunta o reflexió lliure sobre la 1a fase...</string>
+    <string name="chat_input_placeholder">Escriu una pregunta o reflexió lliure sobre la 1a fase&#8230;</string>
     <string name="chat_btn_send">Enviar missatge</string>
     <string name="chat_footer_engine">BasketCoach Pia Sabadell · Motor d\'Anàlisi Interterritorial</string>
     <string name="chat_assistant_avatar_initial">P</string>
