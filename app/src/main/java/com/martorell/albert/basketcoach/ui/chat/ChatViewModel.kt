@@ -59,7 +59,7 @@ class ChatViewModel @Inject constructor(
 
     private var cachedGames: List<Game> = emptyList()
     private var cachedInsights: List<Insight> = emptyList()
-    private var initialPromptProcessed: Boolean = false
+    private var lastProcessedPrompt: String? = null
 
     /**
      * Passively initializes or refreshes the chat workbench.
@@ -99,7 +99,10 @@ class ChatViewModel @Inject constructor(
             val targetTopicId = if (initialPrompt.isNotBlank()) {
                 val matchingInsight = cachedInsights
                     .filter { it.type == InsightType.IMPROVEMENT }
-                    .find { it.exploreChatPrompt == initialPrompt || it.id == initialPrompt }
+                    .find {
+                        it.exploreChatPrompt.trim().equals(initialPrompt.trim(), ignoreCase = true) ||
+                            it.id.trim().equals(initialPrompt.trim(), ignoreCase = true)
+                    }
                 matchingInsight?.id
                     ?: cachedInsights.firstOrNull { it.type == InsightType.IMPROVEMENT }?.id
                     ?: OPEN_INQUIRY_TOPIC_ID
@@ -115,20 +118,21 @@ class ChatViewModel @Inject constructor(
                     _uiState.update { it.copy(content = ChatUiContent.Error(messagesResult.error)) }
                 }
                 is Result.Success -> {
+                    val currentSuccess = _uiState.value.content as? ChatUiContent.Success
                     val content = chatUiMapper.mapToContent(
                         games = cachedGames,
                         insights = cachedInsights,
                         messages = messagesResult.data,
                         activeTopicId = targetTopicId,
-                        inputText = ""
+                        inputText = currentSuccess?.inputText.orEmpty()
                     )
 
                     _uiState.update {
                         it.copy(content = content)
                     }
 
-                    if (initialPrompt.isNotBlank() && !initialPromptProcessed) {
-                        initialPromptProcessed = true
+                    if (initialPrompt.isNotBlank() && initialPrompt != lastProcessedPrompt) {
+                        lastProcessedPrompt = initialPrompt
                         if (messagesResult.data.isEmpty()) {
                             sendMessage(initialPrompt)
                         }

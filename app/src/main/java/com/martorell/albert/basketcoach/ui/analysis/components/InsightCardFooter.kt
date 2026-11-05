@@ -70,7 +70,7 @@ fun InsightCardFooter(
                 horizontalArrangement = Arrangement.End
             ) {
                 Button(
-                    onClick = { onExploreChat(card.exploreChatPrompt) },
+                    onClick = { onExploreChat(card.exploreChatPrompt.ifBlank { card.id }) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PiaNavy,
                         contentColor = PiaWhite
