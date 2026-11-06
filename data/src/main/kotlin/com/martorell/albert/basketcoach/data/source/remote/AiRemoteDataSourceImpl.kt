@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.data.source.remote
 
+import com.martorell.albert.basketcoach.data.network.HttpErrorParser
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
@@ -261,7 +262,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
             response.use { resp ->
                 if (!resp.isSuccessful) {
                     val errorBody = resp.body?.string().orEmpty()
-                    val errorMessage = if (errorBody.isNotBlank()) errorBody else resp.message
+                    val errorMessage = HttpErrorParser.parse(errorBody, resp.message)
                     throw HttpException(resp.code, errorMessage)
                 }
                 val bodyString = resp.body?.string() ?: throw IOException(ERROR_EMPTY_RESPONSE)
@@ -357,7 +358,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
             response.use { resp ->
                 if (!resp.isSuccessful) {
                     val errorBody = resp.body?.string().orEmpty()
-                    val errorMessage = if (errorBody.isNotBlank()) errorBody else resp.message
+                    val errorMessage = HttpErrorParser.parse(errorBody, resp.message)
                     throw HttpException(resp.code, errorMessage)
                 }
 

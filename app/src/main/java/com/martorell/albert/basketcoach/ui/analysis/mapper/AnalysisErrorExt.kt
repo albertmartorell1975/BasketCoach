@@ -1,6 +1,7 @@
 package com.martorell.albert.basketcoach.ui.analysis.mapper
 
 import com.martorell.albert.basketcoach.R
+import com.martorell.albert.basketcoach.data.network.HttpErrorParser
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.ui.util.UiText
 
@@ -18,7 +19,7 @@ fun DomainError.toAnalysisUiText(): UiText = when (this) {
     is DomainError.Network.Timeout -> UiText.StringResource(R.string.analysis_error_timeout)
     is DomainError.Network.Unauthorized -> UiText.StringResource(R.string.analysis_error_unauthorized)
     is DomainError.Network.ServerError -> {
-        val serverMessage = message
+        val serverMessage = message?.let { HttpErrorParser.parse(it) }
         if (!serverMessage.isNullOrBlank()) {
             UiText.DynamicString(serverMessage)
         } else {
@@ -26,7 +27,7 @@ fun DomainError.toAnalysisUiText(): UiText = when (this) {
         }
     }
     is DomainError.Generic -> {
-        val genericMessage = message
+        val genericMessage = message?.let { HttpErrorParser.parse(it) }
         if (!genericMessage.isNullOrBlank()) {
             UiText.DynamicString(genericMessage)
         } else {
