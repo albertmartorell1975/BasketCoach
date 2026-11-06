@@ -64,6 +64,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
         private const val ERROR_EMPTY_RESPONSE = "Empty response body from AI endpoint"
         private const val ERROR_NO_CHOICES = "No choices returned from AI completion endpoint"
 
+        private const val LOG_TAG = "[BasketCoach:AI]"
         private val JSON_MEDIA_TYPE = MEDIA_TYPE_JSON.toMediaType()
 
         /**
@@ -94,6 +95,10 @@ class AiRemoteDataSourceImpl @Inject constructor(
         config.fallbackConfig
     } else {
         config
+    }
+
+    init {
+        log("🚀 [INIT] Data source inicialitzat. Proveïdor actiu: ${providerName(activeConfig)} (model: ${activeConfig.model})")
     }
 
     /**
@@ -131,6 +136,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
+        log("📊 [ANALYSIS] Sol·licitant anàlisi tàctica a ${providerName(activeConfig)} (model: ${activeConfig.model})")
         val userPrompt = PromptTemplates.buildAnalysisUserPrompt(gameContext)
         val messages = listOf(
             ChatMessageDto(role = ChatRole.SYSTEM, content = PromptTemplates.ANALYSIS_SYSTEM_PROMPT),
@@ -154,6 +160,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
         topicContext: String?,
         openInquiryLabel: String
     ): String {
+        log("💬 [CHAT] Sol·licitant resposta de xat a ${providerName(activeConfig)} (model: ${activeConfig.model})")
         val messages = mutableListOf<ChatMessageDto>()
 
         val systemPrompt = PromptTemplates.buildChatSystemPrompt(
@@ -185,11 +192,13 @@ class AiRemoteDataSourceImpl @Inject constructor(
         }
 
         return if (currentConfig.baseUrl.contains("devexpert.io")) {
+            log("🛡️ [GUARDRAIL] Verificant rellevància tàctica amb DevExpert Decisions (model: ${DevExpertConfig.MODEL_JEV})")
             try {
                 executeDevExpertDecision(prompt, lastAssistantMessage, currentConfig)
             } catch (t: Throwable) {
                 val fallback = currentConfig.fallbackConfig
                 if (isFailoverEligible(t) && fallback != null) {
+                    log("⚠️ [FAILOVER] DevExpert Guardrail ha fallat (${t.message ?: t.javaClass.simpleName}). Commutant sessió a Google Gemini (model: ${fallback.model})")
                     activeConfig = fallback
                     executeGeminiClassifier(prompt, lastAssistantMessage, fallback)
                 } else {
@@ -197,6 +206,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
                 }
             }
         } else {
+            log("🛡️ [GUARDRAIL] Verificant rellevància tàctica amb Google Gemini (model: ${currentConfig.model})")
             executeGeminiClassifier(prompt, lastAssistantMessage, currentConfig)
         }
     }
@@ -311,6 +321,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
         } catch (t: Throwable) {
             val fallback = currentConfig.fallbackConfig
             if (isFailoverEligible(t) && fallback != null) {
+                log("⚠️ [FAILOVER] Petició a ${providerName(currentConfig)} ha fallat (${t.message ?: t.javaClass.simpleName}). Commutant sessió a Google Gemini (model: ${fallback.model})")
                 activeConfig = fallback
                 val retryRequest = adjustedRequest.copy(model = fallback.model)
                 executeSingleChatCompletion(retryRequest, fallback)
@@ -380,5 +391,12 @@ class AiRemoteDataSourceImpl @Inject constructor(
             return withoutLast.joinToString("\n").trim()
         }
         return trimmed
+    }
+    private fun log(message: String) {
+        println("$LOG_TAG $message")
+    }
+
+    private fun providerName(clientConfig: AiClientConfig): String {
+        return if (clientConfig.baseUrl.contains("devexpert.io")) "DevExpert" else "Google Gemini"
     }
 }
