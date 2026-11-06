@@ -1,8 +1,8 @@
 package com.martorell.albert.basketcoach.data.mapper
 
-import com.martorell.albert.basketcoach.data.dto.GameDto
-import com.martorell.albert.basketcoach.data.dto.ScoreDto
-import com.martorell.albert.basketcoach.data.dto.TeamStatsDto
+import com.martorell.albert.basketcoach.data.network.dto.GameDto
+import com.martorell.albert.basketcoach.data.network.dto.ScoreDto
+import com.martorell.albert.basketcoach.data.network.dto.TeamStatsDto
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Score
 import com.martorell.albert.basketcoach.domain.model.TeamStats

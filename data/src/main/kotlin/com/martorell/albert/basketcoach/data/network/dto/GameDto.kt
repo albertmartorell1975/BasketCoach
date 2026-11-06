@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.data.dto
+package com.martorell.albert.basketcoach.data.network.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

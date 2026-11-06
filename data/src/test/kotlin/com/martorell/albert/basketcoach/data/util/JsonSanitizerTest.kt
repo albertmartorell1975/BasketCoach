@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.data.mapper
+package com.martorell.albert.basketcoach.data.util
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

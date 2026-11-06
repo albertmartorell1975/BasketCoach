@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.data.mapper
+package com.martorell.albert.basketcoach.data.util
 
 /**
  * Utility responsible for sanitizing raw LLM responses before JSON deserialization.

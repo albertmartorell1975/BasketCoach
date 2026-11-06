@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.mapper.JsonSanitizer
+import com.martorell.albert.basketcoach.data.util.JsonSanitizer
 import com.martorell.albert.basketcoach.data.mapper.toDomain
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto

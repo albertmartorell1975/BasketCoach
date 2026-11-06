@@ -1,9 +1,9 @@
-package com.martorell.albert.basketcoach.data.mapper
+package com.martorell.albert.basketcoach.data.util
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class HttpErrorMapperTest {
+class HttpErrorParserTest {
 
     @Test
     fun `parse extracts clean message from Google Cloud array error JSON`() {
@@ -19,7 +19,7 @@ class HttpErrorMapperTest {
             ]
         """.trimIndent()
 
-        val parsed = HttpErrorMapper.parse(rawGoogleJson)
+        val parsed = HttpErrorParser.parse(rawGoogleJson)
         assertEquals("Invalid Auth key.", parsed)
     }
 
@@ -35,26 +35,26 @@ class HttpErrorMapperTest {
             }
         """.trimIndent()
 
-        val parsed = HttpErrorMapper.parse(rawGoogleJson)
+        val parsed = HttpErrorParser.parse(rawGoogleJson)
         assertEquals("This model models/gemini-2.5-flash is no longer available to new users.", parsed)
     }
 
     @Test
     fun `parse extracts clean message from OpenAI and FastAPI format error JSON`() {
         val rawOpenAiJson = """{"error": {"message": "Incorrect API key provided"}}"""
-        assertEquals("Incorrect API key provided", HttpErrorMapper.parse(rawOpenAiJson))
+        assertEquals("Incorrect API key provided", HttpErrorParser.parse(rawOpenAiJson))
 
         val rawFastApiDetail = """{"detail": "Authentication token expired"}"""
-        assertEquals("Authentication token expired", HttpErrorMapper.parse(rawFastApiDetail))
+        assertEquals("Authentication token expired", HttpErrorParser.parse(rawFastApiDetail))
 
         val rawMessage = """{"message": "Rate limit exceeded"}"""
-        assertEquals("Rate limit exceeded", HttpErrorMapper.parse(rawMessage))
+        assertEquals("Rate limit exceeded", HttpErrorParser.parse(rawMessage))
     }
 
     @Test
     fun `parse returns fallback or raw string when not valid JSON`() {
-        assertEquals("Gateway Timeout", HttpErrorMapper.parse("Gateway Timeout", "fallback"))
-        assertEquals("fallback", HttpErrorMapper.parse("", "fallback"))
-        assertEquals("fallback", HttpErrorMapper.parse(null, "fallback"))
+        assertEquals("Gateway Timeout", HttpErrorParser.parse("Gateway Timeout", "fallback"))
+        assertEquals("fallback", HttpErrorParser.parse("", "fallback"))
+        assertEquals("fallback", HttpErrorParser.parse(null, "fallback"))
     }
 }

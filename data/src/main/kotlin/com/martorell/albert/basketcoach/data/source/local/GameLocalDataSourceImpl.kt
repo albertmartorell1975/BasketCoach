@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.source.local
 
-import com.martorell.albert.basketcoach.data.dto.GameDto
+import com.martorell.albert.basketcoach.data.network.dto.GameDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json

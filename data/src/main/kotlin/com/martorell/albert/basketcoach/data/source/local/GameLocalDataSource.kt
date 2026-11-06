@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.source.local
 
-import com.martorell.albert.basketcoach.data.dto.GameDto
+import com.martorell.albert.basketcoach.data.network.dto.GameDto
 
 /**
  * Local data source contract providing the bundled Phase 1 fixtures as raw [GameDto] objects.

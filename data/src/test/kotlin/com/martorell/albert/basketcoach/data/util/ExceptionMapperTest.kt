@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.util
 
-import com.martorell.albert.basketcoach.data.mapper.HttpException
+import com.martorell.albert.basketcoach.data.network.HttpException
 import com.martorell.albert.basketcoach.data.mapper.toDomainError
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Result
