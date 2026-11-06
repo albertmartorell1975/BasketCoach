@@ -105,9 +105,9 @@ class AnalysisViewModelTest {
                 Result.Error(DomainError.Local.NotFound)
         }
         val fakeAiRepo = object : AiAnalysisRepository {
-            override suspend fun getInsights(games: List<Game>): Result<List<Insight>, DomainError> =
+            override suspend fun getInsights(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Insight>, DomainError> =
                 Result.Success(sampleInsights)
-            override suspend fun getDrills(games: List<Game>): Result<List<Drill>, DomainError> =
+            override suspend fun getDrills(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Drill>, DomainError> =
                 Result.Success(emptyList())
         }
 
@@ -150,14 +150,14 @@ class AnalysisViewModelTest {
                 Result.Error(DomainError.Local.NotFound)
         }
         val fakeAiRepo = object : AiAnalysisRepository {
-            override suspend fun getInsights(games: List<Game>): Result<List<Insight>, DomainError> {
+            override suspend fun getInsights(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Insight>, DomainError> {
                 return if (shouldFail) {
                     Result.Error(DomainError.Network.NoInternet)
                 } else {
                     Result.Success(sampleInsights)
                 }
             }
-            override suspend fun getDrills(games: List<Game>): Result<List<Drill>, DomainError> =
+            override suspend fun getDrills(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Drill>, DomainError> =
                 Result.Success(emptyList())
         }
 
@@ -192,9 +192,9 @@ class AnalysisViewModelTest {
                 Result.Error(DomainError.Local.NotFound)
         }
         val fakeAiRepo = object : AiAnalysisRepository {
-            override suspend fun getInsights(games: List<Game>): Result<List<Insight>, DomainError> =
+            override suspend fun getInsights(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Insight>, DomainError> =
                 Result.Success(emptyList())
-            override suspend fun getDrills(games: List<Game>): Result<List<Drill>, DomainError> =
+            override suspend fun getDrills(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Drill>, DomainError> =
                 Result.Success(emptyList())
         }
 

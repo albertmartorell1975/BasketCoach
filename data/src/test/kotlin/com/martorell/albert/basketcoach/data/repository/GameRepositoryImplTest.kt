@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.dto.GameDto
+import com.martorell.albert.basketcoach.data.network.dto.GameDto
 import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSource
 import com.martorell.albert.basketcoach.data.source.local.GameLocalDataSourceImpl
 import com.martorell.albert.basketcoach.domain.model.DomainError

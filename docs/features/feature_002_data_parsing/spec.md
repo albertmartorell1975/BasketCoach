@@ -89,7 +89,7 @@ so that UseCases and ViewModels can reliably analyze all 14 matches, identify st
 * `gradle/libs.versions.toml` — modify; declare JSON serialization dependency (e.g. `kotlinx-serialization-json` or `moshi`) following `dependency-manager` rules.
 * `data/build.gradle.kts` — modify; apply JSON serialization library and test dependencies (`junit`).
 * `data/src/main/resources/dataset.json` — create; bundled copy of `docs/general/dataset.json` for classloader resource loading.
-* `data/src/main/kotlin/com/martorell/albert/basketcoach/data/dto/GameDto.kt` — create; DTOs (`GameDto`, `ScoreDto`, `TeamStatsDto`) reflecting the raw snake_case JSON schema.
+* `data/src/main/kotlin/com/martorell/albert/basketcoach/data/network/dto/GameDto.kt` — create; DTOs (`GameDto`, `ScoreDto`, `TeamStatsDto`) reflecting the raw snake_case JSON schema.
 * `data/src/main/kotlin/com/martorell/albert/basketcoach/data/mapper/GameMapper.kt` — create; clean extension mappers converting `GameDto` -> `Game`, `ScoreDto` -> `Score`, `TeamStatsDto` -> `TeamStats`, and `Venue`.
 * `data/src/main/kotlin/com/martorell/albert/basketcoach/data/parser/GameJsonParser.kt` — create; interface and implementation `GameJsonParserImpl` to parse JSON strings/streams into `Result<List<Game>, DomainError>`.
 * `data/src/main/kotlin/com/martorell/albert/basketcoach/data/repository/GameRepositoryImpl.kt` — create; implements `GameRepository`, reads `dataset.json` via classloader/parser, and provides memory-cached access.

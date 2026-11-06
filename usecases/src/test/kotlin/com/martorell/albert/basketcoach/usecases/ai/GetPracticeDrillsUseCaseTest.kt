@@ -46,7 +46,9 @@ class GetPracticeDrillsUseCaseTest {
         assertEquals(expectedDrills, (result as Result.Success).data)
         assertEquals(1, fakeGameRepository.getPhase1GamesCallCount)
         assertEquals(1, fakeAiAnalysisRepository.getDrillsCallCount)
-        assertEquals(games, fakeAiAnalysisRepository.lastGamesForDrills)
+        assertEquals(0.2, fakeAiAnalysisRepository.lastPromptForDrills?.temperature ?: 0.0, 0.001)
+        assertTrue(fakeAiAnalysisRepository.lastPromptForDrills?.userPrompt?.contains("Round 1") == true)
+        assertTrue(fakeAiAnalysisRepository.lastPromptForDrills?.systemPrompt?.contains("elite tactical assistant") == true)
     }
 
     @Test

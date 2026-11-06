@@ -179,7 +179,7 @@ BasketCoach integrates with the DevExpert Inference API and provides seamless fa
 2. **Dual-Provider Configuration (`data.network.config`)**:
    - `AiClientConfig`: Pure data model holding `apiKey`, `baseUrl`, and `model`. `AiClientConfig.fromEnvironment()` checks `DEVEXPERT_API_KEY` first, falling back to `GEMINI_API_KEY`.
    - `DevExpertConfig`: Constants and defaults (`DEFAULT_BASE_URL`, models `"chat"` and `"chat-pro"`).
-   - `GeminiConfig`: Constants and defaults (`DEFAULT_BASE_URL`, model `"gemini-2.5-flash"`).
+   - `GeminiConfig`: Constants and defaults (`DEFAULT_BASE_URL`, model `"gemini-3.5-flash"`).
    - `LocalPropertiesReader`: Reads local developer keys from root `local.properties` cleanly catching `IOException`.
 3. **Data Source Separation (`data.source`)**:
    - `AiRemoteDataSource`: Executes OkHttp requests, strips markdown code fences (` ```json `), and deserializes strict DTOs. Blocking I/O is dispatched on `Dispatchers.IO`.
@@ -204,6 +204,25 @@ BasketCoach utilizes the **Structured Outputs Pattern** to bridge non-determinis
 5. **Domain Transformation & Caching**: Mapped to pure domain entities (`List<Insight>`, `List<Drill>`) and cached in-memory with `AiAnalysisLocalDataSource` (`Mutex`).
 
 > For full architectural details, sequence diagrams, and schema specifications, see [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md).
+
+<a id="section-62-dual-provider-fallback"></a>
+### 6.2 Dual-Provider AI Fallback Resilience (`feature_012_gemini_fallback_resilience`)
+
+BasketCoach implements comprehensive, zero-downtime resilience for all remote AI operations:
+1. **Fallback Chaining (`AiClientConfig.fallbackConfig`)**:
+   `AiClientConfig` declares an explicit `fallbackConfig: AiClientConfig?` (without default values). When both `DEVEXPERT_API_KEY` and `GEMINI_API_KEY` are provided, `NetworkModule` and `AiClientConfig.fromEnvironment()` chain Gemini as the secondary fallback for DevExpert. If the DevExpert key is absent or placeholder, direct startup with Gemini is provisioned without attempting DevExpert.
+2. **Comprehensive Failover Triggers**:
+   `AiRemoteDataSourceImpl.isFailoverEligible(throwable)` intercepts:
+   - Subscription & Quota: HTTP 401 Unauthorized (expired key), HTTP 402 Payment Required (subscription expired/quota depleted), HTTP 403 Forbidden (account suspended), HTTP 429 Too Many Requests (rate limit).
+   - Server Outages: HTTP 5xx (500, 502, 503, 504 server failures / maintenance).
+   - Network Timeouts: `SocketTimeoutException`.
+   Offline errors (`UnknownHostException`, `ConnectException`) are explicitly excluded to prevent false failover when internet access is absent.
+3. **Session Failover Latching**:
+   Upon the first failover, `@Volatile private var activeConfig` is updated to `fallbackConfig`. All subsequent requests in the session immediately route to Gemini with zero failing round-trips or timeouts against DevExpert.
+4. **Dynamic Model Adaptation**:
+   When falling back, requests translate DevExpert model aliases (`"chat"`, `"chat-pro"`, `"jev"`) to `fallbackConfig.model` (`"gemini-3.5-flash"`).
+5. **Dual Failure Graceful Degradation**:
+   If both providers fail, technical exceptions are translated by repository `safeCall` into typed `DomainError.Network.*`, transitioning ViewModels to `Content.Error` and displaying `AnalysisErrorView` / `ChatErrorView` with retry buttons.
 
 
 ---
@@ -440,7 +459,7 @@ The conversational AI assistant connects the Tablet Landscape Chat workbench (`C
 > Detailed specification: See [docs/architecture/ai-chat-architecture.md](docs/architecture/ai-chat-architecture.md).
 1. **2-Step AI Domain Guardrail Pipeline**:
    - **DevExpert Jev Decisions Mode**: When `config.baseUrl` targets DevExpert Inference, pre-classifies user prompts via `POST /v1/decisions` with `model = "jev"`. The request passes the domain state (`app_domain`, `last_assistant_message`, `coach_message`) and the `"domain_relevance"` question with `"basketball_relevant"` vs `"off_topic"` criteria.
-   - **Google Gemini Fallback Mode**: When using Gemini Free Tier, executes a lightweight zero-shot classification JSON call (`temperature = 0.0`, zero match history tokens) to `/chat/completions` returning `{"choice": "basketball_relevant" | "off_topic"}`.
+- **Google Gemini Fallback Mode**: When using Gemini Free Tier or when DevExpert `/decisions` fails with an eligible error (401/402/403/429/5xx/timeout), `AiRemoteDataSourceImpl` seamlessly switches `activeConfig` to Gemini and executes a lightweight zero-shot classification JSON call (`temperature = 0.0`, `model = "gemini-3.5-flash"`) to `/chat/completions` returning `{"choice": "basketball_relevant" | "off_topic"}`.
    - **Off-Topic Short-Circuit**: When deemed off-topic, `ChatRepositoryImpl.sendMessage` short-circuits immediately without calling `remoteDataSource.generateChatResponse`, saving expensive generative tokens on the 14-game context. A localized tactical refusal message (`ChatResourceProvider.getOffTopicRejectionMessage()`) is saved directly to `ChatLocalDataSource` under `topicId` and returned as `MessageSender.AI`.
 2. **Topic-Scoped In-Memory Session Governance (Constraint #4 & #6)**:
    - `ChatLocalDataSourceImpl` manages isolated conversation threads using a `Mutex`-guarded `mutableMapOf<String, MutableList<ChatMessage>>()`.

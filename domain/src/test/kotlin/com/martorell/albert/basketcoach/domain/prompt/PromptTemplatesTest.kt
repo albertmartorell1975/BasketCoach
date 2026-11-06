@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.data.network.prompt
+package com.martorell.albert.basketcoach.domain.prompt
 
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.InsightCategory

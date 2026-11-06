@@ -1,7 +1,11 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
+import com.martorell.albert.basketcoach.data.guardrail.TacticalGuardrailEvaluator
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatRole
+import com.martorell.albert.basketcoach.data.network.dto.JevAnswerDto
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionResponseDto
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
@@ -12,12 +16,12 @@ import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.MetricSentiment
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -27,41 +31,37 @@ class ChatRepositoryImplTest {
     private class FakeAiRemoteDataSource(
         var chatResponse: String = "AI response text",
         var exceptionToThrow: Throwable? = null,
-        var isRelevantResponse: Boolean = true
+        var isRelevantChoice: String = PromptTemplates.JEV_CHOICE_BASKETBALL_RELEVANT,
+        var usingDevExpert: Boolean = true
     ) : AiRemoteDataSource {
-        var capturedHistory: List<ChatMessageDto> = emptyList()
-        var capturedPrompt: String = ""
-        var capturedContext: String? = null
-        var capturedTopicContext: String? = null
-        var capturedOpenInquiryLabel: String = ""
+        var capturedMessages: List<ChatMessageDto> = emptyList()
+        var capturedTemperature: Double = 0.0
+        var capturedDecisionRequest: JevDecisionRequestDto? = null
         var callCount: Int = 0
 
-        override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
-            throw UnsupportedOperationException()
-        }
+        override fun isUsingDevExpert(): Boolean = usingDevExpert
 
-        override suspend fun generateChatResponse(
-            conversationHistory: List<ChatMessageDto>,
-            newPrompt: String,
-            gameContext: String?,
-            topicContext: String?,
-            openInquiryLabel: String
+        override suspend fun executeChatCompletion(
+            messages: List<ChatMessageDto>,
+            temperature: Double
         ): String {
             callCount++
-            capturedHistory = conversationHistory
-            capturedPrompt = newPrompt
-            capturedContext = gameContext
-            capturedTopicContext = topicContext
-            capturedOpenInquiryLabel = openInquiryLabel
+            capturedMessages = messages
+            capturedTemperature = temperature
             exceptionToThrow?.let { throw it }
             return chatResponse
         }
 
-        override suspend fun isPromptBasketballRelevant(
-            prompt: String,
-            lastAssistantMessage: String?
-        ): Boolean {
-            return isRelevantResponse
+        override suspend fun executeDecision(
+            request: JevDecisionRequestDto
+        ): JevDecisionResponseDto {
+            capturedDecisionRequest = request
+            exceptionToThrow?.let { throw it }
+            return JevDecisionResponseDto(
+                answers = mapOf(
+                    PromptTemplates.JEV_QUESTION_DOMAIN_RELEVANCE to JevAnswerDto(choice = isRelevantChoice)
+                )
+            )
         }
     }
 
@@ -85,11 +85,13 @@ class ChatRepositoryImplTest {
         localDataSource = ChatLocalDataSourceImpl()
         fakeAnalysisLocalDataSource = AiAnalysisLocalDataSourceImpl()
         fakeChatResourceProvider = FakeChatResourceProvider()
+        val evaluator = TacticalGuardrailEvaluator(fakeRemoteDataSource)
         repository = ChatRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
             localDataSource = localDataSource,
             aiAnalysisLocalDataSource = fakeAnalysisLocalDataSource,
-            chatResourceProvider = fakeChatResourceProvider
+            chatResourceProvider = fakeChatResourceProvider,
+            guardrailEvaluator = evaluator
         )
     }
 
@@ -123,7 +125,7 @@ class ChatRepositoryImplTest {
 
     @Test
     fun `sendMessage when prompt is off-topic short-circuits with localized rejection without calling completions`() = runTest {
-        fakeRemoteDataSource.isRelevantResponse = false
+        fakeRemoteDataSource.isRelevantChoice = PromptTemplates.JEV_CHOICE_OFF_TOPIC
 
         val sendResult = repository.sendMessage("Quin temps fa avui?", null, OPEN_INQUIRY_TOPIC_ID)
 
@@ -173,13 +175,14 @@ class ChatRepositoryImplTest {
 
         assertTrue(sendResult is Result.Success)
         assertEquals(1, fakeRemoteDataSource.callCount)
-        assertNotNull(fakeRemoteDataSource.capturedTopicContext)
-        val topicContext = fakeRemoteDataSource.capturedTopicContext!!
-        assertTrue(topicContext.contains("Desavantatge estructural en el rebot defensiu"))
-        assertTrue(topicContext.contains("Cedim 14 rebots ofensius"))
-        assertTrue(topicContext.contains("Rebots defensius: 62.4%"))
-        assertTrue(topicContext.contains("ACTIVE INTERVENTION AREA (THREAD FOCUS)"))
-        assertEquals("Consulta Lliure", fakeRemoteDataSource.capturedOpenInquiryLabel)
+        assertEquals(0.7, fakeRemoteDataSource.capturedTemperature, 0.001)
+
+        val systemMessage = fakeRemoteDataSource.capturedMessages.firstOrNull { it.role == ChatRole.SYSTEM }?.content.orEmpty()
+        assertTrue(systemMessage.contains("Desavantatge estructural en el rebot defensiu"))
+        assertTrue(systemMessage.contains("Cedim 14 rebots ofensius"))
+        assertTrue(systemMessage.contains("Rebots defensius: 62.4%"))
+        assertTrue(systemMessage.contains("ACTIVE INTERVENTION AREA (THREAD FOCUS)"))
+        assertTrue(systemMessage.contains("Consulta Lliure"))
     }
 
     @Test
@@ -192,7 +195,10 @@ class ChatRepositoryImplTest {
 
         assertTrue(sendResult is Result.Success)
         assertEquals(1, fakeRemoteDataSource.callCount)
-        assertNull(fakeRemoteDataSource.capturedTopicContext)
-        assertEquals("Consulta Lliure", fakeRemoteDataSource.capturedOpenInquiryLabel)
+        assertEquals(0.7, fakeRemoteDataSource.capturedTemperature, 0.001)
+
+        val systemMessage = fakeRemoteDataSource.capturedMessages.firstOrNull { it.role == ChatRole.SYSTEM }?.content.orEmpty()
+        assertFalse(systemMessage.contains("ACTIVE INTERVENTION AREA (THREAD FOCUS)"))
+        assertTrue(systemMessage.contains("Consulta Lliure"))
     }
 }

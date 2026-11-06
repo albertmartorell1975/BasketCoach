@@ -2,9 +2,9 @@ package com.martorell.albert.basketcoach.domain.repository
 
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Drill
-import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Insight
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt
 
 /**
  * Domain repository contract defining operations for AI-driven tactical analysis and practice drills.
@@ -14,18 +14,18 @@ import com.martorell.albert.basketcoach.domain.model.Result
  */
 interface AiAnalysisRepository {
     /**
-     * Generates or retrieves cached tactical insights based on the provided list of matches.
+     * Generates or retrieves cached tactical insights based on the provided [prompt].
      *
-     * @param games The list of historical [Game] fixtures used to ground the analysis.
+     * @param prompt Parameter object containing system prompt, user prompt, and sampling temperature.
      * @return [Result.Success] containing the list of [Insight] items, or [Result.Error] with [DomainError].
      */
-    suspend fun getInsights(games: List<Game>): Result<List<Insight>, DomainError>
+    suspend fun getInsights(prompt: AiAnalysisPrompt): Result<List<Insight>, DomainError>
 
     /**
-     * Generates or retrieves cached practice drill recommendations based on the provided list of matches.
+     * Generates or retrieves cached practice drill recommendations based on the provided [prompt].
      *
-     * @param games The list of historical [Game] fixtures used to ground the drills.
+     * @param prompt Parameter object containing system prompt, user prompt, and sampling temperature.
      * @return [Result.Success] containing the list of [Drill] items, or [Result.Error] with [DomainError].
      */
-    suspend fun getDrills(games: List<Game>): Result<List<Drill>, DomainError>
+    suspend fun getDrills(prompt: AiAnalysisPrompt): Result<List<Drill>, DomainError>
 }

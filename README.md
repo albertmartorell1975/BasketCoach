@@ -28,6 +28,7 @@ BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) 
 - **Strict Schema Contract**: System prompts mandate valid JSON matching `AiAnalysisResponseDto` without markdown wrapping or null fields.
 - **Deterministic Inference**: Queries are dispatched at `temperature = 0.2` for maximum schema reliability.
 - **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
+- **Dual-Provider Resilience**: Automatically falls back to Google Gemini (`gemini-3.5-flash`) on DevExpert subscription expiration (HTTP 402), authentication errors (HTTP 401/403), server outages (HTTP 5xx), or network timeouts with session latching.
 
 For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md) (Section 6.1).
 
@@ -43,3 +44,4 @@ For full architectural details, see the deep dive in [docs/architecture/ai-tacti
 - [x] **`feature_009_analysis_integration`**: Connect Analysis to Real Data via `GenerateInsightsUseCase` and ViewModel in `:app` (`accepted`).
 - [x] **`feature_010_chat_integration`**: Connect Chat to DevExpert API via `SendChatMessageUseCase` and ViewModel in `:app` (`accepted`).
 - [x] **`feature_011_chat_improvement_areas`**: Synchronize Chat Left Pane with Real Analysis Improvement Areas & Topic-Scoped Threads in `:app`, `:usecases`, `:data`, `:domain` (`accepted`).
+- [x] **`feature_012_gemini_fallback_resilience`**: Gemini Fallback & DevExpert Subscription Expiration Resilience in `:data` and `:app` (`accepted`).

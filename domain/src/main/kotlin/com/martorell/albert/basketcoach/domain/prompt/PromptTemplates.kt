@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.data.network.prompt
+package com.martorell.albert.basketcoach.domain.prompt
 
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.Insight
@@ -6,6 +6,10 @@ import com.martorell.albert.basketcoach.domain.model.OUR_TEAM_NAME
 import java.util.Locale
 
 object PromptTemplates {
+
+    const val ANALYSIS_TEMPERATURE = 0.2
+    const val CHAT_TEMPERATURE = 0.7
+    const val CLASSIFIER_TEMPERATURE = 0.0
 
     const val JEV_QUESTION_DOMAIN_RELEVANCE = "domain_relevance"
     const val JEV_CHOICE_BASKETBALL_RELEVANT = "basketball_relevant"

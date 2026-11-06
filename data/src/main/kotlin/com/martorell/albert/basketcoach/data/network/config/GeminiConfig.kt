@@ -7,10 +7,12 @@ object GeminiConfig {
 
     const val ENV_API_KEY: String = "GEMINI_API_KEY"
     const val DEFAULT_BASE_URL: String = "https://generativelanguage.googleapis.com/v1beta/openai"
-    const val DEFAULT_MODEL: String = "gemini-2.5-flash"
+    const val DEFAULT_MODEL: String = "gemini-3.5-flash"
 
     /**
      * Creates an [AiClientConfig] pointing to the Google Gemini OpenAI-compatible endpoint.
+     *
+     * Explicitly sets [AiClientConfig.fallbackConfig] to `null` as Gemini operates as terminal provider.
      *
      * @param apiKey Google Gemini secret API key.
      * @param baseUrl Gemini OpenAI-compatible root URL (default is [DEFAULT_BASE_URL]).
@@ -24,7 +26,8 @@ object GeminiConfig {
         return AiClientConfig(
             apiKey = apiKey,
             baseUrl = baseUrl,
-            model = model
+            model = model,
+            fallbackConfig = null
         )
     }
 
