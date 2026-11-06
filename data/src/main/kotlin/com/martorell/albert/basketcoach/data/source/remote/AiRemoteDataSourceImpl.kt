@@ -38,7 +38,7 @@ import javax.inject.Inject
  *   (HTTP 5xx), and network timeouts ([SocketTimeoutException]).
  * - Latches [activeConfig] to the secondary [AiClientConfig.fallbackConfig] upon the first failover
  *   to avoid redundant failing round-trips for subsequent requests in the session.
- * - Dynamically adapts the inference model parameter to the fallback model (e.g. "gemini-2.5-flash").
+ * - Dynamically adapts the inference model parameter to the fallback model (e.g. "gemini-3.8-flash").
  * - Supports direct Gemini startup when the DevExpert key is absent or blank.
  * - Leaves offline network errors ([UnknownHostException], [ConnectException]) unswallowed to prevent false failovers.
  *
@@ -302,7 +302,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
      *
      * If the primary provider call fails with an eligible error ([isFailoverEligible]) and a fallback
      * configuration is available, latches [activeConfig] to the fallback, updates the request model
-     * to the fallback model (e.g. "gemini-2.5-flash"), and retries the completion.
+     * to the fallback model (e.g. "gemini-3.8-flash"), and retries the completion.
      */
     private suspend fun executeChatCompletion(requestDto: ChatCompletionRequestDto): String {
         val currentConfig = activeConfig

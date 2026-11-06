@@ -8,7 +8,7 @@ package com.martorell.albert.basketcoach.data.network.config
  *
  * @property apiKey Secret API key used for bearer authentication.
  * @property baseUrl The root API endpoint URL (excluding endpoint paths).
- * @property model The inference model identifier (e.g. "chat", "chat-pro", "gemini-2.5-flash").
+ * @property model The inference model identifier (e.g. "chat", "chat-pro", "gemini-3.8-flash").
  * @property fallbackConfig Optional secondary [AiClientConfig] activated when primary inference fails
  * with subscription expiration, authentication, rate limit, server outage, or timeout errors.
  */
