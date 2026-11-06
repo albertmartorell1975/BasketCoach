@@ -6,6 +6,7 @@ import com.martorell.albert.basketcoach.data.network.dto.ChatRole
 import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -13,6 +14,7 @@ import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -24,6 +26,12 @@ class AiRemoteDataSourceTest {
 
     private lateinit var server: MockWebServer
     private lateinit var dataSource: AiRemoteDataSourceImpl
+    private val testJson = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+    }
+    private lateinit var shortTimeoutOkHttpClient: OkHttpClient
 
     @Before
     fun setUp() {
@@ -37,7 +45,7 @@ class AiRemoteDataSourceTest {
             model = "chat",
             fallbackConfig = null
         )
-        val shortTimeoutOkHttpClient = OkHttpClient.Builder()
+        shortTimeoutOkHttpClient = OkHttpClient.Builder()
             .connectTimeout(500, TimeUnit.MILLISECONDS)
             .readTimeout(500, TimeUnit.MILLISECONDS)
             .writeTimeout(500, TimeUnit.MILLISECONDS)
@@ -45,7 +53,8 @@ class AiRemoteDataSourceTest {
 
         dataSource = AiRemoteDataSourceImpl(
             config = config,
-            okHttpClient = shortTimeoutOkHttpClient
+            okHttpClient = shortTimeoutOkHttpClient,
+            json = testJson
         )
     }
 
@@ -122,7 +131,7 @@ class AiRemoteDataSourceTest {
 
         val chatResponse = """
             {
-              "id": "chatcmpl-test-1",
+              "id": "chatcmpl-test-2",
               "choices": [
                 {
                   "index": 0,
@@ -159,16 +168,7 @@ class AiRemoteDataSourceTest {
     }
 
     @Test
-    fun `throws HttpException on blank apiKey, 401 unauthorized, and 500 server error`() = runTest {
-        val blankKeyConfig = AiClientConfig(apiKey = "", baseUrl = server.url("/v1").toString(), model = "chat", fallbackConfig = null)
-        val blankKeyDataSource = AiRemoteDataSourceImpl(config = blankKeyConfig)
-        try {
-            blankKeyDataSource.generateAnalysis("context")
-            fail("Expected HttpException for blank key")
-        } catch (e: HttpException) {
-            assertEquals(401, e.code)
-        }
-
+    fun `throws HttpException on 401 unauthorized and 500 server error`() = runTest {
         server.enqueue(MockResponse().setResponseCode(401).setBody("Unauthorized API key"))
         try {
             dataSource.generateAnalysis("context")
@@ -229,7 +229,8 @@ class AiRemoteDataSourceTest {
         val devExpertClient = OkHttpClient.Builder().dns(customDns).build()
         val customDataSource = AiRemoteDataSourceImpl(
             config = AiClientConfig(apiKey = "key", baseUrl = "http://devexpert.io:" + server.port + "/v1", model = "chat", fallbackConfig = null),
-            okHttpClient = devExpertClient
+            okHttpClient = devExpertClient,
+            json = testJson
         )
         val jevResponseBody = """{"answers": {"domain_relevance": {"choice": "basketball_relevant"}}}"""
         server.enqueue(MockResponse().setResponseCode(200).setBody(jevResponseBody))

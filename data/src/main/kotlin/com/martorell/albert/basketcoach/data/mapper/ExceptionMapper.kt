@@ -28,8 +28,8 @@ fun Throwable.toDomainError(): DomainError = when (this) {
             code == 400 && (cleanMessage.contains("auth key", ignoreCase = true) || cleanMessage.contains("api key", ignoreCase = true)) -> {
                 DomainError.Network.Unauthorized
             }
-            code in 500..599 -> DomainError.Network.ServerError(code, cleanMessage.ifBlank { null })
-            else -> DomainError.Network.ServerError(code, cleanMessage.ifBlank { null })
+            code in 500..599 -> DomainError.Network.ServerError(code, cleanMessage.takeIf { it.isNotBlank() })
+            else -> DomainError.Network.ServerError(code, cleanMessage.takeIf { it.isNotBlank() })
         }
     }
 

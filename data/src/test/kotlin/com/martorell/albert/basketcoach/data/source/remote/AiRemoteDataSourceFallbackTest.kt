@@ -3,6 +3,7 @@ package com.martorell.albert.basketcoach.data.source.remote
 import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
 import com.martorell.albert.basketcoach.data.network.config.GeminiConfig
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -18,6 +19,12 @@ import java.util.concurrent.TimeUnit
 class AiRemoteDataSourceFallbackTest {
 
     private lateinit var server: MockWebServer
+    private val testJson = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+    }
+    private val testOkHttpClient = OkHttpClient.Builder().build()
 
     @Before
     fun setUp() {
@@ -55,7 +62,8 @@ class AiRemoteDataSourceFallbackTest {
         )
         val dataSource = AiRemoteDataSourceImpl(
             config = devExpertConfig,
-            okHttpClient = okHttpClient
+            okHttpClient = okHttpClient,
+            json = testJson
         )
 
         // DevExpert /decisions returns 402 Payment Required (subscription expired)
@@ -103,7 +111,9 @@ class AiRemoteDataSourceFallbackTest {
             fallbackConfig = geminiConfig
         )
         val dataSource = AiRemoteDataSourceImpl(
-            config = devExpertConfig
+            config = devExpertConfig,
+            okHttpClient = testOkHttpClient,
+            json = testJson
         )
 
         // First request: DevExpert returns 503 Service Unavailable, Gemini succeeds
@@ -175,7 +185,9 @@ class AiRemoteDataSourceFallbackTest {
             fallbackConfig = geminiConfig
         )
         val dataSource = AiRemoteDataSourceImpl(
-            config = missingDevExpertConfig
+            config = missingDevExpertConfig,
+            okHttpClient = testOkHttpClient,
+            json = testJson
         )
 
         assertEquals(GeminiConfig.DEFAULT_MODEL, dataSource.getActiveConfig().model)

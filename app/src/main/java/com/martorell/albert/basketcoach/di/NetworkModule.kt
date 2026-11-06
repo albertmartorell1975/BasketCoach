@@ -4,13 +4,13 @@ import com.martorell.albert.basketcoach.BuildConfig
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
 import com.martorell.albert.basketcoach.data.network.config.GeminiConfig
-import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 /**
@@ -25,6 +25,9 @@ object NetworkModule {
 
     private const val PLACEHOLDER_DEVEXPERT = "DEFAULT_DEVEXPERT_API_KEY"
     private const val PLACEHOLDER_GEMINI = "DEFAULT_GEMINI_API_KEY"
+    private const val DEFAULT_CONNECT_TIMEOUT_SECONDS = 30L
+    private const val DEFAULT_READ_TIMEOUT_SECONDS = 30L
+    private const val DEFAULT_WRITE_TIMEOUT_SECONDS = 30L
 
     /**
      * Provides the application-wide [AiClientConfig] singleton.
@@ -44,7 +47,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAiClientConfig(): AiClientConfig {
-        val devexpertKey = BuildConfig.DEVEXPERT_API_KEY
+        val devExpertKey = BuildConfig.DEVEXPERT_API_KEY
             .takeIf { it.isNotBlank() && it != PLACEHOLDER_DEVEXPERT }
             ?: DevExpertConfig.resolveApiKey()
 
@@ -58,9 +61,9 @@ object NetworkModule {
             null
         }
 
-        if (!devexpertKey.isNullOrBlank()) {
+        if (!devExpertKey.isNullOrBlank()) {
             return DevExpertConfig.create(
-                apiKey = devexpertKey,
+                apiKey = devExpertKey,
                 fallbackConfig = geminiConfig
             )
         }
@@ -76,13 +79,19 @@ object NetworkModule {
     }
 
     /**
-     * Provides the default [OkHttpClient] singleton configured with appropriate timeouts for AI inference.
+     * Provides the default [OkHttpClient] singleton configured with resilient timeouts for AI inference.
      *
      * @return Configured [OkHttpClient] instance.
      */
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = AiRemoteDataSourceImpl.defaultOkHttpClient()
+    fun provideAiOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(DEFAULT_CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(DEFAULT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(DEFAULT_WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .build()
+    }
 
     /**
      * Provides the default [Json] serialization engine configured with permissive decoding rules.
@@ -91,5 +100,11 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideJson(): Json = AiRemoteDataSourceImpl.defaultJson()
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            encodeDefaults = true
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.martorell.albert.basketcoach.data.source.remote
 
+import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.data.mapper.HttpErrorMapper
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
@@ -12,7 +13,6 @@ import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto
 import com.martorell.albert.basketcoach.data.network.dto.JevDecisionResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.JevQuestionDto
 import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
-import com.martorell.albert.basketcoach.data.mapper.HttpException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -24,7 +24,6 @@ import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -44,13 +43,13 @@ import javax.inject.Inject
  * - Leaves offline network errors ([UnknownHostException], [ConnectException]) unswallowed to prevent false failovers.
  *
  * @param config Primary AI client configuration providing base URL, API key, model, and optional fallback configuration.
- * @param okHttpClient HTTP client configured with suitable network timeouts.
- * @param json Kotlinx serialization engine configured with lenient JSON parsing.
+ * @param okHttpClient HTTP client configured with suitable network timeouts injected via Hilt.
+ * @param json Kotlinx serialization engine configured with lenient JSON parsing injected via Hilt.
  */
 class AiRemoteDataSourceImpl @Inject constructor(
     private val config: AiClientConfig,
-    private val okHttpClient: OkHttpClient = defaultOkHttpClient(),
-    private val json: Json = defaultJson()
+    private val okHttpClient: OkHttpClient,
+    private val json: Json
 ) : AiRemoteDataSource {
 
     companion object {
@@ -61,34 +60,11 @@ class AiRemoteDataSourceImpl @Inject constructor(
         private const val BEARER_PREFIX = "Bearer "
         private const val MEDIA_TYPE_JSON = "application/json; charset=utf-8"
         private const val CODE_FENCE = "```"
-        private const val ERROR_BLANK_API_KEY = "API key is blank"
         private const val ERROR_EMPTY_RESPONSE = "Empty response body from AI endpoint"
         private const val ERROR_NO_CHOICES = "No choices returned from AI completion endpoint"
 
         private const val LOG_TAG = "[BasketCoach:AI]"
         private val JSON_MEDIA_TYPE = MEDIA_TYPE_JSON.toMediaType()
-
-        /**
-         * Creates an [OkHttpClient] instance pre-configured with standard network timeouts.
-         */
-        fun defaultOkHttpClient(): OkHttpClient {
-            return OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build()
-        }
-
-        /**
-         * Creates a [Json] instance configured to ignore unknown keys and parse leniently.
-         */
-        fun defaultJson(): Json {
-            return Json {
-                ignoreUnknownKeys = true
-                isLenient = true
-                encodeDefaults = true
-            }
-        }
     }
 
     @Volatile
@@ -111,7 +87,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
      * Determines whether a technical failure is eligible to trigger failover to [AiClientConfig.fallbackConfig].
      *
      * Eligible triggers:
-     * - HTTP 401 Unauthorized (expired/invalid key)
+     * - HTTP 401 Unauthorized (expired/invalid/missing key)
      * - HTTP 402 Payment Required (expired subscription / quota depleted)
      * - HTTP 403 Forbidden (account suspended)
      * - HTTP 429 Too Many Requests (rate limit exceeded)
@@ -188,9 +164,6 @@ class AiRemoteDataSourceImpl @Inject constructor(
         lastAssistantMessage: String?
     ): Boolean {
         val currentConfig = activeConfig
-        if (currentConfig.apiKey.isBlank()) {
-            throw HttpException(401, ERROR_BLANK_API_KEY)
-        }
 
         return if (currentConfig.baseUrl.contains("devexpert.io")) {
             log("🛡️ [GUARDRAIL] Verificant rellevància tàctica amb DevExpert Decisions (model: ${DevExpertConfig.MODEL_JEV})")
@@ -220,10 +193,6 @@ class AiRemoteDataSourceImpl @Inject constructor(
         lastAssistantMessage: String?,
         targetConfig: AiClientConfig
     ): Boolean {
-        if (targetConfig.apiKey.isBlank()) {
-            throw HttpException(401, ERROR_BLANK_API_KEY)
-        }
-
         val state = buildMap {
             put(PromptTemplates.JEV_STATE_APP_DOMAIN, PromptTemplates.JEV_APP_DOMAIN_VALUE)
             if (!lastAssistantMessage.isNullOrBlank()) {
@@ -307,9 +276,6 @@ class AiRemoteDataSourceImpl @Inject constructor(
      */
     private suspend fun executeChatCompletion(requestDto: ChatCompletionRequestDto): String {
         val currentConfig = activeConfig
-        if (currentConfig.apiKey.isBlank()) {
-            throw HttpException(401, ERROR_BLANK_API_KEY)
-        }
 
         val adjustedRequest = if (requestDto.model != currentConfig.model) {
             requestDto.copy(model = currentConfig.model)
@@ -339,10 +305,6 @@ class AiRemoteDataSourceImpl @Inject constructor(
         requestDto: ChatCompletionRequestDto,
         targetConfig: AiClientConfig
     ): String {
-        if (targetConfig.apiKey.isBlank()) {
-            throw HttpException(401, ERROR_BLANK_API_KEY)
-        }
-
         val requestBodyString = json.encodeToString(ChatCompletionRequestDto.serializer(), requestDto)
         val requestUrl = "${targetConfig.baseUrl.trimEnd('/')}$ENDPOINT_CHAT_COMPLETIONS"
 
@@ -393,6 +355,7 @@ class AiRemoteDataSourceImpl @Inject constructor(
         }
         return trimmed
     }
+
     private fun log(message: String) {
         println("$LOG_TAG $message")
     }
