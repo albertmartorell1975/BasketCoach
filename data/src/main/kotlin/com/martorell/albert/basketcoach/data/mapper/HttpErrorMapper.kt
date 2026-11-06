@@ -1,4 +1,4 @@
-package com.martorell.albert.basketcoach.data.network
+package com.martorell.albert.basketcoach.data.mapper
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -15,7 +15,7 @@ import kotlinx.serialization.json.jsonPrimitive
  * - OpenAI error format: `{"error": {"message": "..."}}`
  * - FastAPI / DevExpert formats: `{"message": "..."}`, `{"detail": "..."}`, `{"error": "..."}`
  */
-object HttpErrorParser {
+object HttpErrorMapper {
 
     private val json = Json {
         ignoreUnknownKeys = true
