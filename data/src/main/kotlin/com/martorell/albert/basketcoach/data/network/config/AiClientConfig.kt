@@ -16,7 +16,7 @@ data class AiClientConfig(
     val apiKey: String,
     val baseUrl: String,
     val model: String,
-    val fallbackConfig: AiClientConfig? = null
+    val fallbackConfig: AiClientConfig?
 ) {
     companion object {
         /**
@@ -28,7 +28,7 @@ data class AiClientConfig(
          *    configures [DevExpertConfig], chaining [fallbackConfig] to [GeminiConfig] if [GeminiConfig.resolveApiKey] is present.
          * 2. If only [GeminiConfig.resolveApiKey] yields a non-blank key:
          *    boots directly using [GeminiConfig] with zero DevExpert dependency.
-         * 3. Fallback to an empty API key using [DevExpertConfig] defaults.
+         * 3. Fallback to an empty API key using [DevExpertConfig] defaults and explicit null fallback.
          */
         fun fromEnvironment(): AiClientConfig {
             val devexpertKey = DevExpertConfig.resolveApiKey()
@@ -50,7 +50,10 @@ data class AiClientConfig(
                 return geminiConfig
             }
 
-            return DevExpertConfig.create(apiKey = "")
+            return DevExpertConfig.create(
+                apiKey = "",
+                fallbackConfig = null
+            )
         }
     }
 }

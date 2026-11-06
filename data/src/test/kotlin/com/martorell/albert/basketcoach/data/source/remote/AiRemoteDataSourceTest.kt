@@ -34,7 +34,8 @@ class AiRemoteDataSourceTest {
         val config = AiClientConfig(
             apiKey = "test-api-key",
             baseUrl = baseUrl,
-            model = "chat"
+            model = "chat",
+            fallbackConfig = null
         )
         val shortTimeoutOkHttpClient = OkHttpClient.Builder()
             .connectTimeout(500, TimeUnit.MILLISECONDS)
@@ -159,7 +160,7 @@ class AiRemoteDataSourceTest {
 
     @Test
     fun `throws HttpException on blank apiKey, 401 unauthorized, and 500 server error`() = runTest {
-        val blankKeyConfig = AiClientConfig(apiKey = "", baseUrl = server.url("/v1").toString(), model = "chat")
+        val blankKeyConfig = AiClientConfig(apiKey = "", baseUrl = server.url("/v1").toString(), model = "chat", fallbackConfig = null)
         val blankKeyDataSource = AiRemoteDataSourceImpl(config = blankKeyConfig)
         try {
             blankKeyDataSource.generateAnalysis("context")
@@ -227,7 +228,7 @@ class AiRemoteDataSourceTest {
         }
         val devExpertClient = OkHttpClient.Builder().dns(customDns).build()
         val customDataSource = AiRemoteDataSourceImpl(
-            config = AiClientConfig(apiKey = "key", baseUrl = "http://devexpert.io:" + server.port + "/v1", model = "chat"),
+            config = AiClientConfig(apiKey = "key", baseUrl = "http://devexpert.io:" + server.port + "/v1", model = "chat", fallbackConfig = null),
             okHttpClient = devExpertClient
         )
         val jevResponseBody = """{"answers": {"domain_relevance": {"choice": "basketball_relevant"}}}"""

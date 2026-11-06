@@ -210,7 +210,7 @@ BasketCoach utilizes the **Structured Outputs Pattern** to bridge non-determinis
 
 BasketCoach implements comprehensive, zero-downtime resilience for all remote AI operations:
 1. **Fallback Chaining (`AiClientConfig.fallbackConfig`)**:
-   `AiClientConfig` declares an optional `fallbackConfig: AiClientConfig? = null`. When both `DEVEXPERT_API_KEY` and `GEMINI_API_KEY` are provided, `NetworkModule` and `AiClientConfig.fromEnvironment()` chain Gemini as the secondary fallback for DevExpert. If the DevExpert key is absent or placeholder, direct startup with Gemini is provisioned without attempting DevExpert.
+   `AiClientConfig` declares an explicit `fallbackConfig: AiClientConfig?` (without default values). When both `DEVEXPERT_API_KEY` and `GEMINI_API_KEY` are provided, `NetworkModule` and `AiClientConfig.fromEnvironment()` chain Gemini as the secondary fallback for DevExpert. If the DevExpert key is absent or placeholder, direct startup with Gemini is provisioned without attempting DevExpert.
 2. **Comprehensive Failover Triggers**:
    `AiRemoteDataSourceImpl.isFailoverEligible(throwable)` intercepts:
    - Subscription & Quota: HTTP 401 Unauthorized (expired key), HTTP 402 Payment Required (subscription expired/quota depleted), HTTP 403 Forbidden (account suspended), HTTP 429 Too Many Requests (rate limit).

@@ -17,14 +17,14 @@ object DevExpertConfig {
      * @param apiKey DevExpert secret API key.
      * @param baseUrl DevExpert root endpoint URL (default is [DEFAULT_BASE_URL]).
      * @param model Model alias (default is [DEFAULT_MODEL]).
-     * @param fallbackConfig Optional secondary [AiClientConfig] (typically [GeminiConfig]) activated
-     * upon DevExpert HTTP 401/402/403/429/5xx errors or network timeouts.
+     * @param fallbackConfig Explicit secondary [AiClientConfig] (typically [GeminiConfig]) activated
+     * upon DevExpert HTTP 401/402/403/429/5xx errors or network timeouts, or `null` if no fallback is configured.
      */
     fun create(
         apiKey: String,
         baseUrl: String = DEFAULT_BASE_URL,
         model: String = DEFAULT_MODEL,
-        fallbackConfig: AiClientConfig? = null
+        fallbackConfig: AiClientConfig?
     ): AiClientConfig {
         return AiClientConfig(
             apiKey = apiKey,

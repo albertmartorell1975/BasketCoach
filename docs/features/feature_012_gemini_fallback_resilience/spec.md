@@ -85,8 +85,8 @@ so I can continue preparing training sessions without interruption; and if both 
 * Strict Test Budget (Constraint #18): Pure JVM tests with `MockWebServer`, 1-3 tests per class, 2-6 tests per feature.
 
 ### Expected File Changes
-* `data/src/main/kotlin/com/martorell/albert/basketcoach/data/network/config/AiClientConfig.kt` — modify: add `val fallbackConfig: AiClientConfig? = null`, update `fromEnvironment()` to nest Gemini as fallback.
-* `data/src/main/kotlin/com/martorell/albert/basketcoach/data/network/config/DevExpertConfig.kt` — modify: update `create()` to accept optional `fallbackConfig: AiClientConfig? = null`.
+* `data/src/main/kotlin/com/martorell/albert/basketcoach/data/network/config/AiClientConfig.kt` — modify: add `val fallbackConfig: AiClientConfig?`, update `fromEnvironment()` to nest Gemini as fallback.
+* `data/src/main/kotlin/com/martorell/albert/basketcoach/data/network/config/DevExpertConfig.kt` — modify: update `create()` to accept optional `fallbackConfig: AiClientConfig?`.
 * `app/src/main/java/com/martorell/albert/basketcoach/di/NetworkModule.kt` — modify: update `provideAiClientConfig()` to construct `DevExpertConfig.create(..., fallbackConfig = geminiConfig)` when Gemini key is available.
 * `data/src/main/kotlin/com/martorell/albert/basketcoach/data/source/remote/AiRemoteDataSourceImpl.kt` — modify: implement fallback resilience logic across `isPromptBasketballRelevant`, `generateAnalysis`, and `generateChatResponse` covering HTTP 401, 402, 403, 429, 5xx, and `IOException`/timeouts; manage active provider state and model translation.
 * `data/src/test/kotlin/com/martorell/albert/basketcoach/data/source/remote/AiRemoteDataSourceFallbackTest.kt` — create: 3 pure JVM unit tests verifying guardrail fallback, generative inference fallback with failover latching on 5xx/timeout/4xx, and direct Gemini startup.
@@ -126,8 +126,8 @@ so I can continue preparing training sessions without interruption; and if both 
 
 - [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, and `module-architecture-governance`.
 - [x] **Data (`:data`):**
-  - [x] Update `AiClientConfig` to declare `val fallbackConfig: AiClientConfig? = null`.
-  - [x] Update `DevExpertConfig.create` to accept `fallbackConfig: AiClientConfig? = null`.
+  - [x] Update `AiClientConfig` to declare `val fallbackConfig: AiClientConfig?`.
+  - [x] Update `DevExpertConfig.create` to accept `fallbackConfig: AiClientConfig?`.
   - [x] Update `AiClientConfig.fromEnvironment()` to resolve both DevExpert and Gemini keys and nest Gemini as `fallbackConfig` when DevExpert key is present.
   - [x] In `AiRemoteDataSourceImpl`:
     - [x] Maintain an active provider state (`@Volatile private var activeConfig: AiClientConfig`).

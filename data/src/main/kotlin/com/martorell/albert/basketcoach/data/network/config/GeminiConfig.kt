@@ -12,6 +12,8 @@ object GeminiConfig {
     /**
      * Creates an [AiClientConfig] pointing to the Google Gemini OpenAI-compatible endpoint.
      *
+     * Explicitly sets [AiClientConfig.fallbackConfig] to `null` as Gemini operates as terminal provider.
+     *
      * @param apiKey Google Gemini secret API key.
      * @param baseUrl Gemini OpenAI-compatible root URL (default is [DEFAULT_BASE_URL]).
      * @param model Model identifier (default is [DEFAULT_MODEL]).
@@ -24,7 +26,8 @@ object GeminiConfig {
         return AiClientConfig(
             apiKey = apiKey,
             baseUrl = baseUrl,
-            model = model
+            model = model,
+            fallbackConfig = null
         )
     }
 

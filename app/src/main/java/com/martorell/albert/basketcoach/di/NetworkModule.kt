@@ -37,7 +37,7 @@ object NetworkModule {
      * 1. If DevExpert key is present: configures [DevExpertConfig] as primary, nesting [GeminiConfig]
      *    as [AiClientConfig.fallbackConfig] if a Gemini key is also available.
      * 2. If DevExpert key is absent/placeholder and Gemini key is present: boots directly using [GeminiConfig].
-     * 3. Fallback to an empty API key using [DevExpertConfig] defaults.
+     * 3. Fallback to an empty API key using [DevExpertConfig] defaults with explicit null fallback.
      *
      * @return Initialized [AiClientConfig] instance with fallback chaining.
      */
@@ -69,7 +69,10 @@ object NetworkModule {
             return geminiConfig
         }
 
-        return DevExpertConfig.create(apiKey = "")
+        return DevExpertConfig.create(
+            apiKey = "",
+            fallbackConfig = null
+        )
     }
 
     /**
