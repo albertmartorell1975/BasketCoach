@@ -10,7 +10,7 @@
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Implement seamless resilience and automatic fallback to Google Gemini when DevExpert subscription expires, returns authorization/quota errors (HTTP 401 Unauthorized, HTTP 402 Payment Required, HTTP 403 Forbidden, HTTP 429 Too Many Requests), suffers server outages (HTTP 5xx: 500, 502, 503, 504), or encounters network timeouts (`SocketTimeoutException` / `IOException`), covering BOTH AI inferences:
   1. Tactical relevance guardrail: DevExpert Decisions ('jev' model) -> Gemini JSON domain classifier fallback.
-  2. Generative inference: DevExpert chat completions ('chat'/'chat-pro') -> Gemini chat completions ('gemini-3.8-flash').
+  2. Generative inference: DevExpert chat completions ('chat'/'chat-pro') -> Gemini chat completions ('gemini-3.5-flash').
   Also support direct startup with Gemini when DevExpert key is missing or invalid, and graceful UI error states when both providers fail.
 * **Identified Ambiguities / Assumptions:**
   - *Failover Trigger Conditions*:
@@ -20,7 +20,7 @@
     - **Network Failures**: `SocketTimeoutException` and `IOException` (timeout / unreachable host).
     - *Non-failover*: Client-side bad requests (HTTP 400, 422) indicating malformed client payload should not trigger failover.
   - *Failover Latching*: Once DevExpert fails with an auth/subscription or server error, `AiRemoteDataSourceImpl` latches `activeConfig` to Gemini for subsequent requests in the session to avoid duplicate failing round-trips and timeouts.
-  - *Model Mapping*: DevExpert models (`"chat"`, `"chat-pro"`, `"jev"`) are not recognized by Gemini. When falling back, the request `model` parameter is translated to `fallbackConfig.model` (`"gemini-3.8-flash"`).
+  - *Model Mapping*: DevExpert models (`"chat"`, `"chat-pro"`, `"jev"`) are not recognized by Gemini. When falling back, the request `model` parameter is translated to `fallbackConfig.model` (`"gemini-3.5-flash"`).
   - *Direct Startup*: If DevExpert key is blank/missing or placeholder, the app directly boots using Gemini without attempting DevExpert.
   - *Dual Failure UI State*: If both DevExpert and Gemini fail, `safeCall` maps the error to typed `DomainError.Network.*`, which `AnalysisViewModel` and `ChatViewModel` propagate to `AnalysisUiContent.Error` and `ChatUiContent.Error`. The UI renders `AnalysisErrorView` and `ChatErrorView` with localized explanation and a retry button.
 
@@ -46,12 +46,12 @@ so I can continue preparing training sessions without interruption; and if both 
 #### Scenario 1: Tactical Guardrail Fallback on DevExpert Subscription Expiration (HTTP 402/403) or Outage (5xx / Timeout)
 * **Given** the app is configured with DevExpert as primary and Google Gemini as fallback
 * **When** Coach Jordi submits a tactical chat query and DevExpert `/decisions` returns HTTP 402 Payment Required, HTTP 503 Service Unavailable, or throws a `SocketTimeoutException`
-* **Then** `AiRemoteDataSourceImpl` catches the error, switches active provider to Gemini, executes the zero-shot JSON domain classifier via Gemini `/chat/completions` with model `"gemini-3.8-flash"`, correctly identifies the query as basketball relevant, and returns `true`.
+* **Then** `AiRemoteDataSourceImpl` catches the error, switches active provider to Gemini, executes the zero-shot JSON domain classifier via Gemini `/chat/completions` with model `"gemini-3.5-flash"`, correctly identifies the query as basketball relevant, and returns `true`.
 
 #### Scenario 2: Generative Inference Fallback on DevExpert Unauthorized (HTTP 401) or Server Error (5xx)
 * **Given** the app is configured with DevExpert as primary and Google Gemini as fallback
 * **When** `generateAnalysis` or `generateChatResponse` is called and DevExpert `/chat/completions` returns HTTP 401 Unauthorized or HTTP 500 Internal Server Error
-* **Then** `AiRemoteDataSourceImpl` catches the error, updates its active provider to Gemini, retries the request targeting Gemini's OpenAI-compatible endpoint with model `"gemini-3.8-flash"`, and returns the parsed DTO or generated response.
+* **Then** `AiRemoteDataSourceImpl` catches the error, updates its active provider to Gemini, retries the request targeting Gemini's OpenAI-compatible endpoint with model `"gemini-3.5-flash"`, and returns the parsed DTO or generated response.
 
 #### Scenario 3: Session Failover Latching
 * **Given** an initial request encountered an HTTP 401/402/403/5xx or timeout from DevExpert and successfully fell back to Gemini
@@ -103,9 +103,9 @@ so I can continue preparing training sessions without interruption; and if both 
   - `POST /v1/decisions` (`model = "jev"`)
   - `POST /v1/chat/completions` (`model = "chat"` / `"chat-pro"`)
 * **Gemini Fallback Endpoints** (`https://generativelanguage.googleapis.com/v1beta/openai`):
-  - Domain Classifier: `POST /chat/completions` (`model = "gemini-3.8-flash"`, `temperature = 0.0`, schema: `{"choice": "basketball_relevant"}`)
-  - Generative Analysis: `POST /chat/completions` (`model = "gemini-3.8-flash"`, `temperature = 0.2`)
-  - Generative Chat: `POST /chat/completions` (`model = "gemini-3.8-flash"`, `temperature = 0.7`)
+  - Domain Classifier: `POST /chat/completions` (`model = "gemini-3.5-flash"`, `temperature = 0.0`, schema: `{"choice": "basketball_relevant"}`)
+  - Generative Analysis: `POST /chat/completions` (`model = "gemini-3.5-flash"`, `temperature = 0.2`)
+  - Generative Chat: `POST /chat/completions` (`model = "gemini-3.5-flash"`, `temperature = 0.7`)
 * **Authentication**: HTTP Bearer token headers for both providers.
 * **Failover Triggers**: HTTP 401, 402, 403, 429, 5xx (500, 502, 503, 504), and `IOException` (network timeouts).
 
@@ -133,14 +133,14 @@ so I can continue preparing training sessions without interruption; and if both 
     - [x] Maintain an active provider state (`@Volatile private var activeConfig: AiClientConfig`).
     - [x] Initialize `activeConfig` directly with `fallbackConfig` if primary `apiKey.isBlank()` and fallback key is present.
     - [x] Define helper `fun isFailoverEligible(throwable: Throwable): Boolean`: returns true for `HttpException` with code in `[401, 402, 403, 429]` or `code >= 500`, and for `IOException` / `SocketTimeoutException`.
-    - [x] In `isPromptBasketballRelevant`: if DevExpert `/decisions` fails with an eligible error and fallback is available, switch `activeConfig` to `fallbackConfig` and execute the Gemini JSON domain classifier with `model = activeConfig.model` (`"gemini-3.8-flash"`).
+    - [x] In `isPromptBasketballRelevant`: if DevExpert `/decisions` fails with an eligible error and fallback is available, switch `activeConfig` to `fallbackConfig` and execute the Gemini JSON domain classifier with `model = activeConfig.model` (`"gemini-3.5-flash"`).
     - [x] In `executeChatCompletion`: if primary request fails with an eligible error and `activeConfig.fallbackConfig != null`, switch `activeConfig` to `activeConfig.fallbackConfig` and retry the chat completion request targeting `activeConfig.baseUrl` with `model = activeConfig.model` and `activeConfig.apiKey`.
 - [x] **UI / Application Root (`:app`):**
   - [x] In `NetworkModule.kt`: Update `provideAiClientConfig()` to construct `DevExpertConfig.create(apiKey = devexpertKey, fallbackConfig = geminiConfig)` when Gemini key is available.
 - [x] **Testing & Integration (Pragmatic High-Value Testing & Budget Rule):**
   - [x] Add 3 pure JVM unit tests in `:data` (`AiRemoteDataSourceFallbackTest`):
     1. `isPromptBasketballRelevant_whenDevExpertReturns402OrTimeout_fallsBackToGeminiClassifier`: Verifies DevExpert `/decisions` 402 / timeout fails over to Gemini `/chat/completions` JSON classifier and returns true.
-    2. `executeChatCompletion_whenDevExpertFailsWith5xxOr401_retriesWithGeminiAndLatchesProvider`: Verifies DevExpert `/chat/completions` 503 / 401 retries with Gemini `/chat/completions` using `gemini-3.8-flash` and subsequent requests route directly to Gemini without calling DevExpert.
+    2. `executeChatCompletion_whenDevExpertFailsWith5xxOr401_retriesWithGeminiAndLatchesProvider`: Verifies DevExpert `/chat/completions` 503 / 401 retries with Gemini `/chat/completions` using `gemini-3.5-flash` and subsequent requests route directly to Gemini without calling DevExpert.
     3. `directStartupWithGemini_whenDevExpertKeyMissing_routesDirectlyToGemini`: Verifies requests execute against Gemini directly with zero DevExpert calls.
   - [x] Budget check: 3 tests in 1 test class (within 1-3 per class limit, and 3 total tests within 2-6 feature budget). Zero Robolectric tests.
 - [x] **Compiler Self-Verification (MANDATORY):**
@@ -155,6 +155,6 @@ so I can continue preparing training sessions without interruption; and if both 
 - [x] Comprehensive failover triggers verified: 401, 402, 403, 429, 5xx, and `IOException`/timeout.
 - [x] Dual failure propagates to typed `DomainError.Network.*` and renders `AnalysisErrorView` / `ChatErrorView` with retry.
 - [x] Active provider correctly latches to avoid duplicate failing round-trips to DevExpert.
-- [x] Model parameter correctly adapts to `"gemini-3.8-flash"` when falling back to Gemini.
+- [x] Model parameter correctly adapts to `"gemini-3.5-flash"` when falling back to Gemini.
 - [x] Strict test budget (Constraint #18) verified: 3 pure JVM unit tests, zero Robolectric bloat.
 - [x] Validation report written to `docs/features/feature_012_gemini_fallback_resilience/validator/validation-report.md`.

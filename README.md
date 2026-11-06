@@ -28,7 +28,7 @@ BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) 
 - **Strict Schema Contract**: System prompts mandate valid JSON matching `AiAnalysisResponseDto` without markdown wrapping or null fields.
 - **Deterministic Inference**: Queries are dispatched at `temperature = 0.2` for maximum schema reliability.
 - **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
-- **Dual-Provider Resilience**: Automatically falls back to Google Gemini (`gemini-3.8-flash`) on DevExpert subscription expiration (HTTP 402), authentication errors (HTTP 401/403), server outages (HTTP 5xx), or network timeouts with session latching.
+- **Dual-Provider Resilience**: Automatically falls back to Google Gemini (`gemini-3.5-flash`) on DevExpert subscription expiration (HTTP 402), authentication errors (HTTP 401/403), server outages (HTTP 5xx), or network timeouts with session latching.
 
 For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md) (Section 6.1).
 
