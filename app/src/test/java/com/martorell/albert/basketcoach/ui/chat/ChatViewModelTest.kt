@@ -131,8 +131,8 @@ class ChatViewModelTest {
                 )
             )
         )
-        override suspend fun getInsights(games: List<Game>): Result<List<Insight>, DomainError> = insightsResult
-        override suspend fun getDrills(games: List<Game>): Result<List<Drill>, DomainError> = throw UnsupportedOperationException()
+        override suspend fun getInsights(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Insight>, DomainError> = insightsResult
+        override suspend fun getDrills(prompt: com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt): Result<List<Drill>, DomainError> = throw UnsupportedOperationException()
     }
 
     private class FakeChatRepository : ChatRepository {

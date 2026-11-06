@@ -1,7 +1,11 @@
 package com.martorell.albert.basketcoach.data.source.remote
 
+import com.martorell.albert.basketcoach.data.mapper.HttpException
 import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
 import com.martorell.albert.basketcoach.data.network.config.GeminiConfig
+import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
+import com.martorell.albert.basketcoach.data.network.dto.ChatRole
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.Dns
@@ -10,7 +14,9 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.net.InetAddress
@@ -38,7 +44,7 @@ class AiRemoteDataSourceFallbackTest {
     }
 
     @Test
-    fun isPromptBasketballRelevant_whenDevExpertReturns402OrTimeout_fallsBackToGeminiClassifier() = runTest {
+    fun executeDecision_whenDevExpertReturns402_switchesActiveConfigToGeminiAndThrows() = runTest {
         val customDns = object : Dns {
             override fun lookup(hostname: String): List<InetAddress> {
                 return listOf(InetAddress.getByName(server.hostName))
@@ -66,37 +72,31 @@ class AiRemoteDataSourceFallbackTest {
             json = testJson
         )
 
+        assertTrue(dataSource.isUsingDevExpert())
+
         // DevExpert /decisions returns 402 Payment Required (subscription expired)
         server.enqueue(MockResponse().setResponseCode(402).setBody("Payment Required - Subscription Expired"))
-        // Gemini fallback /chat/completions returns JSON classification with mandatory id
-        val geminiClassifierResponse = """
-            {
-              "id": "chatcmpl-gemini-classifier",
-              "choices": [
-                {
-                  "index": 0,
-                  "message": {
-                    "role": "assistant",
-                    "content": "{\"choice\": \"basketball_relevant\"}"
-                  }
-                }
-              ]
-            }
-        """.trimIndent()
-        server.enqueue(MockResponse().setResponseCode(200).setBody(geminiClassifierResponse))
 
-        val isRelevant = dataSource.isPromptBasketballRelevant("Com millorem el balanç defensiu?")
-        assertTrue(isRelevant)
+        val request = JevDecisionRequestDto(
+            model = "jev",
+            state = mapOf("coach_message" to "Com millorem el balanç defensiu?"),
+            questions = emptyMap()
+        )
+
+        try {
+            dataSource.executeDecision(request)
+            fail("Expected HttpException 402")
+        } catch (e: HttpException) {
+            assertEquals(402, e.code)
+        }
+
+        // Active provider is now latched to Gemini
+        assertFalse(dataSource.isUsingDevExpert())
+        assertEquals(GeminiConfig.DEFAULT_MODEL, dataSource.getActiveConfig().model)
 
         val devExpertRequest = server.takeRequest()
         assertEquals("/v1/decisions", devExpertRequest.path)
         assertEquals("Bearer devexpert-test-key", devExpertRequest.getHeader("Authorization"))
-
-        val geminiRequest = server.takeRequest()
-        assertEquals("/gemini/chat/completions", geminiRequest.path)
-        assertEquals("Bearer gemini-test-key", geminiRequest.getHeader("Authorization"))
-        assertTrue(geminiRequest.body.readUtf8().contains(GeminiConfig.DEFAULT_MODEL))
-        assertEquals(GeminiConfig.DEFAULT_MODEL, dataSource.getActiveConfig().model)
     }
 
     @Test
@@ -134,7 +134,10 @@ class AiRemoteDataSourceFallbackTest {
         """.trimIndent()
         server.enqueue(MockResponse().setResponseCode(200).setBody(geminiResponse1))
 
-        val reply1 = dataSource.generateChatResponse(emptyList(), "Com ataquem la zona 2-3?")
+        val reply1 = dataSource.executeChatCompletion(
+            messages = listOf(ChatMessageDto(role = ChatRole.USER, content = "Com ataquem la zona 2-3?")),
+            temperature = 0.7
+        )
         assertEquals("Gemini fallback reply 1", reply1)
 
         val devExpertReq = server.takeRequest()
@@ -164,7 +167,10 @@ class AiRemoteDataSourceFallbackTest {
         """.trimIndent()
         server.enqueue(MockResponse().setResponseCode(200).setBody(geminiResponse2))
 
-        val reply2 = dataSource.generateChatResponse(emptyList(), "I contra una defensa individual?")
+        val reply2 = dataSource.executeChatCompletion(
+            messages = listOf(ChatMessageDto(role = ChatRole.USER, content = "I contra una defensa individual?")),
+            temperature = 0.7
+        )
         assertEquals("Gemini fallback reply 2", reply2)
 
         val geminiReq2 = server.takeRequest()
@@ -209,7 +215,10 @@ class AiRemoteDataSourceFallbackTest {
         """.trimIndent()
         server.enqueue(MockResponse().setResponseCode(200).setBody(geminiResponse))
 
-        val reply = dataSource.generateChatResponse(emptyList(), "Consulta directa")
+        val reply = dataSource.executeChatCompletion(
+            messages = listOf(ChatMessageDto(role = ChatRole.USER, content = "Consulta directa")),
+            temperature = 0.7
+        )
         assertEquals("Direct Gemini response", reply)
 
         val req = server.takeRequest()

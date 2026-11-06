@@ -6,12 +6,16 @@ import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.DrillDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightDto
 import com.martorell.albert.basketcoach.data.network.dto.InsightMetricDto
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto
+import com.martorell.albert.basketcoach.data.network.dto.JevDecisionResponseDto
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSourceImpl
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.InsightCategory
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.prompt.AiAnalysisPrompt
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -20,38 +24,40 @@ import org.junit.Test
 class AiAnalysisRepositoryImplTest {
 
     private class FakeAiRemoteDataSource(
-        var analysisResponse: AiAnalysisResponseDto? = null,
+        var analysisResponse: String = "",
         var exceptionToThrow: Throwable? = null
     ) : AiRemoteDataSource {
         var analysisCallCount: Int = 0
+        var capturedMessages: List<ChatMessageDto> = emptyList()
+        var capturedTemperature: Double = 0.0
 
-        override suspend fun generateAnalysis(gameContext: String): AiAnalysisResponseDto {
-            analysisCallCount++
-            exceptionToThrow?.let { throw it }
-            return analysisResponse ?: throw IllegalStateException("No fake response configured")
-        }
-
-        override suspend fun generateChatResponse(
-            conversationHistory: List<ChatMessageDto>,
-            newPrompt: String,
-            gameContext: String?,
-            topicContext: String?,
-            openInquiryLabel: String
+        override suspend fun executeChatCompletion(
+            messages: List<ChatMessageDto>,
+            temperature: Double
         ): String {
-            throw UnsupportedOperationException()
+            analysisCallCount++
+            capturedMessages = messages
+            capturedTemperature = temperature
+            exceptionToThrow?.let { throw it }
+            return analysisResponse
         }
 
-        override suspend fun isPromptBasketballRelevant(
-            prompt: String,
-            lastAssistantMessage: String?
-        ): Boolean {
-            return true
-        }
+        override fun isUsingDevExpert(): Boolean = true
+
+        override suspend fun executeDecision(
+            request: JevDecisionRequestDto
+        ): JevDecisionResponseDto = JevDecisionResponseDto(emptyMap())
     }
 
     private lateinit var fakeRemoteDataSource: FakeAiRemoteDataSource
     private lateinit var localDataSource: AiAnalysisLocalDataSourceImpl
     private lateinit var repository: AiAnalysisRepositoryImpl
+    private val testPrompt = AiAnalysisPrompt("System prompt", "User prompt", 0.2)
+    private val testJson = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+    }
 
     @Before
     fun setUp() {
@@ -59,12 +65,13 @@ class AiAnalysisRepositoryImplTest {
         localDataSource = AiAnalysisLocalDataSourceImpl()
         repository = AiAnalysisRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
-            localDataSource = localDataSource
+            localDataSource = localDataSource,
+            json = testJson
         )
     }
 
-    private fun sampleResponseDto(): AiAnalysisResponseDto {
-        return AiAnalysisResponseDto(
+    private fun sampleResponseJson(): String {
+        val dto = AiAnalysisResponseDto(
             insights = listOf(
                 InsightDto(
                     id = "insight-1",
@@ -98,13 +105,14 @@ class AiAnalysisRepositoryImplTest {
                 )
             )
         )
+        return "```json\n" + testJson.encodeToString(AiAnalysisResponseDto.serializer(), dto) + "\n```"
     }
 
     @Test
     fun `getInsights calls remote source on cache miss, caches results, and returns mapped domain models`() = runTest {
-        fakeRemoteDataSource.analysisResponse = sampleResponseDto()
+        fakeRemoteDataSource.analysisResponse = sampleResponseJson()
 
-        val insightsResult = repository.getInsights(emptyList())
+        val insightsResult = repository.getInsights(testPrompt)
 
         assertTrue(insightsResult is Result.Success)
         val insights = (insightsResult as Result.Success).data
@@ -112,9 +120,10 @@ class AiAnalysisRepositoryImplTest {
         assertEquals("insight-1", insights[0].id)
         assertEquals(InsightCategory.DEFENSE, insights[0].category)
         assertEquals(1, fakeRemoteDataSource.analysisCallCount)
+        assertEquals(0.2, fakeRemoteDataSource.capturedTemperature, 0.001)
 
         // Calling getDrills should reuse the same cached response without triggering an additional remote call
-        val drillsResult = repository.getDrills(emptyList())
+        val drillsResult = repository.getDrills(testPrompt)
         assertTrue(drillsResult is Result.Success)
         val drills = (drillsResult as Result.Success).data
         assertEquals(1, drills.size)
@@ -124,15 +133,15 @@ class AiAnalysisRepositoryImplTest {
 
     @Test
     fun `getDrills calls remote source when cache is empty, populating both insights and drills`() = runTest {
-        fakeRemoteDataSource.analysisResponse = sampleResponseDto()
+        fakeRemoteDataSource.analysisResponse = sampleResponseJson()
 
-        val drillsResult = repository.getDrills(emptyList())
+        val drillsResult = repository.getDrills(testPrompt)
 
         assertTrue(drillsResult is Result.Success)
         assertEquals(1, (drillsResult as Result.Success).data.size)
         assertEquals(1, fakeRemoteDataSource.analysisCallCount)
 
-        val insightsResult = repository.getInsights(emptyList())
+        val insightsResult = repository.getInsights(testPrompt)
         assertTrue(insightsResult is Result.Success)
         assertEquals(1, (insightsResult as Result.Success).data.size)
         assertEquals(1, fakeRemoteDataSource.analysisCallCount)
@@ -142,7 +151,7 @@ class AiAnalysisRepositoryImplTest {
     fun `getInsights maps remote HttpException to domain ServerError`() = runTest {
         fakeRemoteDataSource.exceptionToThrow = HttpException(500, "Internal Server Error")
 
-        val result = repository.getInsights(emptyList())
+        val result = repository.getInsights(testPrompt)
 
         assertTrue(result is Result.Error)
         val error = (result as Result.Error).error

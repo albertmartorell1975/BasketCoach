@@ -1,10 +1,10 @@
 package com.martorell.albert.basketcoach.data.repository
 
+import com.martorell.albert.basketcoach.data.guardrail.TacticalGuardrailEvaluator
 import com.martorell.albert.basketcoach.data.mapper.toDomain
 import com.martorell.albert.basketcoach.data.mapper.toDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatRole
-import com.martorell.albert.basketcoach.data.network.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.data.source.local.AiAnalysisLocalDataSource
 import com.martorell.albert.basketcoach.data.source.local.ChatLocalDataSource
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
@@ -14,6 +14,7 @@ import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
 import com.martorell.albert.basketcoach.domain.model.MessageSender
 import com.martorell.albert.basketcoach.domain.model.Result
+import com.martorell.albert.basketcoach.domain.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.domain.repository.ChatRepository
 import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
@@ -27,8 +28,7 @@ import javax.inject.Inject
  * - Maintains topic-scoped in-memory session SSOT via [ChatLocalDataSource].
  * - Retrieves active [Insight] from [AiAnalysisLocalDataSource] to ground improvement area threads.
  * - Delegates user-facing rejection and UI thread labels to [ChatResourceProvider] backed by Android strings.
- * - Executes the 2-step AI guardrail pipeline: pre-evaluates user prompt domain relevance via
- *   [AiRemoteDataSource.isPromptBasketballRelevant] before invoking chat completions.
+ * - Delegates the 2-step AI guardrail pipeline to [TacticalGuardrailEvaluator] before invoking chat completions.
  * - Short-circuits off-topic queries immediately with a localized tactical refusal message
  *   without consuming generative AI tokens.
  * - Encapsulates all data operations within [safeCall] to map exceptions into typed [DomainError] results.
@@ -38,12 +38,14 @@ import javax.inject.Inject
  * @param localDataSource Thread-safe in-memory cache holding topic-partitioned conversation messages.
  * @param aiAnalysisLocalDataSource Single Source of Truth for cached tactical insights.
  * @param chatResourceProvider Provider delivering localized user-facing chat strings.
+ * @param guardrailEvaluator Evaluator for pre-classifying coach prompt relevance.
  */
 class ChatRepositoryImpl @Inject constructor(
     private val remoteDataSource: AiRemoteDataSource,
     private val localDataSource: ChatLocalDataSource,
     private val aiAnalysisLocalDataSource: AiAnalysisLocalDataSource,
-    private val chatResourceProvider: ChatResourceProvider
+    private val chatResourceProvider: ChatResourceProvider,
+    private val guardrailEvaluator: TacticalGuardrailEvaluator
 ) : ChatRepository {
 
     override suspend fun getMessages(topicId: String): Result<List<ChatMessage>, DomainError> = safeCall {
@@ -66,10 +68,7 @@ class ChatRepositoryImpl @Inject constructor(
             .lastOrNull { it.sender == MessageSender.AI }
             ?.text
 
-        val isRelevant = remoteDataSource.isPromptBasketballRelevant(
-            prompt = messageText,
-            lastAssistantMessage = lastAssistantMessage
-        )
+        val isRelevant = guardrailEvaluator.isBasketballRelevant(messageText, lastAssistantMessage)
 
         val responseText = if (isRelevant) {
             val historyDtos = localDataSource.getMessages(topicId).dropLast(1).map { it.toDto() }
@@ -82,12 +81,21 @@ class ChatRepositoryImpl @Inject constructor(
             } else {
                 null
             }
-            remoteDataSource.generateChatResponse(
-                conversationHistory = historyDtos,
-                newPrompt = messageText,
+
+            val systemPrompt = PromptTemplates.buildChatSystemPrompt(
                 gameContext = gameContext,
                 topicContext = topicContext,
                 openInquiryLabel = chatResourceProvider.getOpenInquiryLabel()
+            )
+
+            val messages = mutableListOf<ChatMessageDto>()
+            messages.add(ChatMessageDto(role = ChatRole.SYSTEM, content = systemPrompt))
+            messages.addAll(historyDtos)
+            messages.add(ChatMessageDto(role = ChatRole.USER, content = messageText))
+
+            remoteDataSource.executeChatCompletion(
+                messages = messages,
+                temperature = PromptTemplates.CHAT_TEMPERATURE
             )
         } else {
             chatResourceProvider.getOffTopicRejectionMessage()

@@ -6,7 +6,6 @@ import com.martorell.albert.basketcoach.domain.model.InsightCategory
 import com.martorell.albert.basketcoach.domain.model.InsightMetric
 import com.martorell.albert.basketcoach.domain.model.InsightType
 import com.martorell.albert.basketcoach.domain.model.MetricSentiment
-
 import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.usecases.fakes.FakeAiAnalysisRepository
 import com.martorell.albert.basketcoach.usecases.fakes.FakeGameRepository
@@ -68,7 +67,9 @@ class GenerateInsightsUseCaseTest {
         assertEquals(expectedInsights, (result as Result.Success).data)
         assertEquals(1, fakeGameRepository.getPhase1GamesCallCount)
         assertEquals(1, fakeAiAnalysisRepository.getInsightsCallCount)
-        assertEquals(games, fakeAiAnalysisRepository.lastGamesForInsights)
+        assertEquals(0.2, fakeAiAnalysisRepository.lastPromptForInsights?.temperature ?: 0.0, 0.001)
+        assertTrue(fakeAiAnalysisRepository.lastPromptForInsights?.userPrompt?.contains("Round 1") == true)
+        assertTrue(fakeAiAnalysisRepository.lastPromptForInsights?.systemPrompt?.contains("elite tactical assistant") == true)
     }
 
     @Test
