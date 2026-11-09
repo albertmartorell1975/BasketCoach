@@ -1,10 +1,10 @@
 # Operational Modes & Standardized Output Report
 
-This document defines the 3 execution modes, precondition gates, and report schemas for `@workflow-orchestrator`.
+This document defines the 4 execution modes, precondition gates, and report schemas for `@workflow-orchestrator`.
 
-## 1. Three Operational Modes (`plan` | `execute` | `publish`)
+## 1. Four Operational Modes (`plan` | `execute` | `publish` | `review-fix`)
 
-When managing backlog features or delivering to GitHub, `@workflow-orchestrator` operates in one of three deterministic modes:
+When managing backlog features, delivering to GitHub, or resolving PR code reviews, `@workflow-orchestrator` operates in one of four deterministic modes:
 
 ### Mode: `plan` (planificar) — Strictly Read-Only
 Produces the diagnostic execution plan report with zero mutations:
@@ -22,17 +22,25 @@ Executes the feature pipeline through all roles until locally accepted:
    - Parallel wave execution (root workspace stays on base): advances local ref via `git fetch origin <base_branch>:<base_branch>`.
    - Detects local `feature/*` branches whose PRs are already merged and removes them (`git branch -D feature/<old-id>`).
 3. **Common Base SHA**: Fixes `base_sha = $(git rev-parse origin/<base_branch>)`. All concurrent worktrees branch from this exact commit.
-3. **GitHub Issue Sync**: Reuses existing issue or creates `[<feature-id>] <title>`.
-4. **Pipeline Execution**: Spawns hydrated worktree (`.worktrees/impl-<id>`) and runs the 5-stage loop (`workflow-planner -> workflow-implementer -> workflow-validator -> workflow-documenter -> Stage 5 local atomic commits`), honoring any `require_review_after` human checkpoints configured in `feature_list.json` (or requested via prompt) before proceeding to subsequent stages.
-5. **Issue Evidence & CI Delivery**: Updates the issue body with verification evidence. Automatically executes clean push `git push -u origin feature/<feature-id>` and opens the structured evidence PR targeting `base_branch` (`develop`) so that GitHub Actions CI runs immediately. Returns root workspace to `base_branch`. Merging is 100% human-owned.
+4. **GitHub Issue Sync**: Reuses existing issue or creates `[<feature-id>] <title>`.
+5. **Pipeline Execution**: Spawns hydrated worktree (`.worktrees/impl-<id>`) and runs the 5-stage loop (`workflow-planner -> workflow-implementer -> workflow-validator -> workflow-documenter -> Stage 5 local atomic commits`), honoring any `require_review_after` human checkpoints configured in `feature_list.json` (or requested via prompt) before proceeding to subsequent stages.
+6. **Issue Evidence & CI Delivery**: Updates the issue body with verification evidence. Automatically executes clean push `git push -u origin feature/<feature-id>` and opens the structured evidence PR targeting `base_branch` (`develop`) with `BypassSandbox: true` so that GitHub Actions CI runs immediately (if any `git push` or `gh` command fails in the sandbox, retry immediately with `BypassSandbox: true` before falling back to a manual browser URL). Returns root workspace to `base_branch`. Merging is 100% human-owned.
 
 ### Mode: `publish` (publicar) — GitHub PR Delivery
 Pushes validated commits and opens a Pull Request:
 1. **Acceptance Gate**: Requires `status === "accepted"` in `feature_list.json` and existing `validation-report.md`. Status `"passing"` is strictly refused.
 2. **Push Gate**: Requires explicit push permission granted by the user in the current run (default is denied).
-3. **PR Publication**: Runs `git push -u origin feature/<feature-id>`, reuses or creates the PR targeting `base_branch` (`develop`), and formats the body with structured evidence per `@git-governance`.
+3. **PR Publication**: Runs `git push -u origin feature/<feature-id>`, reuses or creates the PR targeting `base_branch` (`develop`), and formats the body with structured evidence per `@git-governance` using `BypassSandbox: true` (always retry with `BypassSandbox: true` if sandboxed network/credential access fails before falling back to a manual browser URL).
 4. **Never Merge**: Autonomous merging (`gh pr merge`) is strictly prohibited.
 5. **Return Root Workspace to Base**: Immediately switches root workspace back to `<base_branch>` (`git checkout <base_branch>`).
+
+### Mode: `review-fix` (revisar-corregir) — Post-PR Review Feedback Loop (Multi-Round)
+Processes developer review comments on an open Pull Request across 1 or $N$ review rounds without polluting the root workspace:
+1. **Target Feature & PR Check**: Verifies that `feature/<feature-id>` exists locally or on remote, and that an open PR exists targeting `base_branch` (`develop`).
+2. **Persist PR Review Brief**: Checks out `feature/<feature-id>`, appends `## PR Review Round #N` with the structured `PR Review Repair Brief` to `docs/features/<feature-id>/validator/pr-review.md`, sets `feature_list.json` status to `"in_progress"` (`repair_attempts = 0`), and commits the brief.
+3. **Worktree Rehydration**: Recreates `.worktrees/impl-<feature-id>` directly from the latest tip of `feature/<feature-id>` and hydrates local Android build properties.
+4. **Iterative Audit & Document**: Runs `workflow-implementer` -> `@compiler` -> `workflow-validator` (`attempts <= 2`, auditing both `git diff feature/<feature-id>...wt/val-<feature-id>` and `git diff develop...wt/val-<feature-id>`) -> `workflow-documenter`.
+5. **Delta Update & Push**: Consolidates the Round `#N` delta onto `feature/<feature-id>` via atomic layer commits, runs `git push origin feature/<feature-id>` (with `BypassSandbox: true`), updates `feature_list.json` to `"accepted"`, cleans worktrees, and returns the root workspace to `develop`. Merging remains 100% human-owned.
 
 ---
 
