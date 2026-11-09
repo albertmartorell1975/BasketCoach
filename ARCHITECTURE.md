@@ -477,7 +477,7 @@ The conversational AI assistant connects the Tablet Landscape Chat workbench (`C
 6. **Decoupled Mathematical Transformation & Resource Parity**:
    - `ChatUiMapper` calculates 3V-11D meta header stats, maps `InsightType.IMPROVEMENT` to dynamic topic cards with deterministic priority (`isPriority = index == 0`), appends `OPEN_INQUIRY_TOPIC_ID`, and maps domain messages to localized sender roles without hardcoded strings.
    - `toChatUiText(): UiText` translates `DomainError` into localized strings with zero `R.string` imports in `ChatViewModel`.
-   - 100% key parity is enforced between Catalan (`values/strings.xml`) and Spanish (`values-es/strings.xml`).
+   - 100% key parity is enforced between Spanish default (`values/strings.xml`) and Catalan (`values-ca/strings.xml`).
 7. **Pragmatic Pure JVM Testing Budget (Constraint #18)**:
    - Presentation, repository, and usecase logic are verified by pure JVM tests without Robolectric:
      - `ChatRepositoryImplTest` (2 tests): Off-topic prompt short-circuiting asserting 0 calls to chat completions; topic-scoped thread isolation asserting independent message history across distinct `topicId` keys.
