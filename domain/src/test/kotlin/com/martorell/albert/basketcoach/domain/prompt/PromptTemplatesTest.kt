@@ -25,12 +25,12 @@ class PromptTemplatesTest {
     }
 
     @Test
-    fun `PromptLanguage fromLocale defaults to CATALAN when locale is English or other`() {
+    fun `PromptLanguage fromLocale defaults to SPANISH when locale is English or other`() {
         val targetEnglish = PromptTemplates.PromptLanguage.fromLocale(Locale.ENGLISH)
-        assertEquals("Catalan (Català)", targetEnglish.displayName)
+        assertEquals("Spanish (Español)", targetEnglish.displayName)
 
         val targetGerman = PromptTemplates.PromptLanguage.fromLocale(Locale.GERMAN)
-        assertEquals("Catalan (Català)", targetGerman.displayName)
+        assertEquals("Spanish (Español)", targetGerman.displayName)
     }
 
     @Test

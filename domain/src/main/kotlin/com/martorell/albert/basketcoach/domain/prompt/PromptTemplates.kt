@@ -29,13 +29,13 @@ object PromptTemplates {
             /**
              * Resolves the target natural language for AI generation based on the active [Locale].
              *
-             * Defaults to Catalan (the primary language of Basquet Pia Sabadell in the FCBQ),
-             * and switches to Spanish when the system locale starts with "es".
+             * Defaults to Spanish (the primary/default language of the application),
+             * and switches to Catalan when the system locale starts with "ca".
              */
             fun fromLocale(locale: Locale = Locale.getDefault()): PromptLanguage {
                 return when (locale.language.lowercase(Locale.ROOT)) {
-                    "es" -> SPANISH
-                    else -> CATALAN
+                    "ca" -> CATALAN
+                    else -> SPANISH
                 }
             }
         }
@@ -165,7 +165,7 @@ object PromptTemplates {
     fun buildChatSystemPrompt(
         gameContext: String?,
         topicContext: String?,
-        openInquiryLabel: String = "Consulta Lliure",
+        openInquiryLabel: String = "Consulta Libre",
         locale: Locale = Locale.getDefault()
     ): String {
         val basePrompt = buildChatSystemPromptBase(locale)
