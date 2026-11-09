@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.repository
 
-import com.martorell.albert.basketcoach.data.mapper.HttpException
+import com.martorell.albert.basketcoach.data.network.HttpException
 import com.martorell.albert.basketcoach.data.network.dto.AiAnalysisResponseDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.DrillDto

@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.guardrail
 
-import com.martorell.albert.basketcoach.data.mapper.HttpException
+import com.martorell.albert.basketcoach.data.network.HttpException
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.JevAnswerDto
 import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto

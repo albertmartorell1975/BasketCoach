@@ -1,6 +1,6 @@
 package com.martorell.albert.basketcoach.data.source.remote
 
-import com.martorell.albert.basketcoach.data.mapper.HttpException
+import com.martorell.albert.basketcoach.data.network.HttpException
 import com.martorell.albert.basketcoach.data.network.config.AiClientConfig
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatRole
