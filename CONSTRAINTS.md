@@ -5,6 +5,12 @@
 * **No Individual Player Stats**: The MVP only models and analyzes team-level and opponent-level statistics.
 * **Topic-Contextualized Chat Threads**: The chat workbench left panel permanently displays the real Improvement Areas (`InsightType.IMPROVEMENT`) loaded via `GenerateInsightsUseCase` alongside an Open Inquiry option (`CONSULTA LLIURE`). Selecting an area in the left panel keeps the list visible (never replacing it with a static detail view) and switches the right panel to the conversation thread scoped to that selected area.
 * **DevExpert API Integration**: All AI insights and chat responses must be routed through the DevExpert API as defined in the discovery.
+* **AI & Semantic Routing (JEV & Structured Outputs)**:
+  - **JEV Semantic Firewall**: NEVER send raw user input directly to the generative (`chat`) model. ALL incoming chat messages MUST first be evaluated by the `jev` model via the `/v1/decisions` endpoint. If JEV returns `choice == "off_topic"`, ABORT the request immediately and return the localized rejection string (consuming zero generative tokens).
+  - **Thread Governance**: System Prompts MUST command the LLM to strictly redirect the user to "Consulta Lliure" using exact localized closing clauses if they deviate from an Improvement Area topic.
+  - **Structured Outputs (Tactical Analysis)**: When generating JSON insights, ALWAYS use `temperature = 0.2`. LLMs may wrap JSON in Markdown; ALWAYS pass the raw response through `stripMarkdownCodeFences(raw)` before deserialization. Use `kotlinx.serialization` with a DTO (`AiAnalysisResponseDto`) that explicitly forbids `null` values for mandatory fields.
+  - **Zero-Assumption Grounding**: NEVER ask the LLM to guess. ALWAYS prepend empirical Phase 1 context using `PromptTemplates.formatGameSummary(games)`.
+  - **Caching (SSOT)**: Tactical analysis MUST be cached in-memory (`AiAnalysisLocalDataSourceImpl`) using a `Mutex` to prevent redundant LLM calls.
 * **Architecture Constraints**: Follow the `Layer-Based` Clean Architecture topology (`:domain` -> `:usecases` <- `:data` -> `:app`) and `MVVM` with `Hybrid UI State`.
 * **Pure Kotlin Domain Mandate**: The `:domain` module must strictly forbid any `android.*` framework dependencies, remaining a 100% pure Kotlin JVM library to preserve testability and architectural boundary separation.
 * **Team Identity Constant**: The domain constant `OUR_TEAM_NAME = "BASQUETPIASABADELL BLAU"` is the single authoritative identifier across the domain layer to compute home/away outcomes, scores, and differentials.

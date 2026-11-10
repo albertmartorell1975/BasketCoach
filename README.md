@@ -30,7 +30,7 @@ BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) 
 - **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
 - **Dual-Provider Resilience**: Automatically falls back to Google Gemini (`gemini-3.5-flash`) on DevExpert subscription expiration (HTTP 402), authentication errors (HTTP 401/403), server outages (HTTP 5xx), or network timeouts with session latching.
 
-For full architectural details, see the deep dive in [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md) (Section 6.1).
+For full architectural details, see the deep dive in [docs/chat/ai-tactical-analysis-structured-outputs.md](docs/chat/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md) (Section 6.1).
 
 ## Progress & Status
 - [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).

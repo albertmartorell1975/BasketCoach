@@ -203,7 +203,7 @@ BasketCoach utilizes the **Structured Outputs Pattern** to bridge non-determinis
 4. **Sanitization & Kotlinx Deserialization**: Strips markdown fences (triple backticks) and parses raw payloads with `Json.decodeFromString<AiAnalysisResponseDto>()`.
 5. **Domain Transformation & Caching**: Mapped to pure domain entities (`List<Insight>`, `List<Drill>`) and cached in-memory with `AiAnalysisLocalDataSource` (`Mutex`).
 
-> For full architectural details, sequence diagrams, and schema specifications, see [docs/architecture/ai-tactical-analysis-structured-outputs.md](docs/architecture/ai-tactical-analysis-structured-outputs.md).
+> For full architectural details, sequence diagrams, and schema specifications, see [docs/chat/ai-tactical-analysis-structured-outputs.md](docs/chat/ai-tactical-analysis-structured-outputs.md).
 
 <a id="section-62-dual-provider-fallback"></a>
 ### 6.2 Dual-Provider AI Fallback Resilience (`feature_012_gemini_fallback_resilience`)
@@ -456,7 +456,7 @@ The conversational AI assistant connects the Tablet Landscape Chat workbench (`C
 
 ### Key Architectural Patterns for Chat Integration
 
-> Detailed specification: See [docs/architecture/ai-chat-architecture.md](docs/architecture/ai-chat-architecture.md).
+> Detailed specification: See [docs/chat/ai-chat-architecture.md](docs/chat/ai-chat-architecture.md).
 1. **2-Step AI Domain Guardrail Pipeline**:
    - **DevExpert Jev Decisions Mode**: When `config.baseUrl` targets DevExpert Inference, pre-classifies user prompts via `POST /v1/decisions` with `model = "jev"`. The request passes the domain state (`app_domain`, `last_assistant_message`, `coach_message`) and the `"domain_relevance"` question with `"basketball_relevant"` vs `"off_topic"` criteria.
 - **Google Gemini Fallback Mode**: When using Gemini Free Tier or when DevExpert `/decisions` fails with an eligible error (401/402/403/429/5xx/timeout), `AiRemoteDataSourceImpl` seamlessly switches `activeConfig` to Gemini and executes a lightweight zero-shot classification JSON call (`temperature = 0.0`, `model = "gemini-3.5-flash"`) to `/chat/completions` returning `{"choice": "basketball_relevant" | "off_topic"}`.
