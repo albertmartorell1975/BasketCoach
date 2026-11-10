@@ -1,49 +1,53 @@
 # Instructions for Agents - BasketCoach
 
-## Project Overview
+## Project Overview & Architecture Map
 
 BasketCoach is a Tablet Landscape application for a Junior Men's Interterritorial basketball coach. It analyzes 14 past games from Phase 1 (static dataset) to extract insights, strengths, weaknesses, and practice drills for Phase 2 using the DevExpert API, and includes a single-thread AI chat assistant.
 
-* **UI Architecture Pattern**: `MVVM (Hybrid UI State & Passive Initialization)` (Governed by `.agents/skills/viewmodel-architecture-governance/SKILL.md`)
-* **Module Topology**: `Layer-Based (:domain, :usecases, :data, :app)` (Governed by `.agents/skills/module-architecture-governance/SKILL.md`)
-  - *Layer-Based*: `:domain` -> `:usecases` <- `:data` -> `:app`
-  - *Feature-First*: `:<feature>:domain`, `:<feature>:usecases`, `:<feature>:data`, `:<feature>:presentation` + `:core:*` + `:app` (Integrator)
-* **Dependency Injection**: `Hilt` (Governed by `.agents/skills/hilt/SKILL.md`)
-* **Persistence**: `Room` (Governed by `.agents/skills/room-schema-governance/SKILL.md`)
-* **AI Provider**: `Gemini`
+* **UI Architecture**: `MVVM (Hybrid UI State & Passive Initialization)` (`.agents/skills/viewmodel-architecture-governance/SKILL.md`)
+* **Module Topology**: `Layer-Based (:domain -> :usecases <- :data -> :app)` (`.agents/skills/module-architecture-governance/SKILL.md`)
+* **Dependency Injection**: `Hilt` (`.agents/skills/hilt/SKILL.md`)
+* **Persistence**: `Room` (`.agents/skills/room-schema-governance/SKILL.md`)
 
-## Read First
+## Deterministic Quality & Safety Gates (The Harness)
 
-1. `PROGRESS.md` — Current verified state and session history (when present).
-2. `feature_list.json` — Feature backlog, dependencies (`depends_on`), and status (`not_started`, `in_progress`, `passing`, `accepted`, `blocked`).
-3. `CONSTRAINTS.md` — Operational `MUST` / `MUST NOT` rules discovered during development.
+* **Fast Compile Check (Iterative Coding)**: `./gradlew compileDebugKotlin` (fast Kotlin & KSP syntax check).
+* **Full APK & Hilt DI Graph Check**: `./gradlew assembleDebug` (verifies full Hilt graph, resources, Manifest, and builds the APK).
+* **Canonical Verification Gate (`@compiler`)**: `./gradlew testDebugUnitTest lintDebug --parallel --build-cache --configuration-cache`
+* **CI Gate**: `.github/workflows/gate.yml` runs automatically on every Pull Request targeting `develop` or `main`.
+* **Active Pre-Execution Hooks**: Destructive commands (`rm -rf`, `git reset --hard`, autonomous `gh pr merge`) and commits exceeding the `AGENTS.md` size budget (max 120 lines / 6 KB) are deterministically blocked by project safety hooks.
+
+## Core Guardrails (MUST / NEVER)
+
+* **NEVER** push directly to `main`/`develop`, force-push, or merge Pull Requests autonomously (`@git-governance`).
+* **NEVER** import `android.*` dependencies in `:domain` modules or hardcode secrets/API keys.
+* **ALWAYS** execute feature work in an isolated `git worktree` (`WIP=1`) and pass the Local Verification Gate before completion.
+* **ALWAYS** preserve the `AGENTS.md` instruction budget (< 100 lines target, 120 lines hard cap); codify new recurring lessons into `CONSTRAINTS.md`.
+
+## Context Routing (Read First)
+
+1. `PROGRESS.md` — Current verified state, last gate execution, and session log.
+2. `feature_list.json` — Feature backlog, `depends_on`, checkpoints (`require_review_after`), and status (`not_started`, `in_progress`, `passing`, `accepted`, `blocked`).
+3. `CONSTRAINTS.md` — Durable `MUST` / `MUST NOT` rules discovered via harness feedback loops.
 4. `CONTEXT.md` & `docs/build-brief.md` — Domain glossary and product scope (when present).
-5. `.agents/skills/README.md` — Active Foundation skills and technical guardrails.
+5. `.agents/skills/README.md` — On-demand (*Just-In-Time*) modular skills and technical guardrails.
 
-Read additional documentation when relevant:
-* `ARCHITECTURE.md` — Module boundaries and data flows.
-* `DESIGN.md` — Visual tokens, core screens, and Android Resource Conversion Policy.
-* `docs/features/<feature-id>/spec.md` — Feature contract for the active feature.
-* `docs/features/<feature-id>/validator/validation-report.md` — Independent validation report and repair brief.
+Read on demand: `ARCHITECTURE.md`, `DESIGN.md`, `docs/features/<feature-id>/spec.md`, `docs/features/<feature-id>/validator/validation-report.md`, and `docs/features/<feature-id>/validator/pr-review.md` (`Round #1..#N`).
 
 ---
 
 ## Unified Multi-Agent Workflow (`foundation`)
 
-This project uses the **Android AI Workflow Foundation Unified Multi-Agent Pipeline**.
-
-### Visual Identity Badges (Mandatory)
-Every agent and subagent MUST prefix its responses and `PROGRESS.md` entries with its assigned color badge:
-* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`** — Pipeline coordination, `feature_list.json`, `git worktree` management, and final `@git-governance` commits.
+Every agent and subagent MUST prefix its responses and `PROGRESS.md` entries with its assigned badge:
+* 🟣 **`[ORCHESTRATOR · workflow-orchestrator]`** — Pipeline coordination, `feature_list.json`, `git worktree` lifecycle, APK hydration, atomic `@git-governance` commits, and PR publication + CI gate trigger.
 * 🔵 **`[PLANNER · workflow-planner]`** — Feature diagnosis and unified specification (`docs/features/<feature-id>/spec.md`).
-* 🟡 **`[IMPLEMENTER · workflow-implementer]`** — Clean Architecture code, tests, and `@compiler` verification in an isolated `git worktree`.
-* 🟢 **`[VALIDATOR · workflow-validator]`** *(or 🔴 on `revise` / `block`)* — Independent 4-level validation and `docs/features/<feature-id>/validator/validation-report.md` in an isolated `git worktree`. Bounded to `MAX_REPAIR_ATTEMPTS = 2` before triggering the Human Decision Gate (`needs_human_review`).
-* 🔷 **`[DOCUMENTER · workflow-documenter]`** — English KDoc and durable Markdown documentation in an isolated `git worktree`. Runs upon validator acceptance or human override.
+* 🟡 **`[IMPLEMENTER · workflow-implementer]`** — Clean Architecture code, pure JVM tests, and `@compiler` verification in an isolated `git worktree`.
+* 🟢 **`[VALIDATOR · workflow-validator]`** *(or 🔴 on `revise` / `block`)* — Read-only 4-level validation (Spec, Security, Compiler/Tests, Runtime) and `validation-report.md` in an isolated `git worktree` (`MAX_REPAIR_ATTEMPTS = 2`).
+* 🔷 **`[DOCUMENTER · workflow-documenter]`** — English KDoc and durable Markdown docs (`CONSTRAINTS.md`, `ARCHITECTURE.md`, `PROGRESS.md`) in an isolated `git worktree` after acceptance.
 
-### Two Ways to Run Work
-1. **Project / Backlog Mode**:
-   - Use `@build-brief` (for product discovery) and `@harness-starter` (to derive `feature_list.json`, `PROGRESS.md`, and `.github/workflows/gate.yml`).
-   - Run `@workflow-orchestrator` to execute the next ready feature (or parallelize independent ready features) from `feature_list.json`.
-2. **Standalone Feature Mode (Ad-hoc)**:
-   - Request a feature directly via `@workflow-orchestrator` (or `@workflow-planner`).
-   - The orchestrator automatically registers the feature in `feature_list.json` and `PROGRESS.md`, generates `docs/features/<feature-id>/spec.md`, and launches the subagents (`planner` -> `implementer` -> `validator` -> `documenter`) in isolated `git worktree` instances with role-tuned model tiers (`inherit` for planner/validator, `flash` for implementer/documenter).
+### Human Checkpoints & Execution Modes
+* **Checkpoints (`require_review_after`)**: Configurable per feature (`"planner"`, `"implementer"`, `"validator"`, or array). Recommended high-leverage pattern: supervise after `"planner"` (`spec.md`) and via GitHub Pull Request review.
+* **Execution Modes**:
+  1. **Backlog Mode**: `@build-brief` -> `@harness-starter` -> `@workflow-orchestrator` (executes ready features from `feature_list.json`).
+  2. **Standalone Mode**: Pass an ad-hoc feature to `@workflow-orchestrator` -> registers, plans, implements, validates, documents in isolated worktrees, and opens the PR against `develop`.
+  3. **Post-PR Review (`review-fix`)**: Pass PR review feedback to `@workflow-orchestrator` -> logs `## PR Review Round #N` in `pr-review.md`, repairs, re-validates, and pushes the delta to the open PR.

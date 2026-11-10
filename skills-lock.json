@@ -1,4 +1,4 @@
-{
+﻿{
     "version":  1,
     "skills":  {
                    "adaptive":  {
@@ -11,7 +11,7 @@
                                               "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                               "sourceType":  "github",
                                               "skillPath":  ".agents/skills/agent-safety-hooks/SKILL.md",
-                                              "computedHash":  "f6e8533af22b1f8cbf9b2c363a2beee755dd39aac2256fbc08db62c0d1acfbff"
+                                              "computedHash":  "c25fce78c84ad58e11acd40b870d229456c37dfe30b48984c260cf6630448075"
                                           },
                    "ai-context-exclusion":  {
                                                 "source":  "albertmartorell1975/android-ai-workflow-foundation",
@@ -125,7 +125,7 @@
                                            "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                            "sourceType":  "github",
                                            "skillPath":  ".agents/skills/harness-starter/SKILL.md",
-                                           "computedHash":  "e13b58fedd1f0ec38f2e48cb3032c2e777db4de758480ad3065a1debccf95f03"
+                                           "computedHash":  "5cdebe5c92b72b7d64a86ea7cf9e25a89f8b265018972e52495316bcc314d717"
                                        },
                    "hilt":  {
                                 "source":  "albertmartorell1975/android-ai-workflow-foundation",
@@ -203,7 +203,7 @@
                                                 "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                                 "sourceType":  "github",
                                                 "skillPath":  ".agents/skills/workflow-initializer/SKILL.md",
-                                                "computedHash":  "ff4984ffb272dc4b3c42b840f3e4ab8f9874395a92c9c31e2bddbf90bcad42b5"
+                                                "computedHash":  "3038e09bdae22ae01041bc188c770744a147f142f6caaa9b1cb8fe41c29bcea7"
                                             },
                    "workflow-orchestrator":  {
                                                  "source":  "albertmartorell1975/android-ai-workflow-foundation",
@@ -225,4 +225,3 @@
                                           }
                }
 }
-
