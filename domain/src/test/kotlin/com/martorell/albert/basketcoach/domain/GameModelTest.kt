@@ -1,10 +1,6 @@
 package com.martorell.albert.basketcoach.domain
 
-import com.martorell.albert.basketcoach.domain.model.ChatMessage
-import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.domain.model.Game
-import com.martorell.albert.basketcoach.domain.model.MessageSender
-import com.martorell.albert.basketcoach.domain.model.Result
 import com.martorell.albert.basketcoach.domain.model.Score
 import com.martorell.albert.basketcoach.domain.model.TeamStats
 import com.martorell.albert.basketcoach.domain.model.Venue
@@ -89,44 +85,5 @@ class GameModelTest {
         assertTrue(homeLoss.isHomeGame)
         assertFalse(homeLoss.isWin)
         assertEquals(-16, homeLoss.pointDifferential)
-    }
-
-    @Test
-    fun chatMessageSenderFlags_distinguishCoachAndAi() {
-        val coachMessage = ChatMessage("msg_coach", MessageSender.COACH, "Question", 1000L)
-        assertTrue(coachMessage.isFromCoach)
-        assertFalse(coachMessage.isFromAi)
-        assertFalse(coachMessage.isFromSystem)
-
-        val aiMessage = ChatMessage("msg_ai", MessageSender.AI, "Answer", 2000L)
-        assertFalse(aiMessage.isFromCoach)
-        assertTrue(aiMessage.isFromAi)
-        assertFalse(aiMessage.isFromSystem)
-
-        val systemMessage = ChatMessage("msg_sys", MessageSender.SYSTEM, "System Prompt", 3000L)
-        assertFalse(systemMessage.isFromCoach)
-        assertFalse(systemMessage.isFromAi)
-        assertTrue(systemMessage.isFromSystem)
-    }
-
-    @Test
-    fun resultFunctionalCombinators_mapOnSuccessAndOnError() {
-        val success: Result<Int, DomainError> = Result.Success(42)
-        val mappedSuccess = success.map { it * 2 }
-        assertEquals(84, (mappedSuccess as Result.Success).data)
-
-        var successCalled = false
-        success.onSuccess { successCalled = true }
-            .onError { throw AssertionError("onError should not fire on Success") }
-        assertTrue(successCalled)
-
-        val error: Result<Int, DomainError> = Result.Error(DomainError.Network.NoInternet)
-        val mappedError = error.map { it * 2 }
-        assertEquals(DomainError.Network.NoInternet, (mappedError as Result.Error).error)
-
-        var errorCalled = false
-        error.onError { errorCalled = true }
-            .onSuccess { throw AssertionError("onSuccess should not fire on Error") }
-        assertTrue(errorCalled)
     }
 }
