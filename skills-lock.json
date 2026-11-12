@@ -1,4 +1,4 @@
-﻿{
+{
     "version":  1,
     "skills":  {
                    "adaptive":  {
@@ -125,7 +125,7 @@
                                            "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                            "sourceType":  "github",
                                            "skillPath":  ".agents/skills/harness-starter/SKILL.md",
-                                           "computedHash":  "5cdebe5c92b72b7d64a86ea7cf9e25a89f8b265018972e52495316bcc314d717"
+                                           "computedHash":  "9977b74f3ede2455b5b03b89f985dd3a532431dd8d88634826bd6182a752e51e"
                                        },
                    "hilt":  {
                                 "source":  "albertmartorell1975/android-ai-workflow-foundation",
@@ -209,7 +209,7 @@
                                                  "source":  "albertmartorell1975/android-ai-workflow-foundation",
                                                  "sourceType":  "github",
                                                  "skillPath":  ".agents/skills/workflow-orchestrator/SKILL.md",
-                                                 "computedHash":  "eeffdd66d48a6f87977e0e4fcb00eee1688c55ead55b8e6484f994e078a4f180"
+                                                 "computedHash":  "11e1b17ffd95b65e0fe70b0fbf69ec94f228a2bab4a7756edd813a2b6798d790"
                                              },
                    "workflow-planner":  {
                                             "source":  "albertmartorell1975/android-ai-workflow-foundation",
