@@ -26,7 +26,7 @@ object NetworkModule {
     private const val PLACEHOLDER_DEVEXPERT = "DEFAULT_DEVEXPERT_API_KEY"
     private const val PLACEHOLDER_GEMINI = "DEFAULT_GEMINI_API_KEY"
     private const val DEFAULT_CONNECT_TIMEOUT_SECONDS = 60L
-    private const val DEFAULT_READ_TIMEOUT_SECONDS = 30L
+    private const val DEFAULT_READ_TIMEOUT_SECONDS = 60L
     private const val DEFAULT_WRITE_TIMEOUT_SECONDS = 30L
 
     /**
