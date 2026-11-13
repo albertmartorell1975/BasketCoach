@@ -33,7 +33,7 @@ import javax.inject.Inject
  *   suspension (HTTP 403), rate limits (HTTP 429), server outages (HTTP 5xx), and timeouts ([SocketTimeoutException]).
  * - Latches [activeConfig] to the secondary [AiClientConfig.fallbackConfig] upon the first failover
  *   to avoid redundant failing round-trips for subsequent requests in the session.
- * - Dynamically adapts the inference model parameter to the fallback model (e.g. "gemini-3.5-flash").
+ * - Dynamically adapts the inference model parameter to the fallback model (e.g. "gemini-4-hydrogen").
  * - Supports direct Gemini startup when the DevExpert key is absent or blank.
  * - Leaves offline network errors ([UnknownHostException], [ConnectException]) unswallowed to prevent false failovers.
  *
