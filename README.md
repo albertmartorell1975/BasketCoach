@@ -1,47 +1,117 @@
 # BasketCoach
 
-BasketCoach is a Tablet Landscape application for a Junior Men's Interterritorial basketball coach. It analyzes 14 past games from Phase 1 (static dataset) to extract insights, strengths, weaknesses, and practice drills for Phase 2 using the DevExpert API, and includes a single-thread AI chat assistant.
+**BasketCoach** is an Android **Tablet Landscape** application built for the coach of **CEB Escola Pia Sabadell** (Junior Men's Interterritorial). It analyzes a **static, bundled 14-game dataset** from Phase 1 at the team and opponent level—without individual player tracking or remote database sync—to turn past match statistics into concrete tactical adjustments and training plans for Phase 2.
+
+Beyond the product itself, BasketCoach serves as a **practical end-to-end showcase of the Android AI Workflow Foundation**, built through a spec-driven, multi-agent engineering pipeline with strict Clean Architecture boundaries and automated quality gates.
+
+---
+
+## Goal & How AI Supports the Coach
+
+Manually cross-referencing 14 full basketball box scores between competition phases makes it difficult to spot recurring tactical patterns. BasketCoach bridges the gap between raw Phase 1 statistics and **Phase 2 court preparation** with one clear objective: **eliminate repeating team weaknesses and double down on winning synergies** against upcoming opponents.
+
+Rather than relying on generic LLM advice, the AI acts as a data-grounded assistant coach across three connected steps:
+
+1. **Establish an Objective Baseline**: Consolidates every Phase 1 team and opponent metric into clear visual indicators—scoring differentials, rebounding balance, shooting efficiency, and ball control (assist-to-turnover ratio).
+2. **Diagnose Patterns Without Hallucinations**: Sends all 14 box scores to the AI using deterministic structured outputs under FIBA competition rules, surfacing prioritized **Strengths** and **Improvement Areas** tied to real metrics and specific game rounds (such as turnover spikes, defensive rebounding deficits, or foul trouble), alongside targeted **practice drills**.
+3. **Translate Insights into Weekly Training**: Through topic-scoped **Chat** threads launched directly from any improvement area (or via *Open Inquiry*), the coach can explore root causes, discuss tactical adjustments, and refine practice drills tailored to the team's weekly schedule.
+
+---
+
+## Core Features
+
+- **Dashboard**: Visualizes the static Phase 1 dataset through a baseline overview, four KPI pillars (*Scoring*, *Rebounds & Balance*, *Shooting Efficiency*, *Game Control*), a 14-round scoring evolution chart, and a full match-by-match statistical table.
+- **Tactical Analysis**: Displays AI-generated strengths, improvement areas, and practice drills strictly grounded in the 14-game dataset via structured JSON outputs (`temperature = 0.2`) and in-memory caching. Supports category filtering and one-tap *"Explore in Chat"* hand-off.
+- **Chat**: A two-pane tablet interface pairing AI-detected improvement areas and an *Open Inquiry* option on the left with isolated, topic-scoped coaching threads on the right. Every incoming prompt is first evaluated by the deterministic **JEV** classification model to block off-topic requests before invoking generative AI.
+
+---
 
 ## Architecture
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for complete system topology, module governance, and design patterns.
+BasketCoach uses a **Layer-Based Clean Architecture** across four Gradle modules. All business logic, use cases, and data transport live in **pure Kotlin JVM** modules with zero Android framework dependencies, wired together by Hilt in the Android presentation module:
 
-- **UI Pattern**: `MVVM (Hybrid UI State & Passive Initialization)` (Governed by `.agents/skills/viewmodel-architecture-governance/SKILL.md`)
-- **Module Topology**: `Layer-Based (:domain, :usecases, :data, :app)`
-  - `:domain` -> `:usecases` <- `:data` -> `:app`
-- **Dependency Injection**: `Hilt`
-- **Persistence**: `Room`
-- **AI Provider**: `Gemini` (DevExpert OpenAI-compatible proxy)
-- **Target Form Factor**: Android Tablet Landscape (`1280x800dp` baseline, minimum typography `12.sp`)
+```mermaid
+flowchart TD
+    App[":app<br/>Compose UI · ViewModels · Hilt DI"]
+    UseCases[":usecases<br/>Pure Kotlin JVM · Interactors"]
+    Data[":data<br/>Pure Kotlin JVM · DevExpert/Gemini · JEV · JSON"]
+    Domain[":domain<br/>Pure Kotlin JVM · Core Entities · Repository Interfaces"]
 
-## Modules
+    App -->|invokes interactors| UseCases
+    App -->|binds via Hilt DI| Data
+    UseCases -->|depends on contracts| Domain
+    Data -->|implements interfaces| Domain
+```
 
-- `:domain` — Pure Kotlin layer defining basketball entities, value objects, domain errors, and repository interfaces.
-- `:data` — Android/Kotlin data layer with Room persistence, static JSON asset parsing, DevExpert API client, and repository implementations.
-- `:usecases` — Domain interactors coordinating business logic and AI analysis.
-- `:app` — Jetpack Compose presentation layer strictly optimized for tablet landscape orientation.
+> Architectural deep dives: [ARCHITECTURE.md](ARCHITECTURE.md) · [CONSTRAINTS.md](CONSTRAINTS.md) · [DESIGN.md](DESIGN.md)
 
-## AI Tactical Analysis & Structured Outputs
+---
 
-BasketCoach integrates AI via DevExpert Inference (with Google Gemini fallback) using the **Structured Outputs Pattern**:
-- **Empirical Grounding**: The AI is strictly anchored in the 14 Phase 1 box scores (`PromptTemplates.formatGameSummary`), preventing hallucinations.
-- **Strict Schema Contract**: System prompts mandate valid JSON matching `AiAnalysisResponseDto` without markdown wrapping or null fields.
-- **Deterministic Inference**: Queries are dispatched at `temperature = 0.2` for maximum schema reliability.
-- **Type-Safe Domain Modeling**: Raw JSON is deserialized with `kotlinx.serialization`, mapped to pure Kotlin domain models (`Insight`, `Drill`), and cached in-memory with thread-safe `Mutex` locking.
-- **Dual-Provider Resilience**: Automatically falls back to Google Gemini (`gemini-4-hydrogen`) on DevExpert subscription expiration (HTTP 402), authentication errors (HTTP 401/403), server outages (HTTP 5xx), or network timeouts with session latching.
+## AI Pipeline, JEV Guardrail & Dual-Provider Failover
 
-For full architectural details, see the deep dive in [docs/chat/ai-tactical-analysis-structured-outputs.md](docs/chat/ai-tactical-analysis-structured-outputs.md) and [ARCHITECTURE.md](ARCHITECTURE.md) (Section 6.1).
+To prevent statistical hallucinations, all AI requests are empirically grounded with aggregated Phase 1 box-score metrics and framed around FIBA competition rules. Conversational queries pass through a two-stage pipeline anchored by a deterministic semantic firewall:
 
-## Progress & Status
-- [x] **`feature_001_domain_models`**: Pure Kotlin domain models and repository interfaces in `:domain` (`accepted`).
-- [x] **`feature_002_data_parsing`**: Phase 1 JSON dataset parsing and cached `GameRepositoryImpl` in `:data` (`accepted`).
-- [x] **`feature_003_devexpert_client`**: DevExpert & Gemini OpenAI-compatible API client, data sources, and repositories in `:data` (`accepted`).
-- [x] **`feature_004_usecases`**: Core business interactors in `:usecases` for game queries, AI tactical insights, and conversational chat (`accepted`).
-- [x] **`feature_005_dashboard_ui`**: Tablet Landscape Dashboard UI (80dp NavRail, 64dp TopBar, Hero card, 4 KPI cards, 14-round evolution chart, 14-match table) in `:app` (`accepted`).
-- [x] **`feature_006_analysis_ui`**: Tablet Landscape Analysis UI (hero card, 3-filter segmented control, tactical insight cards with metric panels) in `:app` (`accepted`).
-- [x] **`feature_007_chat_ui`**: Tablet Single-Thread Chat UI (continuous message history, prompt reflections, AI responses) in `:app` (`accepted`).
-- [x] **`feature_008_dashboard_integration`**: Connect Dashboard to Real Data via `GetPhase1GamesUseCase`, `DashboardViewModel`, and Hilt DI in `:app` (`accepted`).
-- [x] **`feature_009_analysis_integration`**: Connect Analysis to Real Data via `GenerateInsightsUseCase` and ViewModel in `:app` (`accepted`).
-- [x] **`feature_010_chat_integration`**: Connect Chat to DevExpert API via `SendChatMessageUseCase` and ViewModel in `:app` (`accepted`).
-- [x] **`feature_011_chat_improvement_areas`**: Synchronize Chat Left Pane with Real Analysis Improvement Areas & Topic-Scoped Threads in `:app`, `:usecases`, `:data`, `:domain` (`accepted`).
-- [x] **`feature_012_gemini_fallback_resilience`**: Gemini Fallback & DevExpert Subscription Expiration Resilience in `:data` and `:app` (`accepted`).
+```mermaid
+flowchart LR
+    Prompt(["Coach<br/>Prompt"]) --> TryDev["Primary:<br/>DevExpert"]
+    TryDev --> DevOk{"Works?"}
+    DevOk -- "Yes" --> Guard{"Guardrail<br/>(JEV / Gemini)"}
+    DevOk -- "No" --> TryGem["Fallback:<br/>Google Gemini"]
+    TryGem --> GemOk{"Works?"}
+    GemOk -- "Yes" --> Guard
+    GemOk -- "No" --> Err["Show Error<br/>Message"]
+    Guard -- "Off-topic" --> Block["Localized Refusal<br/>(0 gen. tokens)"]
+    Guard -- "Relevant" --> Gen["Generative AI<br/>(+ 14-Game Context)"]
+```
+
+- **Empirical Context Grounding**: Rather than using vector-based RAG, every analysis and chat request deterministically injects an aggregated summary and round-by-round breakdown of all 14 Phase 1 games (along with the active improvement area's diagnosis in topic-scoped threads), preventing retrieval gaps and statistical hallucinations.
+- **Deterministic JEV Guardrail**: Chat queries are never sent directly to the generative model. They are first classified—via DevExpert's deterministic `jev` model, or Gemini's JSON classifier when in fallback—as basketball-relevant or off-topic. Off-topic prompts short-circuit immediately without consuming generative tokens.
+- **Dual-Provider Resilience**: Both Tactical Analysis and Chat use DevExpert Inference (`chat` and `jev`) as the primary provider, with Google Gemini's OpenAI-compatible endpoint (`gemini-4-hydrogen`) as an automatic fallback. Auth, subscription/quota, rate-limit, server, or timeout errors transparently switch and latch the active session to Gemini, while genuine offline network errors remain unlatched. If no DevExpert key is configured, the app boots directly on Gemini.
+
+> Detailed specs: [Structured Outputs](docs/chat/ai-tactical-analysis-structured-outputs.md) · [Chat Architecture](docs/chat/ai-chat-architecture.md)
+
+---
+
+## Built with the Android AI Workflow Foundation
+
+This repository is a live reference implementation of the **Android AI Workflow Foundation** (configured under [.agents/](.agents/skills/README.md)):
+
+```mermaid
+flowchart LR
+    O["Orchestrator<br/>Worktrees · Commits · PR"] --> P["Planner<br/>spec.md"]
+    P -- "Human-in-the-Loop<br/>(Spec Checkpoint)" --> I["Implementer<br/>Code + JVM Tests"]
+    I --> V{"Validator<br/>4-Level Audit"}
+    V -- "revise (Repair Brief)" --> I
+    V -- "accept" --> D["Documenter<br/>KDoc + Docs"]
+    D --> PR["PR + CI Gate"]
+    PR --> Review{"Human-in-the-Loop:<br/>PR Code Review"}
+    Review -- "Changes requested" --> RF["Orchestrator<br/>(review-fix)"] --> I
+    Review -- "Approved" --> Merge(["Human Merge"])
+```
+
+- **Discovery & Project Harness**: Initialized from [docs/build-brief.md](docs/build-brief.md) and [CONTEXT.md](CONTEXT.md) into a structured harness ([AGENTS.md](AGENTS.md), [CONSTRAINTS.md](CONSTRAINTS.md), [feature_list.json](feature_list.json), [PROGRESS.md](PROGRESS.md)) with per-feature specs, validation reports, and PR review logs under [docs/features/](docs/features/).
+- **Orchestrated Multi-Agent Pipeline**: A master Orchestrator manages isolated `git worktree` environments, atomic commits, and PR delivery across dedicated Planner, Implementer, read-only Validator, and Documenter subagents, with configurable human checkpoints (`require_review_after`) before implementation and at PR merge.
+- **Post-PR Review Loop (`review-fix`)**: When code review comments are posted on an open Pull Request, the Orchestrator extracts the feedback and triggers an Implementer → Validator → Documenter repair cycle before pushing the update for human merge.
+- **Modular Skills, Guardrails & CI**: Agents load 37 specialized Android engineering skills on demand ([.agents/skills/README.md](.agents/skills/README.md)), pre-execution safety hooks block destructive commands and enforce instruction budgets, strict rules mandate pure JVM unit tests without Robolectric bloat, and a GitHub Actions gate ([.github/workflows/gate.yml](.github/workflows/gate.yml)) verifies unit tests and Android lint on every PR.
+
+---
+
+## Tech Stack
+
+- **Core & Build**: Kotlin `2.2.10` · Java `17` · AGP `9.4.1` · KSP `2.2.10-2.0.2` · Android (`minSdk 34` / `targetSdk 37`)
+- **UI**: Jetpack Compose (BOM `2026.02.01`, Material 3) · Type-safe Navigation Compose `2.8.5`
+- **DI & Async**: Hilt `2.60.1` · Kotlinx Coroutines `1.9.0`
+- **Networking & Config**: OkHttp `4.12.0` · Kotlinx Serialization `1.7.3` · `secrets-gradle-plugin` `2.0.1`
+- **Testing**: JUnit `4.13.2` · `kotlinx-coroutines-test` · OkHttp `MockWebServer`
+
+---
+
+## Build & Verification
+
+```bash
+# Build the debug APK
+./gradlew assembleDebug
+
+# Run all pure JVM unit tests and Android lint (matches CI gate)
+./gradlew testDebugUnitTest lintDebug --parallel --build-cache --configuration-cache
+```
