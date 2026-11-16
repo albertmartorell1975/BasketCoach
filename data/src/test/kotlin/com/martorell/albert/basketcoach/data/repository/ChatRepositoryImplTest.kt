@@ -20,6 +20,7 @@ import com.martorell.albert.basketcoach.domain.prompt.PromptTemplates
 import com.martorell.albert.basketcoach.domain.repository.ChatResourceProvider
 import com.martorell.albert.basketcoach.domain.repository.OPEN_INQUIRY_TOPIC_ID
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -85,7 +86,7 @@ class ChatRepositoryImplTest {
         localDataSource = ChatLocalDataSourceImpl()
         fakeAnalysisLocalDataSource = AiAnalysisLocalDataSourceImpl()
         fakeChatResourceProvider = FakeChatResourceProvider()
-        val evaluator = TacticalGuardrailEvaluator(fakeRemoteDataSource)
+        val evaluator = TacticalGuardrailEvaluator(fakeRemoteDataSource, Json { ignoreUnknownKeys = true })
         repository = ChatRepositoryImpl(
             remoteDataSource = fakeRemoteDataSource,
             localDataSource = localDataSource,

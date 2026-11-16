@@ -3,12 +3,15 @@ package com.martorell.albert.basketcoach.data.guardrail
 import com.martorell.albert.basketcoach.data.network.config.DevExpertConfig
 import com.martorell.albert.basketcoach.data.network.dto.ChatMessageDto
 import com.martorell.albert.basketcoach.data.network.dto.ChatRole
+import com.martorell.albert.basketcoach.data.network.dto.JevAnswerDto
 import com.martorell.albert.basketcoach.data.network.dto.JevDecisionRequestDto
 import com.martorell.albert.basketcoach.data.network.dto.JevQuestionDto
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
+import com.martorell.albert.basketcoach.data.util.JsonSanitizer
 import com.martorell.albert.basketcoach.domain.prompt.PromptTemplates
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.serialization.json.Json
 
 /**
  * Tactical guardrail evaluator responsible for validating coach input relevance before invoking conversational AI.
@@ -22,7 +25,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class TacticalGuardrailEvaluator @Inject constructor(
-    private val remoteDataSource: AiRemoteDataSource
+    private val remoteDataSource: AiRemoteDataSource,
+    private val json: Json
 ) {
 
     /**
@@ -93,6 +97,15 @@ class TacticalGuardrailEvaluator @Inject constructor(
             ChatMessageDto(role = ChatRole.USER, content = userContent)
         )
         val raw = remoteDataSource.executeChatCompletion(messages, PromptTemplates.CLASSIFIER_TEMPERATURE)
-        return raw.contains(PromptTemplates.JEV_CHOICE_BASKETBALL_RELEVANT)
+        return parseClassifierChoice(raw) == PromptTemplates.JEV_CHOICE_BASKETBALL_RELEVANT
+    }
+
+    private fun parseClassifierChoice(raw: String): String? {
+        val sanitized = JsonSanitizer.stripMarkdownCodeFences(raw)
+        return try {
+            json.decodeFromString<JevAnswerDto>(sanitized).choice
+        } catch (_: Exception) {
+            null
+        }
     }
 }

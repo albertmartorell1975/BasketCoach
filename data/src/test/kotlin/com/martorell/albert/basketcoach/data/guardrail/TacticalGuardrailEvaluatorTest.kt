@@ -8,6 +8,7 @@ import com.martorell.albert.basketcoach.data.network.dto.JevDecisionResponseDto
 import com.martorell.albert.basketcoach.data.source.remote.AiRemoteDataSource
 import com.martorell.albert.basketcoach.domain.prompt.PromptTemplates
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -50,7 +51,7 @@ class TacticalGuardrailEvaluatorTest {
     @Before
     fun setUp() {
         fakeDataSource = FakeAiRemoteDataSource()
-        evaluator = TacticalGuardrailEvaluator(fakeDataSource)
+        evaluator = TacticalGuardrailEvaluator(fakeDataSource, Json { ignoreUnknownKeys = true })
     }
 
     @Test
@@ -89,5 +90,23 @@ class TacticalGuardrailEvaluatorTest {
         assertTrue(result)
         assertEquals(2, fakeDataSource.lastCapturedMessages.size)
         assertTrue(fakeDataSource.lastCapturedMessages[1].content.contains("Com millorem el tir exterior?"))
+    }
+
+    @Test
+    fun isBasketballRelevant_whenGeminiClassifierReturnsOffTopic_returnsFalse() = runTest {
+        fakeDataSource.usingDevExpert = false
+        fakeDataSource.chatCompletionResponse = "{\"choice\": \"off_topic\"}"
+
+        val result = evaluator.isBasketballRelevant("Quina recepta de paella recomanes?", null)
+        assertFalse(result)
+    }
+
+    @Test
+    fun isBasketballRelevant_whenGeminiClassifierReturnsNegatedOrNonJsonProse_returnsFalse() = runTest {
+        fakeDataSource.usingDevExpert = false
+        fakeDataSource.chatCompletionResponse = "this is not basketball_relevant"
+
+        val result = evaluator.isBasketballRelevant("Quin temps fa avui?", null)
+        assertFalse(result)
     }
 }
