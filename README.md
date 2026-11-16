@@ -2,7 +2,7 @@
 
 **BasketCoach** is an Android **Tablet Landscape** application built for the coach of **CEB Escola Pia Sabadell** (Junior Men's Interterritorial). It analyzes a **static, bundled 14-game dataset** from Phase 1 at the team and opponent level—without individual player tracking or remote database sync—to turn past match statistics into concrete tactical adjustments and training plans for Phase 2.
 
-Beyond the product itself, BasketCoach serves as a **practical end-to-end showcase of the Android AI Workflow Foundation**, built through a spec-driven, multi-agent engineering pipeline with strict Clean Architecture boundaries and automated quality gates.
+Beyond the product itself, BasketCoach serves as a **practical end-to-end showcase of the [Android AI Workflow Foundation](https://github.com/albertmartorell1975/android-ai-workflow-foundation)**, built through a spec-driven, multi-agent engineering pipeline with strict Clean Architecture boundaries and automated quality gates.
 
 ---
 
@@ -34,8 +34,8 @@ BasketCoach uses a **Layer-Based Clean Architecture** across four Gradle modules
 flowchart TD
     App[":app<br/>Compose UI · ViewModels · Hilt DI"]
     UseCases[":usecases<br/>Pure Kotlin JVM · Interactors"]
-    Data[":data<br/>Pure Kotlin JVM · DevExpert/Gemini · JEV · JSON"]
-    Domain[":domain<br/>Pure Kotlin JVM · Core Entities · Repository Interfaces"]
+    Data[":data<br/>Pure Kotlin JVM · DevExpert/Gemini · JEV"]
+    Domain[":domain<br/>Pure Kotlin JVM<br/>Entities · Repository Interfaces"]
 
     App -->|invokes interactors| UseCases
     App -->|binds via Hilt DI| Data
@@ -52,15 +52,15 @@ flowchart TD
 To prevent statistical hallucinations, all AI requests are empirically grounded with aggregated Phase 1 box-score metrics and framed around FIBA competition rules. Conversational queries pass through a two-stage pipeline anchored by a deterministic semantic firewall:
 
 ```mermaid
-flowchart LR
-    Prompt(["Coach<br/>Prompt"]) --> TryDev["Primary:<br/>DevExpert"]
+flowchart TD
+    Prompt(["Coach Prompt"]) --> TryDev["Primary: DevExpert API"]
     TryDev --> DevOk{"Works?"}
-    DevOk -- "Yes" --> Guard{"Guardrail<br/>(JEV / Gemini)"}
-    DevOk -- "No" --> TryGem["Fallback:<br/>Google Gemini"]
+    DevOk -- "Yes" --> Guard{"Pre-Flight Guardrail<br/>(JEV / Gemini JSON)"}
+    DevOk -- "Failover" --> TryGem["Fallback: Google Gemini"]
     TryGem --> GemOk{"Works?"}
     GemOk -- "Yes" --> Guard
     GemOk -- "No" --> Err["Show Error<br/>Message"]
-    Guard -- "Off-topic" --> Block["Localized Refusal<br/>(0 gen. tokens)"]
+    Guard -- "Off-topic" --> Block["Localized Refusal<br/>(0 Generative Tokens)"]
     Guard -- "Relevant" --> Gen["Generative AI<br/>(+ 14-Game Context)"]
 ```
 
@@ -74,13 +74,13 @@ flowchart LR
 
 ## Built with the Android AI Workflow Foundation
 
-This repository is a live reference implementation of the **Android AI Workflow Foundation** (configured under [.agents/](.agents/skills/README.md)):
+This repository is a live reference implementation of the **[Android AI Workflow Foundation](https://github.com/albertmartorell1975/android-ai-workflow-foundation)** (configured under [.agents/](.agents/skills/README.md)):
 
 ```mermaid
-flowchart LR
+flowchart TD
     O["Orchestrator<br/>Worktrees · Commits · PR"] --> P["Planner<br/>spec.md"]
-    P -- "Human-in-the-Loop<br/>(Spec Checkpoint)" --> I["Implementer<br/>Code + JVM Tests"]
-    I --> V{"Validator<br/>4-Level Audit"}
+    P -- "Human-in-the-Loop<br/>(Spec Checkpoint)" --> I["Implementer<br/>Code + Pure JVM Tests"]
+    I --> V{"Validator<br/>4-Level Read-Only Audit"}
     V -- "revise (Repair Brief)" --> I
     V -- "accept" --> D["Documenter<br/>KDoc + Docs"]
     D --> PR["PR + CI Gate"]
