@@ -60,3 +60,15 @@ No blocking or non-blocking findings identified.
 ## 4. Implementation Repair Brief
 
 N/A — Feature accepted and ready for `workflow-documenter`.
+
+
+---
+
+## Post-PR Review Round #1 Validation History
+
+* **Round #1 — Iteration 1 (Commit `a1bb8ed`)**: 🔴 **`revise`** — Even with `@compiler` passing (`76/76` unit tests, `assembleDebug` & `lintDebug` green), independent validation caught 4 findings:
+  1. `High` — Non-atomic `_uiState.value =` assignment in `DashboardViewModel.kt#L107-L112` (REVISE Trigger #7).
+  2. `High` — Forbidden Watermelon test `should_HoldRefreshingFlag_when_ConstructingDashboardUiState` in `DashboardViewModelTest.kt#L131-L140` (`DELETE`).
+  3. `High` — `fontSize = 10.sp` (`< 12.sp` Constraint #16) and hardcoded `"Actualitzant dades..."` UI string inside `DashboardRefreshOverlay`.
+  4. `Medium` — Hardcoded `.fillMaxSize()` on `DashboardRefreshOverlay`'s root `Box` instead of caller-controlled modifier (`compose-modifier-and-layout-style`).
+* **Round #1 — Iteration 2 (Commit `40705ba`, post-Repair Brief)**: 🟢 **`accept`** — Verified all 4 findings resolved (`DashboardRefreshOverlay` clean with `@BcThemePreview`, caller-supplied `Modifier.fillMaxSize()`, atomic `_uiState.update`, exact 2-test budget restored). Executed `./gradlew.bat --no-daemon --offline :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug` (`BUILD SUCCESSFUL`, 75/75 tests passing, 0 lint errors/warnings on touched files).
