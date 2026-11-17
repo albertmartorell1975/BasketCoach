@@ -13,7 +13,7 @@ Manually cross-referencing 14 full basketball box scores between competition pha
 Rather than relying on generic LLM advice, the AI acts as a data-grounded assistant coach across three connected steps:
 
 1. **Establish an Objective Baseline**: Consolidates every Phase 1 team and opponent metric into clear visual indicators—scoring differentials, rebounding balance, shooting efficiency, and ball control (assist-to-turnover ratio).
-2. **Diagnose Patterns Without Hallucinations**: Sends all 14 box scores to the AI using deterministic structured outputs under FIBA competition rules, surfacing prioritized **Strengths** and **Improvement Areas** tied to real metrics and specific game rounds (such as turnover spikes, defensive rebounding deficits, or foul trouble), alongside targeted **practice drills**.
+2. **Diagnose Patterns Without Hallucinations**: Sends all 14 box scores to the AI requesting structured JSON outputs under FIBA competition rules, surfacing prioritized **Strengths** and **Improvement Areas** tied to real metrics and specific game rounds (such as turnover spikes, defensive rebounding deficits, or foul trouble), alongside targeted **practice drills**.
 3. **Translate Insights into Weekly Training**: Through topic-scoped **Chat** threads launched directly from any improvement area (or via *Open Inquiry*), the coach can explore root causes, discuss tactical adjustments, and refine practice drills tailored to the team's weekly schedule.
 
 ---
@@ -22,7 +22,7 @@ Rather than relying on generic LLM advice, the AI acts as a data-grounded assist
 
 - **Dashboard**: Visualizes the static Phase 1 dataset through a baseline overview, four KPI pillars (*Scoring*, *Rebounds & Balance*, *Shooting Efficiency*, *Game Control*), a 14-round scoring evolution chart, and a full match-by-match statistical table.
 - **Tactical Analysis**: Displays AI-generated strengths, improvement areas, and practice drills strictly grounded in the 14-game dataset via structured JSON outputs (`temperature = 0.2`) and in-memory caching. Supports category filtering and one-tap *"Explore in Chat"* hand-off.
-- **Chat**: A two-pane tablet interface pairing AI-detected improvement areas and an *Open Inquiry* option on the left with isolated, topic-scoped coaching threads on the right. Every incoming prompt is first evaluated by the deterministic **JEV** classification model to block off-topic requests before invoking generative AI.
+- **Chat**: A two-pane tablet interface pairing AI-detected improvement areas and an *Open Inquiry* option on the left with isolated, topic-scoped coaching threads on the right. Every incoming prompt is first evaluated by the **JEV** classification model to block off-topic requests before invoking generative AI.
 
 ---
 
@@ -49,7 +49,7 @@ flowchart TD
 
 ## AI Pipeline, JEV Guardrail & Dual-Provider Failover
 
-To prevent statistical hallucinations, all AI requests are empirically grounded with aggregated Phase 1 box-score metrics and framed around FIBA competition rules. Conversational queries pass through a two-stage pipeline anchored by a deterministic semantic firewall:
+To prevent statistical hallucinations, all AI requests are empirically grounded with aggregated Phase 1 box-score metrics and framed around FIBA competition rules. Conversational queries pass through a two-stage pipeline anchored by a pre-flight semantic firewall:
 
 ```mermaid
 flowchart TD
@@ -65,7 +65,7 @@ flowchart TD
 ```
 
 - **Empirical Context Grounding**: Rather than using vector-based RAG, every analysis and chat request deterministically injects an aggregated summary and round-by-round breakdown of all 14 Phase 1 games (along with the active improvement area's diagnosis in topic-scoped threads), preventing retrieval gaps and statistical hallucinations.
-- **Deterministic JEV Guardrail**: Chat queries are never sent directly to the generative model. They are first classified—via DevExpert's deterministic `jev` model, or Gemini's JSON classifier when in fallback—as basketball-relevant or off-topic. Off-topic prompts short-circuit immediately without consuming generative tokens.
+- **Pre-Flight JEV Guardrail**: Chat queries are never sent directly to the generative model. They are first classified—via DevExpert's remote `jev` decision model, or Gemini's JSON classifier when in fallback—as basketball-relevant or off-topic. Off-topic prompts short-circuit immediately without consuming generative tokens.
 - **Dual-Provider Resilience**: Both Tactical Analysis and Chat use DevExpert Inference (`chat` and `jev`) as the primary provider, with Google Gemini's OpenAI-compatible endpoint (`gemini-4-hydrogen`) as an automatic fallback. Auth, subscription/quota, rate-limit, server, or timeout errors transparently switch and latch the active session to Gemini, while genuine offline network errors remain unlatched. If no DevExpert key is configured, the app boots directly on Gemini.
 
 > Detailed specs: [Structured Outputs](docs/chat/ai-tactical-analysis-structured-outputs.md) · [Chat Architecture](docs/chat/ai-chat-architecture.md)
