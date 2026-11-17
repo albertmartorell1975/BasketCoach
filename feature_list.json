@@ -218,9 +218,9 @@
         "depends_on": [
             "feature_008_dashboard_integration"
         ],
-        "status": "in_progress",
+        "status": "accepted",
         "verification": "Pure JVM unit tests in DashboardViewModelTest verify re-entry guard, forceRefresh bypass, and intermediate Loading/isRefreshing state transitions during retry; DashboardScreen renders overlay CircularProgressIndicator when isRefreshing is true in Success state.",
-        "evidence": "",
+        "evidence": "./gradlew --no-daemon --offline :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug - 75 unit tests passed across all modules (12 :domain, 40 :data, 9 :usecases, 14 :app including 2 in DashboardViewModelTest), 0 failures; assembleDebug and lintDebug BUILD SUCCESSFUL; live emulator verification on emulator-5554 passed.",
         "notes": "Aligns DashboardViewModel and DashboardScreen state handling with AnalysisViewModel and AnalysisScreen within :app, adhering strictly to the 0-6 test budget."
     }
 ]

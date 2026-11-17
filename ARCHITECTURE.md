@@ -265,7 +265,7 @@ The `:app` module delivers a specialized high-density user experience strictly o
    - Reusable preview annotations (`@BcThemePreview` and `@BcDevicePreview`) validate the Pia Sabadell brand theme across target tablet landscape form factors (Tablet 10" Landscape baseline and Tablet 12" Large Landscape) for all composables without redundant or broken configurations.
 
 
-### 7.1 Dashboard Integration Architecture (`feature_008_dashboard_integration`)
+### 7.1 Dashboard Integration Architecture (`feature_008_dashboard_integration`, refined in `feature_013_dashboard_state_refinement`)
 
 The Phase 1 Dashboard connects to authentic domain fixtures through a decoupled MVVM integration adhering strictly to clean architectural boundaries:
 
@@ -276,9 +276,9 @@ The Phase 1 Dashboard connects to authentic domain fixtures through a decoupled 
 
 2. **Passive ViewModel Lifecycle & Hybrid UI State (`DashboardViewModel`)**:
    - Adheres strictly to the **Passive Initialization Mandate**: zero coroutines or repository queries are launched in constructor or `init` blocks. Initial state defaults passively to `DashboardUiContent.Loading`.
-   - Data loading is explicitly triggered from Compose via `LaunchedEffect(Unit) { viewModel.loadDashboard() }`.
-   - `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` models mutually exclusive states (`Loading`, `Success`, `Error(DomainError)`) while retaining the additive `isRefreshing` overlay flag.
-   - Idempotent concurrency guarding prevents duplicate in-flight requests (`if (_uiState.value.isRefreshing) return`).
+   - Data loading is explicitly triggered from Compose via `LaunchedEffect(Unit) { viewModel.loadDashboard() }`, while error retry passes `forceRefresh = true` (`{ viewModel.loadDashboard(forceRefresh = true) }`).
+   - `DashboardUiState(val content: DashboardUiContent, val isRefreshing: Boolean)` models mutually exclusive states (`Loading`, `Success`, `Error(DomainError)`) while retaining the additive `isRefreshing` overlay flag. When `uiState.isRefreshing` is `true` in `DashboardUiContent.Success`, `DashboardScreen` renders a translucent scrim (`Color.Black.copy(alpha = 0.15f)`) with a centered `CircularProgressIndicator(color = PiaNavy)`.
+   - Idempotent concurrency and re-entry guarding prevents duplicate in-flight requests (`if (_uiState.value.isRefreshing) return`) and redundant reloads when returning to an already-loaded Dashboard (`if (!forceRefresh && _uiState.value.content is DashboardUiContent.Success) return`). Retrying from `Error` synchronously transitions `content` back to `DashboardUiContent.Loading` while preserving `Success` content during explicit refreshes.
    - All state mutations are performed atomically via `MutableStateFlow.update { ... }`.
 
 3. **Authoritative Mathematical Transformation (`DashboardUiMapper`)**:
@@ -295,7 +295,7 @@ The Phase 1 Dashboard connects to authentic domain fixtures through a decoupled 
 5. **Pragmatic Pure JVM Presentation Testing (Constraint #18)**:
    - Presentation tests are 100% pure JVM unit tests without Robolectric:
      - `DashboardUiMapperTest` (2 tests): Mathematical calculation integrity and empty list exception boundary.
-     - `DashboardViewModelTest` (2 tests): Passive initialization, successful data loading, error handling, and retry recovery.
+     - `DashboardViewModelTest` (2 tests): Passive initialization, `Success` re-entry guard, `forceRefresh = true` overlay refresh state, error handling, and intermediate `Loading` transition on retry recovery.
 
 ---
 

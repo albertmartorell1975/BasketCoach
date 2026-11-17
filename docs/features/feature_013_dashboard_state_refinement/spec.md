@@ -6,7 +6,7 @@
 * **`id`:** `feature_013_dashboard_state_refinement`
 * **`area`:** `app`
 * **`depends_on`:** `["feature_008_dashboard_integration"]`
-* **`status`:** `in_progress`
+* **`status`:** `accepted`
 * **`module_topology`:** `Layer-Based (:domain, :usecases, :data, :app)`
 * **Objective:** Align `DashboardViewModel` and `DashboardScreen` in `:app` with the mature state-handling and visual refresh patterns already established in `AnalysisViewModel` (`AnalysisViewModel.kt#L66-L80`) and `AnalysisScreen` (`AnalysisScreen.kt#L56`, `#L104-L113`). Specifically: add an optional `forceRefresh: Boolean = false` parameter and `Success` re-entry guard to `DashboardViewModel.loadDashboard`, transition `Error` immediately to `Loading` when retrying while preserving `Success` content during explicit refreshes, display a translucent refresh overlay (`Color.Black.copy(alpha = 0.15f)` + `CircularProgressIndicator(color = PiaNavy)`) over `DashboardContent` when `isRefreshing == true`, pass `forceRefresh = true` from stateful `DashboardScreen`'s `onRetry`, and strengthen the 2 existing `@Test` methods in `DashboardViewModelTest` within the strict test budget.
 * **Identified Ambiguities / Assumptions:**
@@ -104,32 +104,32 @@ No persistence changes required.
 
 ## 6. Actionable Implementation Checklist (For `workflow-implementer`)
 
-- [ ] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, `viewmodel-architecture-governance/SKILL.md`, and `testing-setup/SKILL.md`. Keep changes strictly confined to `:app` (zero edits to `:domain`, `:usecases`, `:data`, or `*.gradle.kts`).
-- [ ] **Database / Domain / Data / UseCase (`:domain`, `:data`, `:usecases`):** No changes required (strictly confined to `:app`).
-- [ ] **ViewModel Refinement (`app/.../ui/dashboard/DashboardViewModel.kt`):**
-  - [ ] Update signature to `fun loadDashboard(forceRefresh: Boolean = false)`.
-  - [ ] Immediately after `if (_uiState.value.isRefreshing) return`, add re-entry guard: `if (!forceRefresh && _uiState.value.content is DashboardUiContent.Success) return`.
-  - [ ] Update initial `_uiState.update { currentState -> ... }` before `viewModelScope.launch` to match `AnalysisViewModel.kt#L70-L80`: preserve `currentState.content` when `currentState.content is DashboardUiContent.Success`, otherwise set `nextContent = DashboardUiContent.Loading`, and update `currentState.copy(content = nextContent, isRefreshing = true)`.
-- [ ] **Screen Overlay & Retry Refinement (`app/.../ui/dashboard/DashboardScreen.kt`):**
-  - [ ] In stateful `DashboardScreen`, update `onRetry = { viewModel.loadDashboard(forceRefresh = true) }`.
-  - [ ] In stateless `DashboardScreen`, inside `is DashboardUiContent.Success ->`, add the refresh overlay matching `AnalysisScreen.kt#L104-L113`: when `uiState.isRefreshing` is `true`, render `Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = PiaNavy) }` (`CircularProgressIndicator`, `Color`, `PiaNavy`).
-  - [ ] Add `@BcThemePreview` preview (`DashboardScreenRefreshingPreview`) rendering `Phase1PreviewData.uiState.copy(isRefreshing = true)` to verify the `Success` + `isRefreshing` overlay visually.
-- [ ] **UI Design Assets & Folders:** N/A — No graphic assets.
-- [ ] **Testing & Integration (Strict Test Budget: 2 `@Test` methods total in `:app`, 0 new test files, 0 Robolectric tests):**
-  - [ ] Update `app/src/test/java/com/martorell/albert/basketcoach/ui/dashboard/DashboardViewModelTest.kt` keeping **exactly 2 `@Test` methods**:
+- [x] **MANDATORY Pre-Check:** Consult `AGENTS.md`, `CONSTRAINTS.md`, `ARCHITECTURE.md`, `viewmodel-architecture-governance/SKILL.md`, and `testing-setup/SKILL.md`. Keep changes strictly confined to `:app` (zero edits to `:domain`, `:usecases`, `:data`, or `*.gradle.kts`).
+- [x] **Database / Domain / Data / UseCase (`:domain`, `:data`, `:usecases`):** No changes required (strictly confined to `:app`).
+- [x] **ViewModel Refinement (`app/.../ui/dashboard/DashboardViewModel.kt`):**
+  - [x] Update signature to `fun loadDashboard(forceRefresh: Boolean = false)`.
+  - [x] Immediately after `if (_uiState.value.isRefreshing) return`, add re-entry guard: `if (!forceRefresh && _uiState.value.content is DashboardUiContent.Success) return`.
+  - [x] Update initial `_uiState.update { currentState -> ... }` before `viewModelScope.launch` to match `AnalysisViewModel.kt#L70-L80`: preserve `currentState.content` when `currentState.content is DashboardUiContent.Success`, otherwise set `nextContent = DashboardUiContent.Loading`, and update `currentState.copy(content = nextContent, isRefreshing = true)`.
+- [x] **Screen Overlay & Retry Refinement (`app/.../ui/dashboard/DashboardScreen.kt`):**
+  - [x] In stateful `DashboardScreen`, update `onRetry = { viewModel.loadDashboard(forceRefresh = true) }`.
+  - [x] In stateless `DashboardScreen`, inside `is DashboardUiContent.Success ->`, add the refresh overlay matching `AnalysisScreen.kt#L104-L113`: when `uiState.isRefreshing` is `true`, render `Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = PiaNavy) }` (`CircularProgressIndicator`, `Color`, `PiaNavy`).
+  - [x] Add `@BcThemePreview` preview (`DashboardScreenRefreshingPreview`) rendering `Phase1PreviewData.uiState.copy(isRefreshing = true)` to verify the `Success` + `isRefreshing` overlay visually.
+- [x] **UI Design Assets & Folders:** N/A — No graphic assets.
+- [x] **Testing & Integration (Strict Test Budget: 2 `@Test` methods total in `:app`, 0 new test files, 0 Robolectric tests):**
+  - [x] Update `app/src/test/java/com/martorell/albert/basketcoach/ui/dashboard/DashboardViewModelTest.kt` keeping **exactly 2 `@Test` methods**:
     1. `should_RemainPassiveInitially_and_TransitionToSuccess_when_LoadDashboardInvoked`: track `var callCount = 0` inside `fakeRepo.getPhase1Games()`, assert `callCount == 0` initially (passive init), `callCount == 1` after initial `loadDashboard()` + `advanceUntilIdle()`, `callCount == 1` after calling `loadDashboard()` again while in `Success` (re-entry guard), and after calling `loadDashboard(forceRefresh = true)` assert intermediate `Success` + `isRefreshing == true` before `advanceUntilIdle()` and `callCount == 2` + `isRefreshing == false` after `advanceUntilIdle()`.
     2. `should_TransitionToError_when_UseCaseReturnsError_and_RecoverOnRetry`: after initial error load (`DashboardUiContent.Error`), set `shouldFail = false`, invoke `viewModel.loadDashboard()` for retry, assert intermediate state BEFORE `testDispatcher.scheduler.advanceUntilIdle()` (`viewModel.uiState.value.content is DashboardUiContent.Loading` and `viewModel.uiState.value.isRefreshing == true`), then advance scheduler and assert recovery to `DashboardUiContent.Success` with `isRefreshing == false`.
-  - [ ] `DashboardUiMapperTest.kt`: `0 new tests` (mapper untouched).
-  - [ ] `DashboardScreen`: `0 Robolectric UI tests` (states verified via `@BcThemePreview` + `lintDebug`).
-- [ ] **Compiler Self-Verification (MANDATORY):**
-  - [ ] Execute `./gradlew testDebugUnitTest lintDebug --parallel --build-cache --configuration-cache` and `./gradlew assembleDebug`.
-  - [ ] Record passing verification evidence in `PROGRESS.md` and `feature_list.json` (`status: "passing"`).
+  - [x] `DashboardUiMapperTest.kt`: `0 new tests` (mapper untouched).
+  - [x] `DashboardScreen`: `0 Robolectric UI tests` (states verified via `@BcThemePreview` + `lintDebug`).
+- [x] **Compiler Self-Verification (MANDATORY):**
+  - [x] Execute `./gradlew testDebugUnitTest lintDebug --parallel --build-cache --configuration-cache` and `./gradlew assembleDebug`.
+  - [x] Record passing verification evidence in `PROGRESS.md` and `feature_list.json` (`status: "passing"`).
 
 ## 7. Validator Checklist (For `workflow-validator`)
 
-- [ ] Implementation stays strictly within `feature_013_dashboard_state_refinement` scope (`:app` only, zero `.gradle.kts` or non-`:app` module changes, `WIP=1`) and `CONSTRAINTS.md`.
-- [ ] All 4 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior (re-entry guard, `forceRefresh = true` overlay, immediate `Loading` transition on retry, concurrency guard).
-- [ ] Clean Architecture & SOLID invariants (`architecture-solid-audit.md`) respected: passive `init`, atomic `_uiState.update`, zero `R.string` in `DashboardViewModel`, `@BcThemePreview` coverage on stateless states.
-- [ ] `@compiler` verification evidence passes cleanly (`assembleDebug`, `lintDebug`, `testDebugUnitTest`).
-- [ ] Strict test budget verified: `DashboardViewModelTest` maintains 2 cohesive `@Test` methods (within 1–3/class and 0–6/feature caps), asserting intermediate state transitions with 0 Robolectric UI tests and 0 redundant tests.
-- [ ] Structured validation report written to `docs/features/feature_013_dashboard_state_refinement/validator/validation-report.md`.
+- [x] Implementation stays strictly within `feature_013_dashboard_state_refinement` scope (`:app` only, zero `.gradle.kts` or non-`:app` module changes, `WIP=1`) and `CONSTRAINTS.md`.
+- [x] All 4 Acceptance Scenarios (`Given/When/Then`) are satisfied with real behavior (re-entry guard, `forceRefresh = true` overlay, immediate `Loading` transition on retry, concurrency guard).
+- [x] Clean Architecture & SOLID invariants (`architecture-solid-audit.md`) respected: passive `init`, atomic `_uiState.update`, zero `R.string` in `DashboardViewModel`, `@BcThemePreview` coverage on stateless states.
+- [x] `@compiler` verification evidence passes cleanly (`assembleDebug`, `lintDebug`, `testDebugUnitTest`).
+- [x] Strict test budget verified: `DashboardViewModelTest` maintains 2 cohesive `@Test` methods (within 1–3/class and 0–6/feature caps), asserting intermediate state transitions with 0 Robolectric UI tests and 0 redundant tests.
+- [x] Structured validation report written to `docs/features/feature_013_dashboard_state_refinement/validator/validation-report.md`.
