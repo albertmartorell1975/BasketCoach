@@ -7,7 +7,7 @@ BasketCoach is a Tablet Landscape application for a Junior Men's Interterritoria
 * **UI Architecture**: `MVVM (Hybrid UI State & Passive Initialization)` (`.agents/skills/viewmodel-architecture-governance/SKILL.md`)
 * **Module Topology**: `Layer-Based (:domain -> :usecases <- :data -> :app)` (`.agents/skills/module-architecture-governance/SKILL.md`)
 * **Dependency Injection**: `Hilt` (`.agents/skills/hilt/SKILL.md`)
-* **Persistence**: `Room` (`.agents/skills/room-schema-governance/SKILL.md`)
+* **Persistence**: In-memory caching over static bundled JSON (`docs/general/dataset.json`)
 
 ## Deterministic Quality & Safety Gates (The Harness)
 

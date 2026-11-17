@@ -28,7 +28,7 @@ BasketCoach is structured around a **Layer-Based Clean Architecture** topology a
 | :--- | :--- | :--- | :--- |
 | **`:domain`** | Core basketball domain entities, value objects, typed errors (`DomainError`), and repository contracts. | None (pure Kotlin JVM, zero external/Android dependencies). | Pure Kotlin JVM (`libs.plugins.kotlin.jvm`) |
 | **`:usecases`** | Single-responsibility domain interactors orchestrating business workflows. | `:domain` (pure Kotlin JVM, zero Android/data dependencies). | Pure Kotlin JVM (`libs.plugins.kotlin.jvm`) |
-| **`:data`** | Repository implementations, local data parsing (`dataset.json`), database persistence (`Room`), and remote AI clients (`DevExpert API`). | `:domain` | Android / JVM |
+| **`:data`** | Repository implementations, local data parsing (`dataset.json`), in-memory caching, and remote AI clients (`DevExpert API`, `Gemini`). | `:domain` | Android / JVM |
 | **`:app`** | Tablet Landscape Jetpack Compose UI, MVVM ViewModels with Hybrid UI State, and Hilt dependency injection root. | `:domain`, `:usecases`, `:data` | Android Application |
 
 ---
