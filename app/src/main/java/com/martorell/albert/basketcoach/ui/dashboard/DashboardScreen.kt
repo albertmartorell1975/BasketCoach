@@ -93,17 +93,22 @@ fun DashboardScreen(
                     modifier = Modifier.fillMaxSize()
                 )
                 if (uiState.isRefreshing) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.15f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = PiaNavy)
-                    }
+                    DashboardRefreshOverlay(modifier = Modifier.fillMaxSize())
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun DashboardRefreshOverlay(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.background(Color.Black.copy(alpha = 0.15f)),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = PiaNavy)
     }
 }
 
@@ -149,5 +154,13 @@ private fun DashboardScreenRefreshingPreview() {
         DashboardScreen(
             uiState = Phase1PreviewData.uiState.copy(isRefreshing = true)
         )
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardRefreshOverlayPreview() {
+    BasketCoachTheme {
+        DashboardRefreshOverlay(modifier = Modifier.fillMaxSize())
     }
 }
