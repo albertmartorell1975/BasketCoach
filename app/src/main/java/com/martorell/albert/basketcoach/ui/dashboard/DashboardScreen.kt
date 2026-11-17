@@ -1,15 +1,16 @@
 package com.martorell.albert.basketcoach.ui.dashboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.background
-import com.martorell.albert.basketcoach.ui.theme.PiaBackground
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.martorell.albert.basketcoach.domain.model.DomainError
 import com.martorell.albert.basketcoach.ui.dashboard.components.DashboardErrorView
@@ -21,12 +22,15 @@ import com.martorell.albert.basketcoach.ui.dashboard.model.DashboardUiState
 import com.martorell.albert.basketcoach.ui.theme.BasketCoachTheme
 import com.martorell.albert.basketcoach.ui.theme.BcDevicePreview
 import com.martorell.albert.basketcoach.ui.theme.BcThemePreview
+import com.martorell.albert.basketcoach.ui.theme.PiaBackground
+import com.martorell.albert.basketcoach.ui.theme.PiaNavy
 
 /**
  * Stateful entry composable for the Phase 1 Basketball Dashboard.
  *
  * Injects [DashboardViewModel], triggers passive data loading via [LaunchedEffect], and
- * delegates presentation rendering to the stateless overload.
+ * delegates presentation rendering to the stateless overload with `onRetry` wired to
+ * `loadDashboard(forceRefresh = true)`.
  *
  * @param modifier Layout modifier applied to the screen container.
  * @param viewModel Hilt-injected ViewModel managing dashboard state.
@@ -45,7 +49,7 @@ fun DashboardScreen(
     DashboardScreen(
         uiState = uiState,
         modifier = modifier,
-        onRetry = viewModel::loadDashboard
+        onRetry = { viewModel.loadDashboard(forceRefresh = true) }
     )
 }
 
@@ -53,7 +57,9 @@ fun DashboardScreen(
  * Stateless presentation composable for the Phase 1 Basketball Dashboard.
  *
  * Renders [DashboardLoadingView], [DashboardErrorView], or [DashboardContent] based on
- * the active [DashboardUiContent] phase.
+ * the active [DashboardUiContent] phase. When [DashboardUiState.isRefreshing] is `true` over
+ * [DashboardUiContent.Success], renders a translucent scrim overlay with a centered
+ * [CircularProgressIndicator] over the active dashboard content.
  *
  * @param uiState Immutable UI state coordinating mutually exclusive content and refresh flags.
  * @param modifier Layout modifier applied to the screen container.
@@ -86,8 +92,23 @@ fun DashboardScreen(
                     uiState = content,
                     modifier = Modifier.fillMaxSize()
                 )
+                if (uiState.isRefreshing) {
+                    DashboardRefreshOverlay(modifier = Modifier.fillMaxSize())
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun DashboardRefreshOverlay(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.background(Color.Black.copy(alpha = 0.15f)),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = PiaNavy)
     }
 }
 
@@ -123,5 +144,23 @@ private fun DashboardScreenErrorPreview() {
                 isRefreshing = false
             )
         )
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardScreenRefreshingPreview() {
+    BasketCoachTheme {
+        DashboardScreen(
+            uiState = Phase1PreviewData.uiState.copy(isRefreshing = true)
+        )
+    }
+}
+
+@BcThemePreview
+@Composable
+private fun DashboardRefreshOverlayPreview() {
+    BasketCoachTheme {
+        DashboardRefreshOverlay(modifier = Modifier.fillMaxSize())
     }
 }

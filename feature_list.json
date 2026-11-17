@@ -209,5 +209,18 @@
         "require_review_after": [
             "planner"
         ]
+    },
+    {
+        "id": "feature_013_dashboard_state_refinement",
+        "area": "app",
+        "title": "Dashboard Refresh Overlay, Retry Loading Feedback & Re-Entry Guard",
+        "user_visible_behavior": "When the Dashboard is already loaded (Success), navigating away and back does not redundantly reload the 14 games unless forceRefresh is requested. When retrying from an Error state, the screen immediately transitions to Loading for visual feedback, and when refreshing over existing Success content, an overlay CircularProgressIndicator is displayed.",
+        "depends_on": [
+            "feature_008_dashboard_integration"
+        ],
+        "status": "accepted",
+        "verification": "Pure JVM unit tests in DashboardViewModelTest verify re-entry guard, forceRefresh bypass, and intermediate Loading/isRefreshing state transitions during retry; DashboardScreen renders overlay CircularProgressIndicator when isRefreshing is true in Success state.",
+        "evidence": "./gradlew --no-daemon --offline :domain:test :data:test :usecases:test :app:testDebugUnitTest :app:assembleDebug :app:lintDebug - 75 unit tests passed across all modules (12 :domain, 40 :data, 9 :usecases, 14 :app including 2 in DashboardViewModelTest), 0 failures; assembleDebug and lintDebug BUILD SUCCESSFUL; live emulator verification on emulator-5554 passed.",
+        "notes": "Aligns DashboardViewModel and DashboardScreen state handling with AnalysisViewModel and AnalysisScreen within :app, adhering strictly to the 0-6 test budget."
     }
 ]

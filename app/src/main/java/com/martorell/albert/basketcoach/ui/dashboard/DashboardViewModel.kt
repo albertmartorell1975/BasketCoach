@@ -52,15 +52,34 @@ class DashboardViewModel @Inject constructor(
     /**
      * Asynchronously loads Phase 1 game fixtures and computes dashboard performance metrics.
      *
-     * Protected by an idempotent concurrency guard: concurrent invocations while [DashboardUiState.isRefreshing]
-     * is `true` are safely ignored. Transitions to [DashboardUiContent.Success] on successful non-empty data,
-     * or [DashboardUiContent.Error] on use case failure or empty fixture datasets.
+     * Protected by an idempotent concurrency guard that ignores invocations while
+     * [DashboardUiState.isRefreshing] is `true`, and by a re-entry guard that skips redundant
+     * loads when [forceRefresh] is `false` and [DashboardUiState.content] is already
+     * [DashboardUiContent.Success].
+     *
+     * Passing `forceRefresh = true` bypasses the [DashboardUiContent.Success] guard while preserving
+     * existing success content beneath the refresh indicator. When reloading from
+     * [DashboardUiContent.Error], [DashboardUiState.content] transitions immediately to
+     * [DashboardUiContent.Loading] alongside `isRefreshing = true` before the coroutine resolves
+     * to [DashboardUiContent.Success] or [DashboardUiContent.Error].
+     *
+     * @param forceRefresh When `true`, bypasses the existing [DashboardUiContent.Success] guard
+     *   to force a fresh fixture reload.
      */
-    fun loadDashboard() {
+    fun loadDashboard(forceRefresh: Boolean = false) {
         if (_uiState.value.isRefreshing) return
+        if (!forceRefresh && _uiState.value.content is DashboardUiContent.Success) return
 
         _uiState.update { currentState ->
-            currentState.copy(isRefreshing = true)
+            val nextContent = if (currentState.content is DashboardUiContent.Success) {
+                currentState.content
+            } else {
+                DashboardUiContent.Loading
+            }
+            currentState.copy(
+                content = nextContent,
+                isRefreshing = true
+            )
         }
 
         viewModelScope.launch {
