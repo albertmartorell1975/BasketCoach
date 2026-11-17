@@ -13,6 +13,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify AGENTS.md referenced paths exist
+        run: |
+          python3 -c '
+          import os, re, sys
+          with open("AGENTS.md", encoding="utf-8") as f:
+              text = f.read()
+          tokens = re.findall(r"`([^`]+)`", text)
+          missing = []
+          for t in tokens:
+              if any(c in t for c in (" ", "<", ">", "*")) or t.startswith(("./", "http")):
+                  continue
+              if "/" in t or re.fullmatch(r"[A-Z]+\.md", t) or t == "feature_list.json":
+                  if not os.path.exists(t):
+                      missing.append(t)
+          if missing:
+              print("Missing paths referenced in AGENTS.md:", missing, file=sys.stderr)
+              sys.exit(1)
+          print("All AGENTS.md referenced paths exist.")
+          '
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
